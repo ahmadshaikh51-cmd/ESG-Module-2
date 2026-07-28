@@ -1,0 +1,7 @@
+{
+  "github_token": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "repo_owner": "your-github-username",
+  "repo_name": "esg-module",
+  "is_private": true,
+  "commit_message": "Initial commit: ESG Module application"
+}
