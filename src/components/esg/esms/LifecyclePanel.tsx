@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { PanelCard, useEsg } from "../primitives";
-import { 
-  ArrowDown, 
-  Globe, 
-  UserCog, 
-  ShieldCheck, 
-  ArrowLeftRight, 
-  Zap, 
-  Trash2, 
+import {
+  ArrowDown,
+  Globe,
+  UserCog,
+  ShieldCheck,
+  ArrowLeftRight,
+  Zap,
+  Trash2,
   Heart,
   Circle,
   Waypoints,
@@ -32,19 +32,19 @@ function VerticalLine() {
 }
 
 // Top-level flowchart nodes
-function Node({ 
-  title, 
-  subtitle, 
+function Node({
+  title,
+  subtitle,
   variant = "default",
   onClick
-}: { 
-  title: string; 
-  subtitle?: string; 
+}: {
+  title: string;
+  subtitle?: string;
   variant?: "primary" | "default" | "active";
   onClick?: () => void;
 }) {
   return (
-    <div 
+    <div
       onClick={onClick}
       className={cn(
         "w-[260px] flex flex-col items-center justify-center p-3.5 rounded-xl border bg-card text-center transition-all hover:-translate-y-0.5 hover:shadow-md z-10",
@@ -53,8 +53,8 @@ function Node({
         onClick ? "cursor-pointer" : "cursor-default"
       )}>
       <span className={cn(
-        "text-[12.5px] font-bold leading-tight", 
-        variant === "primary" && "text-primary-foreground", 
+        "text-[12.5px] font-bold leading-tight",
+        variant === "primary" && "text-primary-foreground",
         variant === "active" && "text-primary"
       )}>
         {title}
@@ -65,13 +65,13 @@ function Node({
 }
 
 // Branch column header (Environment, Labour, OH&S)
-function BranchHeader({ 
-  title, 
-  color, 
-  icon: Icon 
-}: { 
-  title: string; 
-  color: "green" | "orange" | "red"; 
+function BranchHeader({
+  title,
+  color,
+  icon: Icon
+}: {
+  title: string;
+  color: "green" | "orange" | "red";
   icon: any;
 }) {
   const colorClasses = {
@@ -79,10 +79,10 @@ function BranchHeader({
     orange: "bg-warning/15 text-warning border-warning/30",
     red: "bg-destructive/15 text-destructive border-destructive/30"
   };
-  
+
   return (
     <div className={cn(
-      "w-full py-2.5 px-4 rounded-lg border flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider mb-4", 
+      "w-full py-2.5 px-4 rounded-lg border flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider mb-4",
       colorClasses[color]
     )}>
       <Icon className="w-3.5 h-3.5" />
@@ -94,7 +94,7 @@ function BranchHeader({
 // Standard branch nodes (Permits, Compliance)
 function BranchNode({ title, subtitle, onClick }: { title: string; subtitle: string; onClick?: () => void; }) {
   return (
-    <div 
+    <div
       onClick={onClick}
       className={cn("w-full flex flex-col items-start p-3.5 rounded-xl border border-border bg-card hover:-translate-y-0.5 transition-transform shadow-sm mb-3", onClick ? "cursor-pointer hover:shadow-md" : "cursor-default")}>
       <span className="text-[11.5px] font-bold text-foreground">{title}</span>
@@ -110,33 +110,33 @@ function BranchAction({ title, color, onClick }: { title: string; color: "green"
     orange: "bg-warning text-warning-foreground hover:bg-warning/90",
     red: "bg-destructive text-destructive-foreground hover:bg-destructive/90"
   };
-  
+
   return (
-    <div 
+    <div
       onClick={onClick}
       className={cn(
-      "w-full py-2.5 px-4 rounded-md text-center text-[11.5px] font-bold cursor-pointer transition-colors mb-3 shadow-sm", 
-      colorClasses[color]
-    )}>
+        "w-full py-2.5 px-4 rounded-md text-center text-[11.5px] font-bold cursor-pointer transition-colors mb-3 shadow-sm",
+        colorClasses[color]
+      )}>
       {title}
     </div>
   );
 }
 
 // Meta Data Table component
-function MetaDataCard({ 
-  items, 
-  color 
-}: { 
-  items: { label: string; icon?: any }[]; 
-  color: "green" | "orange" | "red" 
+function MetaDataCard({
+  items,
+  color
+}: {
+  items: { label: string; icon?: any }[];
+  color: "green" | "orange" | "red"
 }) {
   const headerColors = {
     green: "bg-success text-success-foreground",
     orange: "bg-warning text-warning-foreground",
     red: "bg-destructive text-destructive-foreground"
   };
-  
+
   return (
     <div className="w-full rounded-xl border border-border bg-card overflow-hidden mb-3 shadow-sm hover:shadow-md transition-shadow">
       <div className={cn("w-full px-3.5 py-2.5 text-[11px] font-bold flex justify-between items-center", headerColors[color])}>
@@ -145,8 +145,8 @@ function MetaDataCard({
       </div>
       <div className="flex flex-col">
         {items.map((item, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="px-3.5 py-2.5 text-[10.5px] text-muted-foreground border-b border-border last:border-0 hover:bg-muted/50 transition-colors flex items-center gap-2.5"
           >
             {item.icon ? (
@@ -238,7 +238,7 @@ export function LifecyclePanel() {
       <PanelCard>
         <div className="overflow-x-auto p-8 flex justify-center pb-12">
           <div className="flex flex-col items-center min-w-[850px]">
-            
+
             {/* Trunk */}
             <Node title="MBMT Initiation" variant="primary" />
             <VerticalLine />
@@ -249,7 +249,7 @@ export function LifecyclePanel() {
             <Node title="ESDD Report" subtitle="Environmental & Social Due Diligence" onClick={() => onOpen('esdd')} />
             <VerticalLine />
             <Node title="ESAP" subtitle="Environmental & Social Action Plan" variant="active" onClick={() => onOpen('esap')} />
-            
+
             {/* Splitter */}
             <div className="w-[1px] h-6 bg-border" />
             <div className="w-[66.6%] h-[1px] bg-border" />
@@ -261,26 +261,26 @@ export function LifecyclePanel() {
 
             {/* Branches Grid */}
             <div className="grid grid-cols-3 gap-6 w-full max-w-[950px]">
-              
+
               {/* Environment Branch */}
               <div className="flex flex-col items-center w-full">
                 <BranchHeader title="Environment" color="green" icon={Globe} />
                 <BranchNode title="Permits" subtitle="Environmental clearance & licensing" onClick={() => onOpen('permits')} />
                 <BranchNode title="Compliance" subtitle="Statutory verification" onClick={() => onOpen('compliance')} />
                 <BranchNode title="Environmental Monitoring" subtitle="Resource mapping" onClick={() => onOpen('monitoring')} />
-                
+
                 <BranchAction title="Environmental Monitoring" color="green" onClick={() => onOpen('monitoring')} />
-                
-                <MetaDataCard 
-                  color="green" 
+
+                <MetaDataCard
+                  color="green"
                   items={[
                     { label: "Vehicle", icon: ArrowLeftRight },
                     { label: "Energy", icon: Zap },
                     { label: "Waste", icon: Trash2 },
                     { label: "Consumption", icon: Heart }
-                  ]} 
+                  ]}
                 />
-                
+
                 <BranchAction title="Training" color="green" onClick={() => onOpen('training')} />
                 <BranchAction title="Biannual Training" color="green" onClick={() => onOpen('training')} />
               </div>
@@ -291,18 +291,18 @@ export function LifecyclePanel() {
                 <BranchNode title="Permits" subtitle="Labour law compliance" onClick={() => onOpen('permits')} />
                 <BranchNode title="Compliance" subtitle="Wage & Hour verification" onClick={() => onOpen('compliance')} />
                 <BranchNode title="Social Monitoring" subtitle="Workforce demographics" onClick={() => onOpen('monitoring')} />
-                
+
                 <BranchAction title="Social Monitoring" color="orange" onClick={() => onOpen('monitoring')} />
-                
-                <MetaDataCard 
-                  color="orange" 
+
+                <MetaDataCard
+                  color="orange"
                   items={[
                     { label: "Internal Grievance Tracker" },
                     { label: "Stakeholder Engagement Register" },
                     { label: "MOM Tracker" }
-                  ]} 
+                  ]}
                 />
-                
+
                 <BranchAction title="Training" color="orange" onClick={() => onOpen('training')} />
                 <BranchAction title="Biannual Training" color="orange" onClick={() => onOpen('training')} />
               </div>
@@ -313,20 +313,20 @@ export function LifecyclePanel() {
                 <BranchNode title="Permits" subtitle="Safety licensing" onClick={() => onOpen('permits')} />
                 <BranchNode title="Compliance" subtitle="Audit protocols" onClick={() => onOpen('compliance')} />
                 <BranchNode title="Social Monitoring" subtitle="Incident tracking" onClick={() => onOpen('monitoring')} />
-                
+
                 <BranchAction title="Social Monitoring" color="red" onClick={() => onOpen('monitoring')} />
-                
-                <MetaDataCard 
-                  color="red" 
+
+                <MetaDataCard
+                  color="red"
                   items={[
                     { label: "Accident / Incident Register" },
                     { label: "PPE Register" },
                     { label: "OHS Inspection Register" },
                     { label: "First Aid Register" },
                     { label: "Fire Extinguisher Register" }
-                  ]} 
+                  ]}
                 />
-                
+
                 <BranchAction title="Training" color="red" onClick={() => onOpen('training')} />
                 <BranchAction title="Biannual Training" color="red" onClick={() => onOpen('training')} />
               </div>
