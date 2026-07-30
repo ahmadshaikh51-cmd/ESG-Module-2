@@ -1,5 +1,6 @@
-import { Bell, Eye, Globe, Megaphone, ShieldAlert, TimerReset } from "lucide-react";
+import { ArrowLeft, Bell, Eye, Globe, Megaphone, ShieldAlert, TimerReset } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { NOTIFICATIONS, PERIODS, type EsgNotification } from "@/lib/esg-data";
 import { useEsg, type Audience } from "./primitives";
@@ -132,11 +133,80 @@ function NotificationsBell() {
   );
 }
 
+function getPageTitle(area: string, sub?: string) {
+  if (area === "esms") {
+    switch (sub) {
+      case "policies":
+      case "sops":
+        return "Policies & SOPs";
+      case "esdd":
+      case "esia":
+        return "Assessments";
+      case "audit-internal":
+      case "audit-external":
+        return "Audits & Reviews";
+      case "training":
+        return "Training Panel";
+      case "monitoring":
+        return "Environmental Monitoring";
+      case "lifecycle":
+        return "Project Lifecycle";
+      case "esap":
+        return "Environmental & Social Action Plan";
+      default:
+        return "ESMS Dashboard";
+    }
+  }
+  if (area === "projects") {
+    switch (sub) {
+      case "permits":
+        return "Compliance to Permits";
+      case "site":
+        return "Site Compliance";
+      case "nc":
+        return "Non-Conformities";
+      case "amr":
+        return "Annual Monitoring";
+      case "ghg":
+        return "Greenhouse Gas Emissions";
+      case "carbon":
+        return "Carbon Accounting";
+      default:
+        return "Project Compliance";
+    }
+  }
+  if (area === "reports") return "Compliance Reports";
+  if (area === "vendors") return "Vendor Management";
+  if (area === "masters") return "System Masters";
+  return "Overview Dashboard";
+}
+
 /** ESG sub-header: in-tab navigation + the always-visible scope / period / audience context. */
 export function EsgHeader({ area }: { area: string }) {
-  const { goto, scope, setScope } = useEsg();
+  const { goto, scope, setScope, goBack, hasHistory } = useEsg();
+  const search = useSearch({ strict: false }) as any;
+  const sub = search?.sub;
+
   return (
     <div className="space-y-3">
+      {hasHistory && goBack && (
+        <div className="flex items-center gap-3 border-b border-border/40 pb-3 mb-1">
+          <button
+            onClick={goBack}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/60 text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground hover:-translate-x-0.5 active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring/60 shadow-sm"
+            aria-label="Go Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <span className="h-4 w-[1px] bg-border/60" />
+          <div className="flex flex-col">
+            <span className="text-[14px] font-bold text-foreground tracking-tight select-none">
+              {getPageTitle(area, sub)}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Audience lens leads on the left — it changes what every screen shows. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <AudienceControl />

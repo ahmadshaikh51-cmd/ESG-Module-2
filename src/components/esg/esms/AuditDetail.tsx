@@ -288,13 +288,22 @@ export function AuditDetail({
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
-        onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Back to {isExternal ? "external" : "internal"} audits
-      </button>
+      <div className="flex items-center gap-3 border-b border-border/40 pb-3 mb-1">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/60 text-muted-foreground transition-all hover:bg-muted/80 hover:text-foreground hover:-translate-x-0.5 active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring/60 shadow-sm"
+          aria-label={`Back to ${isExternal ? "external" : "internal"} audits`}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+        <span className="h-4 w-[1px] bg-border/60" />
+        <div className="flex flex-col">
+          <span className="text-[14px] font-bold text-foreground tracking-tight select-none">
+            {isExternal ? "External Audits" : "Internal Audits"}
+          </span>
+        </div>
+      </div>
 
       {/* Header card */}
       <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-elevated">

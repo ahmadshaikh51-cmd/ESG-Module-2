@@ -60,19 +60,62 @@ function EsgPage() {
   const monitoring = useMonitoringWorkflow();
   const masters = useMastersWorkflow();
 
+  const [history, setHistory] = useState<{ area: string; sub?: string; scope: ScopeSel }[]>([]);
+
   const goto = useCallback(
     (nextArea: string, opts?: { record?: string; state?: string; sub?: string }) => {
+      setHistory((prev) => {
+        const last = prev[prev.length - 1];
+        if (last && last.area === area && last.sub === sub && JSON.stringify(last.scope) === JSON.stringify(scope)) {
+          return prev;
+        }
+        return [...prev, { area, sub, scope: { ...scope } }];
+      });
+
       void navigate({ search: { area: nextArea, record: opts?.record, sub: opts?.sub } });
       if (opts?.record) setDrawerId(opts.record);
     },
-    [navigate],
+    [navigate, area, sub, scope],
   );
+
+  const goBack = useCallback(() => {
+    setHistory((prev) => {
+      if (prev.length === 0) return prev;
+      const nextHistory = [...prev];
+      const prevPage = nextHistory.pop();
+      if (prevPage) {
+        setScope(prevPage.scope);
+        void navigate({ search: { area: prevPage.area, sub: prevPage.sub } });
+      }
+      return nextHistory;
+    });
+  }, [navigate]);
+
+  const hasHistory = history.length > 0;
 
   const openRecord = useCallback((id: string) => setDrawerId(id), []);
 
   const ctx = useMemo<EsgCtx>(
-    () => ({ scope, setScope, period, setPeriod, audience, setAudience, role, setRole, policy, audit, training, monitoring, masters, openRecord, goto }),
-    [scope, period, audience, role, policy, audit, training, monitoring, masters, openRecord, goto],
+    () => ({
+      scope,
+      setScope,
+      period,
+      setPeriod,
+      audience,
+      setAudience,
+      role,
+      setRole,
+      policy,
+      audit,
+      training,
+      monitoring,
+      masters,
+      openRecord,
+      goto,
+      goBack,
+      hasHistory,
+    }),
+    [scope, period, audience, role, policy, audit, training, monitoring, masters, openRecord, goto, goBack, hasHistory],
   );
 
   // Notification deep-links land with ?record= — open the drawer and highlight the row.

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { PanelCard, useEsg } from "../primitives";
 import {
@@ -163,8 +163,21 @@ function MetaDataCard({
 }
 
 export function LifecyclePanel() {
-  const { goto } = useEsg();
+  const { goto, scope } = useEsg();
   const [mode, setMode] = useState<"all" | string>("all");
+
+  useEffect(() => {
+    if (scope.entityId) {
+      const proj = PROJECT_LIFECYCLES.find((p) => p.entityId === scope.entityId);
+      if (proj) {
+        setMode(proj.projectId);
+      } else {
+        setMode("all");
+      }
+    } else {
+      setMode("all");
+    }
+  }, [scope.entityId]);
 
   const counts = useMemo(() => lifecycleStageCounts(), []);
   const activeLifecycle = mode !== "all" ? PROJECT_LIFECYCLES.find((p) => p.projectId === mode) : undefined;

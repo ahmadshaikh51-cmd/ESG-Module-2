@@ -36,8 +36,8 @@ const NAV_OPERATIONS: NavLink[] = [
 ];
 
 const NAV_CHARGING: NavLink[] = [
-  { to: "/charging", label: "Command Center", comingSoon: true },
-  { to: "/intelligence", label: "Charging Intelligence", comingSoon: true },
+  { to: "/charging", label: "Command Center" },
+  { to: "/intelligence", label: "Charging Intelligence" },
 ];
 
 const NAV_OTHER: NavLink[] = [
@@ -285,7 +285,7 @@ export function AppNav() {
             {NAV_ESG.label}
           </Link>
 
-          <NavDropdown label="Charging" items={NAV_CHARGING} path={path} comingSoon />
+          <NavDropdown label="Charging" items={NAV_CHARGING} path={path} />
 
           {navOther.map((n) =>
             n.comingSoon ? (

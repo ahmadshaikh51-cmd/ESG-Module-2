@@ -55,6 +55,8 @@ export type EsgCtx = {
   masters: MastersWorkflow;
   openRecord: (id: string) => void;
   goto: (area: string, opts?: { record?: string; state?: string; sub?: string }) => void;
+  goBack?: () => void;
+  hasHistory?: boolean;
 };
 
 export const EsgContext = createContext<EsgCtx | null>(null);
