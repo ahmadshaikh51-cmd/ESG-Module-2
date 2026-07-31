@@ -1,15 +1,12 @@
 import {
-  Activity,
-  AlertTriangle,
-  BatteryCharging,
-  Gauge,
-  LayoutDashboard,
-  MapPin,
-  Route,
-  User,
+  Globe,
+  Leaf,
+  ShieldAlert,
+  Users,
+  FileOutput,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
-import { DRIVERS, ROUTES, SEGMENTS } from "./fleet-data";
 
 export type CommandItem = {
   id: string;
@@ -22,46 +19,16 @@ export type CommandItem = {
 };
 
 const PAGES: CommandItem[] = [
-  { id: "page-home", label: "Trip Efficiency", keywords: "dashboard overview trips kpi", href: "/", group: "Pages", icon: LayoutDashboard },
-  { id: "page-routes", label: "Route Intelligence", keywords: "routes map difficulty", href: "/routes", group: "Pages", icon: Route },
-  { id: "page-segments", label: "Segment Risk", keywords: "segments dms risk map", href: "/segments", group: "Pages", icon: AlertTriangle },
-  { id: "page-drivers", label: "Driver Intelligence", keywords: "drivers coaching score", href: "/drivers", group: "Pages", icon: User },
-  { id: "page-fleet", label: "Fleet Command", keywords: "fleet executive command center", href: "/fleet", group: "Pages", icon: Activity },
-  { id: "page-charging", label: "Charger Command Center", keywords: "charger depot bus charging health energy command war room", href: "/charging", group: "Pages", icon: BatteryCharging },
+  { id: "esg-overview", label: "ESG Overview", keywords: "esg overview dashboard carbon emissions water waste electricity metrics", href: "/esg?area=overview", group: "Pages", icon: Globe },
+  { id: "esg-projects", label: "ESG Projects", keywords: "esg projects carbon offsets solar transition charger installation fleet conversion", href: "/esg?area=projects", group: "Pages", icon: Leaf },
+  { id: "esg-esms", label: "ESG ESMS", keywords: "esg esms policy social governance labor safety health audits training", href: "/esg?area=esms", group: "Pages", icon: ShieldAlert },
+  { id: "esg-vendors", label: "ESG Vendors", keywords: "esg vendors suppliers supply chain ethics assessment", href: "/esg?area=vendors", group: "Pages", icon: Users },
+  { id: "esg-reports", label: "ESG Reports", keywords: "esg reports brsr sustainability export download pdf", href: "/esg?area=reports", group: "Pages", icon: FileOutput },
+  { id: "esg-masters", label: "ESG Masters", keywords: "esg masters configuration parameters settings goals thresholds", href: "/esg?area=masters", group: "Pages", icon: Settings },
 ];
 
 export function buildCommandIndex(): CommandItem[] {
-  const routes: CommandItem[] = ROUTES.map((r) => ({
-    id: `route-${r.route_id}`,
-    label: r.route_code,
-    keywords: `${r.route_code} ${r.route_name} route difficulty efficiency`.toLowerCase(),
-    href: "/routes",
-    group: "Routes",
-    icon: MapPin,
-    meta: r.route_name,
-  }));
-
-  const drivers: CommandItem[] = DRIVERS.map((d) => ({
-    id: `driver-${d.driver_id}`,
-    label: d.driver_name,
-    keywords: `${d.driver_name} ${d.company_name} driver ${d.risk_band}`.toLowerCase(),
-    href: "/drivers",
-    group: "Drivers",
-    icon: User,
-    meta: `${d.risk_band} · ${d.contextual_score}`,
-  }));
-
-  const segments: CommandItem[] = SEGMENTS.slice(0, 40).map((s) => ({
-    id: `seg-${s.segment_id}`,
-    label: s.segment_id,
-    keywords: `${s.segment_id} ${s.route_code} segment risk dms`.toLowerCase(),
-    href: "/segments",
-    group: "Segments",
-    icon: Gauge,
-    meta: `Risk ${s.risk_score} · ${s.route_code}`,
-  }));
-
-  return [...PAGES, ...routes, ...drivers, ...segments];
+  return PAGES;
 }
 
 export const COMMAND_INDEX = buildCommandIndex();

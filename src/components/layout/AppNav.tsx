@@ -62,21 +62,21 @@ function ComingSoonBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "rounded px-1 py-px text-[8.5px] font-semibold uppercase tracking-wide text-destructive",
+        "rounded px-1.5 py-px text-[8.5px] font-bold uppercase tracking-wider text-destructive",
         "bg-destructive/10 ring-1 ring-inset ring-destructive/25",
         className,
       )}
     >
-      Soon
+      SOON
     </span>
   );
 }
 
-/** Disabled nav item — no navigation, small “Soon” note. */
+/** Disabled nav item — no navigation, small “SOON” note. */
 function ComingSoonNavItem({ label }: { label: string }) {
   return (
     <span
-      title="Coming soon"
+      title="SOON"
       aria-disabled="true"
       className="inline-flex shrink-0 cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
     >
@@ -100,9 +100,9 @@ function NavDropdown({
   if (comingSoon) {
     return (
       <span
-        title="Coming soon"
+        title="SOON"
         aria-disabled="true"
-        className="inline-flex shrink-0 cursor-not-allowed items-center gap-1 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
+        className="inline-flex shrink-0 cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
       >
         {label}
         <ChevronDown className="h-3 w-3 opacity-40" />
@@ -162,7 +162,7 @@ function MobileNavGroup({ title, items, path }: { title: string; items: NavLink[
         n.comingSoon ? (
           <span
             key={n.to}
-            title="Coming soon"
+            title="SOON"
             aria-disabled="true"
             className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
           >
@@ -233,45 +233,9 @@ export function AppNav() {
         </Link>
 
         <nav className="hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:flex">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex shrink-0 items-center gap-1 rounded-lg px-2.5 py-2 text-[12px] font-medium",
-                  isGroupActive(path, NAV_OPERATIONS)
-                    ? "nav-pill-active"
-                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-                )}
-              >
-                Operations
-                <ChevronDown className="h-3 w-3 opacity-60" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-52">
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wider">
-                Trip & route analytics
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {NAV_OPERATIONS.map((n) => (
-                <DropdownMenuItem key={n.to} asChild>
-                  <Link to={n.to}>{n.label}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <NavDropdown label="Operations" items={NAV_OPERATIONS} path={path} comingSoon={true} />
 
-          <Link
-            to={NAV_READINESS.to}
-            className={cn(
-              "shrink-0 rounded-lg px-2.5 py-2 text-[12px] font-medium",
-              isActive(path, NAV_READINESS.to)
-                ? "nav-pill-active"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            {NAV_READINESS.label}
-          </Link>
+          <ComingSoonNavItem label={NAV_READINESS.label} />
 
           <Link
             to={NAV_ESG.to}
@@ -285,7 +249,7 @@ export function AppNav() {
             {NAV_ESG.label}
           </Link>
 
-          <NavDropdown label="Charging" items={NAV_CHARGING} path={path} />
+          <NavDropdown label="Charging" items={NAV_CHARGING} path={path} comingSoon={true} />
 
           {navOther.map((n) =>
             n.comingSoon ? (
@@ -383,10 +347,53 @@ export function AppNav() {
       </div>
 
       {mobileOpen && (
-        <nav className="border-t border-border/50 px-4 py-3 lg:hidden">
-          <MobileNavGroup title="Operations" items={NAV_OPERATIONS} path={path} />
-          <MobileNavGroup title="Site" items={[NAV_READINESS, NAV_ESG]} path={path} />
-          <MobileNavGroup title="Charging" items={NAV_CHARGING} path={path} />
+        <nav className="border-t border-border/50 px-4 py-3 lg:hidden flex flex-col gap-1">
+          {/* Operations */}
+          <span
+            key="ops-mobile"
+            title="SOON"
+            aria-disabled="true"
+            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+          >
+            <span>Operations</span>
+            <ComingSoonBadge />
+          </span>
+
+          {/* Site Readiness */}
+          <span
+            key="readiness-mobile"
+            title="SOON"
+            aria-disabled="true"
+            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+          >
+            <span>Site Readiness</span>
+            <ComingSoonBadge />
+          </span>
+
+          {/* ESG */}
+          <Link
+            key="esg-mobile"
+            to={NAV_ESG.to}
+            className={cn(
+              "block rounded-lg px-3 py-2.5 text-[13px] font-medium",
+              isActive(path, NAV_ESG.to) ? "nav-pill-active" : "text-muted-foreground",
+            )}
+          >
+            {NAV_ESG.label}
+          </Link>
+
+          {/* Charging */}
+          <span
+            key="charging-mobile"
+            title="SOON"
+            aria-disabled="true"
+            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+          >
+            <span>Charging</span>
+            <ComingSoonBadge />
+          </span>
+
+          {/* More items */}
           <MobileNavGroup title="More" items={navOther} path={path} />
           <button
             type="button"

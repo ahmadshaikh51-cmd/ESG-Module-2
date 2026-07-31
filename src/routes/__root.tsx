@@ -167,6 +167,11 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       void navigate({ to: "/login" });
       return;
     }
+    if (pathname !== "/esg" && !pathname.startsWith("/esg/")) {
+      setAllowed(false);
+      void navigate({ to: "/esg" });
+      return;
+    }
     setAllowed(true);
   }, [pathname, isPublic, navigate]);
 

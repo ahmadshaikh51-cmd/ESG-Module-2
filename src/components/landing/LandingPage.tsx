@@ -279,7 +279,7 @@ export function LandingPage({ brandName = "Voltline", defaultTheme = "dark", sho
           </div>
 
           <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 18 }}>
-            <ModuleCard accent="var(--chart-4)" to="/battery-cycles" icon={["M2 7h16M2 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2M2 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7M22 10v4"]} title="Battery Cycles" body="HV discharge cycles, cell-spread health and equivalent full-cycle load across every pack." metric="EFC · health bands" />
+            <ModuleCard accent="var(--chart-4)" icon={["M2 7h16M2 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2M2 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7M22 10v4"]} title="Battery Cycles" body="HV discharge cycles, cell-spread health and equivalent full-cycle load across every pack." metric="EFC · health bands" />
             <ModuleCard accent="var(--primary)" delay=".06s" icon={["M3 12h4l3 8 4-16 3 8h4"]} title="Operations" body="Trips, route intelligence and round-trip efficiency — live across every depot and shift." metric="Routes · efficiency" />
             <ModuleCard accent="var(--chart-3)" delay=".12s" icon={["M13 2 4 14h7l-1 8 9-12h-7l1-8z"]} title="Charger Network" body="Depot charging, energy throughput and charger uptime — with anomaly detection built in." metric="Uptime · energy flow" />
             <ModuleCard accent="var(--chart-2)" delay=".06s" icon={["M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.2-.3-.3-2.2 2.5-2.5z"]} title="Maintenance" body="Work orders, part lifecycle and predictive alerts — triggered by signals from every module." metric="Work orders · parts" />
