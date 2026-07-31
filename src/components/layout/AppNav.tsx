@@ -58,30 +58,14 @@ function isGroupActive(path: string, items: NavLink[]) {
   return items.some((n) => isActive(path, n.to));
 }
 
-function ComingSoonBadge({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "rounded px-1.5 py-px text-[8.5px] font-bold uppercase tracking-wider text-destructive",
-        "bg-destructive/10 ring-1 ring-inset ring-destructive/25",
-        className,
-      )}
-    >
-      SOON
-    </span>
-  );
-}
-
-/** Disabled nav item — no navigation, small “SOON” note. */
+/** Disabled nav item — no navigation. */
 function ComingSoonNavItem({ label }: { label: string }) {
   return (
     <span
-      title="SOON"
       aria-disabled="true"
-      className="inline-flex shrink-0 cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
+      className="inline-flex shrink-0 cursor-not-allowed items-center rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
     >
       {label}
-      <ComingSoonBadge />
     </span>
   );
 }
@@ -100,13 +84,11 @@ function NavDropdown({
   if (comingSoon) {
     return (
       <span
-        title="SOON"
         aria-disabled="true"
-        className="inline-flex shrink-0 cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
+        className="inline-flex shrink-0 cursor-not-allowed items-center gap-1 rounded-lg px-2.5 py-2 text-[12px] font-medium text-muted-foreground/55"
       >
         {label}
         <ChevronDown className="h-3 w-3 opacity-40" />
-        <ComingSoonBadge />
       </span>
     );
   }
@@ -137,7 +119,6 @@ function NavDropdown({
               className="cursor-not-allowed justify-between opacity-60"
             >
               {item.label}
-              <ComingSoonBadge />
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem key={item.to} asChild>
@@ -162,12 +143,10 @@ function MobileNavGroup({ title, items, path }: { title: string; items: NavLink[
         n.comingSoon ? (
           <span
             key={n.to}
-            title="SOON"
             aria-disabled="true"
-            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+            className="flex cursor-not-allowed items-center rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
           >
             {n.label}
-            <ComingSoonBadge />
           </span>
         ) : (
           <Link
@@ -351,23 +330,19 @@ export function AppNav() {
           {/* Operations */}
           <span
             key="ops-mobile"
-            title="SOON"
             aria-disabled="true"
-            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+            className="flex cursor-not-allowed items-center rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
           >
             <span>Operations</span>
-            <ComingSoonBadge />
           </span>
 
           {/* Site Readiness */}
           <span
             key="readiness-mobile"
-            title="SOON"
             aria-disabled="true"
-            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+            className="flex cursor-not-allowed items-center rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
           >
             <span>Site Readiness</span>
-            <ComingSoonBadge />
           </span>
 
           {/* ESG */}
@@ -385,12 +360,10 @@ export function AppNav() {
           {/* Charging */}
           <span
             key="charging-mobile"
-            title="SOON"
             aria-disabled="true"
-            className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
+            className="flex cursor-not-allowed items-center rounded-lg px-3 py-2.5 text-[13px] font-medium text-muted-foreground/55"
           >
             <span>Charging</span>
-            <ComingSoonBadge />
           </span>
 
           {/* More items */}
