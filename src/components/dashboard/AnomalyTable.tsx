@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { AlertTriangle, Flame, Search, ShieldAlert, Waves, X, Zap } from "lucide-react";
 import { ExportTableButton } from "@/components/insights/ExportTableButton";

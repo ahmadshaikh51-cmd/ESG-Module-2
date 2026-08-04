@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Globe } from "lucide-react";
 import { PageShell } from "@/components/layout/AppNav";
@@ -11,8 +11,13 @@ import { ProjectsTab } from "@/components/esg/ProjectsTab";
 import { RecordDrawer } from "@/components/esg/RecordDrawer";
 import { ReportsTab } from "@/components/esg/ReportsTab";
 import { VendorsTab } from "@/components/esg/VendorsTab";
-import { EsgContext, type Audience, type EsgCtx } from "@/components/esg/primitives";
-import { PERIODS, RECORDS, type ScopeSel } from "@/lib/esg-data";
+import {
+  EsgContext,
+  type Audience,
+  type EsgCtx,
+  type DateRange,
+} from "@/components/esg/primitives";
+import { PERIODS, RECORDS, PROJECT_LIFECYCLES, type ScopeSel } from "@/lib/esg-data";
 import { usePolicyWorkflow, type Role } from "@/lib/esg-policy";
 import { useAuditWorkflow } from "@/lib/esg-audit";
 import { useTrainingWorkflow } from "@/lib/esg-training";
@@ -38,7 +43,8 @@ export const Route = createFileRoute("/esg")({
       { title: "ESG · Voltline" },
       {
         name: "description",
-        content: "Compliance command — permits, ESMS, GHG and reports. A pump against expiry, not a shelf for documents.",
+        content:
+          "Compliance command — permits, ESMS, GHG and reports. A pump against expiry, not a shelf for documents.",
       },
     ],
   }),
@@ -59,6 +65,51 @@ function EsgPage() {
   const training = useTrainingWorkflow(trainingPersonLabel);
   const monitoring = useMonitoringWorkflow();
   const masters = useMastersWorkflow();
+  const defaultRange = useMemo<DateRange>(() => {
+    return {
+      start: new Date("2026-07-01T00:00:00"),
+      end: new Date("2026-07-31T23:59:59"),
+      presetKey: "thisMonth",
+      label: "This Month",
+    };
+  }, []);
+
+  const [dateRange, setDateRangeState] = useState<DateRange>(defaultRange);
+
+  const setDateRange = useCallback((range: DateRange) => {
+    setDateRangeState(range);
+    const y = range.start.getFullYear();
+    const m = String(range.start.getMonth() + 1).padStart(2, "0");
+    setPeriod(`${y}-${m}`);
+  }, []);
+
+  const [projectId, setProjectIdState] = useState<string | null>(null);
+
+  // Sync project selection to scope
+  const setProjectId = useCallback((id: string | null) => {
+    setProjectIdState(id);
+    if (id) {
+      const proj = PROJECT_LIFECYCLES.find((p) => p.projectId === id);
+      if (proj) {
+        setScope({ entityId: proj.entityId });
+      }
+    } else {
+      setScope({});
+    }
+  }, []);
+
+  // Sync scope changes back to project filter
+  useEffect(() => {
+    if (scope.entityId) {
+      const currentProj = PROJECT_LIFECYCLES.find((p) => p.projectId === projectId);
+      if (!currentProj || currentProj.entityId !== scope.entityId) {
+        const matchingProj = PROJECT_LIFECYCLES.find((p) => p.entityId === scope.entityId);
+        setProjectIdState(matchingProj ? matchingProj.projectId : null);
+      }
+    } else {
+      setProjectIdState(null);
+    }
+  }, [scope.entityId, projectId]);
 
   const [history, setHistory] = useState<{ area: string; sub?: string; scope: ScopeSel }[]>([]);
 
@@ -66,7 +117,12 @@ function EsgPage() {
     (nextArea: string, opts?: { record?: string; state?: string; sub?: string }) => {
       setHistory((prev) => {
         const last = prev[prev.length - 1];
-        if (last && last.area === area && last.sub === sub && JSON.stringify(last.scope) === JSON.stringify(scope)) {
+        if (
+          last &&
+          last.area === area &&
+          last.sub === sub &&
+          JSON.stringify(last.scope) === JSON.stringify(scope)
+        ) {
           return prev;
         }
         return [...prev, { area, sub, scope: { ...scope } }];
@@ -101,8 +157,12 @@ function EsgPage() {
       setScope,
       period,
       setPeriod,
+      dateRange,
+      setDateRange,
       audience,
       setAudience,
+      projectId,
+      setProjectId,
       role,
       setRole,
       policy,
@@ -115,12 +175,32 @@ function EsgPage() {
       goBack,
       hasHistory,
     }),
-    [scope, period, audience, role, policy, audit, training, monitoring, masters, openRecord, goto, goBack, hasHistory],
+    [
+      scope,
+      period,
+      dateRange,
+      setDateRange,
+      audience,
+      projectId,
+      setProjectId,
+      role,
+      policy,
+      audit,
+      training,
+      monitoring,
+      masters,
+      openRecord,
+      goto,
+      goBack,
+      hasHistory,
+    ],
   );
 
   // Notification deep-links land with ?record= — open the drawer and highlight the row.
   const activeRecordId = drawerId ?? record ?? null;
-  const activeRecord = activeRecordId ? (RECORDS.find((r) => r.id === activeRecordId) ?? null) : null;
+  const activeRecord = activeRecordId
+    ? (RECORDS.find((r) => r.id === activeRecordId) ?? null)
+    : null;
   const closeDrawer = () => {
     setDrawerId(null);
     if (record) void navigate({ search: { area, record: undefined, sub: undefined } });

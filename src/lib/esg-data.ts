@@ -63,6 +63,12 @@ export const PEOPLE: Person[] = [
   { id: "arjun", name: "Arjun Mehta", role: "Project Manager · MBMT" },
   { id: "rohan", name: "Rohan Desai", role: "Depot Manager · Kashimira" },
   { id: "sunil", name: "Sunil Patil", role: "Admin & Liaison" },
+  { id: "rahul", name: "Rahul Patil", role: "Environmental Compliance Officer" },
+  { id: "madhavi", name: "Madhavi Deshpande", role: "POSH Officer" },
+  { id: "amit", name: "Amit Kulkarni", role: "Factory Compliance Manager" },
+  { id: "prakash", name: "Prakash Joshi", role: "Fire & Safety Officer" },
+  { id: "sandeep", name: "Sandeep Sharma", role: "Contractor Compliance Officer" },
+  { id: "neha", name: "Neha Verma", role: "Principal Employer Compliance Officer" },
 ];
 
 export const personById = (id: string) => PEOPLE.find((p) => p.id === id);
@@ -73,11 +79,23 @@ export const GLOSSARY: Record<string, { full: string; note?: string }> = {
   ESG: { full: "Environmental, Social & Governance" },
   ESMS: { full: "Environmental & Social Management System" },
   ESDD: { full: "Environmental & Social Due Diligence", note: "Study for brownfield projects." },
-  ESIA: { full: "Environmental & Social Impact Assessment", note: "Study for greenfield projects." },
-  ESAP: { full: "Environmental & Social Action Plan", note: "Corrective actions from ESDD / ESIA findings." },
-  AMR: { full: "Annual Monitoring Report", note: "Lender-defined input fields, reported periodically." },
+  ESIA: {
+    full: "Environmental & Social Impact Assessment",
+    note: "Study for greenfield projects.",
+  },
+  ESAP: {
+    full: "Environmental & Social Action Plan",
+    note: "Corrective actions from ESDD / ESIA findings.",
+  },
+  AMR: {
+    full: "Annual Monitoring Report",
+    note: "Lender-defined input fields, reported periodically.",
+  },
   GHG: { full: "Greenhouse Gas", note: "Scope 1 / 2 / 3 emission accounting." },
-  BRSR: { full: "Business Responsibility & Sustainability Reporting", note: "SEBI disclosure format." },
+  BRSR: {
+    full: "Business Responsibility & Sustainability Reporting",
+    note: "SEBI disclosure format.",
+  },
   NOC: { full: "No Objection Certificate" },
   CTO: { full: "Consent to Operate", note: "State pollution control board consent." },
   CTE: { full: "Consent to Establish" },
@@ -92,20 +110,38 @@ export const GLOSSARY: Record<string, { full: string; note?: string }> = {
   SPV: { full: "Special Purpose Vehicle" },
   DG: { full: "Diesel Generator" },
   CEA: { full: "Central Electricity Authority", note: "Publishes the grid emission factor." },
-  DEFRA: { full: "UK Dept. for Environment, Food & Rural Affairs", note: "Emission-factor dataset." },
+  DEFRA: {
+    full: "UK Dept. for Environment, Food & Rural Affairs",
+    note: "Emission-factor dataset.",
+  },
   EV: { full: "Electric Vehicle" },
   MBMT: { full: "Mira Bhayandar Municipal Transport" },
   DMS: { full: "Document Management System" },
   tCO2e: { full: "Tonnes of CO₂ equivalent" },
   SEBI: { full: "Securities and Exchange Board of India" },
   "O&M": { full: "Operations & Maintenance" },
-  NC: { full: "Non-Conformity", note: "An audit or monitoring finding outside a defined requirement." },
-  ESMP: { full: "Environmental & Social Management Plan", note: "Greenfield equivalent of the ESAP." },
-  IFC: { full: "International Finance Corporation", note: "Publishes the Performance Standards lenders benchmark against." },
-  DFI: { full: "Development Finance Institution", note: "Development lender whose requirements shape ESMS scope." },
+  NC: {
+    full: "Non-Conformity",
+    note: "An audit or monitoring finding outside a defined requirement.",
+  },
+  ESMP: {
+    full: "Environmental & Social Management Plan",
+    note: "Greenfield equivalent of the ESAP.",
+  },
+  IFC: {
+    full: "International Finance Corporation",
+    note: "Publishes the Performance Standards lenders benchmark against.",
+  },
+  DFI: {
+    full: "Development Finance Institution",
+    note: "Development lender whose requirements shape ESMS scope.",
+  },
   "E&S": { full: "Environmental & Social" },
   EHS: { full: "Environment, Health & Safety" },
-  CAPA: { full: "Corrective & Preventive Action", note: "The action a non-conformity is closed with." },
+  CAPA: {
+    full: "Corrective & Preventive Action",
+    note: "The action a non-conformity is closed with.",
+  },
   TNA: { full: "Training Needs Assessment" },
 };
 
@@ -122,23 +158,101 @@ export type ComplianceType = {
 };
 
 export const TYPE_MASTER: ComplianceType[] = [
-  { key: "incorporation", label: "Certificate of Incorporation", category: "permit", leadDays: 0, ownerRole: "Company Secretary" },
+  {
+    key: "incorporation",
+    label: "Certificate of Incorporation",
+    category: "permit",
+    leadDays: 0,
+    ownerRole: "Company Secretary",
+  },
   // Renewal-bearing licence types raised to a 90-day (3-month) floor per the
   // stakeholder requirement; perpetual instruments (no expiry) are unaffected.
-  { key: "roc-filing", label: "ROC Annual Filing", category: "permit", leadDays: 90, ownerRole: "Company Secretary" },
-  { key: "moa-aoa", label: "MOA/AOA", category: "permit", leadDays: 0, ownerRole: "Company Secretary" },
-  { key: "cto", label: "CTO — Consent to Operate", category: "permit", leadDays: 90, ownerRole: "ESG Executive" },
-  { key: "coe", label: "COE — Certificate of Establishment", category: "permit", leadDays: 90, ownerRole: "Admin" },
-  { key: "trade-licence", label: "Trade Licence", category: "permit", leadDays: 90, ownerRole: "Admin" },
-  { key: "fire-noc", label: "Fire NOC", category: "site", leadDays: 60, ownerRole: "Depot Manager" },
-  { key: "swm", label: "SWM Authorisation", category: "site", leadDays: 60, ownerRole: "ESG Executive" },
-  { key: "stp", label: "STP Compliance Certificate", category: "site", leadDays: 45, ownerRole: "Depot Manager" },
+  {
+    key: "roc-filing",
+    label: "ROC Annual Filing",
+    category: "permit",
+    leadDays: 90,
+    ownerRole: "Company Secretary",
+  },
+  {
+    key: "moa-aoa",
+    label: "MOA/AOA",
+    category: "permit",
+    leadDays: 0,
+    ownerRole: "Company Secretary",
+  },
+  {
+    key: "cto",
+    label: "CTO — Consent to Operate",
+    category: "permit",
+    leadDays: 90,
+    ownerRole: "ESG Executive",
+  },
+  {
+    key: "coe",
+    label: "COE — Certificate of Establishment",
+    category: "permit",
+    leadDays: 90,
+    ownerRole: "Admin",
+  },
+  {
+    key: "trade-licence",
+    label: "Trade Licence",
+    category: "permit",
+    leadDays: 90,
+    ownerRole: "Admin",
+  },
+  {
+    key: "fire-noc",
+    label: "Fire NOC",
+    category: "site",
+    leadDays: 60,
+    ownerRole: "Depot Manager",
+  },
+  {
+    key: "swm",
+    label: "SWM Authorisation",
+    category: "site",
+    leadDays: 60,
+    ownerRole: "ESG Executive",
+  },
+  {
+    key: "stp",
+    label: "STP Compliance Certificate",
+    category: "site",
+    leadDays: 45,
+    ownerRole: "Depot Manager",
+  },
   { key: "etp", label: "ETP Consent", category: "site", leadDays: 45, ownerRole: "Depot Manager" },
   { key: "pcc", label: "PCC Consent", category: "site", leadDays: 60, ownerRole: "ESG Executive" },
-  { key: "iso-14001", label: "ISO 14001 (Environment)", category: "site", leadDays: 90, ownerRole: "ESG Lead" },
-  { key: "iso-45001", label: "ISO 45001 (Health & Safety)", category: "site", leadDays: 90, ownerRole: "ESG Lead" },
-  { key: "iso-9001", label: "ISO 9001 (Quality) — certification in progress", category: "site", leadDays: 90, ownerRole: "ESG Lead" },
-  { key: "battery-disposal", label: "Battery Disposal Authorisation", category: "site", leadDays: 60, ownerRole: "ESG Executive" },
+  {
+    key: "iso-14001",
+    label: "ISO 14001 (Environment)",
+    category: "site",
+    leadDays: 90,
+    ownerRole: "ESG Lead",
+  },
+  {
+    key: "iso-45001",
+    label: "ISO 45001 (Health & Safety)",
+    category: "site",
+    leadDays: 90,
+    ownerRole: "ESG Lead",
+  },
+  {
+    key: "iso-9001",
+    label: "ISO 9001 (Quality) — certification in progress",
+    category: "site",
+    leadDays: 90,
+    ownerRole: "ESG Lead",
+  },
+  {
+    key: "battery-disposal",
+    label: "Battery Disposal Authorisation",
+    category: "site",
+    leadDays: 60,
+    ownerRole: "ESG Executive",
+  },
 ];
 
 export const typeByKey = (k: string) => TYPE_MASTER.find((t) => t.key === k);
@@ -194,7 +308,8 @@ export const RECORDS: ComplianceRecord[] = [
     ownerId: "rohan",
     doc: { name: "stp-cert-bhayandar.pdf", size: "840 KB", uploadedAt: "2025-07-06" },
     withheldExternal: true,
-    remarks: "Lab re-test of treated water sample scheduled 18 Jul; certificate renewal blocked until report.",
+    remarks:
+      "Lab re-test of treated water sample scheduled 18 Jul; certificate renewal blocked until report.",
     renewal: "none",
   },
   {
@@ -224,7 +339,8 @@ export const RECORDS: ComplianceRecord[] = [
     ownerId: "priya",
     doc: { name: "battery-auth-silvassa.pdf", size: "660 KB", uploadedAt: "2025-06-01" },
     withheldExternal: true,
-    remarks: "Authorised recycler contract lapsed with the permit; renewal filed together on 08 Jul.",
+    remarks:
+      "Authorised recycler contract lapsed with the permit; renewal filed together on 08 Jul.",
     renewal: "initiated",
   },
   // ---- expiring soon (inside lead window) ----
@@ -462,10 +578,7 @@ export const RECORDS: ComplianceRecord[] = [
 
 export type EsgState = "valid" | "expiring" | "overdue";
 
-export const STATE_META: Record<
-  EsgState,
-  { label: string; color: string; text: string }
-> = {
+export const STATE_META: Record<EsgState, { label: string; color: string; text: string }> = {
   valid: { label: "Valid", color: "var(--color-success)", text: "text-success" },
   expiring: { label: "Expiring", color: "var(--color-warning)", text: "text-warning" },
   overdue: { label: "Overdue", color: "var(--color-destructive)", text: "text-destructive" },
@@ -523,7 +636,7 @@ export function recordPlace(r: ComplianceRecord): string {
 
 /**
  * A single uploaded revision of a policy. Approval of the latest version is the
- * gate a policy must pass before its actions enter the ESAP register.
+ * gate a policy must pass before its actions enter the ESAP/ESMP Register.
  */
 export type PolicyVersion = {
   version: string; // "v3.0"
@@ -566,9 +679,33 @@ export const POLICIES: Policy[] = [
     currentVersion: "v3.0",
     reviewDue: "2026-08-30", // inside the 60-day review window
     versions: [
-      { version: "v3.0", uploadedAt: "2026-01-14", uploadedBy: "kavita", status: "approved", approvedBy: "kavita", approvedOn: "2026-01-20", doc: policyDoc("ESG Policy", "v3.0", "1.4 MB") },
-      { version: "v2.0", uploadedAt: "2025-01-10", uploadedBy: "kavita", status: "approved", approvedBy: "kavita", approvedOn: "2025-01-18", doc: policyDoc("ESG Policy", "v2.0", "1.2 MB") },
-      { version: "v1.0", uploadedAt: "2024-02-02", uploadedBy: "priya", status: "approved", approvedBy: "kavita", approvedOn: "2024-02-12", doc: policyDoc("ESG Policy", "v1.0", "980 KB") },
+      {
+        version: "v3.0",
+        uploadedAt: "2026-01-14",
+        uploadedBy: "kavita",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2026-01-20",
+        doc: policyDoc("ESG Policy", "v3.0", "1.4 MB"),
+      },
+      {
+        version: "v2.0",
+        uploadedAt: "2025-01-10",
+        uploadedBy: "kavita",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-01-18",
+        doc: policyDoc("ESG Policy", "v2.0", "1.2 MB"),
+      },
+      {
+        version: "v1.0",
+        uploadedAt: "2024-02-02",
+        uploadedBy: "priya",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2024-02-12",
+        doc: policyDoc("ESG Policy", "v1.0", "980 KB"),
+      },
     ],
   },
   {
@@ -582,8 +719,24 @@ export const POLICIES: Policy[] = [
     currentVersion: "v2.4",
     reviewDue: "2026-06-01", // overdue for annual review
     versions: [
-      { version: "v2.4", uploadedAt: "2025-10-28", uploadedBy: "kavita", status: "approved", approvedBy: "kavita", approvedOn: "2025-11-05", doc: policyDoc("EHS Policy", "v2.4", "1.1 MB") },
-      { version: "v2.0", uploadedAt: "2024-10-20", uploadedBy: "priya", status: "approved", approvedBy: "kavita", approvedOn: "2024-11-02", doc: policyDoc("EHS Policy", "v2.0", "1.0 MB") },
+      {
+        version: "v2.4",
+        uploadedAt: "2025-10-28",
+        uploadedBy: "kavita",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-11-05",
+        doc: policyDoc("EHS Policy", "v2.4", "1.1 MB"),
+      },
+      {
+        version: "v2.0",
+        uploadedAt: "2024-10-20",
+        uploadedBy: "priya",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2024-11-02",
+        doc: policyDoc("EHS Policy", "v2.0", "1.0 MB"),
+      },
     ],
   },
   {
@@ -598,9 +751,31 @@ export const POLICIES: Policy[] = [
     reviewDue: "2026-12-15",
     versions: [
       // v1.2 sits in review — the approved current version is still v1.1
-      { version: "v1.2", uploadedAt: "2026-06-28", uploadedBy: "priya", status: "submitted", doc: policyDoc("Human Rights Policy", "v1.2", "760 KB") },
-      { version: "v1.1", uploadedAt: "2025-06-10", uploadedBy: "kavita", status: "approved", approvedBy: "kavita", approvedOn: "2025-06-20", doc: policyDoc("Human Rights Policy", "v1.1", "740 KB") },
-      { version: "v1.0", uploadedAt: "2024-06-05", uploadedBy: "kavita", status: "approved", approvedBy: "kavita", approvedOn: "2024-06-14", doc: policyDoc("Human Rights Policy", "v1.0", "700 KB") },
+      {
+        version: "v1.2",
+        uploadedAt: "2026-06-28",
+        uploadedBy: "priya",
+        status: "submitted",
+        doc: policyDoc("Human Rights Policy", "v1.2", "760 KB"),
+      },
+      {
+        version: "v1.1",
+        uploadedAt: "2025-06-10",
+        uploadedBy: "kavita",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-06-20",
+        doc: policyDoc("Human Rights Policy", "v1.1", "740 KB"),
+      },
+      {
+        version: "v1.0",
+        uploadedAt: "2024-06-05",
+        uploadedBy: "kavita",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2024-06-14",
+        doc: policyDoc("Human Rights Policy", "v1.0", "700 KB"),
+      },
     ],
   },
   {
@@ -614,7 +789,15 @@ export const POLICIES: Policy[] = [
     currentVersion: "v1.0",
     reviewDue: "2026-09-14",
     versions: [
-      { version: "v1.0", uploadedAt: "2025-09-06", uploadedBy: "priya", status: "approved", approvedBy: "kavita", approvedOn: "2025-09-14", doc: policyDoc("Community Grievance Policy", "v1.0", "540 KB") },
+      {
+        version: "v1.0",
+        uploadedAt: "2025-09-06",
+        uploadedBy: "priya",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-09-14",
+        doc: policyDoc("Community Grievance Policy", "v1.0", "540 KB"),
+      },
     ],
   },
   {
@@ -629,8 +812,151 @@ export const POLICIES: Policy[] = [
     reviewDue: "2027-01-31",
     versions: [
       // A brand-new policy awaiting its first approval — no approved version yet, so
-      // it is NOT in the ESAP register until an approver signs off.
-      { version: "v1.0", uploadedAt: "2026-07-08", uploadedBy: "priya", status: "submitted", doc: policyDoc("Supplier Code of Conduct", "v1.0", "600 KB") },
+      // it is NOT in the ESAP/ESMP Register until an approver signs off.
+      {
+        version: "v1.0",
+        uploadedAt: "2026-07-08",
+        uploadedBy: "priya",
+        status: "submitted",
+        doc: policyDoc("Supplier Code of Conduct", "v1.0", "600 KB"),
+      },
+    ],
+  },
+  {
+    id: "p-form-v",
+    name: "FORM V: Environmental Statement",
+    entityId: "corp",
+    version: "v1.0",
+    status: "approved",
+    updated: "2025-06-15",
+    ownerId: "rahul",
+    currentVersion: "v1.0",
+    reviewDue: "2026-06-15",
+    versions: [
+      {
+        version: "v1.0",
+        uploadedAt: "2025-06-10",
+        uploadedBy: "rahul",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-06-15",
+        doc: policyDoc("FORM V Environmental Statement", "v1.0", "1.2 MB"),
+      },
+    ],
+  },
+  {
+    id: "p-posh",
+    name: "Annual Return under POSH Act, 2013",
+    entityId: "corp",
+    version: "v2.0",
+    status: "approved",
+    updated: "2026-01-20",
+    ownerId: "madhavi",
+    currentVersion: "v2.0",
+    reviewDue: "2027-01-20",
+    versions: [
+      {
+        version: "v2.0",
+        uploadedAt: "2026-01-15",
+        uploadedBy: "madhavi",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2026-01-20",
+        doc: policyDoc("Annual Return under POSH Act 2013", "v2.0", "850 KB"),
+      },
+    ],
+  },
+  {
+    id: "p-factory-act",
+    name: "Annual Return under Factory Act, 1948",
+    entityId: "silvassa",
+    version: "v1.1",
+    status: "under-review",
+    updated: "2026-07-10",
+    ownerId: "amit",
+    currentVersion: "v1.0",
+    reviewDue: "2026-08-30",
+    versions: [
+      {
+        version: "v1.1",
+        uploadedAt: "2026-07-10",
+        uploadedBy: "amit",
+        status: "submitted",
+        doc: policyDoc("Annual Return under Factory Act 1948", "v1.1", "2.1 MB"),
+      },
+      {
+        version: "v1.0",
+        uploadedAt: "2025-07-20",
+        uploadedBy: "amit",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-07-25",
+        doc: policyDoc("Annual Return under Factory Act 1948", "v1.0", "1.9 MB"),
+      },
+    ],
+  },
+  {
+    id: "p-fire-audit",
+    name: "Fire Equipment Inspection Test Report / Fire System Audit Report (Renewal of Fire NOC)",
+    entityId: "mbmt",
+    version: "v3.0",
+    status: "approved",
+    updated: "2025-09-30",
+    ownerId: "prakash",
+    currentVersion: "v3.0",
+    reviewDue: "2026-07-10",
+    versions: [
+      {
+        version: "v3.0",
+        uploadedAt: "2025-09-25",
+        uploadedBy: "prakash",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-09-30",
+        doc: policyDoc("Fire Equipment Inspection Test Report", "v3.0", "3.4 MB"),
+      },
+    ],
+  },
+  {
+    id: "p-clra-contractor",
+    name: "Half-Yearly Return by Contractor (Transvolt) under CLRA, 1970",
+    entityId: "corp",
+    version: "v1.0",
+    status: "under-review",
+    updated: "2026-07-25",
+    ownerId: "sandeep",
+    currentVersion: "v1.0",
+    reviewDue: "2026-10-31",
+    versions: [
+      {
+        version: "v1.0",
+        uploadedAt: "2026-07-25",
+        uploadedBy: "sandeep",
+        status: "draft",
+        doc: policyDoc("Half-Yearly Return by Contractor CLRA 1970", "v1.0", "1.1 MB"),
+      },
+    ],
+  },
+  {
+    id: "p-clra-employer",
+    name: "Annual Return by Principal Employer (Authority/Client) under CLRA, 1970",
+    entityId: "corp",
+    version: "v1.2",
+    status: "approved",
+    updated: "2025-12-15",
+    ownerId: "neha",
+    currentVersion: "v1.2",
+    reviewDue: "2026-08-01",
+    versions: [
+      {
+        version: "v1.2",
+        uploadedAt: "2025-12-10",
+        uploadedBy: "neha",
+        status: "approved",
+        approvedBy: "kavita",
+        approvedOn: "2025-12-15",
+        doc: policyDoc("Annual Return by Principal Employer CLRA 1970", "v1.2", "1.5 MB"),
+      },
     ],
   },
 ];
@@ -648,11 +974,51 @@ export type Sop = {
 };
 
 export const SOPS: Sop[] = [
-  { id: "s-bat", name: "HV Battery Handling & Storage", entityId: "mbmt", activity: "Workshop", version: "v2.1", status: "approved", updated: "2026-03-11" },
-  { id: "s-chg", name: "Overnight Charging Bay Operations", entityId: "mbmt", activity: "Charging", version: "v1.4", status: "approved", updated: "2026-02-02" },
-  { id: "s-spill", name: "Coolant & Oil Spill Response", entityId: "mbmt", activity: "Depot Ops", version: "v1.0", status: "under-review", updated: "2026-06-20" },
-  { id: "s-fire", name: "Fire Drill & Evacuation", entityId: "silvassa", activity: "Depot Ops", version: "v1.2", status: "approved", updated: "2026-04-18" },
-  { id: "s-waste", name: "Segregated Waste Handling", entityId: "silvassa", activity: "Depot Ops", version: "v1.0", status: "draft", updated: "2026-07-01" },
+  {
+    id: "s-bat",
+    name: "HV Battery Handling & Storage",
+    entityId: "mbmt",
+    activity: "Workshop",
+    version: "v2.1",
+    status: "approved",
+    updated: "2026-03-11",
+  },
+  {
+    id: "s-chg",
+    name: "Overnight Charging Bay Operations",
+    entityId: "mbmt",
+    activity: "Charging",
+    version: "v1.4",
+    status: "approved",
+    updated: "2026-02-02",
+  },
+  {
+    id: "s-spill",
+    name: "Coolant & Oil Spill Response",
+    entityId: "mbmt",
+    activity: "Depot Ops",
+    version: "v1.0",
+    status: "under-review",
+    updated: "2026-06-20",
+  },
+  {
+    id: "s-fire",
+    name: "Fire Drill & Evacuation",
+    entityId: "silvassa",
+    activity: "Depot Ops",
+    version: "v1.2",
+    status: "approved",
+    updated: "2026-04-18",
+  },
+  {
+    id: "s-waste",
+    name: "Segregated Waste Handling",
+    entityId: "silvassa",
+    activity: "Depot Ops",
+    version: "v1.0",
+    status: "draft",
+    updated: "2026-07-01",
+  },
 ];
 
 export type Assessment = {
@@ -712,6 +1078,19 @@ export const ASSESSMENTS: Assessment[] = [
       { name: "Land title & lease review", result: "pending" },
       { name: "Fire safety adequacy", result: "pending" },
       { name: "Soil contamination screen", result: "pending" },
+    ],
+  },
+  {
+    id: "a-esia-mbmt-expansion",
+    kind: "ESIA",
+    project: "MBMT depot greenfield expansion (Phase 2)",
+    entityId: "mbmt",
+    projectType: "greenfield",
+    status: "in-progress",
+    params: [
+      { name: "Baseline air & noise survey", result: "pending" },
+      { name: "Tree cover & green belt plan", result: "pending" },
+      { name: "Community consultation", result: "pending" },
     ],
   },
 ];
@@ -831,7 +1210,12 @@ export function esapState(a: EsapAction): "closed" | "overdue" | "open" {
  * Resolves an ESAP source into a display label and a deep-link target, so the
  * register can render a backlink for any source without branching in the UI.
  */
-export function esapSourceLabel(s: EsapSource): { label: string; area: string; sub: string; id: string } {
+export function esapSourceLabel(s: EsapSource): {
+  label: string;
+  area: string;
+  sub: string;
+  id: string;
+} {
   switch (s.kind) {
     case "assessment": {
       const a = ASSESSMENTS.find((x) => x.id === s.id);
@@ -864,7 +1248,12 @@ export function esapSourceLabel(s: EsapSource): { label: string; area: string; s
     }
     case "policy": {
       const p = policyById(s.id);
-      return { label: p ? `Policy — ${p.name}` : "Policy", area: "esms", sub: "policies", id: s.id };
+      return {
+        label: p ? `Policy — ${p.name}` : "Policy",
+        area: "esms",
+        sub: "policies",
+        id: s.id,
+      };
     }
   }
 }
@@ -879,11 +1268,14 @@ export function esapActionEntityId(a: EsapAction): string | undefined {
 }
 
 /**
- * The rollout action a policy contributes to the ESAP register once its latest
+ * The rollout action a policy contributes to the ESAP/ESMP Register once its latest
  * version is approved. Approval is the gate: an unapproved policy has no action.
  * Pass live versions (session edits) or omit for the static baseline.
  */
-export function policyEsapAction(p: Policy, versions: PolicyVersion[] = p.versions): EsapAction | null {
+export function policyEsapAction(
+  p: Policy,
+  versions: PolicyVersion[] = p.versions,
+): EsapAction | null {
   // The action tracks the most recent APPROVED version — so uploading a new draft
   // does not drop an already-approved policy out of the register.
   const approved = versions.find((v) => v.status === "approved");
@@ -973,7 +1365,11 @@ export const AUDITS: Audit[] = [
     conductedOn: "2026-07-01",
     status: "in-progress",
     recordId: "r-iso45001",
-    reportDoc: { name: "tuv-iso45001-surveillance-2026.pdf", size: "2.0 MB", uploadedAt: "2026-07-04" },
+    reportDoc: {
+      name: "tuv-iso45001-surveillance-2026.pdf",
+      size: "2.0 MB",
+      uploadedAt: "2026-07-04",
+    },
   },
   {
     id: "aud-ext-iso14001",
@@ -1123,7 +1519,12 @@ export const MONITORING_PARAMS: MonitoringParam[] = [
   { key: "bod", label: "BOD (treated effluent)", unit: "mg/L", limit: 30, category: "water" },
   { key: "cod", label: "COD (treated effluent)", unit: "mg/L", limit: 250, category: "water" },
   { key: "noise-day", label: "Noise — daytime", unit: "dB(A)", limit: 75, category: "noise" },
-  { key: "haz-waste", label: "Hazardous waste to authorised recycler", unit: "kg", category: "waste" },
+  {
+    key: "haz-waste",
+    label: "Hazardous waste to authorised recycler",
+    unit: "kg",
+    category: "waste",
+  },
 ];
 
 export const monitoringParamByKey = (key: string) => MONITORING_PARAMS.find((p) => p.key === key);
@@ -1148,22 +1549,141 @@ export function isMonitoringBreach(r: MonitoringReading): boolean {
 
 export const MONITORING_READINGS: MonitoringReading[] = [
   // MBMT · Kashimira — July (one breach: PM10 over limit, arrived via Excel)
-  { id: "m-1", paramKey: "pm10", entityId: "mbmt", depotId: "kashimira", period: "2026-07", value: 118, enteredBy: "priya", source: "excel", prov: { source: "monitoring-upload.xlsx", fetchedAt: "2026-07-12T06:30:00Z" } },
-  { id: "m-2", paramKey: "pm25", entityId: "mbmt", depotId: "kashimira", period: "2026-07", value: 48, enteredBy: "priya", source: "excel", prov: { source: "monitoring-upload.xlsx", fetchedAt: "2026-07-12T06:30:00Z" } },
-  { id: "m-3", paramKey: "bod", entityId: "mbmt", depotId: "kashimira", period: "2026-07", value: 22, enteredBy: "rohan", source: "manual" },
-  { id: "m-4", paramKey: "noise-day", entityId: "mbmt", depotId: "kashimira", period: "2026-07", value: 71, enteredBy: "rohan", source: "manual" },
+  {
+    id: "m-1",
+    paramKey: "pm10",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-07",
+    value: 118,
+    enteredBy: "priya",
+    source: "excel",
+    prov: { source: "monitoring-upload.xlsx", fetchedAt: "2026-07-12T06:30:00Z" },
+  },
+  {
+    id: "m-2",
+    paramKey: "pm25",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-07",
+    value: 48,
+    enteredBy: "priya",
+    source: "excel",
+    prov: { source: "monitoring-upload.xlsx", fetchedAt: "2026-07-12T06:30:00Z" },
+  },
+  {
+    id: "m-3",
+    paramKey: "bod",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-07",
+    value: 22,
+    enteredBy: "rohan",
+    source: "manual",
+  },
+  {
+    id: "m-4",
+    paramKey: "noise-day",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-07",
+    value: 71,
+    enteredBy: "rohan",
+    source: "manual",
+  },
   // MBMT · Bhayandar — July
-  { id: "m-5", paramKey: "pm10", entityId: "mbmt", depotId: "bhayandar", period: "2026-07", value: 86, enteredBy: "priya", source: "manual" },
-  { id: "m-6", paramKey: "bod", entityId: "mbmt", depotId: "bhayandar", period: "2026-07", value: 26, enteredBy: "rohan", source: "manual" },
-  { id: "m-7", paramKey: "ph", entityId: "mbmt", depotId: "bhayandar", period: "2026-07", value: null, enteredBy: "rohan", source: "manual" },
+  {
+    id: "m-5",
+    paramKey: "pm10",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    period: "2026-07",
+    value: 86,
+    enteredBy: "priya",
+    source: "manual",
+  },
+  {
+    id: "m-6",
+    paramKey: "bod",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    period: "2026-07",
+    value: 26,
+    enteredBy: "rohan",
+    source: "manual",
+  },
+  {
+    id: "m-7",
+    paramKey: "ph",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    period: "2026-07",
+    value: null,
+    enteredBy: "rohan",
+    source: "manual",
+  },
   // Silvassa — July
-  { id: "m-8", paramKey: "pm10", entityId: "silvassa", depotId: "silvassa-depot", period: "2026-07", value: 74, enteredBy: "priya", source: "manual" },
-  { id: "m-9", paramKey: "noise-day", entityId: "silvassa", depotId: "silvassa-depot", period: "2026-07", value: 68, enteredBy: "priya", source: "manual" },
+  {
+    id: "m-8",
+    paramKey: "pm10",
+    entityId: "silvassa",
+    depotId: "silvassa-depot",
+    period: "2026-07",
+    value: 74,
+    enteredBy: "priya",
+    source: "manual",
+  },
+  {
+    id: "m-9",
+    paramKey: "noise-day",
+    entityId: "silvassa",
+    depotId: "silvassa-depot",
+    period: "2026-07",
+    value: 68,
+    enteredBy: "priya",
+    source: "manual",
+  },
   // June history (for trend sparklines)
-  { id: "m-10", paramKey: "pm10", entityId: "mbmt", depotId: "kashimira", period: "2026-06", value: 92, enteredBy: "priya", source: "manual" },
-  { id: "m-11", paramKey: "pm10", entityId: "mbmt", depotId: "kashimira", period: "2026-05", value: 88, enteredBy: "priya", source: "manual" },
-  { id: "m-12", paramKey: "pm25", entityId: "mbmt", depotId: "kashimira", period: "2026-06", value: 44, enteredBy: "priya", source: "manual" },
-  { id: "m-13", paramKey: "bod", entityId: "mbmt", depotId: "kashimira", period: "2026-06", value: 20, enteredBy: "rohan", source: "manual" },
+  {
+    id: "m-10",
+    paramKey: "pm10",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-06",
+    value: 92,
+    enteredBy: "priya",
+    source: "manual",
+  },
+  {
+    id: "m-11",
+    paramKey: "pm10",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-05",
+    value: 88,
+    enteredBy: "priya",
+    source: "manual",
+  },
+  {
+    id: "m-12",
+    paramKey: "pm25",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-06",
+    value: 44,
+    enteredBy: "priya",
+    source: "manual",
+  },
+  {
+    id: "m-13",
+    paramKey: "bod",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-06",
+    value: 20,
+    enteredBy: "rohan",
+    source: "manual",
+  },
 ];
 
 /* ----------------------------- project lifecycle ---------------------------- */
@@ -1194,32 +1714,93 @@ export const LIFECYCLE_STAGES: LifecycleStage[] = [
   { key: "classification", label: "Project type classification", kind: "decision" },
   // brownfield branch
   { key: "esdd", label: "Comprehensive ESDD", kind: "process", deepLink: { sub: "esdd" } },
-  { key: "esdd-risk", label: "Risk identification & analysis", kind: "process", deepLink: { sub: "esdd" } },
-  { key: "esdd-category", label: "Assign risk category A/B/C/D", kind: "process", deepLink: { sub: "esdd" } },
+  {
+    key: "esdd-risk",
+    label: "Risk identification & analysis",
+    kind: "process",
+    deepLink: { sub: "esdd" },
+  },
+  {
+    key: "esdd-category",
+    label: "Assign risk category A/B/C/D",
+    kind: "process",
+    deepLink: { sub: "esdd" },
+  },
   { key: "esap-formulate", label: "Formulate ESAP", kind: "process", deepLink: { sub: "esap" } },
   { key: "esdd-docs", label: "ESDD report · ESAP", kind: "document" },
   { key: "esap-implement", label: "Implement ESAP", kind: "process", deepLink: { sub: "esap" } },
   // greenfield branch
   { key: "esia", label: "Comprehensive ESIA", kind: "process", deepLink: { sub: "esia" } },
-  { key: "esia-risk", label: "Risk identification & analysis", kind: "process", deepLink: { sub: "esia" } },
-  { key: "esia-category", label: "Assign risk category A/B/C/D", kind: "process", deepLink: { sub: "esia" } },
+  {
+    key: "esia-risk",
+    label: "Risk identification & analysis",
+    kind: "process",
+    deepLink: { sub: "esia" },
+  },
+  {
+    key: "esia-category",
+    label: "Assign risk category A/B/C/D",
+    kind: "process",
+    deepLink: { sub: "esia" },
+  },
   { key: "esmp-formulate", label: "Formulate ESMP", kind: "process", deepLink: { sub: "esia" } },
   { key: "esia-docs", label: "ESIA report · ESMP", kind: "document" },
   { key: "esmp-implement", label: "Implement ESMP", kind: "process", deepLink: { sub: "esia" } },
   // converge
-  { key: "monitor-review", label: "Monitor & review implementation", kind: "process", deepLink: { sub: "monitoring" } },
+  {
+    key: "monitor-review",
+    label: "Monitor & review implementation",
+    kind: "process",
+    deepLink: { sub: "monitoring" },
+  },
   { key: "risk-reduced", label: "Risk category reduced?", kind: "decision" },
-  { key: "update-action", label: "Update action / management plan", note: "Re-implement — loops back", kind: "process", deepLink: { sub: "esap" } },
-  { key: "maintain-ops", label: "Maintain operations", note: "Lower risk profile", kind: "process", deepLink: { sub: "monitoring" } },
-  { key: "ongoing-monitoring", label: "Ongoing monitoring & periodic review", kind: "process", deepLink: { sub: "monitoring" } },
-  { key: "closure", label: "Project closure / phase-out", note: "Not in current scope", kind: "end" },
+  {
+    key: "update-action",
+    label: "Update action / management plan",
+    note: "Re-implement — loops back",
+    kind: "process",
+    deepLink: { sub: "esap" },
+  },
+  {
+    key: "maintain-ops",
+    label: "Maintain operations",
+    note: "Lower risk profile",
+    kind: "process",
+    deepLink: { sub: "monitoring" },
+  },
+  {
+    key: "ongoing-monitoring",
+    label: "Ongoing monitoring & periodic review",
+    kind: "process",
+    deepLink: { sub: "monitoring" },
+  },
+  {
+    key: "closure",
+    label: "Project closure / phase-out",
+    note: "Not in current scope",
+    kind: "end",
+  },
 ];
 
 export const lifecycleStageByKey = (key: string) => LIFECYCLE_STAGES.find((s) => s.key === key);
 
 export const LIFECYCLE_BRANCH_STAGES: Record<LifecycleBranch, string[]> = {
-  brownfield: ["esdd", "esdd-risk", "esdd-category", "esap-formulate", "esdd-docs", "esap-implement"],
-  greenfield: ["esia", "esia-risk", "esia-category", "esmp-formulate", "esia-docs", "esmp-implement"],
+  brownfield: [
+    "esdd",
+    "esdd-risk",
+    "esdd-category",
+    "esap-formulate",
+    "esdd-docs",
+    "esap-implement",
+  ],
+  greenfield: [
+    "esia",
+    "esia-risk",
+    "esia-category",
+    "esmp-formulate",
+    "esia-docs",
+    "esmp-implement",
+  ],
 };
 
 export type ProjectLifecycle = {
@@ -1256,7 +1837,10 @@ export const PROJECT_LIFECYCLES: ProjectLifecycle[] = [
     branch: "brownfield",
     currentStage: "esdd",
     stageEnteredOn: "2026-06-20", // ~25d in stage as of ESG_TODAY — the bottleneck showcase
-    blocked: { reason: "Soil contamination screen results pending from the lab", since: "2026-06-20" },
+    blocked: {
+      reason: "Soil contamination screen results pending from the lab",
+      since: "2026-06-20",
+    },
   },
   {
     projectId: "pl-corp2",
@@ -1298,11 +1882,12 @@ export function lifecycleStageCounts(): Record<string, number> {
  * renderer maps `key` → panel. `available: false` reserves a slot for a later phase
  * without surfacing an empty screen.
  */
-export type EsmsTier = "governance" | "assessment" | "assurance" | "lifecycle";
+export type EsmsTier = "governance" | "assessment" | "monitoring" | "assurance" | "lifecycle";
 
 export const ESMS_TIERS: { key: EsmsTier; label: string }[] = [
   { key: "governance", label: "Governance" },
   { key: "assessment", label: "Assessment" },
+  { key: "monitoring", label: "Site Monitoring" },
   { key: "assurance", label: "Assurance" },
   { key: "lifecycle", label: "Lifecycle" },
 ];
@@ -1319,10 +1904,16 @@ export type EsmsSubTab = {
 export const ESMS_SUBTABS: EsmsSubTab[] = [
   { key: "policies", tier: "governance", label: "Policies", available: true },
   { key: "sops", tier: "governance", label: "SOPs", available: true },
-  { key: "esap", tier: "governance", label: "ESAP register", acronym: "ESAP", available: true },
+  {
+    key: "esap",
+    tier: "governance",
+    label: "ESAP/ESMP Register",
+    acronym: "ESAP",
+    available: true,
+  },
   { key: "esdd", tier: "assessment", label: "ESDD", acronym: "ESDD", available: true },
   { key: "esia", tier: "assessment", label: "ESIA", acronym: "ESIA", available: true },
-  { key: "monitoring", tier: "assessment", label: "Site Monitoring", available: true, phase: 6 },
+  { key: "monitoring", tier: "monitoring", label: "Site Monitoring", available: true, phase: 6 },
   { key: "audit-internal", tier: "assurance", label: "Internal Audit", available: true, phase: 3 },
   { key: "audit-external", tier: "assurance", label: "External Audit", available: true, phase: 4 },
   { key: "training", tier: "assurance", label: "Training", available: true, phase: 5 },
@@ -1345,9 +1936,11 @@ export function esmsTierForSub(sub: string): EsmsTier {
   return ESMS_SUBTABS.find((s) => s.key === sub)?.tier ?? "governance";
 }
 
-export const isEsmsSubAvailable = (sub: string) => !!ESMS_SUBTABS.find((s) => s.key === sub)?.available;
+export const isEsmsSubAvailable = (sub: string) =>
+  !!ESMS_SUBTABS.find((s) => s.key === sub)?.available;
 
-export const esmsSubsForTier = (tier: EsmsTier) => ESMS_SUBTABS.filter((s) => s.tier === tier && s.available);
+export const esmsSubsForTier = (tier: EsmsTier) =>
+  ESMS_SUBTABS.filter((s) => s.tier === tier && s.available);
 
 /** Tiers that currently have at least one available sub-tab. */
 export const availableEsmsTiers = () => ESMS_TIERS.filter((t) => esmsSubsForTier(t.key).length > 0);
@@ -1372,8 +1965,20 @@ export type AmrField = {
 
 export const AMR_FIELDS: AmrField[] = [
   { id: "km", label: "Fleet km operated", unit: "km", mode: "auto", source: "Telematics" },
-  { id: "energy", label: "Charging energy drawn", unit: "kWh", mode: "auto", source: "Energy meters" },
-  { id: "water", label: "Water consumption", unit: "KL", mode: "auto", source: "Depot water meter" },
+  {
+    id: "energy",
+    label: "Charging energy drawn",
+    unit: "kWh",
+    mode: "auto",
+    source: "Energy meters",
+  },
+  {
+    id: "water",
+    label: "Water consumption",
+    unit: "KL",
+    mode: "auto",
+    source: "Depot water meter",
+  },
   { id: "diesel", label: "DG diesel consumed", unit: "L", mode: "manual" },
   { id: "haz", label: "Hazardous waste dispatched", unit: "kg", mode: "manual" },
   { id: "lti", label: "Lost-time injuries", unit: "count", mode: "manual" },
@@ -1382,11 +1987,24 @@ export const AMR_FIELDS: AmrField[] = [
 ];
 
 /** Stub AMR values keyed period → field. `null` = not yet captured. */
-export const AMR_VALUES: Record<string, Record<string, { value: number | null; prov?: Provenance }>> = {
+export const AMR_VALUES: Record<
+  string,
+  Record<string, { value: number | null; prov?: Provenance }>
+> = {
   "2026-07": {
     km: { value: 412_380, prov: { source: "Telematics", fetchedAt: "2026-07-15T02:00:00Z" } },
-    energy: { value: 486_120, prov: { source: "Energy meters", fetchedAt: "2026-07-15T02:00:00Z" } },
-    water: { value: null, prov: { source: "Depot water meter", fetchedAt: "2026-07-15T02:00:00Z", error: "Source unreachable since 12 Jul — meter gateway offline" } },
+    energy: {
+      value: 486_120,
+      prov: { source: "Energy meters", fetchedAt: "2026-07-15T02:00:00Z" },
+    },
+    water: {
+      value: null,
+      prov: {
+        source: "Depot water meter",
+        fetchedAt: "2026-07-15T02:00:00Z",
+        error: "Source unreachable since 12 Jul — meter gateway offline",
+      },
+    },
     diesel: { value: null },
     haz: { value: null },
     lti: { value: 0 },
@@ -1395,8 +2013,14 @@ export const AMR_VALUES: Record<string, Record<string, { value: number | null; p
   },
   "2026-06": {
     km: { value: 798_440, prov: { source: "Telematics", fetchedAt: "2026-07-01T02:00:00Z" } },
-    energy: { value: 941_270, prov: { source: "Energy meters", fetchedAt: "2026-07-01T02:00:00Z" } },
-    water: { value: 1_240, prov: { source: "Depot water meter", fetchedAt: "2026-07-01T02:00:00Z" } },
+    energy: {
+      value: 941_270,
+      prov: { source: "Energy meters", fetchedAt: "2026-07-01T02:00:00Z" },
+    },
+    water: {
+      value: 1_240,
+      prov: { source: "Depot water meter", fetchedAt: "2026-07-01T02:00:00Z" },
+    },
     diesel: { value: 310 },
     haz: { value: 84 },
     lti: { value: 0 },
@@ -1405,8 +2029,14 @@ export const AMR_VALUES: Record<string, Record<string, { value: number | null; p
   },
   "2026-05": {
     km: { value: 771_020, prov: { source: "Telematics", fetchedAt: "2026-06-01T02:00:00Z" } },
-    energy: { value: 910_580, prov: { source: "Energy meters", fetchedAt: "2026-06-01T02:00:00Z" } },
-    water: { value: 1_310, prov: { source: "Depot water meter", fetchedAt: "2026-06-01T02:00:00Z" } },
+    energy: {
+      value: 910_580,
+      prov: { source: "Energy meters", fetchedAt: "2026-06-01T02:00:00Z" },
+    },
+    water: {
+      value: 1_310,
+      prov: { source: "Depot water meter", fetchedAt: "2026-06-01T02:00:00Z" },
+    },
     diesel: { value: 285 },
     haz: { value: 61 },
     lti: { value: 1 },
@@ -1429,26 +2059,98 @@ export type GhgParam = {
 };
 
 export const GHG_PARAMS: GhgParam[] = [
-  { id: "diesel-dg", scope: 1, label: "DG diesel", unit: "L", factor: 2.68, factorSource: "DEFRA 2025", mode: "manual" },
-  { id: "refrigerant", scope: 1, label: "Refrigerant top-up (R134a)", unit: "kg", factor: 1430, factorSource: "IPCC AR6 GWP", mode: "manual" },
-  { id: "grid", scope: 2, label: "Grid electricity (charging + depot)", unit: "kWh", factor: 0.716, factorSource: "CEA Baseline v19", mode: "auto", source: "Energy meters" },
-  { id: "commute", scope: 3, label: "Employee commute", unit: "km", factor: 0.11, factorSource: "DEFRA 2025", mode: "manual" },
-  { id: "upstream-fuel", scope: 3, label: "Well-to-tank — grid electricity", unit: "kWh", factor: 0.078, factorSource: "DEFRA 2025", mode: "auto", source: "Energy meters" },
-  { id: "waste", scope: 3, label: "Waste to landfill", unit: "kg", factor: 0.45, factorSource: "DEFRA 2025", mode: "manual" },
+  {
+    id: "diesel-dg",
+    scope: 1,
+    label: "DG diesel",
+    unit: "L",
+    factor: 2.68,
+    factorSource: "DEFRA 2025",
+    mode: "manual",
+  },
+  {
+    id: "refrigerant",
+    scope: 1,
+    label: "Refrigerant top-up (R134a)",
+    unit: "kg",
+    factor: 1430,
+    factorSource: "IPCC AR6 GWP",
+    mode: "manual",
+  },
+  {
+    id: "grid",
+    scope: 2,
+    label: "Grid electricity (charging + depot)",
+    unit: "kWh",
+    factor: 0.716,
+    factorSource: "CEA Baseline v19",
+    mode: "auto",
+    source: "Energy meters",
+  },
+  {
+    id: "commute",
+    scope: 3,
+    label: "Employee commute",
+    unit: "km",
+    factor: 0.11,
+    factorSource: "DEFRA 2025",
+    mode: "manual",
+  },
+  {
+    id: "upstream-fuel",
+    scope: 3,
+    label: "Well-to-tank — grid electricity",
+    unit: "kWh",
+    factor: 0.078,
+    factorSource: "DEFRA 2025",
+    mode: "auto",
+    source: "Energy meters",
+  },
+  {
+    id: "waste",
+    scope: 3,
+    label: "Waste to landfill",
+    unit: "kg",
+    factor: 0.45,
+    factorSource: "DEFRA 2025",
+    mode: "manual",
+  },
 ];
 
 /** Stub GHG activity quantities keyed period → param. */
 export const GHG_QTY: Record<string, Record<string, number | null>> = {
-  "2026-07": { "diesel-dg": 180, refrigerant: null, grid: 486_120, commute: 61_200, "upstream-fuel": 486_120, waste: 2_100 },
-  "2026-06": { "diesel-dg": 310, refrigerant: 4, grid: 941_270, commute: 118_400, "upstream-fuel": 941_270, waste: 4_450 },
-  "2026-05": { "diesel-dg": 285, refrigerant: 0, grid: 910_580, commute: 120_100, "upstream-fuel": 910_580, waste: 4_120 },
+  "2026-07": {
+    "diesel-dg": 180,
+    refrigerant: null,
+    grid: 486_120,
+    commute: 61_200,
+    "upstream-fuel": 486_120,
+    waste: 2_100,
+  },
+  "2026-06": {
+    "diesel-dg": 310,
+    refrigerant: 4,
+    grid: 941_270,
+    commute: 118_400,
+    "upstream-fuel": 941_270,
+    waste: 4_450,
+  },
+  "2026-05": {
+    "diesel-dg": 285,
+    refrigerant: 0,
+    grid: 910_580,
+    commute: 120_100,
+    "upstream-fuel": 910_580,
+    waste: 4_120,
+  },
 };
 
 /* ------------------------------ carbon savings ----------------------------- */
 
 export const CARBON = {
   /** Public-website methodology (v2.1): baseline diesel bus 1.08 kgCO2e/km vs actual grid-charged EV. */
-  methodology: "Reconciled to public-website methodology v2.1 — baseline diesel bus 1.08 kgCO₂e/km vs metered EV charging × CEA grid factor.",
+  methodology:
+    "Reconciled to public-website methodology v2.1 — baseline diesel bus 1.08 kgCO₂e/km vs metered EV charging × CEA grid factor.",
   baselinePerKm: 1.08, // kgCO2e/km diesel baseline
   cumulativeSavedT: 12_480, // as displayed on website
   websiteFigureT: 12_480,
@@ -1509,7 +2211,12 @@ export const VENDORS: Vendor[] = [
     docs: [
       { name: "GST registration", section: "Registration", status: "verified" },
       { name: "PAN", section: "Identity", status: "verified" },
-      { name: "Debris disposal plan (SWM)", section: "SWM", status: "rejected", note: "Plan names a dump site outside approved list — resubmit." },
+      {
+        name: "Debris disposal plan (SWM)",
+        section: "SWM",
+        status: "rejected",
+        note: "Plan names a dump site outside approved list — resubmit.",
+      },
       { name: "PF/ESIC challans (Q1)", section: "Labour compliance", status: "submitted" },
     ],
   },
@@ -1538,13 +2245,50 @@ export type ReportDef = {
 };
 
 export const REPORT_DEFS: ReportDef[] = [
-  { id: "noncompliance", name: "Non-compliance report", acronyms: [], blurb: "Roll-up of every item outside validity, with root cause and remediation state.", kind: "rollup" },
-  { id: "nc-report", name: "NC Report", acronyms: ["NC"], blurb: "Consolidated register: permits, site compliance, internal & external audit NCs, and monitoring breaches — one list, one number.", kind: "rollup" },
-  { id: "amr", name: "AMR", acronyms: ["AMR"], blurb: "Lender-format monitoring report from configured input fields.", kind: "external-format" },
-  { id: "ghg", name: "GHG inventory", acronyms: ["GHG"], blurb: "Scope 1 / 2 / 3 emissions from configured parameters and factors.", kind: "external-format" },
-  { id: "brsr", name: "BRSR", acronyms: ["BRSR", "SEBI"], blurb: "SEBI disclosure format; project-level, rolls up to group.", kind: "external-format" },
-  { id: "impact", name: "Impact report", acronyms: ["ESIA", "ESDD"], blurb: "Narrative output of the assessment process.", kind: "narrative" },
-  { id: "carbon", name: "Carbon savings", acronyms: ["EV"], blurb: "Baseline-vs-actual emissions avoided by EV fleet operation.", kind: "calculation" },
+
+  {
+    id: "nc-report",
+    name: "NC Report",
+    acronyms: ["NC"],
+    blurb:
+      "Consolidated register: permits, site compliance, internal & external audit NCs, and monitoring breaches — one list, one number.",
+    kind: "rollup",
+  },
+  {
+    id: "amr",
+    name: "AMR",
+    acronyms: ["AMR"],
+    blurb: "Lender-format monitoring report from configured input fields.",
+    kind: "external-format",
+  },
+  {
+    id: "ghg",
+    name: "GHG inventory",
+    acronyms: ["GHG"],
+    blurb: "Scope 1 / 2 / 3 emissions from configured parameters and factors.",
+    kind: "external-format",
+  },
+  {
+    id: "brsr",
+    name: "BRSR",
+    acronyms: ["BRSR", "SEBI"],
+    blurb: "SEBI disclosure format; project-level, rolls up to group.",
+    kind: "external-format",
+  },
+  {
+    id: "impact",
+    name: "Impact report",
+    acronyms: ["ESIA", "ESDD"],
+    blurb: "Narrative output of the assessment process.",
+    kind: "narrative",
+  },
+  {
+    id: "carbon",
+    name: "Carbon savings",
+    acronyms: ["EV"],
+    blurb: "Baseline-vs-actual emissions avoided by EV fleet operation.",
+    kind: "calculation",
+  },
 ];
 
 /* ------------------------------ notifications ------------------------------ */
@@ -1590,7 +2334,8 @@ export const NOTIFICATIONS: EsgNotification[] = [
     id: "n-4",
     kind: "digest",
     title: "Monthly compliance digest — 7 Jul 2026",
-    detail: "4 overdue · 6 expiring · 14 valid across group. Full list in Reports → Non-compliance.",
+    detail:
+      "4 overdue · 6 expiring · 14 valid across group. Full list in Reports → Non-compliance.",
     when: "2026-07-07T09:00:00+05:30",
   },
 ];
@@ -1620,9 +2365,17 @@ export function cellStat(entityId: string, domain: DomainKey): CellStat {
   const zero: CellStat = { valid: 0, expiring: 0, overdue: 0 };
   if (domain === "permits" || domain === "site") {
     const cat: ComplianceCategory = domain === "permits" ? "permit" : "site";
-    return RECORDS.filter((r) => r.entityId === entityId && typeByKey(r.typeKey)?.category === cat).reduce(
+    return RECORDS.filter(
+      (r) => r.entityId === entityId && typeByKey(r.typeKey)?.category === cat,
+    ).reduce(
       (acc, r) => {
-        acc[recordState(r) === "overdue" ? "overdue" : recordState(r) === "expiring" ? "expiring" : "valid"]++;
+        acc[
+          recordState(r) === "overdue"
+            ? "overdue"
+            : recordState(r) === "expiring"
+              ? "expiring"
+              : "valid"
+        ]++;
         return acc;
       },
       { ...zero },
@@ -1662,7 +2415,11 @@ export function cellStat(entityId: string, domain: DomainKey): CellStat {
 
 /* ------------------------------ derived helpers ---------------------------- */
 
-export function auditFindingCounts(auditId: string): { compliant: number; nc: number; observation: number } {
+export function auditFindingCounts(auditId: string): {
+  compliant: number;
+  nc: number;
+  observation: number;
+} {
   const f = AUDIT_FINDINGS.filter((x) => x.auditId === auditId);
   return {
     compliant: f.filter((x) => x.result === "compliant").length,
@@ -1686,12 +2443,16 @@ export function trainingCoverage(
   sel: ScopeSel,
   period: string,
 ): { sessions: number; attendees: number; rate: number } {
-  const sessions = TRAININGS.filter((t) => inScope({ entityId: t.entityId, depotId: t.depotId }, sel)).filter((t) =>
-    t.scheduledAt.startsWith(period),
-  );
+  const sessions = TRAININGS.filter((t) =>
+    inScope({ entityId: t.entityId, depotId: t.depotId }, sel),
+  ).filter((t) => t.scheduledAt.startsWith(period));
   const attendees = sessions.reduce((n, t) => n + t.attendees.length, 0);
   const present = sessions.reduce((n, t) => n + t.attendees.filter((a) => a.present).length, 0);
-  return { sessions: sessions.length, attendees, rate: attendees ? Math.round((present / attendees) * 100) : 0 };
+  return {
+    sessions: sessions.length,
+    attendees,
+    rate: attendees ? Math.round((present / attendees) * 100) : 0,
+  };
 }
 
 export function monitoringBreaches(sel: ScopeSel, period: string): MonitoringReading[] {
@@ -1701,9 +2462,7 @@ export function monitoringBreaches(sel: ScopeSel, period: string): MonitoringRea
 }
 
 export function policiesDueForReview(sel: ScopeSel, withinDays = 60): Policy[] {
-  return POLICIES.filter((p) => inScope({ entityId: p.entityId }, sel)).filter(
-    (p) => daysUntil(p.reviewDue) <= withinDays,
-  );
+  return POLICIES.filter((p) => daysUntil(p.reviewDue) <= withinDays);
 }
 
 export function headline(sel: ScopeSel) {
@@ -1714,10 +2473,20 @@ export function headline(sel: ScopeSel) {
     const entityId = esapActionEntityId(a);
     return entityId ? inScope({ entityId }, { entityId: sel.entityId }) : true;
   });
-  const compliantPct = rec.length === 0 ? 100 : Math.round(((rec.length - overdue.length) / rec.length) * 100);
+  const compliantPct =
+    rec.length === 0 ? 100 : Math.round(((rec.length - overdue.length) / rec.length) * 100);
   // Wired in for the Phase 9 Overview tiles; the current tiles ignore the extra keys.
   const openNcs = openNcCount(sel);
   const breaches = monitoringBreaches(sel, PERIODS[0].id);
   const policiesDue = policiesDueForReview(sel);
-  return { records: rec, overdue, expiring, openActions, compliantPct, openNcs, breaches, policiesDue };
+  return {
+    records: rec,
+    overdue,
+    expiring,
+    openActions,
+    compliantPct,
+    openNcs,
+    breaches,
+    policiesDue,
+  };
 }

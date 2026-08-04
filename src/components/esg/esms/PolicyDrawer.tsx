@@ -2,7 +2,13 @@ import { useRef } from "react";
 import { ArrowUpRight, Check, CircleCheck, Lock, UploadCloud, User } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { entityById, fmtDate, personById, type Policy, type PolicyVersion } from "@/lib/esg-data";
 import {
@@ -38,7 +44,7 @@ function VersionStatusPill({ status }: { status: PolicyVersion["status"] }) {
   );
 }
 
-/** Horizontal 4-step approval stepper: Draft → Submitted → Approved → In ESAP register. */
+/** Horizontal 4-step approval stepper: Draft → Submitted → Approved → In ESAP/ESMP Register. */
 function ApprovalStepper({ current }: { current: number }) {
   return (
     <ol className="flex items-center gap-1">
@@ -70,7 +76,10 @@ function ApprovalStepper({ current }: { current: number }) {
               </span>
             </div>
             {i < POLICY_STEPS.length - 1 && (
-              <span className={cn("mb-4 h-px flex-1", i < current ? "bg-success" : "bg-border")} aria-hidden />
+              <span
+                className={cn("mb-4 h-px flex-1", i < current ? "bg-success" : "bg-border")}
+                aria-hidden
+              />
             )}
           </li>
         );
@@ -81,7 +90,7 @@ function ApprovalStepper({ current }: { current: number }) {
 
 /**
  * Policy detail — version history, upload, and the approval workflow that gates a
- * policy's entry into the ESAP register. Approve/Reject are gated on the stubbed
+ * policy's entry into the ESAP/ESMP Register. Approve/Reject are gated on the stubbed
  * role (presentation of a permission model, not enforcement).
  */
 export function PolicyDrawer({
@@ -115,16 +124,20 @@ export function PolicyDrawer({
   };
   const doSubmit = () => {
     wf.submitPolicyVersion(policy.id);
-    toast.success("Submitted for approval", { description: `${policy.name} ${latest?.version} → awaiting approver.` });
+    toast.success("Submitted for approval", {
+      description: `${policy.name} ${latest?.version} → awaiting approver.`,
+    });
   };
   const doDecide = (decision: "approved" | "rejected") => {
     wf.decidePolicyVersion(policy.id, decision);
     if (decision === "approved") {
       toast.success("Policy approved", {
-        description: `${policy.name} ${latest?.version} approved — now in the ESAP register.`,
+        description: `${policy.name} ${latest?.version} approved — now in the ESAP/ESMP Register.`,
       });
     } else {
-      toast("Version rejected", { description: `${policy.name} ${latest?.version} sent back for revision.` });
+      toast("Version rejected", {
+        description: `${policy.name} ${latest?.version} sent back for revision.`,
+      });
     }
   };
 
@@ -135,9 +148,12 @@ export function PolicyDrawer({
           <div className="flex items-start justify-between gap-3 pr-8">
             <div>
               <div className="section-label">Policy · {entityById(policy.entityId)?.short}</div>
-              <SheetTitle className="mt-1 text-[19px] leading-tight tracking-tight">{policy.name}</SheetTitle>
+              <SheetTitle className="mt-1 text-[19px] leading-tight tracking-tight">
+                {policy.name}
+              </SheetTitle>
               <SheetDescription className="mt-0.5 text-[12.5px]">
-                Owner {owner?.name} · {approvedVersion ? `current ${approvedVersion}` : "no approved version yet"}
+                Owner {owner?.name} ·{" "}
+                {approvedVersion ? `current ${approvedVersion}` : "no approved version yet"}
               </SheetDescription>
             </div>
             <StatePill state={reviewState} size="md" />
@@ -187,8 +203,8 @@ export function PolicyDrawer({
                   onClick={onOpenEsap}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-success/10 px-3 py-1.5 text-[12px] font-semibold text-success transition-colors hover:bg-success/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
                 >
-                  <CircleCheck className="h-3.5 w-3.5" aria-hidden /> In the <A t="ESAP" /> register — open it{" "}
-                  <ArrowUpRight className="h-3 w-3" aria-hidden />
+                  <CircleCheck className="h-3.5 w-3.5" aria-hidden /> In the <A t="ESAP" /> register
+                  — open it <ArrowUpRight className="h-3 w-3" aria-hidden />
                 </button>
               ) : latest?.status === "rejected" ? (
                 <p className="text-[12px] font-medium text-destructive">
@@ -226,7 +242,9 @@ export function PolicyDrawer({
                     className="h-8 gap-1.5 rounded-lg text-[12px]"
                     onClick={() => doDecide("approved")}
                     disabled={!mayApprove}
-                    title={mayApprove ? undefined : "Requires the Approver role (switch in Masters)"}
+                    title={
+                      mayApprove ? undefined : "Requires the Approver role (switch in Masters)"
+                    }
                   >
                     {!mayApprove && <Lock className="h-3.5 w-3.5" aria-hidden />}
                     Approve
@@ -237,7 +255,9 @@ export function PolicyDrawer({
                     className="h-8 rounded-lg text-[12px]"
                     onClick={() => doDecide("rejected")}
                     disabled={!mayApprove}
-                    title={mayApprove ? undefined : "Requires the Approver role (switch in Masters)"}
+                    title={
+                      mayApprove ? undefined : "Requires the Approver role (switch in Masters)"
+                    }
                   >
                     Reject
                   </Button>
@@ -254,14 +274,22 @@ export function PolicyDrawer({
           {/* Upload new version */}
           <section>
             <div className="section-label mb-2">Upload new version</div>
-            <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={doUpload} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+              onChange={doUpload}
+            />
             <button
               type="button"
               onClick={() => (mayEdit ? fileRef.current?.click() : undefined)}
               disabled={!mayEdit}
               className={cn(
                 "flex w-full flex-col items-center gap-1.5 rounded-xl border border-dashed border-border px-4 py-6 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
-                mayEdit ? "hover:border-primary/50 hover:bg-muted/40" : "cursor-not-allowed opacity-60",
+                mayEdit
+                  ? "hover:border-primary/50 hover:bg-muted/40"
+                  : "cursor-not-allowed opacity-60",
               )}
               title={mayEdit ? undefined : "Requires the Maintainer role (switch in Masters)"}
             >
@@ -294,7 +322,9 @@ export function PolicyDrawer({
                     >
                       {i === 0 ? "★" : ""}
                     </span>
-                    {i < versions.length - 1 && <span className="mt-1 w-px flex-1 bg-border" aria-hidden />}
+                    {i < versions.length - 1 && (
+                      <span className="mt-1 w-px flex-1 bg-border" aria-hidden />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1 pb-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -303,16 +333,22 @@ export function PolicyDrawer({
                     </div>
                     <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                       <User className="h-3 w-3" aria-hidden />
-                      {personById(v.uploadedBy)?.name ?? v.uploadedBy} · uploaded {fmtDate(v.uploadedAt)}
+                      {personById(v.uploadedBy)?.name ?? v.uploadedBy} · uploaded{" "}
+                      {fmtDate(v.uploadedAt)}
                       {v.approvedOn && (
                         <>
                           {" · "}approved {fmtDate(v.approvedOn)}
-                          {v.approvedBy ? ` by ${personById(v.approvedBy)?.name ?? v.approvedBy}` : ""}
+                          {v.approvedBy
+                            ? ` by ${personById(v.approvedBy)?.name ?? v.approvedBy}`
+                            : ""}
                         </>
                       )}
                     </div>
                     <div className="mt-1.5">
-                      <DocChip name={v.doc.name} size={v.doc.size !== "—" ? v.doc.size : undefined} />
+                      <DocChip
+                        name={v.doc.name}
+                        size={v.doc.size !== "—" ? v.doc.size : undefined}
+                      />
                     </div>
                   </div>
                 </li>

@@ -3,7 +3,7 @@
  *
  * Holds the mutable version/approval state for policies (upload → submit →
  * approve) in React state, plus the pure helpers that read it. Approval is the
- * gate a policy passes before its rollout action enters the ESAP register.
+ * gate a policy passes before its rollout action enters the ESAP/ESMP Register.
  */
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -37,7 +37,7 @@ export const canApprovePolicies = (r: Role) => r === "approver";
 
 /* ------------------------- policy version + step logic --------------------- */
 
-export const POLICY_STEPS = ["Draft", "Submitted", "Approved", "In ESAP register"] as const;
+export const POLICY_STEPS = ["Draft", "Submitted", "Approved", "In ESAP/ESMP Register"] as const;
 
 export const latestVersion = (vs: PolicyVersion[]): PolicyVersion | undefined => vs[0];
 
@@ -54,8 +54,10 @@ export function policyStepIndex(vs: PolicyVersion[]): number {
   return 0; // draft or rejected sit at the start of the flow
 }
 
-export const policyRejected = (vs: PolicyVersion[]): boolean => latestVersion(vs)?.status === "rejected";
-export const policyApproved = (vs: PolicyVersion[]): boolean => latestVersion(vs)?.status === "approved";
+export const policyRejected = (vs: PolicyVersion[]): boolean =>
+  latestVersion(vs)?.status === "rejected";
+export const policyApproved = (vs: PolicyVersion[]): boolean =>
+  latestVersion(vs)?.status === "approved";
 
 /** Annual-review state, reusing the compliance state machine's thresholds. */
 export function policyReviewState(p: Policy): EsgState {
@@ -130,19 +132,22 @@ export function usePolicyWorkflow(): PolicyWorkflow {
     });
   }, []);
 
-  const decidePolicyVersion = useCallback((policyId: string, decision: "approved" | "rejected", by = "kavita") => {
-    setOverrides((o) => {
-      const p = policyById(policyId);
-      if (!p) return o;
-      const vs = (o[policyId] ?? p.versions).slice();
-      if (!vs.length) return o;
-      vs[0] =
-        decision === "approved"
-          ? { ...vs[0], status: "approved", approvedBy: by, approvedOn: todayIso() }
-          : { ...vs[0], status: "rejected" };
-      return { ...o, [policyId]: vs };
-    });
-  }, []);
+  const decidePolicyVersion = useCallback(
+    (policyId: string, decision: "approved" | "rejected", by = "kavita") => {
+      setOverrides((o) => {
+        const p = policyById(policyId);
+        if (!p) return o;
+        const vs = (o[policyId] ?? p.versions).slice();
+        if (!vs.length) return o;
+        vs[0] =
+          decision === "approved"
+            ? { ...vs[0], status: "approved", approvedBy: by, approvedOn: todayIso() }
+            : { ...vs[0], status: "rejected" };
+        return { ...o, [policyId]: vs };
+      });
+    },
+    [],
+  );
 
   const policyEsapActionsFn = useCallback(
     () =>
@@ -160,6 +165,12 @@ export function usePolicyWorkflow(): PolicyWorkflow {
       decidePolicyVersion,
       policyEsapActions: policyEsapActionsFn,
     }),
-    [policyVersions, uploadPolicyVersion, submitPolicyVersion, decidePolicyVersion, policyEsapActionsFn],
+    [
+      policyVersions,
+      uploadPolicyVersion,
+      submitPolicyVersion,
+      decidePolicyVersion,
+      policyEsapActionsFn,
+    ],
   );
 }

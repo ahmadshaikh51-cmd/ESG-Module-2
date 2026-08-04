@@ -255,8 +255,6 @@ export function LifecyclePanel() {
             {/* Trunk */}
             <Node title="MBMT Initiation" variant="primary" />
             <VerticalLine />
-            <Node title="Project Initiation" subtitle="Define scope and compliance objectives" />
-            <VerticalLine />
             <Node title="Preliminary E&S Screening" subtitle="Initial impact assessment report" onClick={() => onOpen('screening')} />
             <VerticalLine />
             <Node title="ESDD Report" subtitle="Environmental & Social Due Diligence" onClick={() => onOpen('esdd')} />
@@ -295,7 +293,7 @@ export function LifecyclePanel() {
                 />
 
                 <BranchAction title="Training" color="green" onClick={() => onOpen('training')} />
-                <BranchAction title="Biannual Training" color="green" onClick={() => onOpen('training')} />
+                <BranchAction title="Biannual monitoring" color="green" onClick={() => onOpen('training')} />
               </div>
 
               {/* Labour Branch */}
@@ -317,7 +315,7 @@ export function LifecyclePanel() {
                 />
 
                 <BranchAction title="Training" color="orange" onClick={() => onOpen('training')} />
-                <BranchAction title="Biannual Training" color="orange" onClick={() => onOpen('training')} />
+                <BranchAction title="Biannual monitoring" color="orange" onClick={() => onOpen('training')} />
               </div>
 
               {/* OH&S Branch */}
@@ -341,7 +339,7 @@ export function LifecyclePanel() {
                 />
 
                 <BranchAction title="Training" color="red" onClick={() => onOpen('training')} />
-                <BranchAction title="Biannual Training" color="red" onClick={() => onOpen('training')} />
+                <BranchAction title="Biannual monitoring" color="red" onClick={() => onOpen('training')} />
               </div>
 
             </div>

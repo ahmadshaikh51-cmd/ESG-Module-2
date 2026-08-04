@@ -38,7 +38,16 @@ import {
   type EsgState,
 } from "@/lib/esg-data";
 import { fmtDate, inScope } from "@/lib/esg-data";
-import { CriticalBeam, EmptyState, Gloss, LoadingRows, PanelCard, StatePill, useEsg, useStubLoad } from "./primitives";
+import {
+  CriticalBeam,
+  EmptyState,
+  Gloss,
+  LoadingRows,
+  PanelCard,
+  StatePill,
+  useEsg,
+  useStubLoad,
+} from "./primitives";
 import { WorkQueue } from "./WorkQueue";
 import { buildNcRegister, ncItemPlace, NC_SOURCE_LABEL, type NcItem } from "@/lib/esg-nc";
 import { LifecyclePanel } from "./esms/LifecyclePanel";
@@ -75,15 +84,22 @@ function RiskTile({
   if (curated) {
     return (
       <div
-        className={cn("rounded-2xl border border-dashed border-border/70 bg-card/50 p-5", className)}
+        className={cn(
+          "rounded-2xl border border-dashed border-border/70 bg-card/50 p-5",
+          className,
+        )}
         style={{
           backgroundImage:
             "repeating-linear-gradient(45deg, transparent, transparent 5px, color-mix(in oklab, var(--muted-foreground) 5%, transparent) 5px, color-mix(in oklab, var(--muted-foreground) 5%, transparent) 6px)",
         }}
       >
-        <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+        <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </div>
         <div className="mt-1.5 text-[15px] font-semibold text-muted-foreground">Withheld</div>
-        <div className="mt-1 text-[11.5px] text-muted-foreground">Curated out of the external view</div>
+        <div className="mt-1 text-[11.5px] text-muted-foreground">
+          Curated out of the external view
+        </div>
       </div>
     );
   }
@@ -112,7 +128,9 @@ function RiskTile({
           : undefined
       }
     >
-      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </div>
       <div className="mt-1.5 flex items-baseline gap-1.5">
         <span className="num text-[26px] font-semibold tracking-tight" style={{ color: accent }}>
           {value}
@@ -125,7 +143,8 @@ function RiskTile({
 
 /** Compact drill list for the Open NCs / Monitoring breaches tiles — same NcItem shape as the NC register. */
 function NcItemList({ items, onOpen }: { items: NcItem[]; onOpen: (sub: string) => void }) {
-  if (items.length === 0) return <EmptyState title="Nothing here" hint="No items match in this scope." />;
+  if (items.length === 0)
+    return <EmptyState title="Nothing here" hint="No items match in this scope." />;
   return (
     <div className="max-h-[380px] overflow-auto">
       {items.map((item) => (
@@ -142,7 +161,12 @@ function NcItemList({ items, onOpen }: { items: NcItem[]; onOpen: (sub: string) 
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">
-            <span className={cn("num text-[12px] font-semibold", item.ageDays > 30 ? "text-destructive" : "text-muted-foreground")}>
+            <span
+              className={cn(
+                "num text-[12px] font-semibold",
+                item.ageDays > 30 ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
               {item.ageDays}d
             </span>
             <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60" aria-hidden />
@@ -155,10 +179,22 @@ function NcItemList({ items, onOpen }: { items: NcItem[]; onOpen: (sub: string) 
 
 /* ------------------------------ matrix / graph ----------------------------- */
 
-function CellChip({ stat, onClick, curated }: { stat: CellStat; onClick?: () => void; curated?: boolean }) {
+function CellChip({
+  stat,
+  onClick,
+  curated,
+}: {
+  stat: CellStat;
+  onClick?: () => void;
+  curated?: boolean;
+}) {
   const total = stat.valid + stat.expiring + stat.overdue;
   if (total === 0)
-    return <span className="inline-block rounded-md px-2 py-1 text-[11px] text-muted-foreground/60">—</span>;
+    return (
+      <span className="inline-block rounded-md px-2 py-1 text-[11px] text-muted-foreground/60">
+        —
+      </span>
+    );
   if (curated) {
     const pct = Math.round((stat.valid / total) * 100);
     const healthy = pct >= 95;
@@ -235,8 +271,17 @@ function StackBar({ stat }: { stat: CellStat }) {
 /* --------------------------------- overview -------------------------------- */
 
 export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string }) {
-  const { scope, setScope, audience, goto, period, audit, monitoring } = useEsg();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const {
+    scope,
+    setScope,
+    audience,
+    goto,
+    period,
+    audit,
+    monitoring,
+    projectId: selectedProjectId,
+    setProjectId: setSelectedProjectId,
+  } = useEsg();
   const [panel, setPanel] = useState<PanelSel>(null);
   const [view, setView] = useState<"matrix" | "graph">("matrix");
   const loading = useStubLoad(JSON.stringify(scope) + audience + selectedProjectId);
@@ -245,62 +290,91 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   // Helper Functions
   const projectLocation = (projectId: string) => {
     switch (projectId) {
-      case "pl-mbmt": return "Mira Bhayandar";
-      case "pl-silvassa": return "Silvassa";
-      case "pl-noida": return "Noida";
-      case "pl-corp2": return "Andheri HQ";
-      default: return "Corporate";
+      case "pl-mbmt":
+        return "Mira Bhayandar";
+      case "pl-silvassa":
+        return "Silvassa";
+      case "pl-noida":
+        return "Noida";
+      case "pl-corp2":
+        return "Andheri HQ";
+      default:
+        return "Corporate";
     }
   };
 
   const projectOwner = (projectId: string) => {
     switch (projectId) {
-      case "pl-mbmt": return "Arjun Mehta";
-      case "pl-silvassa": return "Priya Nair";
-      case "pl-noida": return "Kavita Rao";
-      case "pl-corp2": return "Sunil Patil";
-      default: return "ESG Team";
+      case "pl-mbmt":
+        return "Arjun Mehta";
+      case "pl-silvassa":
+        return "Priya Nair";
+      case "pl-noida":
+        return "Kavita Rao";
+      case "pl-corp2":
+        return "Sunil Patil";
+      default:
+        return "ESG Team";
     }
   };
 
   const projectResponsibleTeam = (entityId: string) => {
     switch (entityId) {
-      case "mbmt": return "MBMT ESG Team";
-      case "silvassa": return "Silvassa SPV";
-      case "corp": return "HQ Compliance";
-      default: return "Compliance Operations";
+      case "mbmt":
+        return "MBMT ESG Team";
+      case "silvassa":
+        return "Silvassa SPV";
+      case "corp":
+        return "HQ Compliance";
+      default:
+        return "Compliance Operations";
     }
   };
 
   const projectStageName = (stageKey: string) => {
     switch (stageKey) {
-      case "new-opportunity": return "Initiation";
+      case "new-opportunity":
+        return "Initiation";
       case "screening":
-      case "screening-doc": return "Screening";
-      case "classification": return "Classification";
+      case "screening-doc":
+        return "Screening";
+      case "classification":
+        return "Classification";
       case "esdd":
       case "esdd-risk":
       case "esdd-category":
       case "esia":
       case "esia-risk":
-      case "esia-category": return "Assessment";
+      case "esia-category":
+        return "Assessment";
       case "esap-formulate":
       case "esmp-formulate":
       case "esdd-docs":
-      case "esia-docs": return "Formulation";
+      case "esia-docs":
+        return "Formulation";
       case "esap-implement":
-      case "esmp-implement": return "Implementation";
+      case "esmp-implement":
+        return "Implementation";
       case "monitor-review":
       case "risk-reduced":
-      case "update-action": return "Monitoring";
+      case "update-action":
+        return "Monitoring";
       case "maintain-ops":
-      case "ongoing-monitoring": return "Operation";
-      case "closure": return "Closed";
-      default: return "Onboarding";
+      case "ongoing-monitoring":
+        return "Operation";
+      case "closure":
+        return "Closed";
+      default:
+        return "Onboarding";
     }
   };
 
-  const getProjectHealthLabel = (p: any, overdueCount: number, expiringCount: number, breachCount: number) => {
+  const getProjectHealthLabel = (
+    p: any,
+    overdueCount: number,
+    expiringCount: number,
+    breachCount: number,
+  ) => {
     if (p.currentStage === "closure") return "Completed";
     if (p.blocked) return "Critical";
     if (overdueCount > 2) return "High Risk";
@@ -315,7 +389,11 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
     return "healthy";
   };
 
-  const getComplianceRiskLevel = (overdueCount: number, expiringCount: number, breachCount: number) => {
+  const getComplianceRiskLevel = (
+    overdueCount: number,
+    expiringCount: number,
+    breachCount: number,
+  ) => {
     if (overdueCount > 2) return "Severe";
     if (overdueCount > 0) return "High";
     if (breachCount > 0) return "Moderate";
@@ -338,25 +416,16 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   };
 
   function SeverityDot({ level }: { level: "critical" | "warning" | "healthy" }) {
-    const bg = level === "critical" ? "bg-destructive animate-pulse" : level === "warning" ? "bg-warning" : "bg-success";
+    const bg =
+      level === "critical"
+        ? "bg-destructive animate-pulse"
+        : level === "warning"
+          ? "bg-warning"
+          : "bg-success";
     return <span className={cn("inline-block h-2 w-2 rounded-full", bg)} />;
   }
 
-  // Keep selectedProjectId in sync with the global scope.entityId selector
-  useEffect(() => {
-    if (scope.entityId) {
-      const proj = PROJECT_LIFECYCLES.find((p) => p.entityId === scope.entityId);
-      if (proj) {
-        setSelectedProjectId(proj.projectId);
-      } else {
-        setSelectedProjectId(null);
-      }
-    } else {
-      setSelectedProjectId(null);
-    }
-  }, [scope.entityId]);
-
-  const handleSelectProject = (proj: typeof PROJECT_LIFECYCLES[0]) => {
+  const handleSelectProject = (proj: (typeof PROJECT_LIFECYCLES)[0]) => {
     setScope({ entityId: proj.entityId });
     setSelectedProjectId(proj.projectId);
     setPanel(null); // Clear active KPI panel drilldown on project switch
@@ -372,7 +441,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
 
   // Calculate project aggregate context or global context
   const activeProject = useMemo(() => {
-    return selectedProjectId ? PROJECT_LIFECYCLES.find((p) => p.projectId === selectedProjectId) : null;
+    return selectedProjectId
+      ? PROJECT_LIFECYCLES.find((p) => p.projectId === selectedProjectId)
+      : null;
   }, [selectedProjectId]);
 
   const projectAgg = useMemo(() => {
@@ -384,11 +455,19 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
 
   // NC/monitoring calculations for detail tiles
   const ncRegister = useMemo(
-    () => buildNcRegister(activeProject ? { entityId: activeProject.entityId } : scope, period, audit, monitoring),
+    () =>
+      buildNcRegister(
+        activeProject ? { entityId: activeProject.entityId } : scope,
+        period,
+        audit,
+        monitoring,
+      ),
     [activeProject, scope, period, audit, monitoring],
   );
   const openNcItems = ncRegister.filter(
-    (r) => (r.source === "internal-audit" || r.source === "external-audit") && r.actionStatus !== "closed",
+    (r) =>
+      (r.source === "internal-audit" || r.source === "external-audit") &&
+      r.actionStatus !== "closed",
   );
   const breachItems = ncRegister.filter((r) => r.source === "monitoring");
 
@@ -420,10 +499,13 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
 
   const panelRecords: ComplianceRecord[] = useMemo(() => {
     if (!panel) return [];
-    if (panel.kind === "state") return projectAgg.records.filter((r) => recordState(r) === panel.state);
+    if (panel.kind === "state")
+      return projectAgg.records.filter((r) => recordState(r) === panel.state);
     if (panel.kind === "domain") {
       const cat = panel.domain === "permits" ? "permit" : "site";
-      return RECORDS.filter((r) => r.entityId === panel.entityId && typeByKey(r.typeKey)?.category === cat);
+      return RECORDS.filter(
+        (r) => r.entityId === panel.entityId && typeByKey(r.typeKey)?.category === cat,
+      );
     }
     return [];
   }, [panel, projectAgg.records]);
@@ -433,13 +515,22 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   const selectedProjectBreachCount = breachItems.length;
 
   const selectedProjectHealth = activeProject
-    ? getProjectHealthLabel(activeProject, selectedProjectOverdue, selectedProjectExpiring, selectedProjectBreachCount)
+    ? getProjectHealthLabel(
+        activeProject,
+        selectedProjectOverdue,
+        selectedProjectExpiring,
+        selectedProjectBreachCount,
+      )
     : "Healthy";
 
   const selectedProjectHealthLevel = healthLabelToLevel(selectedProjectHealth);
 
   const complianceRisk = useMemo(() => {
-    return getComplianceRiskLevel(selectedProjectOverdue, selectedProjectExpiring, selectedProjectBreachCount);
+    return getComplianceRiskLevel(
+      selectedProjectOverdue,
+      selectedProjectExpiring,
+      selectedProjectBreachCount,
+    );
   }, [selectedProjectOverdue, selectedProjectExpiring, selectedProjectBreachCount]);
 
   const panelMeta =
@@ -469,13 +560,15 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
           ? {
               accent: "var(--color-chart-2)",
               title: "Open ESAP actions",
-              blurb: "Corrective actions from ESDD / ESIA findings — the same numbers as the ESMS register.",
+              blurb:
+                "Corrective actions from ESDD / ESIA findings — the same numbers as the ESMS register.",
             }
           : panel?.kind === "openNc"
             ? {
                 accent: "var(--color-destructive)",
                 title: "Open non-conformities",
-                blurb: "Internal & external audit NCs without a closed corrective action — the same register as NC Reports.",
+                blurb:
+                  "Internal & external audit NCs without a closed corrective action — the same register as NC Reports.",
               }
             : panel?.kind === "breaches"
               ? {
@@ -520,39 +613,74 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                 {activeProject.project}
               </h2>
               <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2.5 text-[11.5px] text-muted-foreground">
-                <span>Location: <strong className="text-foreground font-medium">{projectLocation(activeProject.projectId)}</strong></span>
+                <span>
+                  Location:{" "}
+                  <strong className="text-foreground font-medium">
+                    {projectLocation(activeProject.projectId)}
+                  </strong>
+                </span>
                 <span>·</span>
-                <span>Stage: <strong className="text-foreground font-medium">{projectStageName(activeProject.currentStage)}</strong></span>
+                <span>
+                  Stage:{" "}
+                  <strong className="text-foreground font-medium">
+                    {projectStageName(activeProject.currentStage)}
+                  </strong>
+                </span>
                 <span>·</span>
-                <span>Lifecycle: <strong className="text-foreground font-medium">{lifecycleStageByKey(activeProject.currentStage)?.label}</strong></span>
+                <span>
+                  Lifecycle:{" "}
+                  <strong className="text-foreground font-medium">
+                    {lifecycleStageByKey(activeProject.currentStage)?.label}
+                  </strong>
+                </span>
                 <span>·</span>
-                <span>Owner: <strong className="text-foreground font-medium">{projectOwner(activeProject.projectId)}</strong></span>
+                <span>
+                  Owner:{" "}
+                  <strong className="text-foreground font-medium">
+                    {projectOwner(activeProject.projectId)}
+                  </strong>
+                </span>
                 <span>·</span>
-                <span>Timeline: <strong className="text-foreground font-medium">Entered stage {fmtDate(activeProject.stageEnteredOn)}</strong></span>
+                <span>
+                  Timeline:{" "}
+                  <strong className="text-foreground font-medium">
+                    Entered stage {fmtDate(activeProject.stageEnteredOn)}
+                  </strong>
+                </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4 shrink-0">
               <div className="text-right">
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Overall Project Health</div>
-                <span className={cn(
-                  "inline-block rounded px-2 py-0.5 text-[10px] font-semibold uppercase mt-1 tracking-wider",
-                  selectedProjectHealthLevel === "critical"
-                    ? "bg-destructive/15 text-destructive animate-pulse border border-destructive/25"
-                    : selectedProjectHealthLevel === "warning"
-                      ? "bg-warning/15 text-warning border border-warning/25"
-                      : "bg-success/15 text-success border border-success/25"
-                )}>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                  Overall Project Health
+                </div>
+                <span
+                  className={cn(
+                    "inline-block rounded px-2 py-0.5 text-[10px] font-semibold uppercase mt-1 tracking-wider",
+                    selectedProjectHealthLevel === "critical"
+                      ? "bg-destructive/15 text-destructive animate-pulse border border-destructive/25"
+                      : selectedProjectHealthLevel === "warning"
+                        ? "bg-warning/15 text-warning border border-warning/25"
+                        : "bg-success/15 text-success border border-success/25",
+                  )}
+                >
                   {selectedProjectHealth}
                 </span>
               </div>
               <div className="h-10 w-[1px] bg-border/40" />
               <div className="text-right">
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Project Status</div>
-                <span className={cn(
-                  "inline-block rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase mt-1 tracking-wider border",
-                  activeProject.blocked ? "bg-destructive/15 text-destructive border-destructive/25" : "bg-success/15 text-success border-success/25"
-                )}>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                  Project Status
+                </div>
+                <span
+                  className={cn(
+                    "inline-block rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase mt-1 tracking-wider border",
+                    activeProject.blocked
+                      ? "bg-destructive/15 text-destructive border-destructive/25"
+                      : "bg-success/15 text-success border-success/25",
+                  )}
+                >
                   {activeProject.blocked ? "Blocked" : "Active"}
                 </span>
               </div>
@@ -573,13 +701,23 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                 hint="expired · non-compliant now"
                 accent="var(--color-destructive)"
                 active={panel?.kind === "state" && panel.state === "overdue"}
-                onClick={() => setPanel(panel?.kind === "state" && panel.state === "overdue" ? null : { kind: "state", state: "overdue" })}
+                onClick={() =>
+                  setPanel(
+                    panel?.kind === "state" && panel.state === "overdue"
+                      ? null
+                      : { kind: "state", state: "overdue" },
+                  )
+                }
                 curated={external}
               />
             </CriticalBeam>
             <RiskTile
               className="h-full"
-              label={<>Open <Gloss text="NC" />s</>}
+              label={
+                <>
+                  Open <Gloss text="NC" />s
+                </>
+              }
               value={String(openNcItems.length)}
               hint="audit non-conformities, no closed action"
               accent="var(--color-destructive)"
@@ -604,11 +742,21 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               hint="inside the renewal lead window"
               accent="var(--color-warning)"
               active={panel?.kind === "state" && panel.state === "expiring"}
-              onClick={() => setPanel(panel?.kind === "state" && panel.state === "expiring" ? null : { kind: "state", state: "expiring" })}
+              onClick={() =>
+                setPanel(
+                  panel?.kind === "state" && panel.state === "expiring"
+                    ? null
+                    : { kind: "state", state: "expiring" },
+                )
+              }
             />
             <RiskTile
               className="h-full"
-              label={<>Open <Gloss text="ESAP" /> actions</>}
+              label={
+                <>
+                  Open <Gloss text="ESAP" /> actions
+                </>
+              }
               value={String(openActions.length)}
               hint={`${openActions.filter((a) => esapState(a) === "overdue").length} past due date`}
               accent="var(--color-chart-2)"
@@ -623,7 +771,13 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               hint={`${projectAgg.records.length - projectAgg.overdue.length} of ${projectAgg.records.length} items in force`}
               accent={getComplianceRiskAccent(complianceRisk)}
               active={panel?.kind === "state" && panel.state === "valid"}
-              onClick={() => setPanel(panel?.kind === "state" && panel.state === "valid" ? null : { kind: "state", state: "valid" })}
+              onClick={() =>
+                setPanel(
+                  panel?.kind === "state" && panel.state === "valid"
+                    ? null
+                    : { kind: "state", state: "valid" },
+                )
+              }
             />
           </div>
 
@@ -631,7 +785,13 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
           <AnimatePresence initial={false}>
             {panel && panelMeta && (
               <motion.div
-                key={panel.kind === "state" ? panel.state : panel.kind === "domain" ? `${panel.entityId}-${panel.domain}` : "actions"}
+                key={
+                  panel.kind === "state"
+                    ? panel.state
+                    : panel.kind === "domain"
+                      ? `${panel.entityId}-${panel.domain}`
+                      : "actions"
+                }
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6, height: 0 }}
                 animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, height: "auto" }}
                 exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6, height: 0 }}
@@ -658,7 +818,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                       </span>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-[15px] font-semibold tracking-tight">{panelMeta.title}</h3>
+                          <h3 className="text-[15px] font-semibold tracking-tight">
+                            {panelMeta.title}
+                          </h3>
                           <span
                             className="num rounded-full px-2 py-0.5 text-[11px] font-semibold"
                             style={{
@@ -707,20 +869,34 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                             </div>
                             <div className="flex shrink-0 items-center gap-3">
                               <span
-                                className={cn("num text-[12px] font-semibold", st === "overdue" ? "text-destructive" : "text-muted-foreground")}
+                                className={cn(
+                                  "num text-[12px] font-semibold",
+                                  st === "overdue" ? "text-destructive" : "text-muted-foreground",
+                                )}
                               >
                                 due {fmtDate(a.due)}
                               </span>
-                              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60" aria-hidden />
+                              <ArrowRight
+                                className="h-3.5 w-3.5 text-muted-foreground/60"
+                                aria-hidden
+                              />
                             </div>
                           </button>
                         );
                       })}
                     </div>
                   ) : panel.kind === "openNc" || panel.kind === "breaches" ? (
-                    <NcItemList items={panel.kind === "openNc" ? openNcItems : breachItems} onOpen={(sub) => goto("esms", { sub })} />
+                    <NcItemList
+                      items={panel.kind === "openNc" ? openNcItems : breachItems}
+                      onOpen={(sub) => goto("esms", { sub })}
+                    />
                   ) : (
-                    <WorkQueue records={panelRecords} defaultFilter="all" highlightId={deepLinkRecordId} compact />
+                    <WorkQueue
+                      records={panelRecords}
+                      defaultFilter="all"
+                      highlightId={deepLinkRecordId}
+                      compact
+                    />
                   )}
                 </PanelCard>
               </motion.div>
@@ -744,7 +920,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <Waypoints className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">Open Lifecycle</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">Stage pipeline</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  Stage pipeline
+                </span>
               </button>
               <button
                 onClick={() => goto("esms", { sub: "policies" })}
@@ -752,7 +930,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <ClipboardList className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">View Registers</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">Policies & SOPs</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  Policies & SOPs
+                </span>
               </button>
               <button
                 onClick={() => goto("reports")}
@@ -760,7 +940,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <BarChart3 className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">View Reports</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">Compliance summaries</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  Compliance summaries
+                </span>
               </button>
               <button
                 onClick={() => goto("projects", { sub: "permits" })}
@@ -768,7 +950,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <FileText className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">Documents</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">DMS records</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  DMS records
+                </span>
               </button>
               <button
                 onClick={() => goto("esms", { sub: "monitoring" })}
@@ -776,7 +960,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <Activity className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">Monitoring</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">Emission telemetry</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  Emission telemetry
+                </span>
               </button>
               <button
                 onClick={() => goto("projects", { sub: "permits" })}
@@ -784,7 +970,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               >
                 <CircleCheck className="h-5 w-5 text-primary mb-1.5 opacity-80" />
                 <span className="text-[11.5px] font-semibold text-foreground">Permits</span>
-                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">CTE/CTO licenses</span>
+                <span className="text-[9.5px] text-muted-foreground mt-0.5 font-mono">
+                  CTE/CTO licenses
+                </span>
               </button>
             </div>
           </PanelCard>
@@ -805,15 +993,27 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               const projectHeadline = headline({ entityId: p.entityId });
               const overdueCount = projectHeadline.overdue.length;
               const expiringCount = projectHeadline.expiring.length;
-              
+
               // Count open NCs & breaches for health indicator
-              const projNcRegister = buildNcRegister({ entityId: p.entityId }, period, audit, monitoring);
+              const projNcRegister = buildNcRegister(
+                { entityId: p.entityId },
+                period,
+                audit,
+                monitoring,
+              );
               const openNcCount = projNcRegister.filter(
-                (r) => (r.source === "internal-audit" || r.source === "external-audit") && r.actionStatus !== "closed",
+                (r) =>
+                  (r.source === "internal-audit" || r.source === "external-audit") &&
+                  r.actionStatus !== "closed",
               ).length;
               const breachCount = projNcRegister.filter((r) => r.source === "monitoring").length;
 
-              const healthLabel = getProjectHealthLabel(p, overdueCount, expiringCount, breachCount);
+              const healthLabel = getProjectHealthLabel(
+                p,
+                overdueCount,
+                expiringCount,
+                breachCount,
+              );
               const healthLevel = healthLabelToLevel(healthLabel);
 
               return (
@@ -848,31 +1048,41 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                     <div className="text-[11.5px] space-y-1 pt-2 border-t border-border/30">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Location</span>
-                        <span className="font-semibold text-foreground font-mono">{projectLocation(p.projectId)}</span>
+                        <span className="font-semibold text-foreground font-mono">
+                          {projectLocation(p.projectId)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Current Stage</span>
-                        <span className="font-semibold text-foreground">{projectStageName(p.currentStage)}</span>
+                        <span className="font-semibold text-foreground">
+                          {projectStageName(p.currentStage)}
+                        </span>
                       </div>
                     </div>
 
                     {/* Overall Compliance Score & Status */}
                     <div className="mt-4 flex items-baseline justify-between border-t border-border/30 pt-3">
                       <div>
-                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Health Status</div>
-                        <span className={cn(
-                          "inline-block rounded px-1.5 py-0.5 text-[8.5px] font-semibold uppercase mt-1 tracking-wider border",
-                          healthLevel === "critical"
-                            ? "bg-destructive/12 text-destructive border-destructive/25 animate-pulse"
-                            : healthLevel === "warning"
-                              ? "bg-warning/12 text-warning border-warning/25"
-                              : "bg-success/12 text-success border-success/25"
-                        )}>
+                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                          Health Status
+                        </div>
+                        <span
+                          className={cn(
+                            "inline-block rounded px-1.5 py-0.5 text-[8.5px] font-semibold uppercase mt-1 tracking-wider border",
+                            healthLevel === "critical"
+                              ? "bg-destructive/12 text-destructive border-destructive/25 animate-pulse"
+                              : healthLevel === "warning"
+                                ? "bg-warning/12 text-warning border-warning/25"
+                                : "bg-success/12 text-success border-success/25",
+                          )}
+                        >
                           {healthLabel}
                         </span>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">Last Updated</div>
+                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">
+                          Last Updated
+                        </div>
                         <span className="text-[11.5px] font-mono text-muted-foreground">
                           {fmtDate(p.stageEnteredOn)}
                         </span>
@@ -888,7 +1098,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
           <PanelCard>
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
               <div>
-                <h3 className="text-[15px] font-semibold tracking-tight">Compliance by entity & area</h3>
+                <h3 className="text-[15px] font-semibold tracking-tight">
+                  Compliance by entity & area
+                </h3>
                 <p className="text-[12px] text-muted-foreground">
                   {external
                     ? "Curated view — aggregate health only; item-level lapses are withheld here."
@@ -914,7 +1126,10 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
             ) : view === "matrix" ? (
               <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
                 {entities.map((e) => (
-                  <div key={e.id} className="rounded-2xl border border-border/60 bg-background/60 p-4">
+                  <div
+                    key={e.id}
+                    className="rounded-2xl border border-border/60 bg-background/60 p-4"
+                  >
                     <button
                       type="button"
                       onClick={() => setScope({ entityId: e.id })}
@@ -937,7 +1152,8 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                               stat={stat}
                               curated={external}
                               onClick={() => {
-                                if (d.key === "permits" || d.key === "site") setPanel({ kind: "domain", entityId: e.id, domain: d.key });
+                                if (d.key === "permits" || d.key === "site")
+                                  setPanel({ kind: "domain", entityId: e.id, domain: d.key });
                                 else if (d.key === "esms") goto("esms");
                                 else if (d.key === "vendor") goto("vendors");
                                 else goto("projects");
@@ -970,12 +1186,17 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                       <div className="truncate text-[12.5px] font-medium">{e.short}</div>
                       {external ? (
                         <div className="flex h-5 w-full overflow-hidden rounded-md bg-muted/40 p-[1px]">
-                          <div className="h-full rounded-[3px] bg-success" style={{ width: `${pct}%` }} />
+                          <div
+                            className="h-full rounded-[3px] bg-success"
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       ) : (
                         <StackBar stat={totals} />
                       )}
-                      <div className="num text-right text-[13px] font-semibold text-foreground">{pct}%</div>
+                      <div className="num text-right text-[13px] font-semibold text-foreground">
+                        {pct}%
+                      </div>
                     </div>
                   );
                 })}
@@ -983,7 +1204,10 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
                   <div className="flex items-center gap-4 border-t border-border/40 pt-3 text-[11px] text-muted-foreground">
                     {(["valid", "expiring", "overdue"] as EsgState[]).map((s) => (
                       <span key={s} className="inline-flex items-center gap-1.5">
-                        <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: STATE_META[s].color }} />
+                        <span
+                          className="h-2.5 w-2.5 rounded-[3px]"
+                          style={{ background: STATE_META[s].color }}
+                        />
                         {STATE_META[s].label}
                       </span>
                     ))}

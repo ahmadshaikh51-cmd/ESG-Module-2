@@ -21,6 +21,13 @@ import { LifecyclePanel } from "./esms/LifecyclePanel";
 
 /** Renders a tier-2 tab's label — through the acronym glossary when it is one. */
 function subLabel(s: EsmsSubTab): React.ReactNode {
+  if (s.key === "esap") {
+    return (
+      <>
+        <A t="ESAP" />/<A t="ESMP" /> Register
+      </>
+    );
+  }
   if (!s.acronym) return s.label;
   const rest = s.label.slice(s.acronym.length);
   return (
@@ -94,8 +101,12 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
           {sub === "sops" && <SopsPanel />}
           {sub === "esdd" && <AssessmentsPanel kind="ESDD" onOpenEsap={() => setSub("esap")} />}
           {sub === "esia" && <AssessmentsPanel kind="ESIA" onOpenEsap={() => setSub("esap")} />}
-          {sub === "audit-internal" && <AuditsPanel kind="internal" onOpenEsap={() => setSub("esap")} />}
-          {sub === "audit-external" && <AuditsPanel kind="external" onOpenEsap={() => setSub("esap")} />}
+          {sub === "audit-internal" && (
+            <AuditsPanel kind="internal" onOpenEsap={() => setSub("esap")} />
+          )}
+          {sub === "audit-external" && (
+            <AuditsPanel kind="external" onOpenEsap={() => setSub("esap")} />
+          )}
           {sub === "training" && <TrainingPanel />}
           {sub === "monitoring" && <MonitoringPanel />}
           {sub === "lifecycle" && <LifecyclePanel />}

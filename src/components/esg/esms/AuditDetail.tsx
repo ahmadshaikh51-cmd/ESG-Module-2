@@ -21,7 +21,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
@@ -49,7 +55,10 @@ function FindingResultChip({ result }: { result: AuditFinding["result"] }) {
   return (
     <span
       className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-      style={{ background: `color-mix(in oklab, ${meta.color} 14%, transparent)`, color: meta.color }}
+      style={{
+        background: `color-mix(in oklab, ${meta.color} 14%, transparent)`,
+        color: meta.color,
+      }}
     >
       <Icon className="h-3 w-3" aria-hidden />
       {result === "nc" ? <A t="NC" /> : meta.label}
@@ -57,7 +66,7 @@ function FindingResultChip({ result }: { result: AuditFinding["result"] }) {
   );
 }
 
-/** Create-corrective-action dialog for an NC row → appends into the ESAP register. */
+/** Create-corrective-action dialog for an NC row → appends into the ESAP/ESMP Register. */
 function CorrectiveActionDialog({
   open,
   onOpenChange,
@@ -115,7 +124,12 @@ function CorrectiveActionDialog({
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px]">Due date</Label>
-              <Input type="date" value={due} onChange={(e) => setDue(e.target.value)} className="h-9 text-[12.5px]" />
+              <Input
+                type="date"
+                value={due}
+                onChange={(e) => setDue(e.target.value)}
+                className="h-9 text-[12.5px]"
+              />
             </div>
           </div>
         </div>
@@ -238,13 +252,19 @@ function AddFindingDialog({
           </div>
           <div className="space-y-1.5">
             <Label className="text-[12px]">
-              Remarks {result === "nc" && <span className="text-destructive">— required for an NC</span>}
+              Remarks{" "}
+              {result === "nc" && <span className="text-destructive">— required for an NC</span>}
             </Label>
             <Textarea
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              placeholder={result === "nc" ? "State the non-conformity and evidence" : "Optional notes"}
-              className={cn("min-h-[64px] text-[12.5px]", ncMissingRemarks && "border-destructive/40")}
+              placeholder={
+                result === "nc" ? "State the non-conformity and evidence" : "Optional notes"
+              }
+              className={cn(
+                "min-h-[64px] text-[12.5px]",
+                ncMissingRemarks && "border-destructive/40",
+              )}
             />
             {ncMissingRemarks && (
               <p className="text-[11px] font-medium text-destructive">
@@ -319,10 +339,14 @@ export function AuditDetail({
                 </span>
               )}
             </div>
-            <h3 className="mt-1.5 text-[16px] font-semibold leading-snug tracking-tight">{audit.title}</h3>
+            <h3 className="mt-1.5 text-[16px] font-semibold leading-snug tracking-tight">
+              {audit.title}
+            </h3>
             <div className="mt-1 text-[12px] text-muted-foreground">
               {entityById(audit.entityId)?.short}
-              {audit.depotId ? ` · ${entityById(audit.entityId)?.depots.find((d) => d.id === audit.depotId)?.name}` : ""}{" "}
+              {audit.depotId
+                ? ` · ${entityById(audit.entityId)?.depots.find((d) => d.id === audit.depotId)?.name}`
+                : ""}{" "}
               · {audit.auditorName}
               {audit.auditorOrg ? ` (${audit.auditorOrg})` : ""}
             </div>
@@ -344,7 +368,8 @@ export function AuditDetail({
             className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-primary/25 bg-primary/8 px-2.5 py-1.5 text-[11.5px] font-medium text-primary transition-colors hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
           >
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-            Maintains {typeByKey(linkedRecord.typeKey)?.label} <ArrowUpRight className="h-3 w-3" aria-hidden />
+            Maintains {typeByKey(linkedRecord.typeKey)?.label}{" "}
+            <ArrowUpRight className="h-3 w-3" aria-hidden />
           </button>
         )}
       </div>
@@ -353,8 +378,8 @@ export function AuditDetail({
       {!external && unlinked > 0 && (
         <div className="flex items-center gap-2.5 rounded-xl border border-warning/35 bg-warning/8 px-4 py-2.5 text-[12px] font-medium text-warning">
           <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-          {unlinked} non-conformit{unlinked === 1 ? "y has" : "ies have"} no corrective action yet — create one to close
-          the loop.
+          {unlinked} non-conformit{unlinked === 1 ? "y has" : "ies have"} no corrective action yet —
+          create one to close the loop.
         </div>
       )}
 
@@ -364,18 +389,26 @@ export function AuditDetail({
           <div>
             <h4 className="text-[14px] font-semibold tracking-tight">Findings</h4>
             <p className="text-[11.5px] text-muted-foreground">
-              Compliant observations and non-conformities. NCs require remarks and a corrective action.
+              Compliant observations and non-conformities. NCs require remarks and a corrective
+              action.
             </p>
           </div>
           {!external && (
-            <Button size="sm" variant="outline" className="h-8 gap-1.5 text-[12px]" onClick={() => setAddOpen(true)}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 gap-1.5 text-[12px]"
+              onClick={() => setAddOpen(true)}
+            >
               <Plus className="h-3.5 w-3.5" aria-hidden /> Record finding
             </Button>
           )}
         </div>
 
         {visibleFindings.length === 0 && withheldCount === 0 ? (
-          <div className="px-5 py-8 text-center text-[12.5px] text-muted-foreground">No findings recorded yet.</div>
+          <div className="px-5 py-8 text-center text-[12.5px] text-muted-foreground">
+            No findings recorded yet.
+          </div>
         ) : (
           <div className="divide-y divide-border/40">
             {visibleFindings.map((f) => {
@@ -383,7 +416,10 @@ export function AuditDetail({
               return (
                 <div
                   key={f.id}
-                  className={cn("flex flex-wrap items-start gap-3 px-5 py-3", isNc && "border-l-2 border-l-destructive")}
+                  className={cn(
+                    "flex flex-wrap items-start gap-3 px-5 py-3",
+                    isNc && "border-l-2 border-l-destructive",
+                  )}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -397,7 +433,9 @@ export function AuditDetail({
                       <span className="text-[11px] text-muted-foreground">· {f.area}</span>
                       {isNc && !external && <WithheldPill />}
                     </div>
-                    {f.remarks && <div className="mt-1 text-[11.5px] text-muted-foreground">{f.remarks}</div>}
+                    {f.remarks && (
+                      <div className="mt-1 text-[11.5px] text-muted-foreground">{f.remarks}</div>
+                    )}
                   </div>
                   {isNc && (
                     <div className="shrink-0">
@@ -427,7 +465,8 @@ export function AuditDetail({
             })}
             {withheldCount > 0 && (
               <div className="px-5 py-3 text-[11.5px] text-muted-foreground">
-                {withheldCount} non-conformit{withheldCount === 1 ? "y" : "ies"} withheld from the external view.
+                {withheldCount} non-conformit{withheldCount === 1 ? "y" : "ies"} withheld from the
+                external view.
               </div>
             )}
           </div>
@@ -442,7 +481,9 @@ export function AuditDetail({
         ) : (
           <button
             type="button"
-            onClick={() => toast("Upload queued", { description: "Signed report upload is a UI stub." })}
+            onClick={() =>
+              toast("Upload queued", { description: "Signed report upload is a UI stub." })
+            }
             className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-2 text-[12px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
           >
             <FileUp className="h-3.5 w-3.5" aria-hidden /> Upload signed report (stub)
@@ -457,7 +498,7 @@ export function AuditDetail({
           if (caFor) {
             wf.createCorrectiveAction(audit.id, caFor)(d);
             toast.success("Corrective action created", {
-              description: `Added to the ESAP register, owned by ${personById(d.ownerId)?.name}.`,
+              description: `Added to the ESAP/ESMP Register, owned by ${personById(d.ownerId)?.name}.`,
             });
           }
         }}
@@ -467,7 +508,9 @@ export function AuditDetail({
         onOpenChange={setAddOpen}
         onAdd={(d) => {
           wf.addFinding(audit.id, d);
-          toast.success("Finding recorded", { description: `${d.clause} — ${FINDING_RESULT_META[d.result].label}.` });
+          toast.success("Finding recorded", {
+            description: `${d.clause} — ${FINDING_RESULT_META[d.result].label}.`,
+          });
         }}
       />
     </div>

@@ -38,7 +38,8 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
     });
     if (filter === "all") return scoped;
     if (filter === "closed") return scoped.filter((a) => a.status === "closed");
-    if (filter === "overdue") return scoped.filter((a) => a.status !== "closed" && daysUntil(a.due) < 0);
+    if (filter === "overdue")
+      return scoped.filter((a) => a.status !== "closed" && daysUntil(a.due) < 0);
     return scoped.filter((a) => a.status !== "closed");
   }, [scope.entityId, filter, actionOverrides, policy, audit]);
 
@@ -56,11 +57,12 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
         <div>
           <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
             <FileSearch className="h-4 w-4 text-primary" aria-hidden />
-            <A t="ESAP" /> — action register
+            <A t="ESAP" />/<A t="ESMP" /> — action register
           </h3>
           <p className="text-[12px] text-muted-foreground">
-            A living worklist converging from <A t="ESDD" /> / <A t="ESIA" /> findings, audit <A t="NC" />s, and approved
-            policies — not a static uploaded document.
+            A living worklist converging from <A t="ESDD" /> / <A t="ESIA" /> findings, audit{" "}
+            <A t="NC" />
+            s, and approved policies — not a static uploaded document.
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -72,7 +74,9 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
               aria-pressed={filter === f}
               className={cn(
                 "rounded-lg px-2.5 py-1 text-[11.5px] font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
-                filter === f ? "nav-pill-active" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                filter === f
+                  ? "nav-pill-active"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
               )}
             >
               {f}
@@ -91,7 +95,13 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
             const linkable = isEsmsSubAvailable(src.sub);
             const closed = a.status === "closed";
             return (
-              <div key={a.id} className={cn("flex flex-wrap items-center gap-3 px-5 py-3.5", closed && "opacity-60")}>
+              <div
+                key={a.id}
+                className={cn(
+                  "flex flex-wrap items-center gap-3 px-5 py-3.5",
+                  closed && "opacity-60",
+                )}
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <div className="text-[13px] font-medium leading-snug">{a.action}</div>
@@ -139,7 +149,13 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
                             : "bg-muted text-muted-foreground",
                     )}
                   >
-                    {closed ? "Closed" : st === "overdue" ? "Overdue" : a.status === "in-progress" ? "In progress" : "Open"}
+                    {closed
+                      ? "Closed"
+                      : st === "overdue"
+                        ? "Overdue"
+                        : a.status === "in-progress"
+                          ? "In progress"
+                          : "Open"}
                   </span>
                   {!closed && audience === "internal" && (
                     <button

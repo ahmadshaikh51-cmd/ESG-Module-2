@@ -2,7 +2,7 @@
  * Audit workflow — UI-only stub (Phases 3 & 4).
  *
  * Holds session state for internal AND external audits (scheduling, findings,
- * and the corrective actions that flow from NCs into the ESAP register), layered
+ * and the corrective actions that flow from NCs into the ESAP/ESMP Register), layered
  * over the seed data in esg-data. Internal and external audits are the same shape
  * separated by `kind` — the register is deliberately kept unified while the two
  * lists are shown separately, per the requirement.
@@ -100,12 +100,16 @@ export function useAuditWorkflow(): AuditWorkflow {
     (auditId: string, findingId: string): CorrectiveActionAppender =>
       (d: CorrectiveDraft) => {
         const finding = [...AUDIT_FINDINGS, ...sessionFindings].find((f) => f.id === findingId);
-        const kind = ([...AUDITS, ...sessionAudits].find((a) => a.id === auditId)?.kind ?? "internal") as AuditKind;
+        const kind = ([...AUDITS, ...sessionAudits].find((a) => a.id === auditId)?.kind ??
+          "internal") as AuditKind;
         const actionId = `ca-${findingId}`;
         const ncRef = `NC-${ESG_TODAY.getFullYear()}-${String(++ncSeq.current).padStart(3, "0")}`;
         const action: EsapAction = {
           id: actionId,
-          source: { kind: kind === "internal" ? "internal-audit" : "external-audit", id: findingId },
+          source: {
+            kind: kind === "internal" ? "internal-audit" : "external-audit",
+            id: findingId,
+          },
           finding: finding ? `${finding.clause} — ${finding.area}` : "Audit non-conformity",
           action: d.action,
           ownerId: d.ownerId,
@@ -155,13 +159,11 @@ export function useAuditWorkflow(): AuditWorkflow {
 }
 
 /** Human label + tint for a finding result (label + glyph handled at call site). */
-export const FINDING_RESULT_META: Record<
-  AuditFinding["result"],
-  { label: string; color: string }
-> = {
-  compliant: { label: "Compliant", color: "var(--color-success)" },
-  observation: { label: "Observation", color: "var(--color-warning)" },
-  nc: { label: "NC", color: "var(--color-destructive)" },
-};
+export const FINDING_RESULT_META: Record<AuditFinding["result"], { label: string; color: string }> =
+  {
+    compliant: { label: "Compliant", color: "var(--color-success)" },
+    observation: { label: "Observation", color: "var(--color-warning)" },
+    nc: { label: "NC", color: "var(--color-destructive)" },
+  };
 
 export { todayIso as auditTodayIso };

@@ -33,13 +33,24 @@ import type { MastersWorkflow } from "@/lib/esg-masters";
 
 export type Audience = "internal" | "external";
 
+export type DateRange = {
+  start: Date;
+  end: Date;
+  presetKey?: string;
+  label: string;
+};
+
 export type EsgCtx = {
   scope: ScopeSel;
   setScope: (s: ScopeSel) => void;
   period: string;
   setPeriod: (p: string) => void;
+  dateRange: DateRange;
+  setDateRange: (range: DateRange) => void;
   audience: Audience;
   setAudience: (a: Audience) => void;
+  projectId: string | null;
+  setProjectId: (id: string | null) => void;
   /** Stubbed role for the permission-model presentation — UI gating, not enforcement. */
   role: Role;
   setRole: (r: Role) => void;
@@ -183,7 +194,11 @@ export function A({ t, className }: { t: string; className?: string }) {
                 className="w-auto max-w-[280px] rounded-xl border border-border/60 bg-popover px-3.5 py-2.5 text-popover-foreground shadow-elevated outline-none"
               >
                 <div className="text-[12px] font-semibold tracking-tight">{entry.full}</div>
-                {entry.note && <div className="mt-1 text-[11.5px] leading-snug text-muted-foreground">{entry.note}</div>}
+                {entry.note && (
+                  <div className="mt-1 text-[11.5px] leading-snug text-muted-foreground">
+                    {entry.note}
+                  </div>
+                )}
               </motion.div>
             </PopoverPrimitive.Content>
           </PopoverPrimitive.Portal>
@@ -212,7 +227,15 @@ const STATE_ICON: Record<EsgState, typeof CircleCheck> = {
 };
 
 /** Label + glyph + tint — state never reads through colour alone. */
-export function StatePill({ state, className, size = "sm" }: { state: EsgState; className?: string; size?: "sm" | "md" }) {
+export function StatePill({
+  state,
+  className,
+  size = "sm",
+}: {
+  state: EsgState;
+  className?: string;
+  size?: "sm" | "md";
+}) {
   const meta = STATE_META[state];
   const Icon = STATE_ICON[state];
   return (
@@ -222,7 +245,10 @@ export function StatePill({ state, className, size = "sm" }: { state: EsgState; 
         size === "md" ? "px-2 py-1 text-[11px]" : "px-1.5 py-0.5 text-[10px]",
         className,
       )}
-      style={{ background: `color-mix(in oklab, ${meta.color} 14%, transparent)`, color: meta.color }}
+      style={{
+        background: `color-mix(in oklab, ${meta.color} 14%, transparent)`,
+        color: meta.color,
+      }}
     >
       <Icon className={size === "md" ? "h-3.5 w-3.5" : "h-3 w-3"} aria-hidden />
       {meta.label}
@@ -235,7 +261,10 @@ export function StateDot({ state }: { state: EsgState }) {
   return (
     <span
       className="grid h-5 w-5 shrink-0 place-items-center rounded-md"
-      style={{ background: `color-mix(in oklab, ${STATE_META[state].color} 14%, transparent)`, color: STATE_META[state].color }}
+      style={{
+        background: `color-mix(in oklab, ${STATE_META[state].color} 14%, transparent)`,
+        color: STATE_META[state].color,
+      }}
       aria-label={STATE_META[state].label}
     >
       <Icon className="h-3 w-3" aria-hidden />
@@ -322,7 +351,11 @@ export function EmptyState({
         <Icon className="h-5 w-5" aria-hidden />
       </span>
       <div className="text-[13px] font-medium text-foreground">{title}</div>
-      {hint && <div className="max-w-[360px] text-[12px] leading-relaxed text-muted-foreground">{hint}</div>}
+      {hint && (
+        <div className="max-w-[360px] text-[12px] leading-relaxed text-muted-foreground">
+          {hint}
+        </div>
+      )}
     </div>
   );
 }
@@ -352,7 +385,9 @@ export function DocChip({ name, size }: { name: string; size?: string }) {
     >
       <FileText className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
       <span className="truncate">{name}</span>
-      {size && <span className="shrink-0 text-[10.5px] font-normal text-muted-foreground">{size}</span>}
+      {size && (
+        <span className="shrink-0 text-[10.5px] font-normal text-muted-foreground">{size}</span>
+      )}
     </button>
   );
 }
@@ -409,8 +444,13 @@ export function PanelCard({
 }) {
   return (
     <section
-      className={cn("overflow-hidden rounded-2xl border border-border/60 bg-card shadow-elevated", className)}
-      style={accent ? { borderColor: `color-mix(in oklab, ${accent} 35%, transparent)` } : undefined}
+      className={cn(
+        "overflow-hidden rounded-2xl border border-border/60 bg-card shadow-elevated",
+        className,
+      )}
+      style={
+        accent ? { borderColor: `color-mix(in oklab, ${accent} 35%, transparent)` } : undefined
+      }
     >
       {children}
     </section>
