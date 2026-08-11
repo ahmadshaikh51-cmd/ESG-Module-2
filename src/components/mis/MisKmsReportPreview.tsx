@@ -47,10 +47,7 @@ export function MisKmsReportPreview({
     [columnOrder, columns],
   );
 
-  const allRows = useMemo(
-    () => rowsProp ?? sampleScheduleReports(siteName),
-    [rowsProp, siteName],
-  );
+  const allRows = useMemo(() => rowsProp ?? sampleScheduleReports(siteName), [rowsProp, siteName]);
 
   const rows = useMemo(() => allRows.slice(0, maxRows), [allRows, maxRows]);
 
@@ -85,9 +82,7 @@ export function MisKmsReportPreview({
   }, [allRows]);
 
   if (visibleColumns.length === 0) {
-    return (
-      <p className="py-8 text-center text-[13px] text-muted-foreground">{OPS.emptyColumns}</p>
-    );
+    return <p className="py-8 text-center text-[13px] text-muted-foreground">{OPS.emptyColumns}</p>;
   }
 
   const colSpanRest = Math.max(1, visibleColumns.length);
@@ -226,9 +221,7 @@ export function MisKmsReportPreview({
         </MisTableShell>
       </div>
 
-      {!rowsProp && (
-        <p className="text-[11px] text-muted-foreground">{OPS.sampleDataNote}</p>
-      )}
+      {!rowsProp && <p className="text-[11px] text-muted-foreground">{OPS.sampleDataNote}</p>}
     </div>
   );
 }

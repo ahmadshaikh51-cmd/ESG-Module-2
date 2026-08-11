@@ -54,7 +54,10 @@ export function MisPivotPreview({
           {config.colDim !== "none" && (
             <>
               {" "}
-              · Columns: <strong className="text-foreground">{dimLabel(config.colDim as PivotConfig["rowDim"])}</strong>
+              · Columns:{" "}
+              <strong className="text-foreground">
+                {dimLabel(config.colDim as PivotConfig["rowDim"])}
+              </strong>
             </>
           )}
         </div>
@@ -95,9 +98,7 @@ export function MisPivotPreview({
         </MisTableShell>
       </div>
 
-      {!useLiveTrips && (
-        <p className="text-[11px] text-muted-foreground">{OPS.sampleDataNote}</p>
-      )}
+      {!useLiveTrips && <p className="text-[11px] text-muted-foreground">{OPS.sampleDataNote}</p>}
     </div>
   );
 }

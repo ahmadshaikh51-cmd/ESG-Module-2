@@ -12,7 +12,8 @@ export function SopsPanel() {
     <PanelCard>
       <div className="border-b border-border/60 px-5 py-3.5">
         <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-          <ClipboardCheck className="h-4 w-4 text-primary" aria-hidden /> Standard Operating Procedures
+          <ClipboardCheck className="h-4 w-4 text-primary" aria-hidden /> Standard Operating
+          Procedures
         </h3>
         <p className="text-[12px] text-muted-foreground">
           Organised by entity, then activity — the shop-floor layer of the <A t="ESMS" />.
@@ -41,7 +42,9 @@ export function SopsPanel() {
                       </span>
                       <DocStatusPill status={s.status} />
                     </div>
-                    <span className="text-[11px] text-muted-foreground">updated {fmtDate(s.updated)}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      updated {fmtDate(s.updated)}
+                    </span>
                   </div>
                 ))}
               </div>

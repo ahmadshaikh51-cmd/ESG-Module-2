@@ -1,8 +1,14 @@
 import { useMemo, useState } from "react";
-import { AlertOctagon, ArrowUpRight, Download, Link2 } from "lucide-react";
+import { AlertOctagon, ArrowUpRight, Download, Link2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { ESG_GROUP, entityById, esapSourceLabel, ESAP_ACTIONS, personById } from "@/lib/esg-data";
 import {
@@ -21,7 +27,13 @@ import { exportToXlsx } from "@/lib/export-xlsx";
 import { EmptyState, PanelCard, WithheldPill, useEsg } from "../primitives";
 import { Button } from "@/components/ui/button";
 
-const SOURCE_ORDER: NcSource[] = ["permit", "site", "internal-audit", "external-audit", "monitoring"];
+const SOURCE_ORDER: NcSource[] = [
+  "permit",
+  "site",
+  "internal-audit",
+  "external-audit",
+  "monitoring",
+];
 const AGE_BUCKETS: AgeBucket[] = ["0-30", "31-90", "90+"];
 
 function ActionStatusPill({ status }: { status: NcItem["actionStatus"] }) {
@@ -34,7 +46,12 @@ function ActionStatusPill({ status }: { status: NcItem["actionStatus"] }) {
           ? { label: "Open", cls: "bg-muted text-muted-foreground" }
           : { label: "No action", cls: "bg-destructive/12 text-destructive" };
   return (
-    <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider", meta.cls)}>
+    <span
+      className={cn(
+        "rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+        meta.cls,
+      )}
+    >
       {meta.label}
     </span>
   );
@@ -48,12 +65,30 @@ function SeverityPill({ severity }: { severity?: NcItem["severity"] }) {
       : severity === "minor"
         ? "bg-warning/14 text-warning"
         : "bg-muted text-muted-foreground";
-  return <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider", cls)}>{severity}</span>;
+  return (
+    <span
+      className={cn(
+        "rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+        cls,
+      )}
+    >
+      {severity}
+    </span>
+  );
 }
 
-function NcDetailDialog({ item, onClose, onNavigate }: { item: NcItem | null; onClose: () => void; onNavigate: (item: NcItem) => void }) {
+function NcDetailDialog({
+  item,
+  onClose,
+  onNavigate,
+}: {
+  item: NcItem | null;
+  onClose: () => void;
+  onNavigate: (item: NcItem) => void;
+}) {
   if (!item) return null;
-  const linkedAction = item.backlink.kind === "record" ? undefined : ESAP_ACTIONS.find((a) => a.ncRef === item.ref);
+  const linkedAction =
+    item.backlink.kind === "record" ? undefined : ESAP_ACTIONS.find((a) => a.ncRef === item.ref);
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-[480px]">
@@ -71,23 +106,33 @@ function NcDetailDialog({ item, onClose, onNavigate }: { item: NcItem | null; on
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Ref</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Ref
+              </div>
               <div className="num mt-0.5 font-medium">{item.ref}</div>
             </div>
             <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Entity</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Entity
+              </div>
               <div className="mt-0.5 font-medium">{ncItemPlace(item)}</div>
             </div>
             <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Raised</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Raised
+              </div>
               <div className="mt-0.5 font-medium">{ncRaisedLabel(item)}</div>
             </div>
             <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Age</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Age
+              </div>
               <div className="num mt-0.5 font-medium">{item.ageDays}d</div>
             </div>
             <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Owner</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Owner
+              </div>
               <div className="mt-0.5 font-medium">{ncItemOwnerName(item)}</div>
             </div>
           </div>
@@ -101,10 +146,13 @@ function NcDetailDialog({ item, onClose, onNavigate }: { item: NcItem | null; on
           )}
           {linkedAction && (
             <div className="rounded-lg border border-primary/25 bg-primary/8 px-3 py-2">
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-primary">Linked corrective action</div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-primary">
+                Linked corrective action
+              </div>
               <div className="mt-0.5 font-medium">{linkedAction.action}</div>
               <div className="mt-0.5 text-[11px] text-muted-foreground">
-                {esapSourceLabel(linkedAction.source).label} · owner {personById(linkedAction.ownerId)?.name}
+                {esapSourceLabel(linkedAction.source).label} · owner{" "}
+                {personById(linkedAction.ownerId)?.name}
               </div>
             </div>
           )}
@@ -113,7 +161,8 @@ function NcDetailDialog({ item, onClose, onNavigate }: { item: NcItem | null; on
             onClick={() => onNavigate(item)}
             className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1.5 text-[12px] font-semibold text-foreground transition-colors hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
           >
-            <Link2 className="h-3.5 w-3.5" aria-hidden /> Open origin record <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+            <Link2 className="h-3.5 w-3.5" aria-hidden /> {item.id.startsWith("rec-") ? "Edit NC Report" : "Open origin record"}{" "}
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
           </button>
         </div>
       </DialogContent>
@@ -121,7 +170,7 @@ function NcDetailDialog({ item, onClose, onNavigate }: { item: NcItem | null; on
   );
 }
 
-export function NcPanel() {
+export function NcPanel({ onAdd, onEdit }: { onAdd?: () => void; onEdit?: (id: string) => void }) {
   const { scope, period, audience, openRecord, goto, audit, monitoring } = useEsg();
   const [source, setSource] = useState<NcSource | "all">("all");
   const [entityId, setEntityId] = useState<string | "all">("all");
@@ -130,16 +179,36 @@ export function NcPanel() {
   const [selected, setSelected] = useState<NcItem | null>(null);
   const external = audience === "external";
 
-  const register = useMemo(
-    () => buildNcRegister(scope, period, audit, monitoring),
-    [scope, period, audit, monitoring],
-  );
+  const register = useMemo(() => {
+    const defaultRegister = buildNcRegister(scope, period, audit, monitoring);
+    const saved = JSON.parse(localStorage.getItem("voltline-report-records") || "[]")
+      .filter((r: any) => r.reportType === "nc" && (!scope.entityId || r.entity === scope.entityId))
+      .map((r: any) => ({
+        id: r.id,
+        ref: r.ncFields?.ncNumber || r.id,
+        source: (r.ncFields?.source?.toLowerCase() === "permit" ? "permit" : "site") as any,
+        title: r.ncFields?.title || "Custom NC Report",
+        entityId: r.entity,
+        depotId: r.site,
+        raisedDate: r.ncFields?.targetDate || r.updatedAt,
+        ownerId: r.ncFields?.assignedPerson || "rohan",
+        ageDays: 0,
+        actionStatus: (r.status === "Submitted" ? "in-progress" : r.status === "Approved" || r.status === "Locked" ? "closed" : "open") as any,
+        remarks: r.ncFields?.observation || "",
+        withheldExternal: false,
+        backlink: { kind: "record" as const, recordId: r.id }
+      }));
+    return [...saved, ...defaultRegister];
+  }, [scope, period, audit, monitoring]);
 
   const filtered = useMemo(() => {
     let rows = register.filter((r) => (external ? !r.withheldExternal : true));
     if (source !== "all") rows = rows.filter((r) => r.source === source);
     if (entityId !== "all") rows = rows.filter((r) => r.entityId === entityId);
-    if (status !== "all") rows = rows.filter((r) => (status === "closed" ? r.actionStatus === "closed" : r.actionStatus !== "closed"));
+    if (status !== "all")
+      rows = rows.filter((r) =>
+        status === "closed" ? r.actionStatus === "closed" : r.actionStatus !== "closed",
+      );
     if (age !== "all") rows = rows.filter((r) => ageBucket(r.ageDays) === age);
     return sortNcRegister(rows);
   }, [register, external, source, entityId, status, age]);
@@ -148,8 +217,13 @@ export function NcPanel() {
 
   const navigate = (item: NcItem) => {
     setSelected(null);
-    if (item.backlink.kind === "record") openRecord(item.backlink.recordId);
-    else goto("esms", { sub: item.backlink.sub });
+    if (item.id.startsWith("rec-")) {
+      if (onEdit) onEdit(item.id);
+    } else if (item.backlink.kind === "record") {
+      openRecord(item.backlink.recordId);
+    } else {
+      goto("esms", { sub: item.backlink.sub });
+    }
   };
 
   const exportRegister = () => {
@@ -164,12 +238,18 @@ export function NcPanel() {
         { key: "age", header: "Age (days)", format: (r: NcItem) => r.ageDays },
         { key: "severity", header: "Severity", format: (r: NcItem) => r.severity ?? "" },
         { key: "owner", header: "Owner", format: (r: NcItem) => ncItemOwnerName(r) },
-        { key: "action", header: "Corrective action status", format: (r: NcItem) => r.actionStatus },
+        {
+          key: "action",
+          header: "Corrective action status",
+          format: (r: NcItem) => r.actionStatus,
+        },
       ],
       filtered,
       "NC Register",
     );
-    toast.success("NC register exported", { description: `${filtered.length} rows written to .xlsx.` });
+    toast.success("NC register exported", {
+      description: `${filtered.length} rows written to .xlsx.`,
+    });
   };
 
   return (
@@ -181,7 +261,9 @@ export function NcPanel() {
               <SelectValue placeholder="Source" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="text-[12px]">All sources</SelectItem>
+              <SelectItem value="all" className="text-[12px]">
+                All sources
+              </SelectItem>
               {SOURCE_ORDER.map((s) => (
                 <SelectItem key={s} value={s} className="text-[12px]">
                   {NC_SOURCE_LABEL[s]}
@@ -194,7 +276,9 @@ export function NcPanel() {
               <SelectValue placeholder="Entity" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="text-[12px]">All entities</SelectItem>
+              <SelectItem value="all" className="text-[12px]">
+                All entities
+              </SelectItem>
               {ESG_GROUP.entities.map((e) => (
                 <SelectItem key={e.id} value={e.id} className="text-[12px]">
                   {e.short}
@@ -207,9 +291,15 @@ export function NcPanel() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="open" className="text-[12px]">Open</SelectItem>
-              <SelectItem value="closed" className="text-[12px]">Closed</SelectItem>
-              <SelectItem value="all" className="text-[12px]">All</SelectItem>
+              <SelectItem value="open" className="text-[12px]">
+                Open
+              </SelectItem>
+              <SelectItem value="closed" className="text-[12px]">
+                Closed
+              </SelectItem>
+              <SelectItem value="all" className="text-[12px]">
+                All
+              </SelectItem>
             </SelectContent>
           </Select>
           <Select value={age} onValueChange={(v) => setAge(v as typeof age)}>
@@ -217,7 +307,9 @@ export function NcPanel() {
               <SelectValue placeholder="Age" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="text-[12px]">Any age</SelectItem>
+              <SelectItem value="all" className="text-[12px]">
+                Any age
+              </SelectItem>
               {AGE_BUCKETS.map((b) => (
                 <SelectItem key={b} value={b} className="text-[12px]">
                   {b}d
@@ -226,24 +318,34 @@ export function NcPanel() {
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" variant="outline" className="h-8 gap-1.5 text-[12px]" onClick={exportRegister}>
-          <Download className="h-3.5 w-3.5" aria-hidden /> Export .xlsx
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1.5 text-[12px]"
+            onClick={exportRegister}
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden /> Export .xlsx
+          </Button>
+        </div>
       </div>
 
       <PanelCard>
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
           <div>
             <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-              <AlertOctagon className="h-4 w-4 text-destructive" aria-hidden /> Non-Compliance register
+              <AlertOctagon className="h-4 w-4 text-destructive" aria-hidden /> Non-Compliance
+              register
             </h3>
             <p className="text-[12px] text-muted-foreground">
-              Every lapse across permits, site compliance, internal &amp; external audit, and monitoring — oldest open
-              first. Age is the risk signal.
+              Every lapse across permits, site compliance, internal &amp; external audit, and
+              monitoring — oldest open first. Age is the risk signal.
             </p>
           </div>
           {!external && withheldCount > 0 && (
-            <span className="text-[11.5px] text-muted-foreground">{withheldCount} withheld from external view</span>
+            <span className="text-[11.5px] text-muted-foreground">
+              {withheldCount} withheld from external view
+            </span>
           )}
         </div>
         {filtered.length === 0 ? (
@@ -278,12 +380,18 @@ export function NcPanel() {
                         {item.withheldExternal && !external && <WithheldPill />}
                       </div>
                     </td>
-                    <td className="px-3 py-2.5 text-muted-foreground">{NC_SOURCE_LABEL[item.source]}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground">
+                      {NC_SOURCE_LABEL[item.source]}
+                    </td>
                     <td className="px-3 py-2.5">{ncItemPlace(item)}</td>
                     <td
                       className={cn(
                         "num px-3 py-2.5 text-right font-semibold",
-                        item.ageDays > 90 ? "text-destructive" : item.ageDays > 30 ? "text-warning" : "text-muted-foreground",
+                        item.ageDays > 90
+                          ? "text-destructive"
+                          : item.ageDays > 30
+                            ? "text-warning"
+                            : "text-muted-foreground",
                       )}
                     >
                       {item.ageDays}d

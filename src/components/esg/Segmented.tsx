@@ -10,9 +10,27 @@ export type SegmentOption<T extends string> = {
 };
 
 const SIZE = {
-  sm: { pad: "p-0.5", seg: "px-2.5 py-1 text-[11.5px]", gap: "gap-1.5", icon: "h-3 w-3", radius: "rounded-md" },
-  md: { pad: "p-0.5", seg: "px-3 py-1.5 text-[12px]", gap: "gap-1.5", icon: "h-3.5 w-3.5", radius: "rounded-lg" },
-  lg: { pad: "p-1", seg: "px-4 py-2 text-[13px] font-medium", gap: "gap-2", icon: "h-4 w-4", radius: "rounded-lg" },
+  sm: {
+    pad: "p-0.5",
+    seg: "px-2.5 py-1 text-[11.5px]",
+    gap: "gap-1.5",
+    icon: "h-3 w-3",
+    radius: "rounded-md",
+  },
+  md: {
+    pad: "p-0.5",
+    seg: "px-3 py-1.5 text-[12px]",
+    gap: "gap-1.5",
+    icon: "h-3.5 w-3.5",
+    radius: "rounded-lg",
+  },
+  lg: {
+    pad: "p-1",
+    seg: "px-4 py-2 text-[13px] font-medium",
+    gap: "gap-2",
+    icon: "h-4 w-4",
+    radius: "rounded-lg",
+  },
 } as const;
 
 /**
@@ -67,7 +85,11 @@ export function Segmented<T extends string>({
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
               s.seg,
               s.radius,
-              active ? (emphasis ? "text-primary-foreground" : "text-foreground") : "text-muted-foreground hover:text-foreground",
+              active
+                ? emphasis
+                  ? "text-primary-foreground"
+                  : "text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {active && (

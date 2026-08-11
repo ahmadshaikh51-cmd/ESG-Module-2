@@ -22,9 +22,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { ESG_GROUP, ESG_TODAY, entityById, inScope, PEOPLE, personById, type Training } from "@/lib/esg-data";
+import {
+  ESG_GROUP,
+  ESG_TODAY,
+  entityById,
+  inScope,
+  PEOPLE,
+  personById,
+  type Training,
+} from "@/lib/esg-data";
 import {
   attendanceRate,
   fmtDateTime,
@@ -62,7 +76,7 @@ function ScheduleTrainingDialog({ onSchedule }: { onSchedule: (d: TrainingDraft)
   const [trainerId, setTrainerId] = useState("");
   const [attendeeIds, setAttendeeIds] = useState<string[]>([]);
 
-  const depots = entityId ? entityById(entityId)?.depots ?? [] : [];
+  const depots = entityId ? (entityById(entityId)?.depots ?? []) : [];
   const valid = topic.trim() && entityId && scheduledAt && trainerId && attendeeIds.length > 0;
 
   const reset = () => {
@@ -195,7 +209,10 @@ function ScheduleTrainingDialog({ onSchedule }: { onSchedule: (d: TrainingDraft)
             <div className="max-h-[140px] space-y-1.5 overflow-y-auto rounded-lg border border-border/60 p-2">
               {PEOPLE.map((p) => (
                 <label key={p.id} className="flex cursor-pointer items-center gap-2 text-[12.5px]">
-                  <Checkbox checked={attendeeIds.includes(p.id)} onCheckedChange={() => toggle(p.id)} />
+                  <Checkbox
+                    checked={attendeeIds.includes(p.id)}
+                    onCheckedChange={() => toggle(p.id)}
+                  />
                   <span>{p.name}</span>
                   <span className="text-[11px] text-muted-foreground">· {p.role}</span>
                 </label>
@@ -264,7 +281,8 @@ function SessionDetailDialog({
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" aria-hidden /> {fmtDateTime(live.scheduledAt)} · {live.durationMins}m
+              <Clock className="h-3.5 w-3.5" aria-hidden /> {fmtDateTime(live.scheduledAt)} ·{" "}
+              {live.durationMins}m
             </span>
             <span>Trainer {personById(live.trainerId)?.name}</span>
             <span
@@ -317,7 +335,9 @@ function SessionDetailDialog({
               className="text-[12px]"
               onClick={() => {
                 wf.completeTraining(live.id);
-                toast.success("Training completed", { description: `${live.topic} — attendance recorded.` });
+                toast.success("Training completed", {
+                  description: `${live.topic} — attendance recorded.`,
+                });
               }}
             >
               Mark completed
@@ -331,7 +351,13 @@ function SessionDetailDialog({
 
 /* ------------------------------ calendar view ------------------------------ */
 
-function CalendarView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: Training) => void }) {
+function CalendarView({
+  sessions,
+  onOpen,
+}: {
+  sessions: Training[];
+  onOpen: (t: Training) => void;
+}) {
   const [cursor, setCursor] = useState({ y: ESG_TODAY.getFullYear(), m: ESG_TODAY.getMonth() });
   const weeks = useMemo(() => monthMatrix(cursor.y, cursor.m), [cursor]);
   const byDay = useMemo(() => {
@@ -398,7 +424,11 @@ function CalendarView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: 
               <div
                 className={cn(
                   "mb-1 inline-flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-[11px] font-semibold",
-                  isToday ? "bg-primary text-primary-foreground" : inMonth ? "text-foreground" : "text-muted-foreground/50",
+                  isToday
+                    ? "bg-primary text-primary-foreground"
+                    : inMonth
+                      ? "text-foreground"
+                      : "text-muted-foreground/50",
                 )}
               >
                 {day.getDate()}
@@ -429,7 +459,13 @@ function CalendarView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: 
 
 /* ------------------------------- history view ------------------------------ */
 
-function HistoryView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: Training) => void }) {
+function HistoryView({
+  sessions,
+  onOpen,
+}: {
+  sessions: Training[];
+  onOpen: (t: Training) => void;
+}) {
   const past = useMemo(
     () => sessions.slice().sort((a, b) => b.scheduledAt.localeCompare(a.scheduledAt)),
     [sessions],
@@ -458,7 +494,9 @@ function HistoryView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: T
       })),
       "History",
     );
-    toast.success("Training history exported", { description: `${past.length} sessions written to .xlsx.` });
+    toast.success("Training history exported", {
+      description: `${past.length} sessions written to .xlsx.`,
+    });
   };
 
   return (
@@ -466,9 +504,16 @@ function HistoryView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: T
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
         <div>
           <h3 className="text-[15px] font-semibold tracking-tight">Training history</h3>
-          <p className="text-[12px] text-muted-foreground">Every session with attendance and completion state.</p>
+          <p className="text-[12px] text-muted-foreground">
+            Every session with attendance and completion state.
+          </p>
         </div>
-        <Button size="sm" variant="outline" className="h-8 gap-1.5 text-[12px]" onClick={exportHistory}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 gap-1.5 text-[12px]"
+          onClick={exportHistory}
+        >
           <Download className="h-3.5 w-3.5" aria-hidden /> Export history
         </Button>
       </div>
@@ -498,7 +543,9 @@ function HistoryView({ sessions, onOpen }: { sessions: Training[]; onOpen: (t: T
                       {t.topic}
                     </button>
                   </td>
-                  <td className="px-3 py-2.5 text-muted-foreground">{fmtDateTime(t.scheduledAt)}</td>
+                  <td className="px-3 py-2.5 text-muted-foreground">
+                    {fmtDateTime(t.scheduledAt)}
+                  </td>
                   <td className="num px-3 py-2.5 text-right">
                     {presentCount(t)}/{t.attendees.length} · {attendanceRate(t)}%
                   </td>
@@ -539,10 +586,11 @@ export function TrainingPanel() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const sessions = useMemo(
-    () => wf.trainings().filter((t) => inScope({ entityId: t.entityId, depotId: t.depotId }, scope)),
+    () =>
+      wf.trainings().filter((t) => inScope({ entityId: t.entityId, depotId: t.depotId }, scope)),
     [wf, scope],
   );
-  const openTraining = openId ? sessions.find((t) => t.id === openId) ?? null : null;
+  const openTraining = openId ? (sessions.find((t) => t.id === openId) ?? null) : null;
 
   return (
     <div className="space-y-4">
@@ -560,7 +608,9 @@ export function TrainingPanel() {
         <ScheduleTrainingDialog
           onSchedule={(d) => {
             wf.scheduleTraining(d);
-            toast.success("Training scheduled", { description: `${d.topic} — ${fmtDateTime(d.scheduledAt)}.` });
+            toast.success("Training scheduled", {
+              description: `${d.topic} — ${fmtDateTime(d.scheduledAt)}.`,
+            });
           }}
         />
       </div>

@@ -33,23 +33,39 @@ const STATUS_STYLE: Record<string, string> = {
 export function StatusBadge({ status }: { status: SyncJobStatus }) {
   const cls = STATUS_STYLE[status] ?? "bg-muted text-muted-foreground ring-border";
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide ring-1 ring-inset ${cls}`}>
-      {status === "running" && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />}
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide ring-1 ring-inset ${cls}`}
+    >
+      {status === "running" && (
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
+      )}
       {status}
     </span>
   );
 }
 
 export function Panel({
-  title, subtitle, icon, actions, children,
+  title,
+  subtitle,
+  icon,
+  actions,
+  children,
 }: {
-  title: string; subtitle?: string; icon?: ReactNode; actions?: ReactNode; children: ReactNode;
+  title: string;
+  subtitle?: string;
+  icon?: ReactNode;
+  actions?: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-elevated">
       <div className="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
         <div className="flex items-center gap-3">
-          {icon && <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary">{icon}</span>}
+          {icon && (
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary">
+              {icon}
+            </span>
+          )}
           <div>
             <h3 className="text-[15px] font-semibold tracking-tight">{title}</h3>
             {subtitle && <p className="text-[12px] text-muted-foreground">{subtitle}</p>}
@@ -63,7 +79,5 @@ export function Panel({
 }
 
 export function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="p-8 text-center text-[12.5px] text-muted-foreground">{message}</div>
-  );
+  return <div className="p-8 text-center text-[12.5px] text-muted-foreground">{message}</div>;
 }

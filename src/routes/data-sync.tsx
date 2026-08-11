@@ -18,7 +18,10 @@ export const Route = createFileRoute("/data-sync")({
   head: () => ({
     meta: [
       { title: "Data Sync · Voltline" },
-      { name: "description", content: "Browse remote catalogs, sync marts and manage the DuckDB warehouse." },
+      {
+        name: "description",
+        content: "Browse remote catalogs, sync marts and manage the DuckDB warehouse.",
+      },
     ],
   }),
   component: DataSyncPage,
@@ -30,7 +33,9 @@ function DataSyncPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  useEffect(() => { setApiReady(hasApiKey()); }, []);
+  useEffect(() => {
+    setApiReady(hasApiKey());
+  }, []);
   useEffect(() => {
     setUser(getCurrentUser());
     setAuthChecked(true);
@@ -58,7 +63,11 @@ function DataSyncPage() {
       description="Browse the remote Glue catalog, load tables and keep DuckDB marts in sync with your lakehouse."
       meta={
         <div className="flex items-center gap-2">
-          <Button variant="outline" disabled={!apiReady || refresh.isPending} onClick={() => refresh.mutate()}>
+          <Button
+            variant="outline"
+            disabled={!apiReady || refresh.isPending}
+            onClick={() => refresh.mutate()}
+          >
             <RefreshCcw className={`h-4 w-4 ${refresh.isPending ? "animate-spin" : ""}`} />
             Refresh views
           </Button>
@@ -69,7 +78,12 @@ function DataSyncPage() {
       <StatusStrip apiReady={apiReady} />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <RemoteBrowserPanel apiReady={apiReady} onSynced={() => { /* handled via query invalidation */ }} />
+        <RemoteBrowserPanel
+          apiReady={apiReady}
+          onSynced={() => {
+            /* handled via query invalidation */
+          }}
+        />
         <LocalTablesPanel apiReady={apiReady} />
       </div>
 

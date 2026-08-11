@@ -32,7 +32,11 @@ const YES_STYLE = { fill: "FFDCFCE7", font: "FF166534" };
 const NO_STYLE = { fill: "FFF3F4F6", font: "FF6B7280" };
 const FLAG_STYLE = { fill: "FFFEE2E2", font: "FF991B1B" };
 
-const solid = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
+const solid = (argb: string) => ({
+  type: "pattern" as const,
+  pattern: "solid" as const,
+  fgColor: { argb },
+});
 const thinBorder = {
   top: { style: "thin" as const, color: { argb: C.border } },
   left: { style: "thin" as const, color: { argb: C.border } },
@@ -64,7 +68,12 @@ const COLUMNS: ColDef[] = [
   { header: "Risk band", width: 12, type: "text", value: (e) => e.risk_band },
   { header: "Driver score", width: 11, type: "num2", value: (e) => e.contextual_score },
   { header: "Driving score", width: 12, type: "pct100", value: (e) => e.percentile },
-  { header: "Score band", width: 10, type: "text", value: (e) => e.extras.rawScoreBand ?? e.risk_band },
+  {
+    header: "Score band",
+    width: 10,
+    type: "text",
+    value: (e) => e.extras.rawScoreBand ?? e.risk_band,
+  },
   { header: "Trips driven", width: 12, type: "int", value: (e) => e.trips_30d },
   { header: "Trips scored", width: 12, type: "int", value: (e) => e.extras.tripsScored },
   { header: "Efficiency (kWh/km)", width: 17, type: "num2", value: (e) => e.efficiency_kwh_per_km },
@@ -77,8 +86,18 @@ const COLUMNS: ColDef[] = [
   { header: "Distraction density", width: 16, type: "num2", value: (e) => e.distraction },
   { header: "Dominant risk", width: 16, type: "text", value: (e) => e.extras.dominantRisk },
   { header: "Score trend", width: 12, type: "text", value: (e) => e.extras.scoreTrend },
-  { header: "Incentive eligible", width: 15, type: "text", value: (e) => (e.extras.incentiveEligible ? "Yes" : "No") },
-  { header: "Needs review", width: 13, type: "text", value: (e) => (e.extras.reviewRequired ? "Yes" : "No") },
+  {
+    header: "Incentive eligible",
+    width: 15,
+    type: "text",
+    value: (e) => (e.extras.incentiveEligible ? "Yes" : "No"),
+  },
+  {
+    header: "Needs review",
+    width: 13,
+    type: "text",
+    value: (e) => (e.extras.reviewRequired ? "Yes" : "No"),
+  },
   { header: "Coaching module", width: 22, type: "text", value: (e) => e.extras.coachingModule },
   { header: "Coaching trigger", width: 26, type: "text", value: (e) => e.extras.coachingTrigger },
   { header: "Snapshot", width: 13, type: "text", value: (e) => e.extras.snapshotDate },
@@ -92,7 +111,12 @@ function setCellFill(cell: Cell, fillArgb: string, fontArgb: string, bold = fals
   cell.font = { color: { argb: fontArgb }, bold, size: 10, name: "Calibri" };
 }
 
-function buildLeaderboardSheet(ws: Worksheet, title: string, subtitle: string, entries: DriverLeaderboardEntry[]) {
+function buildLeaderboardSheet(
+  ws: Worksheet,
+  title: string,
+  subtitle: string,
+  entries: DriverLeaderboardEntry[],
+) {
   const lastColLetter = ws.getColumn(COLUMNS.length).letter;
 
   // Title band (row 1) + subtitle (row 2), merged across all columns.
@@ -119,7 +143,11 @@ function buildLeaderboardSheet(ws: Worksheet, title: string, subtitle: string, e
     const cell = headerRow.getCell(i + 1);
     cell.value = col.header;
     setCellFill(cell, C.brandDeep, C.white, true);
-    cell.alignment = { vertical: "middle", horizontal: col.type === "text" ? "left" : "center", wrapText: true };
+    cell.alignment = {
+      vertical: "middle",
+      horizontal: col.type === "text" ? "left" : "center",
+      wrapText: true,
+    };
     cell.border = thinBorder;
     ws.getColumn(i + 1).width = col.width;
   });
@@ -161,7 +189,9 @@ function buildLeaderboardSheet(ws: Worksheet, title: string, subtitle: string, e
   });
 
   // Freeze title + header, enable filter on the header row.
-  ws.views = [{ state: "frozen", xSplit: 2, ySplit: headerRowIdx, topLeftCell: `C${headerRowIdx + 1}` }];
+  ws.views = [
+    { state: "frozen", xSplit: 2, ySplit: headerRowIdx, topLeftCell: `C${headerRowIdx + 1}` },
+  ];
   ws.autoFilter = {
     from: { row: headerRowIdx, column: 1 },
     to: { row: headerRowIdx, column: COLUMNS.length },
@@ -276,11 +306,19 @@ export async function exportDriverWorkbook(entries: DriverLeaderboardEntry[]): P
 
   const now = new Date();
   const stamp = now.toLocaleString(undefined, {
-    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const generatedAt = `Generated ${stamp} · ${entries.length} drivers`;
 
-  buildSummarySheet(workbook.addWorksheet("Summary", { properties: { tabColor: { argb: C.brand } } }), entries, generatedAt);
+  buildSummarySheet(
+    workbook.addWorksheet("Summary", { properties: { tabColor: { argb: C.brand } } }),
+    entries,
+    generatedAt,
+  );
 
   buildLeaderboardSheet(
     workbook.addWorksheet("Leaderboard", { properties: { tabColor: { argb: C.brandDeep } } }),

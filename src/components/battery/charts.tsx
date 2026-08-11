@@ -7,10 +7,22 @@ import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const fmt = (v: number | null | undefined, dec = 0) =>
-  v == null || !Number.isFinite(v) ? "—" : dec === 0 ? Math.round(v).toLocaleString() : v.toFixed(dec);
+  v == null || !Number.isFinite(v)
+    ? "—"
+    : dec === 0
+      ? Math.round(v).toLocaleString()
+      : v.toFixed(dec);
 
 /** Segmented-control button used across toolbars + filters. */
-export function Seg({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+export function Seg({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
   return (
     <button
       type="button"
@@ -40,7 +52,9 @@ export function Panel({
   children: ReactNode;
 }) {
   return (
-    <div className={cn("rounded-2xl border border-border/60 bg-card p-5 shadow-elevated", className)}>
+    <div
+      className={cn("rounded-2xl border border-border/60 bg-card p-5 shadow-elevated", className)}
+    >
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <div className="section-label">{title}</div>
@@ -55,7 +69,10 @@ export function Panel({
 
 /* ---------- sparkline ---------- */
 export function spark(vals: (number | null)[], w: number, h: number) {
-  const valid = vals.map((v, i) => ({ v, i })).filter((o) => o.v != null) as { v: number; i: number }[];
+  const valid = vals.map((v, i) => ({ v, i })).filter((o) => o.v != null) as {
+    v: number;
+    i: number;
+  }[];
   if (!valid.length) return { line: "", area: "" };
   const nums = valid.map((o) => o.v);
   const mn = Math.min(...nums);
@@ -70,15 +87,39 @@ export function spark(vals: (number | null)[], w: number, h: number) {
   });
   const x0 = (valid[0].i / (n - 1)) * w;
   const x1 = (valid[valid.length - 1].i / (n - 1)) * w;
-  return { line: pts.join(" "), area: `${x0.toFixed(1)},${h} ${pts.join(" ")} ${x1.toFixed(1)},${h}` };
+  return {
+    line: pts.join(" "),
+    area: `${x0.toFixed(1)},${h} ${pts.join(" ")} ${x1.toFixed(1)},${h}`,
+  };
 }
 
-export function Sparkline({ vals, color, w, h, lineOnly }: { vals: (number | null)[]; color: string; w: number; h: number; lineOnly?: boolean }) {
+export function Sparkline({
+  vals,
+  color,
+  w,
+  h,
+  lineOnly,
+}: {
+  vals: (number | null)[];
+  color: string;
+  w: number;
+  h: number;
+  lineOnly?: boolean;
+}) {
   const s = spark(vals, w, h);
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
-      {!lineOnly && s.area && <polyline points={s.area} fill={color} fillOpacity={0.11} stroke="none" />}
-      <polyline points={s.line} fill="none" stroke={color} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" />
+      {!lineOnly && s.area && (
+        <polyline points={s.area} fill={color} fillOpacity={0.11} stroke="none" />
+      )}
+      <polyline
+        points={s.line}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.7}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -107,12 +148,21 @@ export function Donut({
 
   const activeSeg = hoveredLabel ? segments.find((s) => s.label === hoveredLabel) : null;
   const displayTop = activeSeg ? String(activeSeg.value) : centerTop;
-  const displaySub = activeSeg ? `${activeSeg.label} (${Math.round((activeSeg.value / total) * 100)}%)` : centerSub;
+  const displaySub = activeSeg
+    ? `${activeSeg.label} (${Math.round((activeSeg.value / total) * 100)}%)`
+    : centerSub;
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="color-mix(in oklab,var(--muted-foreground) 14%,transparent)" strokeWidth={thickness} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="color-mix(in oklab,var(--muted-foreground) 14%,transparent)"
+          strokeWidth={thickness}
+        />
         {segments.map((s) => {
           const len = (s.value / total) * c;
           const isHovered = hoveredLabel === s.label;
@@ -142,8 +192,14 @@ export function Donut({
       </svg>
       {(displayTop || displaySub) && (
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          {displayTop && <span className="num text-[22px] font-semibold leading-none">{displayTop}</span>}
-          {displaySub && <span className="mt-1 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground text-center px-2">{displaySub}</span>}
+          {displayTop && (
+            <span className="num text-[22px] font-semibold leading-none">{displayTop}</span>
+          )}
+          {displaySub && (
+            <span className="mt-1 text-[10px] uppercase tracking-wider font-semibold text-muted-foreground text-center px-2">
+              {displaySub}
+            </span>
+          )}
         </div>
       )}
     </div>
@@ -151,7 +207,15 @@ export function Donut({
 }
 
 /* ---------- horizontal bar row ---------- */
-export function HBar({ label, value, max, color, suffix, onClick, active }: {
+export function HBar({
+  label,
+  value,
+  max,
+  color,
+  suffix,
+  onClick,
+  active,
+}: {
   label: string;
   value: number;
   max: number;
@@ -174,17 +238,30 @@ export function HBar({ label, value, max, color, suffix, onClick, active }: {
     >
       <div className="mb-1 flex items-center justify-between text-[11.5px]">
         <span className="font-medium">{label}</span>
-        <span className="num font-semibold">{fmt(value, value < 100 ? 1 : 0)}{suffix}</span>
+        <span className="num font-semibold">
+          {fmt(value, value < 100 ? 1 : 0)}
+          {suffix}
+        </span>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full" style={{ background: "color-mix(in oklab,var(--muted-foreground) 16%,transparent)" }}>
-        <div className="h-full rounded-full transition-all" style={{ width: `${w}%`, background: color }} />
+      <div
+        className="h-1.5 overflow-hidden rounded-full"
+        style={{ background: "color-mix(in oklab,var(--muted-foreground) 16%,transparent)" }}
+      >
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${w}%`, background: color }}
+        />
       </div>
     </button>
   );
 }
 
 /* ---------- grouped vertical bars (one group per category) ---------- */
-export function VBars({ groups, max, height = 150 }: {
+export function VBars({
+  groups,
+  max,
+  height = 150,
+}: {
   groups: { label: string; bars: { value: number; color: string; tip?: string }[] }[];
   max: number;
   height?: number;
@@ -195,13 +272,27 @@ export function VBars({ groups, max, height = 150 }: {
         <div key={g.label} className="flex h-full min-w-[64px] flex-1 flex-col">
           <div className="flex flex-1 items-end justify-center gap-1.5">
             {g.bars.map((b, i) => (
-              <div key={i} className="flex h-full flex-1 flex-col items-center justify-end" title={b.tip}>
-                <span className="num mb-1 text-[10.5px] font-semibold">{fmt(b.value, b.value < 100 ? 1 : 0)}</span>
-                <div className="w-full max-w-[26px] rounded-t-md" style={{ height: `${Math.max(2, (b.value / (max || 1)) * 100)}%`, background: b.color }} />
+              <div
+                key={i}
+                className="flex h-full flex-1 flex-col items-center justify-end"
+                title={b.tip}
+              >
+                <span className="num mb-1 text-[10.5px] font-semibold">
+                  {fmt(b.value, b.value < 100 ? 1 : 0)}
+                </span>
+                <div
+                  className="w-full max-w-[26px] rounded-t-md"
+                  style={{
+                    height: `${Math.max(2, (b.value / (max || 1)) * 100)}%`,
+                    background: b.color,
+                  }}
+                />
               </div>
             ))}
           </div>
-          <div className="mt-2 border-t border-border/60 pt-2 text-center text-[11.5px] font-semibold">{g.label}</div>
+          <div className="mt-2 border-t border-border/60 pt-2 text-center text-[11.5px] font-semibold">
+            {g.label}
+          </div>
         </div>
       ))}
     </div>

@@ -6,9 +6,12 @@ export const readinessKeys = {
   all: ["site-readiness"] as const,
   sites: () => [...readinessKeys.all, "sites"] as const,
   checklists: () => [...readinessKeys.all, "checklists"] as const,
-  matrix: (siteId?: string, projectId?: string) => [...readinessKeys.all, "matrix", siteId, projectId] as const,
-  pending: (siteId?: string, projectId?: string) => [...readinessKeys.all, "pending", siteId, projectId] as const,
-  dashboardStats: (projectId?: string) => [...readinessKeys.all, "dashboardStats", projectId] as const,
+  matrix: (siteId?: string, projectId?: string) =>
+    [...readinessKeys.all, "matrix", siteId, projectId] as const,
+  pending: (siteId?: string, projectId?: string) =>
+    [...readinessKeys.all, "pending", siteId, projectId] as const,
+  dashboardStats: (projectId?: string) =>
+    [...readinessKeys.all, "dashboardStats", projectId] as const,
   globalStats: () => [...readinessKeys.all, "globalStats"] as const,
   snapshots: () => [...readinessKeys.all, "snapshots"] as const,
 };

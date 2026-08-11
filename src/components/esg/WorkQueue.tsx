@@ -12,7 +12,15 @@ import {
   type ComplianceRecord,
   type EsgState,
 } from "@/lib/esg-data";
-import { CriticalBeam, EmptyState, Gloss, StateDot, StatePill, WithheldPill, useEsg } from "./primitives";
+import {
+  CriticalBeam,
+  EmptyState,
+  Gloss,
+  StateDot,
+  StatePill,
+  WithheldPill,
+  useEsg,
+} from "./primitives";
 
 type StateFilter = "all" | EsgState;
 
@@ -78,7 +86,9 @@ export function WorkQueue({
             aria-pressed={filter === c.key}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11.5px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
-              filter === c.key ? "nav-pill-active" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              filter === c.key
+                ? "nav-pill-active"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
             )}
           >
             {c.label}
@@ -154,7 +164,10 @@ export function WorkQueue({
                     <td className="px-3 py-2.5 text-right">
                       <span
                         className="num text-[13px] font-semibold"
-                        style={{ color: st === "valid" ? "var(--color-muted-foreground)" : STATE_META[st].color }}
+                        style={{
+                          color:
+                            st === "valid" ? "var(--color-muted-foreground)" : STATE_META[st].color,
+                        }}
                       >
                         {countdownLabel(r)}
                       </span>

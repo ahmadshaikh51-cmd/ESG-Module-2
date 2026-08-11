@@ -89,13 +89,13 @@ function resolveInsightDomain(raw: GraphQlInsight): string {
 export function mapGraphQlInsight(raw: GraphQlInsight, index: number): DailyInsight {
   const dom = resolveInsightDomain(raw);
   const id = `graphql-insight-${dom}-${index}`;
-  
+
   // Severity mapping (mart uses critical / high / medium / low)
   let severity: InsightSeverity = "info";
   const sev = raw.severity.toLowerCase();
   if (sev === "critical") severity = "critical";
   else if (sev === "high" || sev === "medium" || sev === "warning") severity = "warning";
-  
+
   // Audience mapping based on domain
   let audience: InsightAudience[] = ["operations"];
   if (dom === "driver" || dom === "route" || dom === "drivers" || dom === "routes") {
@@ -107,13 +107,17 @@ export function mapGraphQlInsight(raw: GraphQlInsight, index: number): DailyInsi
   // Recommended actions mapping
   let action = "Review operational guidelines and verify asset performance in respective module.";
   if (dom === "battery") {
-    action = "Schedule battery diagnostics, inspect cell balancing boards, and review charge cycle logs.";
+    action =
+      "Schedule battery diagnostics, inspect cell balancing boards, and review charge cycle logs.";
   } else if (dom === "thermal") {
-    action = "Inspect coolant loops, verify pump performance, and audit BMS high-temperature warning thresholds.";
+    action =
+      "Inspect coolant loops, verify pump performance, and audit BMS high-temperature warning thresholds.";
   } else if (dom === "driver") {
-    action = "Open Driver Intelligence for coaching plan, check regen usage levels, and audit acceleration profiles.";
+    action =
+      "Open Driver Intelligence for coaching plan, check regen usage levels, and audit acceleration profiles.";
   } else if (dom === "route") {
-    action = "Compare route segment energy intensity against corridor baseline, check depot dispatch times, and review congestion delays.";
+    action =
+      "Compare route segment energy intensity against corridor baseline, check depot dispatch times, and review congestion delays.";
   }
 
   // Deep link mapping
@@ -135,24 +139,29 @@ export function mapGraphQlInsight(raw: GraphQlInsight, index: number): DailyInsi
       : raw.entityCount > 0
         ? raw.entityCount
         : null;
-  
+
   // Override baseline value for thermal domain to 40, and pack imbalance to 150
-  const overrideBaseline = dom === "thermal"
-    ? 40
-    : raw.insightTitle.toLowerCase().includes("pack imbalance")
-      ? 150
-      : raw.baselineValue;
-  const baseValFmt = typeof overrideBaseline === "number" ? parseFloat(overrideBaseline.toFixed(2)) : overrideBaseline;
-  
+  const overrideBaseline =
+    dom === "thermal"
+      ? 40
+      : raw.insightTitle.toLowerCase().includes("pack imbalance")
+        ? 150
+        : raw.baselineValue;
+  const baseValFmt =
+    typeof overrideBaseline === "number"
+      ? parseFloat(overrideBaseline.toFixed(2))
+      : overrideBaseline;
+
   const metric =
     typeof metricValFmt === "number" && raw.metricValue !== null
       ? `${metricValFmt} ${raw.metricUnit}`
       : raw.entityCount > 0
         ? `${raw.entityCount} buses`
         : "—";
-  const vsBaseline = overrideBaseline !== undefined && overrideBaseline !== null
-    ? `vs ${baseValFmt} ${raw.metricUnit}`
-    : "no baseline";
+  const vsBaseline =
+    overrideBaseline !== undefined && overrideBaseline !== null
+      ? `vs ${baseValFmt} ${raw.metricUnit}`
+      : "no baseline";
 
   // Calculate delta percentage
   let deltaPct = 0;
@@ -172,7 +181,12 @@ export function mapGraphQlInsight(raw: GraphQlInsight, index: number): DailyInsi
       : "flat";
 
   // Generate a realistic 30-day trend chart
-  const trend = generateTrend(metricValue, overrideBaseline ?? metricValue * 0.9, trendDirection, 30);
+  const trend = generateTrend(
+    metricValue,
+    overrideBaseline ?? metricValue * 0.9,
+    trendDirection,
+    30,
+  );
   const spark = trend.slice(-14).map((t) => t.value);
 
   // Generate supporting data
@@ -181,7 +195,7 @@ export function mapGraphQlInsight(raw: GraphQlInsight, index: number): DailyInsi
     raw.entityCount,
     metricValue,
     overrideBaseline ?? 0,
-    raw.metricUnit
+    raw.metricUnit,
   );
 
   return {
@@ -211,34 +225,34 @@ function generateTrend(
   metricValue: number,
   baselineValue: number,
   trendDirection: string,
-  days = 30
+  days = 30,
 ): { date: string; value: number }[] {
   const points: { date: string; value: number }[] = [];
   const base = baselineValue || metricValue * 0.9;
   const target = metricValue;
-  
+
   for (let i = 0; i < days; i++) {
     // Linear interpolation
     const t = i / (days - 1);
     let val = base + (target - base) * t;
-    
+
     // Add sinusoidal and random fluctuations for high fidelity
     const noise = (Math.sin(i * 0.5) * 0.03 + (Math.random() - 0.5) * 0.04) * val;
     val += noise;
-    
+
     // Generate dates backwards from today
     const dateObj = new Date();
     dateObj.setDate(dateObj.getDate() - (days - 1 - i));
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const day = String(dateObj.getDate()).padStart(2, "0");
     const dateStr = `${month}-${day}`;
-    
+
     points.push({
       date: dateStr,
       value: parseFloat(val.toFixed(2)),
     });
   }
-  
+
   return points;
 }
 
@@ -250,13 +264,13 @@ function generateEvidence(
   entityCount: number,
   metricValue: number,
   baselineValue: number,
-  metricUnit: string
+  metricUnit: string,
 ): {
   evidence: Record<string, string | number>[];
   columns: { key: string; header: string }[];
 } {
   const dom = domain.toLowerCase();
-  
+
   if (dom === "battery") {
     const cols = [
       { key: "Asset", header: "Asset ID" },
@@ -269,15 +283,16 @@ function generateEvidence(
     const rows = Array.from({ length: count }, (_, i) => {
       const busNum = `Bus ${String(100 + i * 23 + 7).padStart(4, "0")}`;
       const depot = depots[i % depots.length];
-      const val = metricUnit === "%" 
-        ? `${(metricValue - i * 1.5).toFixed(1)}%` 
-        : `${Math.round(metricValue / count - i)} imbalances`;
+      const val =
+        metricUnit === "%"
+          ? `${(metricValue - i * 1.5).toFixed(1)}%`
+          : `${Math.round(metricValue / count - i)} imbalances`;
       const status = i === 0 ? "Critical" : "Warning";
       return { Asset: busNum, Depot: depot, Value: val, Status: status };
     });
     return { evidence: rows, columns: cols };
   }
-  
+
   if (dom === "thermal") {
     const cols = [
       { key: "Asset", header: "Asset ID" },
@@ -296,7 +311,7 @@ function generateEvidence(
     });
     return { evidence: rows, columns: cols };
   }
-  
+
   if (dom === "driver") {
     const cols = [
       { key: "Driver", header: "Driver Name" },
@@ -310,13 +325,13 @@ function generateEvidence(
       const name = drivers[i % drivers.length];
       const trips = 12 - i * 2;
       const val = `${(metricValue - i * 0.05).toFixed(2)} kWh/km`;
-      const pct = (((metricValue - i * 0.05) - baselineValue) / (baselineValue || 1) * 100);
+      const pct = ((metricValue - i * 0.05 - baselineValue) / (baselineValue || 1)) * 100;
       const delta = `${pct >= 0 ? "+" : ""}${pct.toFixed(0)}%`;
       return { Driver: name, Trips: trips, Value: val, Delta: delta };
     });
     return { evidence: rows, columns: cols };
   }
-  
+
   if (dom === "route") {
     const cols = [
       { key: "Route", header: "Route Code" },
@@ -330,22 +345,26 @@ function generateEvidence(
       const code = routes[i % routes.length];
       const trips = 18 - i * 3;
       const val = `${(metricValue - i * 0.03).toFixed(2)} kWh/km`;
-      const pct = (((metricValue - i * 0.03) - baselineValue) / (baselineValue || 1) * 100);
+      const pct = ((metricValue - i * 0.03 - baselineValue) / (baselineValue || 1)) * 100;
       const delta = `${pct >= 0 ? "+" : ""}${pct.toFixed(0)}%`;
       return { Route: code, Trips: trips, Value: val, Delta: delta };
     });
     return { evidence: rows, columns: cols };
   }
-  
+
   return {
     evidence: [
-      { Metric: `${metricValue} ${metricUnit}`, Baseline: `${baselineValue} ${metricUnit}`, Entities: entityCount || 1 }
+      {
+        Metric: `${metricValue} ${metricUnit}`,
+        Baseline: `${baselineValue} ${metricUnit}`,
+        Entities: entityCount || 1,
+      },
     ],
     columns: [
       { key: "Metric", header: "Metric Value" },
       { key: "Baseline", header: "Baseline Value" },
-      { key: "Entities", header: "Entities Count" }
-    ]
+      { key: "Entities", header: "Entities Count" },
+    ],
   };
 }
 
@@ -387,7 +406,7 @@ export function mapInsightTitleForDetails(title: string): string {
  */
 export async function fetchInsightsFact(
   insightTitle: string,
-  limit = 100
+  limit = 100,
 ): Promise<GraphQlInsightFact[]> {
   const sql = `
     SELECT 

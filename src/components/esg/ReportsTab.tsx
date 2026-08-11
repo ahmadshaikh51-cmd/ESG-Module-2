@@ -103,18 +103,23 @@ function makePreset(key: string): DateRange {
       return { start: s, end: e, presetKey: "last30", label: "Last 30 Days" };
     case "lastQuarter": {
       const qStart = Math.floor(TODAY.getMonth() / 3) * 3 - 3;
-      s.setMonth(qStart); s.setDate(1);
-      e.setMonth(qStart + 3); e.setDate(0);
+      s.setMonth(qStart);
+      s.setDate(1);
+      e.setMonth(qStart + 3);
+      e.setDate(0);
       return { start: s, end: e, presetKey: "lastQuarter", label: "Last Quarter" };
     }
     case "thisYear":
-      s.setMonth(0); s.setDate(1);
-      e.setMonth(11); e.setDate(31);
+      s.setMonth(0);
+      s.setDate(1);
+      e.setMonth(11);
+      e.setDate(31);
       return { start: s, end: e, presetKey: "thisYear", label: "This Year" };
     default: {
       // thisMonth
       s.setDate(1);
-      e.setMonth(TODAY.getMonth() + 1); e.setDate(0);
+      e.setMonth(TODAY.getMonth() + 1);
+      e.setDate(0);
       return { start: s, end: e, presetKey: "thisMonth", label: "This Month" };
     }
   }
@@ -557,19 +562,12 @@ function ExportFlow({ def, onDone }: { def: ReportDef; onDone: () => void }) {
   );
 }
 
-function InternalPreview({
-  def,
-  reportFilter,
-}: {
-  def: ReportDef;
-  reportFilter: ReportFilter;
-}) {
+function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: ReportFilter }) {
   const { scope, period, audience, audit, monitoring } = useEsg();
   const external = audience === "external";
 
   // Derive an overriding scope from the site filter
-  const filteredScope =
-    reportFilter.siteId === "all" ? scope : { entityId: reportFilter.siteId };
+  const filteredScope = reportFilter.siteId === "all" ? scope : { entityId: reportFilter.siteId };
   const { start: drStart, end: drEnd } = reportFilter.dateRange;
 
   /** True if a date falls within the filter range (inclusive) */
@@ -669,7 +667,10 @@ function InternalPreview({
           {AMR_FIELDS.map((f) => {
             const v = vals[f.id];
             return (
-              <div key={f.id} className="rounded-xl border border-border/50 bg-muted/20 px-3.5 py-3">
+              <div
+                key={f.id}
+                className="rounded-xl border border-border/50 bg-muted/20 px-3.5 py-3"
+              >
                 <div className="truncate text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   {f.label}
                 </div>
@@ -756,9 +757,9 @@ function InternalPreview({
             </div>
           ))}
           <p className="pt-1 text-[11.5px] leading-relaxed text-muted-foreground">
-            Generated per project, rolled up to group — the roll-up is native to the report, mirroring
-            the dashboard. Disclosure format follows <A t="SEBI" /> <A t="BRSR" /> as configured in
-            Masters.
+            Generated per project, rolled up to group — the roll-up is native to the report,
+            mirroring the dashboard. Disclosure format follows <A t="SEBI" /> <A t="BRSR" /> as
+            configured in Masters.
           </p>
         </div>
       </div>
@@ -826,7 +827,6 @@ function InternalPreview({
     </div>
   );
 }
-
 
 /* ------------------------------- upload zone -------------------------------- */
 
@@ -1060,7 +1060,11 @@ export function ReportsTab() {
             </Button>
           </div>
         </div>
-        {loading ? <LoadingRows rows={4} /> : <InternalPreview def={def} reportFilter={reportFilter} />}
+        {loading ? (
+          <LoadingRows rows={4} />
+        ) : (
+          <InternalPreview def={def} reportFilter={reportFilter} />
+        )}
       </PanelCard>
 
       {audience === "internal" && (

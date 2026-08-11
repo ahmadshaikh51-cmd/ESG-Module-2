@@ -19,10 +19,7 @@ import {
   curveExplainability,
   thermalCurveData,
 } from "@/lib/charger-explainability";
-import type {
-  BusOperationalHealthDaily,
-  ChargerBusCompatibility,
-} from "@/lib/charger-data";
+import type { BusOperationalHealthDaily, ChargerBusCompatibility } from "@/lib/charger-data";
 import { ChargingCurveHero } from "./ChargingCurveHero";
 import { fmt, GlassPanel, PanelHead, RiskPill } from "./primitives";
 
@@ -77,7 +74,9 @@ export function ExplainableBusIntelligence({
         className={`scroll-mt-28 space-y-4 ${highlightDrill ? "rounded-2xl ring-2 ring-primary/40 ring-offset-2 ring-offset-background" : ""}`}
       >
         {highlightDrill && (
-          <p className="text-[11px] font-medium text-primary">Opened from risk ranking · investigate bus</p>
+          <p className="text-[11px] font-medium text-primary">
+            Opened from risk ranking · investigate bus
+          </p>
         )}
         <GlassPanel className="overflow-hidden border-primary/25">
           <PanelHead
@@ -132,9 +131,7 @@ export function ExplainableBusIntelligence({
               title="Charging curve evolution"
               sub="SOC % vs power — CC · CV · taper · thermal stress zones"
             />
-            {curve && curve.series.length > 0 ? (
-              <ChargingCurveHero series={curve.series} />
-            ) : null}
+            {curve && curve.series.length > 0 ? <ChargingCurveHero series={curve.series} /> : null}
             <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
               <span className="inline-flex items-center gap-1">
                 <span className="h-2 w-4 rounded-sm bg-primary/40" /> CC phase
@@ -153,7 +150,9 @@ export function ExplainableBusIntelligence({
                 <div
                   key={m.key}
                   className={`rounded-lg border px-3 py-2.5 ${
-                    m.impact.includes("earlier") || m.impact.includes("Elevated") || m.impact.includes("Abnormal")
+                    m.impact.includes("earlier") ||
+                    m.impact.includes("Elevated") ||
+                    m.impact.includes("Abnormal")
                       ? "border-destructive/30 bg-destructive/5"
                       : "border-border/40 bg-muted/10"
                   }`}
@@ -164,7 +163,9 @@ export function ExplainableBusIntelligence({
                       {fmt(m.value, m.unit === "%" ? 0 : 1)} {m.unit}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground">{m.impact}</p>
+                  <p className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                    {m.impact}
+                  </p>
                 </div>
               ))}
             </div>
@@ -191,7 +192,14 @@ export function ExplainableBusIntelligence({
                     fillOpacity={0.35}
                     {...CHART_ENTER}
                   />
-                  <Line yAxisId="p" type="monotone" dataKey="power" stroke="#38bdf8" dot={false} strokeWidth={2} />
+                  <Line
+                    yAxisId="p"
+                    type="monotone"
+                    dataKey="power"
+                    stroke="#38bdf8"
+                    dot={false}
+                    strokeWidth={2}
+                  />
                   <defs>
                     <linearGradient id="thermalGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#f87171" stopOpacity={0.5} />
@@ -220,7 +228,9 @@ export function ExplainableBusIntelligence({
                   >
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="font-medium num">{c.charger_id}</span>
-                      <span className="num text-destructive">{fmt(c.performance_delta_pct, 0)}%</span>
+                      <span className="num text-destructive">
+                        {fmt(c.performance_delta_pct, 0)}%
+                      </span>
                     </div>
                     <p className="mt-1 text-[10.5px] text-muted-foreground">{c.headline}</p>
                   </div>

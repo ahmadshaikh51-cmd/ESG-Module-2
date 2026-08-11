@@ -360,10 +360,42 @@ const INITIAL_MAINTENANCE: MaintenanceItem[] = [
 ];
 
 const INITIAL_TOD_SESSIONS: TodSession[] = [
-  { id: "tod_01", vehicleNumber: "MH-31-EQ-1002", chargerId: "TV-KHA-01", hour: 10, durationHours: 2, demandKw: 150, costInr: 1800 },
-  { id: "tod_02", vehicleNumber: "MH-31-EQ-1005", chargerId: "TV-WAD-01", hour: 14, durationHours: 3, demandKw: 100, costInr: 3200 },
-  { id: "tod_03", vehicleNumber: "MH-02-FL-4001", chargerId: "TV-BKC-01", hour: 18, durationHours: 1.5, demandKw: 200, costInr: 4500 },
-  { id: "tod_04", vehicleNumber: "MH-31-EQ-1008", chargerId: "TV-KHA-02", hour: 6, durationHours: 4, demandKw: 90, costInr: 2400 },
+  {
+    id: "tod_01",
+    vehicleNumber: "MH-31-EQ-1002",
+    chargerId: "TV-KHA-01",
+    hour: 10,
+    durationHours: 2,
+    demandKw: 150,
+    costInr: 1800,
+  },
+  {
+    id: "tod_02",
+    vehicleNumber: "MH-31-EQ-1005",
+    chargerId: "TV-WAD-01",
+    hour: 14,
+    durationHours: 3,
+    demandKw: 100,
+    costInr: 3200,
+  },
+  {
+    id: "tod_03",
+    vehicleNumber: "MH-02-FL-4001",
+    chargerId: "TV-BKC-01",
+    hour: 18,
+    durationHours: 1.5,
+    demandKw: 200,
+    costInr: 4500,
+  },
+  {
+    id: "tod_04",
+    vehicleNumber: "MH-31-EQ-1008",
+    chargerId: "TV-KHA-02",
+    hour: 6,
+    durationHours: 4,
+    demandKw: 90,
+    costInr: 2400,
+  },
 ];
 
 const INITIAL_BILLS: BillReconciliation[] = [
@@ -421,7 +453,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
             return { ...item, slaCountdownSecs: item.slaCountdownSecs - 1 };
           }
           return item;
-        })
+        }),
       );
     }, 1000);
     return () => clearInterval(timer);
@@ -455,7 +487,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return c;
-      })
+      }),
     );
   };
 
@@ -472,7 +504,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return c;
-      })
+      }),
     );
   };
 
@@ -490,7 +522,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return c;
-      })
+      }),
     );
     // Simulate boot completion back to original state or available after 3 seconds
     setTimeout(() => {
@@ -503,7 +535,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
             };
           }
           return c;
-        })
+        }),
       );
     }, 3000);
   };
@@ -523,7 +555,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return c;
-      })
+      }),
     );
   };
 
@@ -538,7 +570,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return c;
-      })
+      }),
     );
   };
 
@@ -600,7 +632,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return s;
-      })
+      }),
     );
   };
 
@@ -609,7 +641,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
       prev.map((m) => {
         if (m.id === maintenanceId) {
           const updatedChecklist = m.checklist.map((c) =>
-            c.id === checklistId ? { ...c, checked: !c.checked } : c
+            c.id === checklistId ? { ...c, checked: !c.checked } : c,
           );
           return {
             ...m,
@@ -617,7 +649,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return m;
-      })
+      }),
     );
   };
 
@@ -627,7 +659,7 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
         if (m.id === maintenanceId) {
           const chargerId = m.chargerId;
           setChargers((cList) =>
-            cList.map((c) => (c.id === chargerId ? { ...c, status: "available" } : c))
+            cList.map((c) => (c.id === chargerId ? { ...c, status: "available" } : c)),
           );
           return {
             ...m,
@@ -636,14 +668,12 @@ export const ChargingSystemProvider: React.FC<{ children: React.ReactNode }> = (
           };
         }
         return m;
-      })
+      }),
     );
   };
 
   const approveBill = (billId: string) => {
-    setBills((prev) =>
-      prev.map((b) => (b.id === billId ? { ...b, status: "approved" } : b))
-    );
+    setBills((prev) => prev.map((b) => (b.id === billId ? { ...b, status: "approved" } : b)));
   };
 
   return (

@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { AlertTriangle, Flame, Search, ShieldAlert, Waves, X, Zap } from "lucide-react";
 import { ExportTableButton } from "@/components/insights/ExportTableButton";
@@ -13,7 +12,12 @@ const FLAGS = [
   { key: "high_temp_flag", label: "Thermal", icon: Flame, tone: "destructive" as const },
   { key: "voltage_instability_flag", label: "Voltage", icon: Zap, tone: "warning" as const },
   { key: "pack_imbalance_flag", label: "Imbalance", icon: Waves, tone: "warning" as const },
-  { key: "efficiency_anomaly_flag", label: "Efficiency", icon: ShieldAlert, tone: "destructive" as const },
+  {
+    key: "efficiency_anomaly_flag",
+    label: "Efficiency",
+    icon: ShieldAlert,
+    tone: "destructive" as const,
+  },
 ] as const;
 
 export function AnomalyTable({ trips, onSelect }: Props) {
@@ -22,7 +26,11 @@ export function AnomalyTable({ trips, onSelect }: Props) {
 
   const flagged = useMemo(() => {
     return trips.filter(
-      (t) => t.high_temp_flag || t.voltage_instability_flag || t.pack_imbalance_flag || t.efficiency_anomaly_flag,
+      (t) =>
+        t.high_temp_flag ||
+        t.voltage_instability_flag ||
+        t.pack_imbalance_flag ||
+        t.efficiency_anomaly_flag,
     );
   }, [trips]);
 
@@ -62,9 +70,13 @@ export function AnomalyTable({ trips, onSelect }: Props) {
           <h3 className="text-[15px] font-semibold tracking-tight">Diagnostics & anomalies</h3>
           <p className="mt-0.5 text-[12.5px] text-muted-foreground">
             {filteredFlagged.length !== flagged.length ? (
-              <span>Showing {filteredFlagged.length} filtered anomalies (out of {flagged.length})</span>
+              <span>
+                Showing {filteredFlagged.length} filtered anomalies (out of {flagged.length})
+              </span>
             ) : (
-              <span>{flagged.length} flagged trips out of {trips.length} in the current window.</span>
+              <span>
+                {flagged.length} flagged trips out of {trips.length} in the current window.
+              </span>
             )}
           </p>
         </div>
@@ -126,8 +138,8 @@ export function AnomalyTable({ trips, onSelect }: Props) {
             const activeClass = isActive
               ? "ring-2 scale-105 shadow-sm font-semibold opacity-100 animate-pulse-subtle"
               : isAnyActive
-              ? "opacity-40 hover:opacity-80 scale-95"
-              : "hover:scale-102 hover:shadow-sm opacity-100";
+                ? "opacity-40 hover:opacity-80 scale-95"
+                : "hover:scale-102 hover:shadow-sm opacity-100";
 
             return (
               <button
@@ -183,7 +195,9 @@ export function AnomalyTable({ trips, onSelect }: Props) {
                         <span
                           key={f.key}
                           className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10.5px] ring-1 ${
-                            f.tone === "destructive" ? "bg-destructive/10 text-destructive ring-destructive/20" : "bg-warning/10 text-warning ring-warning/20"
+                            f.tone === "destructive"
+                              ? "bg-destructive/10 text-destructive ring-destructive/20"
+                              : "bg-warning/10 text-warning ring-warning/20"
                           }`}
                         >
                           <f.icon className="h-2.5 w-2.5" />
@@ -192,7 +206,9 @@ export function AnomalyTable({ trips, onSelect }: Props) {
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-2.5 text-right num text-foreground">{t.kwh_per_km.toFixed(2)}</td>
+                  <td className="px-4 py-2.5 text-right num text-foreground">
+                    {t.kwh_per_km.toFixed(2)}
+                  </td>
                   <td className="px-4 py-2.5 text-right">
                     <SeverityPill score={sev} />
                   </td>
@@ -216,11 +232,15 @@ export function AnomalyTable({ trips, onSelect }: Props) {
 function SeverityPill({ score }: { score: number }) {
   const level = score >= 4 ? "Critical" : score >= 2 ? "High" : "Low";
   const tone =
-    level === "Critical" ? "bg-destructive/15 text-destructive ring-destructive/30"
-      : level === "High" ? "bg-warning/15 text-warning ring-warning/30"
-      : "bg-muted/60 text-muted-foreground ring-border";
+    level === "Critical"
+      ? "bg-destructive/15 text-destructive ring-destructive/30"
+      : level === "High"
+        ? "bg-warning/15 text-warning ring-warning/30"
+        : "bg-muted/60 text-muted-foreground ring-border";
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ${tone}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ${tone}`}
+    >
       <AlertTriangle className="h-3 w-3" /> {level}
     </span>
   );

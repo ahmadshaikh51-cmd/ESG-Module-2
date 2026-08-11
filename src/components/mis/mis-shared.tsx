@@ -11,7 +11,12 @@ export function StatusPill({ status }: { status: MergedTrip["status"] }) {
   };
   const label = { completed: "Completed", lost: "Lost", short: "Short", extra: "Extra" }[status];
   return (
-    <span className={cn("inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1", map[status])}>
+    <span
+      className={cn(
+        "inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold ring-1",
+        map[status],
+      )}
+    >
       {label}
     </span>
   );
@@ -32,7 +37,12 @@ export function MisTableShell({
 }) {
   return (
     <div className={cn("overflow-auto rounded-lg border border-border/60", className)}>
-      <table className={cn("mis-table w-full border-collapse text-[11.5px]", className?.includes("min-w-0") ? "min-w-0" : "min-w-[1280px]")}>
+      <table
+        className={cn(
+          "mis-table w-full border-collapse text-[11.5px]",
+          className?.includes("min-w-0") ? "min-w-0" : "min-w-[1280px]",
+        )}
+      >
         {children}
       </table>
     </div>

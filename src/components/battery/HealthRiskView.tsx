@@ -33,7 +33,10 @@ export function HealthRiskView({
   monthName: string;
   onSelectBus: (bus: BusRow) => void;
 }) {
-  const rows = useMemo(() => rowsForScope(dataset, monthName, company), [dataset, company, monthName]);
+  const rows = useMemo(
+    () => rowsForScope(dataset, monthName, company),
+    [dataset, company, monthName],
+  );
   const [band, setBand] = useState<"ALL" | Band>("ALL");
 
   const h = healthTotals(rows);
@@ -42,37 +45,75 @@ export function HealthRiskView({
     { label: "Monitor", value: h.monitor, color: "var(--warning)" },
     { label: "Attention", value: h.attention, color: "var(--destructive)" },
   ];
-  const avgHealth = rows.length ? rows.reduce((a, r) => a + (r.healthScore ?? 0), 0) / rows.length : 0;
+  const avgHealth = rows.length
+    ? rows.reduce((a, r) => a + (r.healthScore ?? 0), 0) / rows.length
+    : 0;
   const avgSpread = rows.length ? rows.reduce((a, r) => a + (r.spread ?? 0), 0) / rows.length : 0;
   const subzero = rows.reduce((a, r) => a + (r.subzero ?? 0), 0);
 
-  const filtered = useMemo(() => (band === "ALL" ? rows : rows.filter((r) => r.band === band)), [rows, band]);
+  const filtered = useMemo(
+    () => (band === "ALL" ? rows : rows.filter((r) => r.band === band)),
+    [rows, band],
+  );
   const watchlist = useMemo(
-    () => [...rows].filter((r) => r.band !== "HEALTHY").sort((a, b) => (a.healthScore ?? 0) - (b.healthScore ?? 0)),
+    () =>
+      [...rows]
+        .filter((r) => r.band !== "HEALTHY")
+        .sort((a, b) => (a.healthScore ?? 0) - (b.healthScore ?? 0)),
     [rows],
   );
 
   if (!rows.length) {
-    return <div className="rounded-2xl border border-border/60 bg-card p-12 text-center text-[13px] text-muted-foreground">No data for this scope.</div>;
+    return (
+      <div className="rounded-2xl border border-border/60 bg-card p-12 text-center text-[13px] text-muted-foreground">
+        No data for this scope.
+      </div>
+    );
   }
 
   return (
     <div className="chart-enter space-y-4">
       <div className="grid gap-4 sm:grid-cols-3">
-        <RiskStat Icon={HeartPulse} label="Avg health score" value={fmt(avgHealth, 1)} color="var(--success)" />
-        <RiskStat Icon={ShieldAlert} label="Needs attention" value={fmt(h.attention)} sub={`${h.monitor} monitor`} color="var(--destructive)" />
-        <RiskStat Icon={Thermometer} label="Avg cell spread" value={`${fmt(avgSpread, 0)} mV`} sub={`${subzero} sub-zero days`} color="var(--warning)" />
+        <RiskStat
+          Icon={HeartPulse}
+          label="Avg health score"
+          value={fmt(avgHealth, 1)}
+          color="var(--success)"
+        />
+        <RiskStat
+          Icon={ShieldAlert}
+          label="Needs attention"
+          value={fmt(h.attention)}
+          sub={`${h.monitor} monitor`}
+          color="var(--destructive)"
+        />
+        <RiskStat
+          Icon={Thermometer}
+          label="Avg cell spread"
+          value={`${fmt(avgSpread, 0)} mV`}
+          sub={`${subzero} sub-zero days`}
+          color="var(--warning)"
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.6fr]">
         {/* Health distribution */}
         <Panel title="Health distribution" subtitle={`${monthName} · ${h.total} buses`}>
           <div className="flex items-center gap-5">
-            <Donut segments={donut} centerTop={`${Math.round((h.healthy / (h.total || 1)) * 100)}%`} centerSub="healthy" />
+            <Donut
+              segments={donut}
+              centerTop={`${Math.round((h.healthy / (h.total || 1)) * 100)}%`}
+              centerSub="healthy"
+            />
             <div className="flex-1 space-y-2.5">
               <LegendRow color="var(--success)" label="Healthy" n={h.healthy} total={h.total} />
               <LegendRow color="var(--warning)" label="Monitor" n={h.monitor} total={h.total} />
-              <LegendRow color="var(--destructive)" label="Attention" n={h.attention} total={h.total} />
+              <LegendRow
+                color="var(--destructive)"
+                label="Attention"
+                n={h.attention}
+                total={h.total}
+              />
             </div>
           </div>
         </Panel>
@@ -85,7 +126,8 @@ export function HealthRiskView({
             <div className="flex gap-0.5 rounded-xl border border-border/60 bg-muted/40 p-[3px]">
               {BAND_FILTERS.map((b) => (
                 <Seg key={b.value} active={band === b.value} onClick={() => setBand(b.value)}>
-                  <span className="h-1.5 w-1.5 rounded-sm" style={{ background: b.dot }} /> {b.label}
+                  <span className="h-1.5 w-1.5 rounded-sm" style={{ background: b.dot }} />{" "}
+                  {b.label}
                 </Seg>
               ))}
             </div>
@@ -96,9 +138,14 @@ export function HealthRiskView({
       </div>
 
       {/* Watchlist */}
-      <Panel title="Risk watchlist" subtitle={`${watchlist.length} buses outside the healthy band · worst first · click for detail`}>
+      <Panel
+        title="Risk watchlist"
+        subtitle={`${watchlist.length} buses outside the healthy band · worst first · click for detail`}
+      >
         {watchlist.length === 0 ? (
-          <div className="py-8 text-center text-[13px] text-muted-foreground">All buses healthy in this scope.</div>
+          <div className="py-8 text-center text-[13px] text-muted-foreground">
+            All buses healthy in this scope.
+          </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-border/60">
             <table className="w-full min-w-[720px] border-collapse text-[12.5px]">
@@ -117,15 +164,31 @@ export function HealthRiskView({
                 {watchlist.slice(0, 60).map((r) => {
                   const bc = BAND_COLOR[r.band];
                   return (
-                    <tr key={r.reg} onClick={() => onSelectBus(r)} className="cursor-pointer border-b border-border/40 transition hover:bg-muted/40">
+                    <tr
+                      key={r.reg}
+                      onClick={() => onSelectBus(r)}
+                      className="cursor-pointer border-b border-border/40 transition hover:bg-muted/40"
+                    >
                       <td className="num whitespace-nowrap px-3.5 py-2 font-semibold">{r.reg}</td>
-                      <td className="whitespace-nowrap px-3.5 py-2 text-muted-foreground">{r.type}</td>
-                      <td className="num px-3.5 py-2 text-right font-semibold">{fmt(r.healthScore, 0)}</td>
+                      <td className="whitespace-nowrap px-3.5 py-2 text-muted-foreground">
+                        {r.type}
+                      </td>
+                      <td className="num px-3.5 py-2 text-right font-semibold">
+                        {fmt(r.healthScore, 0)}
+                      </td>
                       <td className="num px-3.5 py-2 text-right">{fmt(r.spread, 0)}</td>
                       <td className="num px-3.5 py-2 text-right">{fmt(r.peakTemp, 0)}</td>
-                      <td className="num px-3.5 py-2 text-right text-muted-foreground">{fmt(r.subzero, 0)}</td>
+                      <td className="num px-3.5 py-2 text-right text-muted-foreground">
+                        {fmt(r.subzero, 0)}
+                      </td>
                       <td className="px-3.5 py-2 text-center">
-                        <span className="inline-block rounded-md px-2 py-[2px] text-[10px] font-semibold" style={{ color: bc, background: `color-mix(in oklab,${bc} 13%,transparent)` }}>
+                        <span
+                          className="inline-block rounded-md px-2 py-[2px] text-[10px] font-semibold"
+                          style={{
+                            color: bc,
+                            background: `color-mix(in oklab,${bc} 13%,transparent)`,
+                          }}
+                        >
                           {r.band}
                         </span>
                       </td>
@@ -160,7 +223,12 @@ function RiskScatter({ rows, onSelectBus }: { rows: BusRow[]; onSelectBus: (b: B
   const xTicks = 4;
   const yTicks = 4;
 
-  if (!pts.length) return <div className="py-10 text-center text-[13px] text-muted-foreground">No buses match this filter.</div>;
+  if (!pts.length)
+    return (
+      <div className="py-10 text-center text-[13px] text-muted-foreground">
+        No buses match this filter.
+      </div>
+    );
 
   return (
     <div className="overflow-x-auto">
@@ -170,8 +238,23 @@ function RiskScatter({ rows, onSelectBus }: { rows: BusRow[]; onSelectBus: (b: B
           const y = sy(v);
           return (
             <g key={`y${i}`}>
-              <line x1={pad.l} x2={W - pad.r} y1={y} y2={y} stroke="color-mix(in oklab,var(--muted-foreground) 14%,transparent)" strokeWidth={1} />
-              <text x={pad.l - 8} y={y + 3} textAnchor="end" className="fill-muted-foreground" fontSize={9}>{Math.round(v)}</text>
+              <line
+                x1={pad.l}
+                x2={W - pad.r}
+                y1={y}
+                y2={y}
+                stroke="color-mix(in oklab,var(--muted-foreground) 14%,transparent)"
+                strokeWidth={1}
+              />
+              <text
+                x={pad.l - 8}
+                y={y + 3}
+                textAnchor="end"
+                className="fill-muted-foreground"
+                fontSize={9}
+              >
+                {Math.round(v)}
+              </text>
             </g>
           );
         })}
@@ -180,12 +263,29 @@ function RiskScatter({ rows, onSelectBus }: { rows: BusRow[]; onSelectBus: (b: B
           const x = sx(v);
           return (
             <g key={`x${i}`}>
-              <line x1={x} x2={x} y1={pad.t} y2={H - pad.b} stroke="color-mix(in oklab,var(--muted-foreground) 8%,transparent)" strokeWidth={1} />
-              <text x={x} y={H - pad.b + 14} textAnchor="middle" className="fill-muted-foreground" fontSize={9}>{Math.round(v)}</text>
+              <line
+                x1={x}
+                x2={x}
+                y1={pad.t}
+                y2={H - pad.b}
+                stroke="color-mix(in oklab,var(--muted-foreground) 8%,transparent)"
+                strokeWidth={1}
+              />
+              <text
+                x={x}
+                y={H - pad.b + 14}
+                textAnchor="middle"
+                className="fill-muted-foreground"
+                fontSize={9}
+              >
+                {Math.round(v)}
+              </text>
             </g>
           );
         })}
-        <text x={pad.l} y={H - 4} className="fill-muted-foreground" fontSize={9}>cell spread (mV) →</text>
+        <text x={pad.l} y={H - 4} className="fill-muted-foreground" fontSize={9}>
+          cell spread (mV) →
+        </text>
         {pts.map((r) => (
           <circle
             key={r.reg}
@@ -206,25 +306,65 @@ function RiskScatter({ rows, onSelectBus }: { rows: BusRow[]; onSelectBus: (b: B
   );
 }
 
-function LegendRow({ color, label, n, total }: { color: string; label: string; n: number; total: number }) {
+function LegendRow({
+  color,
+  label,
+  n,
+  total,
+}: {
+  color: string;
+  label: string;
+  n: number;
+  total: number;
+}) {
   const pct = Math.round((n / (total || 1)) * 100);
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-[12px]">
-        <span className="flex items-center gap-2 font-medium"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />{label}</span>
-        <span className="text-muted-foreground"><span className="num font-semibold text-foreground">{n}</span> · {pct}%</span>
+        <span className="flex items-center gap-2 font-medium">
+          <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />
+          {label}
+        </span>
+        <span className="text-muted-foreground">
+          <span className="num font-semibold text-foreground">{n}</span> · {pct}%
+        </span>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full" style={{ background: "color-mix(in oklab,var(--muted-foreground) 16%,transparent)" }}>
+      <div
+        className="h-1.5 overflow-hidden rounded-full"
+        style={{ background: "color-mix(in oklab,var(--muted-foreground) 16%,transparent)" }}
+      >
         <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
       </div>
     </div>
   );
 }
 
-function RiskStat({ Icon, label, value, sub, color }: { Icon: typeof HeartPulse; label: string; value: string; sub?: string; color: string }) {
+function RiskStat({
+  Icon,
+  label,
+  value,
+  sub,
+  color,
+}: {
+  Icon: typeof HeartPulse;
+  label: string;
+  value: string;
+  sub?: string;
+  color: string;
+}) {
   return (
-    <div className="card-interactive accent-bar-top relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border/60 bg-card p-4 shadow-elevated" style={{ ["--accent-color" as string]: color }}>
-      <div className="flex h-10 w-10 flex-none items-center justify-center rounded-xl ring-1" style={{ color, background: `color-mix(in oklab,${color} 13%,transparent)`, boxShadow: `inset 0 0 0 1px color-mix(in oklab,${color} 25%,transparent)` }}>
+    <div
+      className="card-interactive accent-bar-top relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border/60 bg-card p-4 shadow-elevated"
+      style={{ ["--accent-color" as string]: color }}
+    >
+      <div
+        className="flex h-10 w-10 flex-none items-center justify-center rounded-xl ring-1"
+        style={{
+          color,
+          background: `color-mix(in oklab,${color} 13%,transparent)`,
+          boxShadow: `inset 0 0 0 1px color-mix(in oklab,${color} 25%,transparent)`,
+        }}
+      >
         <Icon className="h-[18px] w-[18px]" />
       </div>
       <div>

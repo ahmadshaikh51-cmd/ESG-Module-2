@@ -17,7 +17,11 @@ export function InfrastructureStress({ chargers }: { chargers: ChargerHealthDail
       <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
         {nodes.map((n, i) => {
           const color =
-            n.severity === "critical" ? "var(--color-destructive)" : n.severity === "warning" ? "var(--color-warning)" : "var(--color-success)";
+            n.severity === "critical"
+              ? "var(--color-destructive)"
+              : n.severity === "warning"
+                ? "var(--color-warning)"
+                : "var(--color-success)";
           return (
             <motion.div
               key={n.id}
@@ -26,10 +30,24 @@ export function InfrastructureStress({ chargers }: { chargers: ChargerHealthDail
               transition={{ delay: i * 0.05 }}
               className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/60 p-4"
             >
-              <div className="pointer-events-none absolute inset-0 opacity-30" style={{ background: `radial-gradient(circle at 70% 20%, ${color}, transparent 60%)` }} />
+              <div
+                className="pointer-events-none absolute inset-0 opacity-30"
+                style={{
+                  background: `radial-gradient(circle at 70% 20%, ${color}, transparent 60%)`,
+                }}
+              />
               <div className="relative flex items-center justify-between">
-                <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">{n.id}</div>
-                <span className="rounded-full px-2 py-0.5 text-[9.5px] font-semibold uppercase ring-1" style={{ color, borderColor: color, background: `color-mix(in oklab, ${color} 12%, transparent)` }}>
+                <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                  {n.id}
+                </div>
+                <span
+                  className="rounded-full px-2 py-0.5 text-[9.5px] font-semibold uppercase ring-1"
+                  style={{
+                    color,
+                    borderColor: color,
+                    background: `color-mix(in oklab, ${color} 12%, transparent)`,
+                  }}
+                >
                   {n.severity}
                 </span>
               </div>

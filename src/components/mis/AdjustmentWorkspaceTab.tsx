@@ -79,9 +79,7 @@ export function AdjustmentWorkspaceTab() {
                   }`}
                 >
                   <span className="flex items-center gap-2 font-medium">
-                    {r.hasAdjustment && (
-                      <span className="h-2 w-2 rounded-full bg-primary" />
-                    )}
+                    {r.hasAdjustment && <span className="h-2 w-2 rounded-full bg-primary" />}
                     {r.runningBoard}
                   </span>
                   <span className="text-[10px] text-muted-foreground">
@@ -273,7 +271,11 @@ export function AdjustmentWorkspaceTab() {
             </div>
           )}
 
-          <ScheduleSummaryPanel row={selected} onUndo={undoLast} onReset={() => resetSchedule(selected.scheduleCode, selected.shift)} />
+          <ScheduleSummaryPanel
+            row={selected}
+            onUndo={undoLast}
+            onReset={() => resetSchedule(selected.scheduleCode, selected.shift)}
+          />
         </div>
       )}
     </div>
@@ -297,8 +299,8 @@ function ScheduleSummaryPanel({
         <div>
           <div className="text-[10px] uppercase">After adjustments</div>
           <div>
-            Scheduled: {m.scheduledTrips} · Completed: {m.tripCompleted} · Loss: {m.tripNotCompleted} ·
-            Short: {m.shortTrip}
+            Scheduled: {m.scheduledTrips} · Completed: {m.tripCompleted} · Loss:{" "}
+            {m.tripNotCompleted} · Short: {m.shortTrip}
           </div>
         </div>
         <div>

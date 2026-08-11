@@ -51,7 +51,8 @@ function mapBand(band: string | null, score: number): DriverScore["risk_band"] {
   if (/^d\+?$/.test(b)) return "At-risk";
   if (b.includes("elite") || b.includes("excellent") || b.includes("top")) return "Elite";
   if (b.includes("strong") || b.includes("good")) return "Strong";
-  if (b.includes("average") || b.includes("fair") || b.includes("medium") || b.includes("moderate")) return "Average";
+  if (b.includes("average") || b.includes("fair") || b.includes("medium") || b.includes("moderate"))
+    return "Average";
   if (b.includes("critical") || b.includes("severe")) return "Critical";
   if (b.includes("risk") || b.includes("watch") || b.includes("poor")) return "At-risk";
   if (score >= 88) return "Elite";
@@ -95,7 +96,9 @@ function mapRowToEntry(row: Record<string, unknown>, index: number): DriverLeade
     contextual_score: +contextualScore.toFixed(1),
     percentile: drivingScore,
     efficiency_kwh_per_km: num(row.efficiency),
-    efficiency_delta_pct: +(trendDirection(scoreTrend) * Math.abs(num(row.score_trend, 0))).toFixed(1),
+    efficiency_delta_pct: +(trendDirection(scoreTrend) * Math.abs(num(row.score_trend, 0))).toFixed(
+      1,
+    ),
     difficulty_exposure: num(row.exposure),
     risk_band: mapBand(str(row.score_band), contextualScore),
     harsh_braking: num(row.braking_density),
@@ -113,9 +116,11 @@ function mapRowToEntry(row: Record<string, unknown>, index: number): DriverLeade
       windowEndDate: str(row.window_end_date),
       tripsScored: row.trips_scored == null ? null : num(row.trips_scored),
       tripsPeerScored: row.trips_peer_scored == null ? null : num(row.trips_peer_scored),
-      peerScoreCoveragePct: row.peer_score_coverage_pct == null ? null : num(row.peer_score_coverage_pct),
+      peerScoreCoveragePct:
+        row.peer_score_coverage_pct == null ? null : num(row.peer_score_coverage_pct),
       scoreTrend,
-      starsPerTripWeighted: row.stars_per_trip_weighted == null ? null : num(row.stars_per_trip_weighted),
+      starsPerTripWeighted:
+        row.stars_per_trip_weighted == null ? null : num(row.stars_per_trip_weighted),
       highRiskRatio: row.high_risk_ratio == null ? null : num(row.high_risk_ratio),
       fatigueDensity: row.fatigue_density == null ? null : num(row.fatigue_density),
       dominantRisk: str(row.dominant_risk),

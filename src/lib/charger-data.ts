@@ -212,7 +212,11 @@ function buildBusHealth(): BusOperationalHealthDaily[] {
       const avgPower = clamp(42 + r() * 28 - stressBias * 0.2, 28, 78);
       const thermal = clamp(22 + r() * 45 + stressBias + (di > 22 ? r() * 12 : 0), 8, 98);
       const disconnects = Math.round(r() * 2 + disconnectBias * (r() > 0.6 ? 1 : 0));
-      const health = clamp(88 - thermal * 0.35 - disconnects * 8 - stressBias * 0.5 + r() * 10, 22, 99);
+      const health = clamp(
+        88 - thermal * 0.35 - disconnects * 8 - stressBias * 0.5 + r() * 10,
+        22,
+        99,
+      );
       const abnormality = clamp(100 - health + r() * 15 + disconnects * 6, 5, 99);
       const is_abnormal = abnormality >= 55 || disconnects >= 2 || thermal >= 70;
 
@@ -330,11 +334,46 @@ function buildEvents(): AbnormalityEvent[] {
   const events: AbnormalityEvent[] = [];
   const now = Date.now();
   const samples = [
-    { type: "charger" as const, id: "TV-KHA-12", label: "Charger TV-KHA-12", depot: "Khapri", msg: "Disconnect spike detected (+340% vs 7d median)", action: "Inspect CCS connector and comms module" },
-    { type: "bus" as const, id: "1107", label: "Bus 1107", depot: "Wadi", msg: "Thermal rise above threshold for 3 consecutive days", action: "Schedule battery thermal inspection" },
-    { type: "depot" as const, id: "dep_khapri", label: "Depot Khapri", depot: "Khapri", msg: "Anomaly frequency increased 22% vs fleet median", action: "Review transformer load balancing" },
-    { type: "charger" as const, id: "TV-MIH-08", label: "Charger TV-MIH-08", depot: "MIHAN", msg: "Persistent disconnect instability", action: "Replace charge controller firmware" },
-    { type: "bus" as const, id: "1203", label: "Bus 1203", depot: "BKC Mumbai", msg: "Charging 28% slower than depot peers", action: "Check BMS charge acceptance curve" },
+    {
+      type: "charger" as const,
+      id: "TV-KHA-12",
+      label: "Charger TV-KHA-12",
+      depot: "Khapri",
+      msg: "Disconnect spike detected (+340% vs 7d median)",
+      action: "Inspect CCS connector and comms module",
+    },
+    {
+      type: "bus" as const,
+      id: "1107",
+      label: "Bus 1107",
+      depot: "Wadi",
+      msg: "Thermal rise above threshold for 3 consecutive days",
+      action: "Schedule battery thermal inspection",
+    },
+    {
+      type: "depot" as const,
+      id: "dep_khapri",
+      label: "Depot Khapri",
+      depot: "Khapri",
+      msg: "Anomaly frequency increased 22% vs fleet median",
+      action: "Review transformer load balancing",
+    },
+    {
+      type: "charger" as const,
+      id: "TV-MIH-08",
+      label: "Charger TV-MIH-08",
+      depot: "MIHAN",
+      msg: "Persistent disconnect instability",
+      action: "Replace charge controller firmware",
+    },
+    {
+      type: "bus" as const,
+      id: "1203",
+      label: "Bus 1203",
+      depot: "BKC Mumbai",
+      msg: "Charging 28% slower than depot peers",
+      action: "Check BMS charge acceptance curve",
+    },
   ];
   samples.forEach((s, i) => {
     events.push({
@@ -354,10 +393,54 @@ function buildEvents(): AbnormalityEvent[] {
 
 function buildMaintenance(): MaintenanceRecommendation[] {
   return [
-    { id: "m1", severity: "critical", vehicle_number: "1107", depot_name: "Wadi", title: "Bus charging 34% slower than fleet peers", root_cause: "BMS charge acceptance declining · CCS handshake failures", action: "Inspect connector pins and run BMS diagnostic", impact: "High downtime risk on morning blocks", urgency: "immediate", trend: "↓ 18% charge acceptance over 14d" },
-    { id: "m2", severity: "critical", vehicle_number: "1004", depot_name: "Khapri", title: "Thermal rise increased 18% over 30 days", root_cause: "Cell imbalance under sustained fast charge", action: "Thermal imaging + pack balance check", impact: "Battery degradation acceleration", urgency: "this_week", trend: "↑ thermal/kWh weekly" },
-    { id: "m3", severity: "warning", vehicle_number: "1203", depot_name: "BKC Mumbai", title: "Charging consistency deteriorating", root_cause: "Session stability variance vs depot norm", action: "Recalibrate charge profile on TV-BKC-04", impact: "Energy per SOC% 22% above fleet", urgency: "this_week", trend: "Consistency 62 → 48" },
-    { id: "m4", severity: "warning", vehicle_number: "1302", depot_name: "Andheri", title: "Repeated disconnect instability", root_cause: "Intermittent comms on specific charger pair", action: "Firmware sync on TV-AND-08", impact: "3.2× disconnect rate vs median", urgency: "scheduled", trend: "Stable last 48h after patch trial" },
+    {
+      id: "m1",
+      severity: "critical",
+      vehicle_number: "1107",
+      depot_name: "Wadi",
+      title: "Bus charging 34% slower than fleet peers",
+      root_cause: "BMS charge acceptance declining · CCS handshake failures",
+      action: "Inspect connector pins and run BMS diagnostic",
+      impact: "High downtime risk on morning blocks",
+      urgency: "immediate",
+      trend: "↓ 18% charge acceptance over 14d",
+    },
+    {
+      id: "m2",
+      severity: "critical",
+      vehicle_number: "1004",
+      depot_name: "Khapri",
+      title: "Thermal rise increased 18% over 30 days",
+      root_cause: "Cell imbalance under sustained fast charge",
+      action: "Thermal imaging + pack balance check",
+      impact: "Battery degradation acceleration",
+      urgency: "this_week",
+      trend: "↑ thermal/kWh weekly",
+    },
+    {
+      id: "m3",
+      severity: "warning",
+      vehicle_number: "1203",
+      depot_name: "BKC Mumbai",
+      title: "Charging consistency deteriorating",
+      root_cause: "Session stability variance vs depot norm",
+      action: "Recalibrate charge profile on TV-BKC-04",
+      impact: "Energy per SOC% 22% above fleet",
+      urgency: "this_week",
+      trend: "Consistency 62 → 48",
+    },
+    {
+      id: "m4",
+      severity: "warning",
+      vehicle_number: "1302",
+      depot_name: "Andheri",
+      title: "Repeated disconnect instability",
+      root_cause: "Intermittent comms on specific charger pair",
+      action: "Firmware sync on TV-AND-08",
+      impact: "3.2× disconnect rate vs median",
+      urgency: "scheduled",
+      trend: "Stable last 48h after patch trial",
+    },
   ];
 }
 
@@ -412,8 +495,7 @@ function buildChargingSessions(): ChargingSession[] {
         const power = clamp(38 + r() * 35 - (abnormalBus ? 10 : 0), 25, 82);
         const energy = (power * duration) / 60;
         const disconnect = r() < (abnormalBus ? 0.18 : 0.06);
-        const is_abnormal =
-          disconnect || socDelta < 25 || power < 40 || (abnormalBus && r() > 0.7);
+        const is_abnormal = disconnect || socDelta < 25 || power < 40 || (abnormalBus && r() > 0.7);
 
         sessions.push({
           session_id: `sess_${bus.id}_${date}_${s}`,
@@ -511,7 +593,11 @@ function buildCurvePoints(abnormal: boolean, seed: number): ChargingCurvePoint[]
 
     const voltage = clamp(380 + soc * 0.9 + r() * 8, 360, 480);
     const current = (power * 1000) / voltage;
-    const temp = clamp(28 + soc * 0.35 + (phase === "CV" ? 12 : 0) + (abnormal ? 8 : 0) + r() * 4, 26, 72);
+    const temp = clamp(
+      28 + soc * 0.35 + (phase === "CV" ? 12 : 0) + (abnormal ? 8 : 0) + r() * 4,
+      26,
+      72,
+    );
     points.push({
       soc_pct: soc,
       power_kw: +power.toFixed(2),
@@ -590,11 +676,7 @@ function buildEnergyFlow(): EnergyFlowIntelligenceDaily[] {
         const output = bottleneck ? demand * 0.72 : demand * (0.94 + r() * 0.06);
         const gap = Math.max(0, demand - output);
         const eff = (output / Math.max(grid, 1)) * 100;
-        const stress = clamp(
-          (gap / Math.max(demand, 1)) * 100 + (peak ? 15 : 0) + di * 3,
-          5,
-          98,
-        );
+        const stress = clamp((gap / Math.max(demand, 1)) * 100 + (peak ? 15 : 0) + di * 3, 5, 98);
         rows.push({
           date,
           hour,
@@ -624,7 +706,10 @@ export const CHARGER_BUS_COMPATIBILITY = buildCompatibility();
 export const CHARGING_CURVE_ANALYTICS = buildChargingCurves();
 export const ENERGY_FLOW_INTELLIGENCE = buildEnergyFlow();
 
-export function busRiskLevel(row: { abnormality_score: number; operational_health_score: number }): RiskLevel {
+export function busRiskLevel(row: {
+  abnormality_score: number;
+  operational_health_score: number;
+}): RiskLevel {
   return riskFromScore(row.abnormality_score, row.operational_health_score);
 }
 

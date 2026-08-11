@@ -1,6 +1,14 @@
 import { useEffect, useMemo } from "react";
 import L from "leaflet";
-import { CircleMarker, MapContainer, Polygon, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  CircleMarker,
+  MapContainer,
+  Polygon,
+  Polyline,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import { useTheme } from "@/hooks/use-theme";
 import { MUMBAI_CENTER, MUMBAI_DEFAULT_ZOOM } from "@/lib/geo-data";
 import {
@@ -52,7 +60,12 @@ export interface SegmentRiskMapProps {
   routePath?: [number, number][];
 }
 
-export function SegmentRiskMap({ rows, height = 560, showFootprints = false, routePath }: SegmentRiskMapProps) {
+export function SegmentRiskMap({
+  rows,
+  height = 560,
+  showFootprints = false,
+  routePath,
+}: SegmentRiskMapProps) {
   const { dark } = useTheme();
 
   /** Leaflet-ordered ([lat, lng]) version of the route underlay, if any. */
@@ -98,11 +111,23 @@ export function SegmentRiskMap({ rows, height = 560, showFootprints = false, rou
           <>
             <Polyline
               positions={routeLatLngs}
-              pathOptions={{ color: "#2dd4bf", weight: 11, opacity: 0.12, lineCap: "round", lineJoin: "round" }}
+              pathOptions={{
+                color: "#2dd4bf",
+                weight: 11,
+                opacity: 0.12,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
             />
             <Polyline
               positions={routeLatLngs}
-              pathOptions={{ color: "#2dd4bf", weight: 4, opacity: 0.45, lineCap: "round", lineJoin: "round" }}
+              pathOptions={{
+                color: "#2dd4bf",
+                weight: 4,
+                opacity: 0.45,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
             />
           </>
         )}
@@ -116,13 +141,20 @@ export function SegmentRiskMap({ rows, height = 560, showFootprints = false, rou
               <Polygon
                 key={`poly-${r.segment_id}`}
                 positions={ring}
-                pathOptions={{ color, weight: 1, opacity: 0.35, fillColor: color, fillOpacity: 0.12 }}
+                pathOptions={{
+                  color,
+                  weight: 1,
+                  opacity: 0.35,
+                  fillColor: color,
+                  fillOpacity: 0.12,
+                }}
               />
             );
           })}
 
         {rows.map((r) => {
-          if (!Number.isFinite(r.segment_lat_bin) || !Number.isFinite(r.segment_lon_bin)) return null;
+          if (!Number.isFinite(r.segment_lat_bin) || !Number.isFinite(r.segment_lon_bin))
+            return null;
           const level = normalizeRiskLevel(r.risk_level);
           const color = RISK_LEVEL_COLOR[level];
           const isHigh = level === "high" || level === "critical";

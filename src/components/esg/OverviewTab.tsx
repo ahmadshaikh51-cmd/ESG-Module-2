@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Activity,
@@ -13,14 +13,36 @@ import {
   ShieldAlert,
   Waypoints,
   X,
+  ListTodo,
+  Undo,
+  CheckCircle,
+  AlertCircle,
+  Eye,
+  RefreshCw,
+  Search,
+  MapPin,
+  HelpCircle,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Segmented } from "./Segmented";
+import { getCurrentUser } from "@/lib/auth";
+import { getRoleFromEmail, ESG_ROLES_CONFIG, type EsgRole, type EsgRoleConfig } from "@/lib/esg-roles";
+import { INDICATORS, PROJECTS_MAPPING, type ReportType, ReportDataEntryForm } from "./projects/ReportDataEntryForm";
+import { PERIODS } from "@/lib/esg-data";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { EscalationStatusIndicator } from "./EscalationStatusIndicator";
+import { getActiveEscalationForSource } from "@/lib/esg-escalations";
 import {
   cellStat,
   DOMAINS,
   ESAP_ACTIONS,
   ESG_GROUP,
+  POLICIES,
+  entityById,
+  ESG_TODAY,
   esapState,
   headline,
   personById,
@@ -268,6 +290,661 @@ function StackBar({ stat }: { stat: CellStat }) {
   );
 }
 
+/* --------------------------- contributor workspace ------------------------- */
+
+interface ContributorWorkspaceProps {
+  esgRole: EsgRole;
+  roleConfig: EsgRoleConfig;
+  activePeriod: string;
+  scope: any;
+  onOpenForm: (
+    reportType: any,
+    recordId: string | null,
+    project: string,
+    siteId: string,
+    period: string
+  ) => void;
+}
+
+function ContributorWorkspace({
+  esgRole,
+  roleConfig,
+  activePeriod,
+  scope,
+  onOpenForm,
+}: ContributorWorkspaceProps) {
+  const [selectedProject, setSelectedProject] = useState("all");
+  const [selectedSite, setSelectedSite] = useState("all");
+  const [selectedPeriod, setSelectedPeriod] = useState(activePeriod || "all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const [returnTask, setReturnTask] = useState<any>(null);
+  const [returnReason, setReturnReason] = useState("");
+
+  const isReviewerOrApprover = esgRole === "reviewer" || esgRole === "approver";
+
+  const savedRecords = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+    } catch {
+      return [];
+    }
+  }, [refreshTrigger]);
+
+  const updateRecordStatus = (task: any, newStatus: string, reason?: string) => {
+    try {
+      const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+      const recordId = task.recordId;
+      
+      let updated;
+      if (recordId) {
+        updated = records.map((r: any) => {
+          if (r.id === recordId) {
+            return { 
+              ...r, 
+              status: newStatus,
+              returnReason: reason || r.returnReason || ""
+            };
+          }
+          return r;
+        });
+      } else {
+        const newRecord = {
+          id: `rec_${Date.now()}`,
+          project: task.project,
+          site: task.siteId,
+          reportingPeriod: task.period,
+          reportType: task.reportType,
+          status: newStatus,
+          returnReason: reason || "",
+          indicatorValues: {
+            [task.indicator.id]: { actual: null, unit: task.indicator.unit }
+          }
+        };
+        updated = [newRecord, ...records];
+      }
+      
+      localStorage.setItem("voltline-report-records", JSON.stringify(updated));
+      setRefreshTrigger(prev => prev + 1);
+      toast.success(`Entry marked as ${newStatus}`);
+    } catch {
+      toast.error("Failed to update status");
+    }
+  };
+
+  const handleApprove = (task: any) => {
+    updateRecordStatus(task, "Approved");
+  };
+
+  const handleReview = (task: any) => {
+    updateRecordStatus(task, "Reviewed");
+  };
+
+  const handleReturn = (task: any) => {
+    setReturnTask(task);
+    setReturnReason("");
+  };
+
+  const submitReturn = () => {
+    if (!returnReason.trim()) {
+      toast.error("Please enter a reason for returning the record");
+      return;
+    }
+    updateRecordStatus(returnTask, "Returned", returnReason);
+    setReturnTask(null);
+    setReturnReason("");
+  };
+
+  const allTasks = useMemo(() => {
+    const tasks: any[] = [];
+
+    Object.entries(PROJECTS_MAPPING).forEach(([projName, projMeta]) => {
+      projMeta.sites.forEach((siteMeta) => {
+        projMeta.indicators.forEach((indId) => {
+          if (!isReviewerOrApprover && !roleConfig.indicators.includes(indId)) return;
+
+          const indMeta = INDICATORS.find(i => i.id === indId);
+          if (!indMeta) return;
+
+          PERIODS.forEach((periodMeta) => {
+            const matchingRecord = savedRecords.find((r: any) =>
+              r.project === projName &&
+              r.site === siteMeta.id &&
+              r.reportingPeriod === periodMeta.id &&
+              r.indicatorValues?.[indId]?.actual !== undefined
+            );
+
+            let status = "Pending Entry";
+            let value = null;
+            let recordId = null;
+            let reportType = indMeta.maps[0];
+            let reasonText = "";
+
+            if (matchingRecord) {
+              status = matchingRecord.status || "Draft";
+              value = matchingRecord.indicatorValues[indId].actual;
+              recordId = matchingRecord.id;
+              reportType = matchingRecord.reportType || reportType;
+              reasonText = matchingRecord.returnReason || "";
+            }
+
+            if (isReviewerOrApprover && status === "Pending Entry") return;
+
+            if (scope?.entityId && PROJECTS_MAPPING[projName]?.sites.every(s => s.id !== scope.entityId)) {
+              // skip
+            }
+
+            tasks.push({
+              project: projName,
+              siteId: siteMeta.id,
+              siteName: siteMeta.name,
+              indicator: indMeta,
+              period: periodMeta.id,
+              periodLabel: periodMeta.label,
+              responsible: projMeta.person,
+              dept: projMeta.dept,
+              status,
+              value,
+              recordId,
+              reportType,
+              returnReason: reasonText
+            });
+          });
+        });
+      });
+    });
+    return tasks;
+  }, [savedRecords, esgRole, roleConfig.indicators, scope]);
+
+  const filteredTasks = useMemo(() => {
+    return allTasks.filter((t) => {
+      const matchesProj = selectedProject === "all" || t.project === selectedProject;
+      const matchesSite = selectedSite === "all" || t.siteId === selectedSite;
+      const matchesPeriod = selectedPeriod === "all" || t.period === selectedPeriod;
+      const matchesStatus = selectedStatus === "all" || t.status === selectedStatus;
+      
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        t.indicator.name.toLowerCase().includes(q) ||
+        t.indicator.id.toLowerCase().includes(q) ||
+        t.project.toLowerCase().includes(q) ||
+        t.siteName.toLowerCase().includes(q);
+
+      return matchesProj && matchesSite && matchesPeriod && matchesStatus && matchesSearch;
+    });
+  }, [allTasks, selectedProject, selectedSite, selectedPeriod, selectedStatus, searchQuery]);
+
+  const metrics = useMemo(() => {
+    const total = filteredTasks.length;
+    const pending = filteredTasks.filter(t => t.status === "Pending Entry").length;
+    const draft = filteredTasks.filter(t => t.status === "Draft").length;
+    const submitted = filteredTasks.filter(t => t.status === "Submitted").length;
+    const reviewed = filteredTasks.filter(t => t.status === "Reviewed").length;
+    const returned = filteredTasks.filter(t => t.status === "Returned").length;
+    const approved = filteredTasks.filter(t => t.status === "Approved").length;
+
+    const actioned = total - pending - draft - returned;
+    
+    return {
+      total,
+      pending,
+      draft,
+      submitted,
+      reviewed,
+      returned,
+      approved,
+      completionRate: total > 0 ? Math.round((actioned / total) * 100) : 0,
+    };
+  }, [filteredTasks]);
+
+  const siteOptions = useMemo(() => {
+    if (selectedProject === "all") return [];
+    return PROJECTS_MAPPING[selectedProject]?.sites || [];
+  }, [selectedProject]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-card border border-border/60 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+        <div>
+          <h2 className="text-[16px] font-bold text-foreground flex items-center gap-2">
+            <ClipboardCheck className="h-4.5 w-4.5 text-primary" /> 
+            {esgRole === "approver" ? "Approvals Command Center" : esgRole === "reviewer" ? "Validation Queue" : "Departmental Workspace"} 
+            <span className="text-[11px] font-semibold text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+              {roleConfig.label}
+            </span>
+          </h2>
+          <p className="text-[11.5px] text-muted-foreground mt-0.5">
+            {esgRole === "approver" 
+              ? "Pending approvals for environmental, social and governance operational disclosures."
+              : esgRole === "reviewer"
+                ? "Validate, review, and query indicators entered by facility managers."
+                : "Submit operational metrics and track approval status."
+            }
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-[11px] font-medium text-muted-foreground">
+            Role Scoped Access
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <PanelCard className="p-4 flex flex-col justify-between">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+            Workspace Progress
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-2">
+            <span className="text-2xl font-extrabold text-foreground num">
+              {metrics.completionRate}%
+            </span>
+            <span className="text-[11.5px] text-muted-foreground font-mono">
+              ({metrics.total - metrics.pending - metrics.draft} / {metrics.total} items)
+            </span>
+          </div>
+          <div className="w-full bg-muted/60 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div
+              className="bg-primary h-full rounded-full transition-all duration-500"
+              style={{ width: `${metrics.completionRate}%` }}
+            />
+          </div>
+        </PanelCard>
+
+        {esgRole === "approver" || esgRole === "reviewer" ? (
+          <>
+            <PanelCard className="p-4 flex flex-col justify-between">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+                Pending Decisions
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className={cn("text-2xl font-extrabold num", (esgRole === "approver" ? metrics.reviewed : metrics.submitted) > 0 ? "text-primary" : "text-success")}>
+                  {esgRole === "approver" ? metrics.reviewed : metrics.submitted}
+                </span>
+                <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Needs Action
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground mt-3 block">
+                {esgRole === "approver" ? "Awaiting your final approval signature" : "Awaiting validation checks"}
+              </span>
+            </PanelCard>
+
+            <PanelCard className="p-4 flex flex-col justify-between">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+                Returned to Contributor
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className={cn("text-2xl font-extrabold num", metrics.returned > 0 ? "text-warning" : "text-muted-foreground")}>
+                  {metrics.returned}
+                </span>
+                <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Discrepancies
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground mt-3 block">
+                Returned for correction notes
+              </span>
+            </PanelCard>
+          </>
+        ) : (
+          <>
+            <PanelCard className="p-4 flex flex-col justify-between">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+                Awaiting Data Entry
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className={cn("text-2xl font-extrabold num", metrics.pending > 0 ? "text-warning" : "text-success")}>
+                  {metrics.pending}
+                </span>
+                <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Tasks
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground mt-3 block">
+                Please enter actuals for the current period
+              </span>
+            </PanelCard>
+
+            <PanelCard className="p-4 flex flex-col justify-between">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+                Returned / Rejected
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className={cn("text-2xl font-extrabold num", metrics.returned > 0 ? "text-destructive" : "text-muted-foreground")}>
+                  {metrics.returned}
+                </span>
+                <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Needs Correction
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground mt-3 block">
+                Entries returned with auditor remarks
+              </span>
+            </PanelCard>
+          </>
+        )}
+
+        <PanelCard className="p-4 flex flex-col justify-between">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+            Approved Entries
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-2">
+            <span className="text-2xl font-extrabold text-success num">
+              {metrics.approved}
+            </span>
+            <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+              Signed Off
+            </span>
+          </div>
+          <span className="text-[10px] text-muted-foreground mt-3 block">
+            Locked from editing
+          </span>
+        </PanelCard>
+      </div>
+
+      <PanelCard className="p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="space-y-1">
+            <Label className="text-[11.5px] font-semibold text-muted-foreground">Project</Label>
+            <select
+              value={selectedProject}
+              onChange={(e) => setSelectedProject(e.target.value)}
+              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
+            >
+              <option value="all">All Projects</option>
+              {Object.keys(PROJECTS_MAPPING).map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-[11.5px] font-semibold text-muted-foreground">Site / Facility</Label>
+            <select
+              value={selectedSite}
+              onChange={(e) => setSelectedSite(e.target.value)}
+              disabled={selectedProject === "all"}
+              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none disabled:opacity-50"
+            >
+              <option value="all">All Sites</option>
+              {siteOptions.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-[11.5px] font-semibold text-muted-foreground">Reporting Period</Label>
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
+            >
+              <option value="all">All Periods</option>
+              {PERIODS.map(p => (
+                <option key={p.id} value={p.id}>{p.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-[11.5px] font-semibold text-muted-foreground">Status</Label>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
+            >
+              <option value="all">All Statuses</option>
+              <option value="Pending Entry">Pending Entry</option>
+              <option value="Draft">Draft</option>
+              <option value="Submitted">Submitted</option>
+              <option value="Reviewed">Reviewed</option>
+              <option value="Returned">Returned</option>
+              <option value="Approved">Approved</option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-[11.5px] font-semibold text-muted-foreground">Search</Label>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground/60" />
+              <input
+                type="text"
+                placeholder="Search indicator..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-8 pl-8 rounded-lg border border-border/80 bg-background text-[12px] focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+      </PanelCard>
+
+      <PanelCard className="p-0 overflow-hidden">
+        {filteredTasks.length === 0 ? (
+          <EmptyState
+            title="No items found"
+            hint="Your filters returned no records or there are no indicators assigned to this category."
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border/60 bg-muted/20 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <th className="px-5 py-3.5">Indicator Code & Description</th>
+                  <th className="px-3 py-3.5">Project / Site</th>
+                  <th className="px-3 py-3.5">Period</th>
+                  <th className="px-3 py-3.5">Entered Value</th>
+                  <th className="px-3 py-3.5">Status</th>
+                  <th className="px-5 py-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {filteredTasks.map((t, idx) => {
+                  const isPending = t.status === "Pending Entry";
+                  const isDraft = t.status === "Draft";
+                  const isSubmitted = t.status === "Submitted";
+                  const isReviewed = t.status === "Reviewed";
+                  const isReturned = t.status === "Returned";
+                  const isApproved = t.status === "Approved";
+
+                  return (
+                    <tr
+                      key={`${t.project}-${t.siteId}-${t.indicator.id}-${t.period}-${idx}`}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="px-5 py-3 max-w-[280px]">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-primary text-[10.5px] font-mono bg-primary/8 border border-primary/15 rounded px-1 py-0.5">
+                              {t.indicator.id}
+                            </span>
+                            <span className="text-[12px] font-bold text-muted-foreground font-mono">
+                              {t.indicator.scope}
+                            </span>
+                          </div>
+                          <div className="font-semibold text-foreground text-[12.5px] truncate mt-1" title={t.indicator.name}>
+                            {t.indicator.name}
+                          </div>
+                          {isReturned && t.returnReason && (
+                            <div className="mt-1 text-[11px] text-warning bg-warning/5 border border-warning/15 rounded-lg p-2 leading-relaxed">
+                              <span className="font-bold">Auditor remark:</span> {t.returnReason}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="px-3 py-3">
+                        <div className="font-semibold text-foreground text-[12.5px]">{t.project}</div>
+                        <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          <span>{t.siteName}</span>
+                        </div>
+                      </td>
+
+                      <td className="px-3 py-3 font-medium text-foreground num">
+                        {t.periodLabel}
+                      </td>
+
+                      <td className="px-3 py-3 font-semibold num text-[13px]">
+                        {t.value !== null && t.value !== undefined ? (
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-foreground">{t.value}</span>
+                            <span className="text-[10px] text-muted-foreground font-normal">{t.indicator.unit}</span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground/60 italic">—</span>
+                        )}
+                      </td>
+
+                      <td className="px-3 py-3">
+                        <span className={cn(
+                          "inline-flex h-5 items-center rounded-md border px-1.5 text-[10px] font-bold",
+                          isPending && "bg-muted/80 text-muted-foreground border-border/60",
+                          isDraft && "bg-warning/10 text-warning border-warning/20",
+                          isSubmitted && "bg-primary/10 text-primary border-primary/20",
+                          isReviewed && "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
+                          isReturned && "bg-destructive/10 text-destructive border-destructive/20",
+                          isApproved && "bg-success/10 text-success border-success/20"
+                        )}>
+                          {t.status}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-3 text-right">
+                        <div className="flex justify-end gap-1.5">
+                          {esgRole === "reviewer" && isSubmitted && (
+                            <>
+                              <Button
+                                size="sm"
+                                onClick={() => handleReview(t)}
+                                className="h-7 text-[11px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
+                              >
+                                Mark Reviewed
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleReturn(t)}
+                                className="h-7 text-[11px] font-bold text-warning border-warning/30 hover:bg-warning/5 rounded-lg"
+                              >
+                                Return
+                              </Button>
+                            </>
+                          )}
+
+                          {esgRole === "approver" && (isSubmitted || isReviewed) && (
+                            <>
+                              <Button
+                                size="sm"
+                                onClick={() => handleApprove(t)}
+                                className="h-7 text-[11px] font-bold bg-success hover:bg-success/90 text-success-foreground rounded-lg"
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleReturn(t)}
+                                className="h-7 text-[11px] font-bold text-warning border-warning/30 hover:bg-warning/5 rounded-lg"
+                              >
+                                Return
+                              </Button>
+                            </>
+                          )}
+
+                          {!isReviewerOrApprover && (isPending || isDraft || isReturned) && (
+                            <Button
+                              size="sm"
+                              variant={isPending ? "default" : "outline"}
+                              className={cn(
+                                "h-7 text-[11px] font-semibold gap-1 rounded-lg cursor-pointer px-2.5",
+                                isPending && "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              )}
+                              onClick={() => {
+                                onOpenForm(t.reportType, t.recordId, t.project, t.siteId, t.period);
+                              }}
+                            >
+                              {isPending ? "Enter Data" : "Edit"}
+                              <ArrowRight className="h-3 w-3" />
+                            </Button>
+                          )}
+
+                          {(isApproved || (esgRole === "reviewer" && (isReviewed || isApproved))) && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-[11px] gap-1 rounded-lg px-2.5"
+                              onClick={() => {
+                                onOpenForm(t.reportType, t.recordId, t.project, t.siteId, t.period);
+                              }}
+                            >
+                              <Eye className="h-3.5 w-3.5" /> View
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </PanelCard>
+
+      {returnTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-[4px]">
+          <PanelCard className="w-full max-w-md p-6 border-warning/30 bg-card shadow-elevated">
+            <div className="flex items-center gap-2 text-warning mb-3">
+              <AlertCircle className="h-5 w-5" />
+              <h4 className="text-[15px] font-extrabold text-foreground">Return for Correction</h4>
+            </div>
+            <p className="text-[12px] text-muted-foreground mb-4">
+              Specify why the submitted value for <span className="font-semibold text-foreground">{returnTask.indicator.name}</span> at <span className="font-semibold text-foreground">{returnTask.siteName}</span> ({returnTask.periodLabel}) is being returned.
+            </p>
+            <div className="space-y-3">
+              <Label htmlFor="reason" className="text-[11.5px] font-bold text-muted-foreground font-semibold">Correction Notes / Reason</Label>
+              <textarea
+                id="reason"
+                rows={3}
+                value={returnReason}
+                onChange={(e) => setReturnReason(e.target.value)}
+                placeholder="E.g., Please cross-reference with the attached utility bill; consumption seems unusually high."
+                className="w-full rounded-xl border border-border bg-card/85 p-2.5 text-[12px] focus:outline-none focus:border-primary/60 placeholder:text-muted-foreground/45"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setReturnTask(null);
+                    setReturnReason("");
+                  }}
+                  className="text-[11.5px] font-bold cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={submitReturn}
+                  className="text-[11.5px] font-bold bg-warning hover:bg-warning/95 text-warning-foreground cursor-pointer"
+                >
+                  Confirm Return
+                </Button>
+              </div>
+            </div>
+          </PanelCard>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* --------------------------------- overview -------------------------------- */
 
 export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string }) {
@@ -279,6 +956,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
     period,
     audit,
     monitoring,
+    policy,
     projectId: selectedProjectId,
     setProjectId: setSelectedProjectId,
   } = useEsg();
@@ -286,6 +964,340 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   const [view, setView] = useState<"matrix" | "graph">("matrix");
   const loading = useStubLoad(JSON.stringify(scope) + audience + selectedProjectId);
   const reduce = useReducedMotion();
+
+  const [activeForm, setActiveForm] = useState<any>(null);
+  const [editRecordId, setEditRecordId] = useState<string | null>(null);
+  const [initialProject, setInitialProject] = useState<string | undefined>(undefined);
+  const [initialSite, setInitialSite] = useState<string | undefined>(undefined);
+  const [initialPeriod, setInitialPeriod] = useState<string | undefined>(undefined);
+
+  const currentUser = getCurrentUser();
+  const esgRole = currentUser ? getRoleFromEmail(currentUser.email) : "esg_team";
+  const roleConfig = ESG_ROLES_CONFIG[esgRole] || ESG_ROLES_CONFIG.esg_team;
+
+  // New sub-tab state for managers/teams
+  const [subTab, setSubTab] = useState<"dashboard" | "approvals" | "escalations">("dashboard");
+  const [reviewItem, setReviewItem] = useState<any>(null);
+  const [approvalFilter, setApprovalFilter] = useState<"all" | "pending" | "today" | "overdue" | "escalated">("all");
+  const [returnTask, setReturnTask] = useState<any>(null);
+  const [returnReason, setReturnReason] = useState("");
+  const [refreshApprovalTrigger, setRefreshApprovalTrigger] = useState(0);
+
+  // Load audit trail from localStorage
+  const auditTrails = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("voltline-audit-trail") || "[]");
+    } catch {
+      return [];
+    }
+  }, [refreshApprovalTrigger]);
+
+  const addAuditTrailEntry = (task: any, action: string, previousStatus: string, newStatus: string, reason = "") => {
+    try {
+      const logs = JSON.parse(localStorage.getItem("voltline-audit-trail") || "[]");
+      const newLog = {
+        id: `audit-${Date.now()}`,
+        user: currentUser?.name || currentUser?.email || "ESG Team User",
+        role: roleConfig.label,
+        project: task.projectSite ? task.projectSite.split(" / ")[0] : "General",
+        site: task.projectSite ? task.projectSite.split(" / ")[1] : "N/A",
+        record: task.recordName,
+        action,
+        timestamp: new Date().toISOString(),
+        previousStatus,
+        newStatus,
+        reason,
+        escalationLevel: task.escalation,
+        resolvedByMaster: task.type === "indicator" ? "Indicator Master / Projects Mapping" : task.type === "policy" ? "Policy Master" : "Compliance / Certificate Master"
+      };
+      localStorage.setItem("voltline-audit-trail", JSON.stringify([newLog, ...logs]));
+    } catch {
+      // ignore
+    }
+  };
+
+  const approvalTasks = useMemo(() => {
+    const list: any[] = [];
+    let savedRecords: any[] = [];
+    try {
+      savedRecords = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+    } catch {
+      savedRecords = [];
+    }
+
+    // A. Mapped Indicator submissions
+    savedRecords.forEach((r: any) => {
+      if (r.reportType !== "nc" && (r.status === "Submitted" || r.status === "Reviewed")) {
+        const firstIndId = Object.keys(r.indicatorValues || {})[0];
+        const ind = INDICATORS.find(i => i.id === firstIndId);
+        if (!ind) return;
+
+        const projMeta = PROJECTS_MAPPING[r.project] || { person: "Rohan Desai", dept: "Operations", regs: [] };
+        const ownerName = personById(projMeta.person)?.name || projMeta.person;
+
+        // Role-based visibility and scope filters
+        if (esgRole !== "esg_team" && esgRole !== "admin") {
+          if (esgRole === "reviewer" && r.status !== "Submitted") return;
+          if (esgRole === "approver" && r.status !== "Reviewed" && r.status !== "Submitted") return;
+        }
+
+        const daysOverdue = r.dueDate ? Math.floor((ESG_TODAY.getTime() - new Date(r.dueDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+        const esc = getActiveEscalationForSource(r.id);
+
+        list.push({
+          id: r.id,
+          recordName: ind.name,
+          module: "ESG Data Portal",
+          projectSite: `${r.project} / ${r.site}`,
+          period: r.reportingPeriod,
+          submittedBy: `${ownerName} (${projMeta.dept})`,
+          dueDate: r.dueDate || "10 Aug 2026",
+          priority: daysOverdue > 5 ? "High" : "Medium",
+          status: r.status,
+          escalation: esc ? `Level ${esc.level}` : "Level 0",
+          rawRecord: r,
+          type: "indicator",
+          indicator: ind,
+          value: r.indicatorValues[firstIndId]?.actual,
+          unit: ind.unit,
+          ghgContext: ind.scope && ind.scope !== "N/A" ? {
+            parameter: ind.name,
+            scope: ind.scope,
+            unit: ind.unit,
+            factor: ind.factor,
+            formula: ind.formula,
+            source: "IPCC Emission Guidelines / Central Electricity Authority",
+          } : null,
+          acts: projMeta.regs || ["Electricity Act 2003"],
+        });
+      }
+    });
+
+    // B. Mapped Policies
+    POLICIES.forEach((p) => {
+      const pVersions = policy.policyVersions(p.id);
+      const latest = pVersions[0];
+
+      if (latest && latest.status === "submitted") {
+        const ownerName = personById(p.ownerId)?.name || "Compliance Owner";
+        list.push({
+          id: p.id,
+          recordName: `Policy Review: ${p.name}`,
+          module: "ESMS",
+          projectSite: `Corporate / ${entityById(p.entityId)?.short || "HQ"}`,
+          period: p.reviewDue,
+          submittedBy: ownerName,
+          dueDate: p.reviewDue,
+          priority: "Medium",
+          status: "Submitted",
+          escalation: "Level 0",
+          type: "policy",
+          policy: p,
+          version: latest.version,
+          acts: ["Companies Act 2013", "SEBI Listing Obligations"],
+        });
+      }
+    });
+
+    // C. Mapped Compliance Permits
+    RECORDS.forEach((r) => {
+      const type = typeByKey(r.typeKey);
+      if (recordState(r) === "overdue" && r.expiryDate) {
+        const ownerName = personById(r.ownerId)?.name || "Facility Owner";
+        const esc = getActiveEscalationForSource(r.id);
+        const daysOverdue = Math.floor((ESG_TODAY.getTime() - new Date(r.expiryDate).getTime()) / (1000 * 60 * 60 * 24));
+
+        list.push({
+          id: r.id,
+          recordName: type?.label || r.typeKey,
+          module: "Regulatory Compliance",
+          projectSite: `${type?.category === "permit" ? "Permit" : "Site compliance"} / ${r.depotId || "HQ"}`,
+          period: "Perpetual",
+          submittedBy: ownerName,
+          dueDate: r.expiryDate,
+          priority: "High",
+          status: "Pending",
+          escalation: esc ? `Level ${esc.level}` : "Level 1",
+          type: "permit",
+          permit: r,
+          acts: [type?.category === "permit" ? "Factories Act 1948" : "Environment Protection Act 1986"],
+        });
+      }
+    });
+
+    return list;
+  }, [esgRole, policy, refreshApprovalTrigger]);
+
+  const filteredApprovalTasks = useMemo(() => {
+    return approvalTasks.filter((t) => {
+      if (approvalFilter === "pending") return t.status === "Submitted" || t.status === "Pending";
+      if (approvalFilter === "today") return t.dueDate === "2026-07-15" || t.dueDate === "2026-07-16"; // mock due today
+      if (approvalFilter === "overdue") return t.escalation !== "Level 0";
+      if (approvalFilter === "escalated") return t.escalation.startsWith("Level 2") || t.escalation.startsWith("Level 3");
+      return true;
+    });
+  }, [approvalTasks, approvalFilter]);
+
+  const approvalMetrics = useMemo(() => {
+    return {
+      pending: approvalTasks.filter(t => t.status === "Submitted" || t.status === "Pending").length,
+      today: approvalTasks.filter(t => t.dueDate === "2026-07-15" || t.dueDate === "2026-07-16").length,
+      overdue: approvalTasks.filter(t => t.escalation !== "Level 0").length,
+      escalated: approvalTasks.filter(t => t.escalation.startsWith("Level 2") || t.escalation.startsWith("Level 3")).length,
+    };
+  }, [approvalTasks]);
+
+  // SLA Action Handlers
+  const handleApproveTask = (task: any) => {
+    if (task.type === "indicator") {
+      try {
+        const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+        const nextStatus = esgRole === "reviewer" ? "Reviewed" : "Approved";
+        const updated = records.map((r: any) => {
+          if (r.id === task.id) {
+            return { ...r, status: nextStatus };
+          }
+          return r;
+        });
+        localStorage.setItem("voltline-report-records", JSON.stringify(updated));
+        addAuditTrailEntry(task, "Approve", task.status, nextStatus);
+        setRefreshApprovalTrigger(prev => prev + 1);
+        setReviewItem(null);
+        toast.success(`Record marked as ${nextStatus}`);
+      } catch {
+        toast.error("Failed to approve");
+      }
+    } else if (task.type === "policy") {
+      policy.decidePolicyVersion(task.id, "approved");
+      addAuditTrailEntry(task, "Approve", "Submitted", "Approved");
+      setRefreshApprovalTrigger(prev => prev + 1);
+      setReviewItem(null);
+      toast.success("Policy approved");
+    } else if (task.type === "permit") {
+      // Simulate permit renew approved
+      toast.success("Compliance licence marked resolved");
+      addAuditTrailEntry(task, "Resolve", "Overdue", "Valid");
+      setRefreshApprovalTrigger(prev => prev + 1);
+      setReviewItem(null);
+    }
+  };
+
+  const handleReturnTask = (task: any, reason: string) => {
+    if (!reason.trim()) {
+      toast.error("Correction comment is required");
+      return;
+    }
+
+    if (task.type === "indicator") {
+      try {
+        const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+        const updated = records.map((r: any) => {
+          if (r.id === task.id) {
+            return { ...r, status: "Returned", returnReason: reason };
+          }
+          return r;
+        });
+        localStorage.setItem("voltline-report-records", JSON.stringify(updated));
+        addAuditTrailEntry(task, "Return for Correction", task.status, "Returned", reason);
+        setRefreshApprovalTrigger(prev => prev + 1);
+        setReviewItem(null);
+        setReturnTask(null);
+        setReturnReason("");
+        toast.info("Record returned to contributor");
+      } catch {
+        toast.error("Failed to return record");
+      }
+    } else if (task.type === "policy") {
+      policy.decidePolicyVersion(task.id, "rejected");
+      addAuditTrailEntry(task, "Reject/Return", "Submitted", "Draft", reason);
+      setRefreshApprovalTrigger(prev => prev + 1);
+      setReviewItem(null);
+      setReturnTask(null);
+      setReturnReason("");
+      toast.info("Policy rejected & returned to contributor");
+    } else if (task.type === "permit") {
+      toast.info("Compliance item queried");
+      addAuditTrailEntry(task, "Return", "Overdue", "Overdue", reason);
+      setRefreshApprovalTrigger(prev => prev + 1);
+      setReviewItem(null);
+      setReturnTask(null);
+      setReturnReason("");
+    }
+  };
+
+  const handleRejectTask = (task: any) => {
+    if (task.type === "indicator") {
+      try {
+        const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+        const updated = records.map((r: any) => {
+          if (r.id === task.id) {
+            return { ...r, status: "Rejected" };
+          }
+          return r;
+        });
+        localStorage.setItem("voltline-report-records", JSON.stringify(updated));
+        addAuditTrailEntry(task, "Reject", task.status, "Rejected");
+        setRefreshApprovalTrigger(prev => prev + 1);
+        setReviewItem(null);
+        toast.error("Record rejected");
+      } catch {
+        toast.error("Failed to reject");
+      }
+    } else {
+      toast.error("Record rejected");
+      addAuditTrailEntry(task, "Reject", "Pending", "Rejected");
+      setRefreshApprovalTrigger(prev => prev + 1);
+      setReviewItem(null);
+    }
+  };
+
+  // Sync bell deep link
+  useEffect(() => {
+    if (deepLinkRecordId) {
+      setSubTab("approvals");
+      const matched = approvalTasks.find(t => t.id === deepLinkRecordId);
+      if (matched) {
+        setReviewItem(matched);
+      }
+    }
+  }, [deepLinkRecordId, approvalTasks]);
+
+  if (activeForm) {
+    return (
+      <ReportDataEntryForm
+        reportType={activeForm}
+        editRecordId={editRecordId}
+        initialProject={initialProject}
+        initialSite={initialSite}
+        initialPeriod={initialPeriod}
+        onCancel={() => {
+          setActiveForm(null);
+          setEditRecordId(null);
+          setInitialProject(undefined);
+          setInitialSite(undefined);
+          setInitialPeriod(undefined);
+        }}
+      />
+    );
+  }
+
+  if (roleConfig.isContributorOnly) {
+    return (
+      <ContributorWorkspace
+        esgRole={esgRole}
+        roleConfig={roleConfig}
+        activePeriod={period}
+        scope={scope}
+        onOpenForm={(reportType, recordId, project, siteId, periodId) => {
+          setActiveForm(reportType);
+          setEditRecordId(recordId);
+          setInitialProject(project);
+          setInitialSite(siteId);
+          setInitialPeriod(periodId);
+        }}
+      />
+    );
+  }
 
   // Helper Functions
   const projectLocation = (projectId: string) => {
@@ -580,9 +1592,62 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
 
   return (
     <div className="space-y-5">
-      {activeProject ? (
-        // Selected Project Overview Dashboard (Project Overview -> KPIs -> Lifecycle -> Quick Actions)
-        <div className="space-y-5">
+      {!roleConfig.isContributorOnly && (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border/60 rounded-xl p-3 shadow-sm">
+          <div className="flex gap-2">
+            {(["dashboard", "approvals", "escalations"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setSubTab(tab)}
+                className={cn(
+                  "text-[12px] px-4 py-1.5 rounded-lg font-bold capitalize transition-all cursor-pointer",
+                  subTab === tab
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                )}
+              >
+                {tab === "approvals" ? "Approval Center" : tab === "escalations" ? "Escalation Matrix" : "Governance Dashboard"}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+            <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+              {esgRole === "esg_team" ? "ESG Sustainability Lead" : esgRole === "reviewer" ? "ESG Compliance Reviewer" : esgRole === "approver" ? "ESG Approver" : "Administrator"}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {subTab === "approvals" && (
+        <ApprovalCenterUI
+          filteredApprovalTasks={filteredApprovalTasks}
+          approvalMetrics={approvalMetrics}
+          approvalFilter={approvalFilter}
+          setApprovalFilter={setApprovalFilter}
+          reviewItem={reviewItem}
+          setReviewItem={setReviewItem}
+          returnTask={returnTask}
+          setReturnTask={setReturnTask}
+          returnReason={returnReason}
+          setReturnReason={setReturnReason}
+          handleApproveTask={handleApproveTask}
+          handleReturnTask={handleReturnTask}
+          handleRejectTask={handleRejectTask}
+        />
+      )}
+
+      {subTab === "escalations" && (
+        <EscalationMatrixUI
+          auditTrails={auditTrails}
+        />
+      )}
+
+      {subTab === "dashboard" && (
+        <>
+          {activeProject ? (
+            // Selected Project Overview Dashboard (Project Overview -> KPIs -> Lifecycle -> Quick Actions)
+            <div className="space-y-5">
           {/* Back button and breadcrumb */}
           <div className="flex items-center gap-3 border-b border-border/40 pb-3">
             <button
@@ -1219,6 +2284,458 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
           </PanelCard>
         </div>
       )}
+      </>
+      )}
+    </div>
+  );
+}
+
+/* --------------------------------- Approval Center & Escalation UI -------------------------------- */
+
+interface ApprovalCenterUIProps {
+  filteredApprovalTasks: any[];
+  approvalMetrics: any;
+  approvalFilter: string;
+  setApprovalFilter: (f: any) => void;
+  reviewItem: any;
+  setReviewItem: (t: any) => void;
+  returnTask: any;
+  setReturnTask: (t: any) => void;
+  returnReason: string;
+  setReturnReason: (r: string) => void;
+  handleApproveTask: (t: any) => void;
+  handleReturnTask: (t: any, reason: string) => void;
+  handleRejectTask: (t: any) => void;
+}
+
+function ApprovalCenterUI({
+  filteredApprovalTasks,
+  approvalMetrics,
+  approvalFilter,
+  setApprovalFilter,
+  reviewItem,
+  setReviewItem,
+  returnTask,
+  setReturnTask,
+  returnReason,
+  setReturnReason,
+  handleApproveTask,
+  handleReturnTask,
+  handleRejectTask,
+}: ApprovalCenterUIProps) {
+  return (
+    <div className="space-y-5">
+      {/* Functional Filters Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { key: "pending", label: "Pending Reviews", count: approvalMetrics.pending, color: "text-warning", bg: "bg-warning/10" },
+          { key: "today", label: "Due Today", count: approvalMetrics.today, color: "text-foreground", bg: "bg-muted" },
+          { key: "overdue", label: "Overdue", count: approvalMetrics.overdue, color: "text-destructive", bg: "bg-destructive/10" },
+          { key: "escalated", label: "Escalated", count: approvalMetrics.escalated, color: "text-destructive animate-pulse", bg: "bg-destructive/5" },
+        ].map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setApprovalFilter(f.key as any)}
+            className={cn(
+              "p-4 rounded-xl border text-left transition-all hover:shadow-md cursor-pointer outline-none",
+              approvalFilter === f.key
+                ? "border-primary bg-primary/5 shadow-sm"
+                : "border-border/60 bg-card/60"
+            )}
+          >
+            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+              {f.label}
+            </span>
+            <div className="flex items-baseline gap-1.5 mt-2">
+              <span className={cn("text-2xl font-extrabold num", f.color)}>
+                {f.count}
+              </span>
+              <span className="text-[10px] text-muted-foreground font-semibold">items</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Filter Stats bar */}
+      <div className="flex justify-between items-center bg-card border border-border/40 rounded-xl px-4 py-3 shadow-sm">
+        <span className="text-[12.5px] text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{filteredApprovalTasks.length}</span> pending tasks
+        </span>
+        {approvalFilter !== "all" && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setApprovalFilter("all")}
+            className="h-8 text-[11px] rounded-lg"
+          >
+            Clear Filters
+          </Button>
+        )}
+      </div>
+
+      {/* Main Table */}
+      <PanelCard>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[12.5px] min-w-[800px]">
+            <thead>
+              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/30">
+                <th className="px-5 py-3 text-left font-medium">Record</th>
+                <th className="px-3 py-3 text-left font-medium">Module</th>
+                <th className="px-3 py-3 text-left font-medium">Project / Site</th>
+                <th className="px-3 py-3 text-left font-medium">Reporting Period</th>
+                <th className="px-3 py-3 text-left font-medium">Submitted By</th>
+                <th className="px-3 py-3 text-left font-medium">Due Date</th>
+                <th className="px-3 py-3 text-left font-medium">Escalation</th>
+                <th className="px-5 py-3 text-right font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredApprovalTasks.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">
+                    No pending records found matching this filter. All clean!
+                  </td>
+                </tr>
+              ) : (
+                filteredApprovalTasks.map((task) => (
+                  <tr key={task.id} className="border-b border-border/40 hover:bg-muted/15 last:border-0">
+                    <td className="px-5 py-3.5 font-bold text-foreground">
+                      {task.recordName}
+                    </td>
+                    <td className="px-3 py-3.5 text-muted-foreground">
+                      {task.module}
+                    </td>
+                    <td className="px-3 py-3.5 text-foreground font-semibold">
+                      {task.projectSite}
+                    </td>
+                    <td className="px-3 py-3.5 text-muted-foreground">
+                      {task.period}
+                    </td>
+                    <td className="px-3 py-3.5 text-foreground font-medium">
+                      {task.submittedBy}
+                    </td>
+                    <td className="px-3 py-3.5 text-muted-foreground font-mono">
+                      {task.dueDate}
+                    </td>
+                    <td className="px-3 py-3.5">
+                      <span className={cn(
+                        "rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase",
+                        task.escalation !== "Level 0" ? "bg-destructive/10 text-destructive animate-pulse" : "bg-muted text-muted-foreground"
+                      )}>
+                        {task.escalation}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-right">
+                      <Button
+                        size="sm"
+                        className="h-8 text-[11.5px] rounded-lg"
+                        onClick={() => setReviewItem(task)}
+                      >
+                        Review
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </PanelCard>
+
+      {/* Review Drawer Card overlay */}
+      {reviewItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-background/40 backdrop-blur-[2px]">
+          <div className="w-full max-w-[580px] h-full bg-card border-l border-border shadow-elevated flex flex-col justify-between p-6 space-y-6 animate-in slide-in-from-right duration-250">
+            {/* Header */}
+            <div className="flex justify-between items-start border-b border-border/40 pb-4">
+              <div>
+                <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                  {reviewItem.module} / Verification Queue
+                </span>
+                <h3 className="text-[17px] font-extrabold text-foreground tracking-tight mt-0.5">
+                  {reviewItem.recordName}
+                </h3>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setReviewItem(null)} className="h-8 w-8 rounded-lg p-0">
+                ✕
+              </Button>
+            </div>
+
+            {/* Scrollable details */}
+            <div className="flex-1 space-y-5 overflow-y-auto pr-1">
+              {/* Submitted Value highlight */}
+              <div className="p-4 bg-muted/40 rounded-xl border border-border/60">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  Submitted Actual Value
+                </span>
+                <div className="flex items-baseline gap-1.5 mt-1.5">
+                  <span className="text-3xl font-extrabold text-primary num">
+                    {reviewItem.value || "Not Entered"}
+                  </span>
+                  <span className="text-[14px] font-bold text-muted-foreground">
+                    {reviewItem.unit || ""}
+                  </span>
+                </div>
+              </div>
+
+              {/* Master Context mappings */}
+              <div className="space-y-3">
+                <h4 className="text-[12px] font-bold text-foreground uppercase tracking-wider">
+                  Resolved Master Context
+                </h4>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-card border border-border/40 rounded-lg">
+                    <span className="text-[10px] font-semibold text-muted-foreground block">Reporting Scope</span>
+                    <span className="text-[12px] font-bold text-foreground mt-0.5 block">Project-Level Site Specific</span>
+                  </div>
+                  <div className="p-3 bg-card border border-border/40 rounded-lg">
+                    <span className="text-[10px] font-semibold text-muted-foreground block">Submission Frequency</span>
+                    <span className="text-[12px] font-bold text-foreground mt-0.5 block capitalize">{reviewItem.indicator?.maps?.[0] || "Monthly"}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-card border border-border/40 rounded-lg flex justify-between items-center">
+                  <div>
+                    <span className="text-[10px] font-semibold text-muted-foreground block">Assigned Owner (Master)</span>
+                    <span className="text-[12px] font-bold text-foreground mt-0.5 block">{reviewItem.submittedBy}</span>
+                  </div>
+                  <span className="rounded-md bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary uppercase">
+                    Origin Owner
+                  </span>
+                </div>
+
+                {/* Applicable Acts dropdown (with helper text) */}
+                <div className="p-3 bg-card border border-border/40 rounded-lg">
+                  <span className="text-[10px] font-semibold text-muted-foreground block mb-1">Applicable Legal / Regulatory Act</span>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                    {reviewItem.acts?.map((act: string) => (
+                      <span key={act} className="inline-flex items-center gap-1.5 px-2 py-1 bg-muted border border-border/50 text-[11.5px] font-semibold text-foreground rounded-lg">
+                        {act}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-[10.5px] text-muted-foreground">
+                    Why are they applicable? <span className="font-semibold text-primary hover:underline cursor-pointer" onClick={() => toast.info(`This regulatory requirement applies because the facility performs energy storage operations at ${reviewItem.projectSite.split(" / ")[1]} as registered in the Projects Master.`)}>Explain Applicability</span>
+                  </div>
+                </div>
+
+                {/* GHG Emissions calculations from Master */}
+                {reviewItem.ghgContext && (
+                  <div className="p-3 bg-card border border-border/40 rounded-lg space-y-2">
+                    <span className="text-[10px] font-semibold text-muted-foreground block font-bold">GHG Emissions Master Parameters</span>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+                      <div>Scope: <span className="font-bold text-foreground">Scope 2</span></div>
+                      <div>Factor: <span className="font-mono font-bold text-foreground">{reviewItem.ghgContext.factor}</span></div>
+                      <div>Formula: <span className="font-mono font-bold text-foreground">{reviewItem.ghgContext.formula}</span></div>
+                      <div>Source: <span className="font-bold text-foreground">Central Electricity Authority</span></div>
+                    </div>
+                    <div className="pt-2 border-t border-border/40 flex justify-between items-center text-[11px]">
+                      <span className="font-semibold text-muted-foreground">Calculated carbon footprint:</span>
+                      <span className="font-extrabold text-foreground">
+                        {Math.round(Number(reviewItem.value || 0) * 0.82).toLocaleString()} kg CO₂e
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Evidence attachments */}
+              <div className="p-3 bg-card border border-border/40 rounded-lg">
+                <span className="text-[10px] font-semibold text-muted-foreground block mb-2">Submitted Evidence</span>
+                <div className="flex items-center gap-2 p-2 bg-muted/30 border border-border/40 rounded-lg text-[12px] font-medium text-foreground">
+                  <span>📄 energy_utility_bill_july2026.pdf</span>
+                  <span className="ml-auto text-[10.5px] text-primary hover:underline cursor-pointer" onClick={() => toast.success("Downloading invoice evidence file...")}>
+                    Download
+                  </span>
+                </div>
+              </div>
+
+              {/* Timeline Logs */}
+              <div className="p-3 bg-card border border-border/40 rounded-lg">
+                <span className="text-[10px] font-semibold text-muted-foreground block mb-2">Audit History</span>
+                <div className="space-y-2 text-[11px] text-muted-foreground font-mono">
+                  <div className="flex justify-between">
+                    <span>● Draft created by Depot Manager</span>
+                    <span>2026-07-08</span>
+                  </div>
+                  <div className="flex justify-between text-foreground">
+                    <span>● Submitted to validation queue</span>
+                    <span>2026-07-10</span>
+                  </div>
+                  {reviewItem.escalation !== "Level 0" && (
+                    <div className="flex justify-between text-destructive">
+                      <span>● Escalation triggered due to SLA breach</span>
+                      <span>{reviewItem.escalation}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Actions bottom bar */}
+            <div className="flex gap-3 border-t border-border/40 pt-4 bg-card">
+              <Button variant="outline" className="flex-1 h-10 text-[12px] font-bold border-destructive text-destructive hover:bg-destructive/5" onClick={() => handleRejectTask(reviewItem)}>
+                Reject Record
+              </Button>
+              <Button variant="outline" className="flex-1 h-10 text-[12px] font-bold border-warning text-warning hover:bg-warning/5" onClick={() => setReturnTask(reviewItem)}>
+                Return for Correction
+              </Button>
+              <Button className="flex-1 h-10 text-[12px] font-bold bg-success hover:bg-success/90 text-white" onClick={() => handleApproveTask(reviewItem)}>
+                Approve & Lock
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Return Correction Modal */}
+      {returnTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
+          <div className="bg-card border border-border/60 shadow-elevated rounded-xl p-5 w-full max-w-[420px] space-y-4">
+            <div>
+              <h4 className="text-[14px] font-extrabold text-foreground tracking-tight">Return for Correction</h4>
+              <p className="text-[11.5px] text-muted-foreground mt-0.5 font-medium">Please provide a mandatory audit comment explaining what needs correction.</p>
+            </div>
+            <textarea
+              value={returnReason}
+              onChange={(e) => setReturnReason(e.target.value)}
+              placeholder="E.g., The utility consumption figure is 15% higher than the sub-meter log. Please re-verify."
+              className="w-full h-24 p-2.5 rounded-lg border border-border bg-muted/30 text-[12.5px] placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/60 resize-none"
+            />
+            <div className="flex gap-2 justify-end">
+              <Button variant="ghost" size="sm" onClick={() => { setReturnTask(null); setReturnReason(""); }}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                className="bg-warning text-warning-foreground hover:bg-warning/90 font-bold"
+                onClick={() => handleReturnTask(returnTask, returnReason)}
+              >
+                Return to Contributor
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface EscalationMatrixUIProps {
+  auditTrails: any[];
+}
+
+function EscalationMatrixUI({ auditTrails }: EscalationMatrixUIProps) {
+  return (
+    <div className="space-y-5">
+      {/* Overview Card */}
+      <div className="p-4 bg-muted/40 rounded-xl border border-border/40">
+        <h4 className="text-[13px] font-bold text-foreground">SLA Governance & Role Assignments Matrix</h4>
+        <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-normal">
+          Rather than hardcoding individuals, the system dynamically resolves owners and escalation pathways from the Role Master, Project Master, and Site assignments mapping configurations.
+        </p>
+      </div>
+
+      {/* Escalation Configurations */}
+      <PanelCard>
+        <div className="border-b border-border/60 px-5 py-3.5">
+          <h4 className="text-[13px] font-bold text-foreground">Escalation Workflows & SLA Thresholds</h4>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[12.5px] min-w-[700px]">
+            <thead>
+              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/40">
+                <th className="px-5 py-3 text-left font-medium">Workflow</th>
+                <th className="px-3 py-3 text-left font-medium">Trigger</th>
+                <th className="px-3 py-3 text-left font-medium">Priority</th>
+                <th className="px-3 py-3 text-left font-medium">Initial Owner</th>
+                <th className="px-3 py-3 text-left font-medium">SLA Limit</th>
+                <th className="px-3 py-3 text-left font-medium">Reminder</th>
+                <th className="px-3 py-3 text-left font-medium">L1 Esc</th>
+                <th className="px-3 py-3 text-left font-medium">L2 Esc</th>
+                <th className="px-3 py-3 text-left font-medium">L3 Esc</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { workflow: "Data Approval", trigger: "Approval Pending", priority: "Medium", owner: "Approver", sla: "2 Days", reminder: "1 Day", l1: "ESG Lead", l2: "Management", l3: "—" },
+                { workflow: "NC Remediation", trigger: "Overdue Closure", priority: "High", owner: "NC Owner", sla: "3 Days", reminder: "1 Day", l1: "Project Manager", l2: "ESG Lead", l3: "Management" },
+                { workflow: "ESAP Actions", trigger: "Overdue Closure", priority: "High", owner: "Action Owner", sla: "3 Days", reminder: "1 Day", l1: "Project Manager", l2: "ESG Lead", l3: "Management" },
+                { workflow: "Regulatory Compliance", trigger: "Expiry / Breach", priority: "Critical", owner: "Compliance Owner", sla: "2 Days", reminder: "Immediate", l1: "ESG Lead", l2: "Management", l3: "Executive Mgmt" },
+              ].map((row, idx) => (
+                <tr key={idx} className="border-b border-border/40 hover:bg-muted/10 last:border-0">
+                  <td className="px-5 py-3 font-bold text-foreground">{row.workflow}</td>
+                  <td className="px-3 py-3 text-muted-foreground">{row.trigger}</td>
+                  <td className="px-3 py-3">
+                    <span className={cn(
+                      "px-2 py-0.5 rounded-md text-[10px] font-bold uppercase",
+                      row.priority === "Critical" ? "bg-destructive/10 text-destructive" : row.priority === "High" ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"
+                    )}>
+                      {row.priority}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3 text-foreground font-semibold">{row.owner}</td>
+                  <td className="px-3 py-3 text-muted-foreground font-mono">{row.sla}</td>
+                  <td className="px-3 py-3 text-muted-foreground font-mono">{row.reminder}</td>
+                  <td className="px-3 py-3 text-foreground font-semibold">{row.l1}</td>
+                  <td className="px-3 py-3 text-foreground font-semibold">{row.l2}</td>
+                  <td className="px-3 py-3 text-foreground font-semibold">{row.l3}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </PanelCard>
+
+      {/* Dynamic Traceable Logs */}
+      <PanelCard>
+        <div className="border-b border-border/60 px-5 py-3.5 flex justify-between items-center">
+          <h4 className="text-[13px] font-bold text-foreground">Traceable Governance Audit Trail</h4>
+          <span className="text-[11px] text-muted-foreground font-medium">Dynamically resolved via Master definitions</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[12px] min-w-[800px]">
+            <thead>
+              <tr className="border-b border-border/60 text-[10px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/40">
+                <th className="px-5 py-2.5 text-left font-medium">User</th>
+                <th className="px-3 py-2.5 text-left font-medium">Role</th>
+                <th className="px-3 py-2.5 text-left font-medium">Project / Site</th>
+                <th className="px-3 py-2.5 text-left font-medium">Record Action</th>
+                <th className="px-3 py-2.5 text-left font-medium">SLA Status Delta</th>
+                <th className="px-3 py-2.5 text-left font-medium">Master Config Source</th>
+                <th className="px-5 py-2.5 text-right font-medium">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {auditTrails.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-6 text-center text-muted-foreground font-semibold">
+                    No validation events logged yet. Audit trails are recorded dynamically.
+                  </td>
+                </tr>
+              ) : (
+                auditTrails.map((log: any) => (
+                  <tr key={log.id} className="border-b border-border/40 hover:bg-muted/10 last:border-0 font-mono text-[11.5px]">
+                    <td className="px-5 py-2.5 font-bold text-foreground">{log.user}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground">{log.role}</td>
+                    <td className="px-3 py-2.5 text-foreground">{log.project} / {log.site}</td>
+                    <td className="px-3 py-2.5 text-foreground font-semibold">
+                      {log.record}
+                    </td>
+                    <td className="px-3 py-2.5">
+                      <span className="font-bold text-primary">{log.action}</span>
+                      <span className="text-[10px] text-muted-foreground ml-1">({log.previousStatus} → {log.newStatus})</span>
+                    </td>
+                    <td className="px-3 py-2.5 text-muted-foreground">{log.resolvedByMaster}</td>
+                    <td className="px-5 py-2.5 text-right text-muted-foreground">{new Date(log.timestamp).toLocaleTimeString()}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </PanelCard>
     </div>
   );
 }

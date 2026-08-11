@@ -71,7 +71,9 @@ export function ExplainableChargerIntelligence({
         className={`scroll-mt-28 space-y-4 ${highlightDrill ? "rounded-2xl ring-2 ring-primary/40 ring-offset-2 ring-offset-background" : ""}`}
       >
         {highlightDrill && (
-          <p className="text-[11px] font-medium text-primary">Opened from risk ranking · investigate charger</p>
+          <p className="text-[11px] font-medium text-primary">
+            Opened from risk ranking · investigate charger
+          </p>
         )}
 
         <GlassPanel className="overflow-hidden border-primary/25">
@@ -127,13 +129,14 @@ export function ExplainableChargerIntelligence({
               title="Charging curve intelligence"
               sub="Representative bus session on this charger · SOC vs power"
             />
-            {curve && curve.series.length > 0 ? (
-              <ChargingCurveHero series={curve.series} />
-            ) : null}
+            {curve && curve.series.length > 0 ? <ChargingCurveHero series={curve.series} /> : null}
           </GlassPanel>
 
           <GlassPanel className="max-h-[420px] overflow-auto p-4">
-            <PanelHead title="Root cause intelligence" sub="How curve metrics impact charger health" />
+            <PanelHead
+              title="Root cause intelligence"
+              sub="How curve metrics impact charger health"
+            />
             <div className="space-y-2">
               {explain.map((m) => (
                 <div
@@ -153,7 +156,9 @@ export function ExplainableChargerIntelligence({
                       {fmt(m.value, m.unit === "%" ? 0 : 1)} {m.unit}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground">{m.impact}</p>
+                  <p className="mt-1.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                    {m.impact}
+                  </p>
                 </div>
               ))}
             </div>
@@ -161,7 +166,10 @@ export function ExplainableChargerIntelligence({
         </div>
 
         <GlassPanel className="p-4">
-          <PanelHead title="Thermal on representative session" sub="Power vs temperature across SOC" />
+          <PanelHead
+            title="Thermal on representative session"
+            sub="Power vs temperature across SOC"
+          />
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={thermal}>
@@ -179,13 +187,21 @@ export function ExplainableChargerIntelligence({
                   stroke="#f87171"
                   {...CHART_ENTER}
                 />
-                <Line yAxisId="p" type="monotone" dataKey="power" stroke="#38bdf8" dot={false} strokeWidth={2} />
+                <Line
+                  yAxisId="p"
+                  type="monotone"
+                  dataKey="power"
+                  stroke="#38bdf8"
+                  dot={false}
+                  strokeWidth={2}
+                />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
           <p className="mt-2 flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Thermometer className="h-3.5 w-3.5 text-destructive" />
-            Thermal rise during CV correlates with disconnect and power cap behavior on this charger.
+            Thermal rise during CV correlates with disconnect and power cap behavior on this
+            charger.
           </p>
         </GlassPanel>
 

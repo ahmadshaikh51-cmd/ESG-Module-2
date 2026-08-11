@@ -25,7 +25,11 @@ const C = {
   starsFont: "FF047857",
 } as const;
 
-const solid = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
+const solid = (argb: string) => ({
+  type: "pattern" as const,
+  pattern: "solid" as const,
+  fgColor: { argb },
+});
 const thinBorder = {
   top: { style: "thin" as const, color: { argb: C.border } },
   left: { style: "thin" as const, color: { argb: C.border } },
@@ -67,23 +71,56 @@ const TRIP_COLUMNS: ColDef<DriverTripDetailRow>[] = [
   { header: "Time bucket", width: 12, type: "text", value: (r) => r.timeBucket },
   { header: "Vehicle size", width: 11, type: "text", value: (r) => r.vehicleSize },
   { header: "Vehicle", width: 12, type: "text", value: (r) => tripVehicleLabel(r) },
-  { header: "Sched. start", width: 10, type: "text", value: (r) => formatUtcTripTime(r.tripStartTime) },
+  {
+    header: "Sched. start",
+    width: 10,
+    type: "text",
+    value: (r) => formatUtcTripTime(r.tripStartTime),
+  },
   { header: "Sched. end", width: 10, type: "text", value: (r) => formatUtcTripTime(r.tripEndTime) },
-  { header: "Actual start", width: 10, type: "text", value: (r) => formatUtcTripTime(r.actualTripStartTime) },
-  { header: "Actual end", width: 10, type: "text", value: (r) => formatUtcTripTime(r.actualTripEndTime) },
+  {
+    header: "Actual start",
+    width: 10,
+    type: "text",
+    value: (r) => formatUtcTripTime(r.actualTripStartTime),
+  },
+  {
+    header: "Actual end",
+    width: 10,
+    type: "text",
+    value: (r) => formatUtcTripTime(r.actualTripEndTime),
+  },
   { header: "Actual dur. (min)", width: 12, type: "num1", value: (r) => r.actualTripDurationMin },
   { header: "Actual dist. (km)", width: 13, type: "num1", value: (r) => r.actualDistanceKm },
   { header: "Efficiency (kWh/km)", width: 15, type: "num2", value: (r) => r.kwhPerKm },
   { header: "Difficulty", width: 10, type: "num1", value: (r) => r.routeDifficultyScore },
-  { header: "Driver score", width: 12, type: "num1", value: (r) => (r.contextualDriverScore != null && r.contextualDriverScore > 0 ? r.contextualDriverScore : null) },
-  { header: "Driving score", width: 12, type: "int", value: (r) => (r.drivingScore > 0 ? r.drivingScore : null) },
+  {
+    header: "Driver score",
+    width: 12,
+    type: "num1",
+    value: (r) =>
+      r.contextualDriverScore != null && r.contextualDriverScore > 0
+        ? r.contextualDriverScore
+        : null,
+  },
+  {
+    header: "Driving score",
+    width: 12,
+    type: "int",
+    value: (r) => (r.drivingScore > 0 ? r.drivingScore : null),
+  },
   { header: "Score band", width: 10, type: "text", value: (r) => r.driverScoreBand },
   { header: "Alerts", width: 9, type: "int", value: (r) => r.totalDmsEvents },
   { header: "Braking /100km", width: 12, type: "num1", value: (r) => r.hardBrakingDensity },
   { header: "Overspeed /100km", width: 13, type: "num1", value: (r) => r.overspeedDensity },
   { header: "Distraction /100km", width: 14, type: "num1", value: (r) => r.distractionDensity },
   { header: "Fatigue /100km", width: 12, type: "num1", value: (r) => r.fatigueDensity },
-  { header: "Regen ratio", width: 10, type: "pct", value: (r) => (r.regenRatio > 0 ? r.regenRatio : null) },
+  {
+    header: "Regen ratio",
+    width: 10,
+    type: "pct",
+    value: (r) => (r.regenRatio > 0 ? r.regenRatio : null),
+  },
   { header: "Driver stars", width: 10, type: "int", value: (r) => r.driverStarCount },
   { header: "Risk flag", width: 10, type: "text", value: (r) => r.behaviorRiskFlag },
 ];
@@ -97,10 +134,25 @@ const DAILY_COLUMNS: ColDef<DriverDailyTripRow>[] = [
   { header: "Trips", width: 8, type: "int", value: (r) => r.tripCount },
   { header: "Distance (km)", width: 13, type: "num2", value: (r) => r.totalDistanceKm },
   { header: "Efficiency (kWh/km)", width: 16, type: "num2", value: (r) => r.avgEfficiencyKwhPerKm },
-  { header: "Median eff. (kWh/km)", width: 16, type: "num2", value: (r) => r.medianEfficiencyKwhPerKm },
+  {
+    header: "Median eff. (kWh/km)",
+    width: 16,
+    type: "num2",
+    value: (r) => r.medianEfficiencyKwhPerKm,
+  },
   { header: "Route exposure", width: 13, type: "num2", value: (r) => r.avgRouteDifficulty },
-  { header: "Driver score", width: 11, type: "num1", value: (r) => (r.avgContextualDriverScore > 0 ? r.avgContextualDriverScore : null) },
-  { header: "Driving score", width: 12, type: "int", value: (r) => (r.avgDrivingScore > 0 ? r.avgDrivingScore : null) },
+  {
+    header: "Driver score",
+    width: 11,
+    type: "num1",
+    value: (r) => (r.avgContextualDriverScore > 0 ? r.avgContextualDriverScore : null),
+  },
+  {
+    header: "Driving score",
+    width: 12,
+    type: "int",
+    value: (r) => (r.avgDrivingScore > 0 ? r.avgDrivingScore : null),
+  },
   { header: "Alerts", width: 9, type: "int", value: (r) => r.dmsEvents },
   { header: "Braking /100km", width: 13, type: "num2", value: (r) => r.avgBrakingDensity },
   { header: "Overspeed /100km", width: 14, type: "num2", value: (r) => r.avgOverspeedDensity },
@@ -156,7 +208,11 @@ function buildSheet<T>(
     const cell = headerRow.getCell(i + 1);
     cell.value = col.header;
     setCellFill(cell, C.brandDeep, C.white, true);
-    cell.alignment = { vertical: "middle", horizontal: col.type === "text" ? "left" : "center", wrapText: true };
+    cell.alignment = {
+      vertical: "middle",
+      horizontal: col.type === "text" ? "left" : "center",
+      wrapText: true,
+    };
     cell.border = thinBorder;
     ws.getColumn(i + 1).width = col.width;
   });
@@ -206,18 +262,22 @@ function buildSheet<T>(
     excelRow.height = 18;
   });
 
-  ws.views = [{ state: "frozen", xSplit: 1, ySplit: headerRowIdx, topLeftCell: `B${headerRowIdx + 1}` }];
+  ws.views = [
+    { state: "frozen", xSplit: 1, ySplit: headerRowIdx, topLeftCell: `B${headerRowIdx + 1}` },
+  ];
   ws.autoFilter = {
     from: { row: headerRowIdx, column: 1 },
     to: { row: headerRowIdx, column: columns.length },
   };
 }
 
-function buildTripSheet(ws: Worksheet, driverName: string, subtitle: string, rows: DriverTripDetailRow[]) {
-  const windowAvgEff =
-    rows.length > 0
-      ? rows.reduce((s, r) => s + r.kwhPerKm, 0) / rows.length
-      : 0;
+function buildTripSheet(
+  ws: Worksheet,
+  driverName: string,
+  subtitle: string,
+  rows: DriverTripDetailRow[],
+) {
+  const windowAvgEff = rows.length > 0 ? rows.reduce((s, r) => s + r.kwhPerKm, 0) / rows.length : 0;
 
   buildSheet(ws, `Trip detail — ${driverName}`, subtitle, TRIP_COLUMNS, rows, {
     riskCol: TRIP_RISK_COL,
@@ -231,11 +291,19 @@ function buildTripSheet(ws: Worksheet, driverName: string, subtitle: string, row
   });
 }
 
-function buildDailySheet(ws: Worksheet, driverName: string, subtitle: string, rows: DriverDailyTripRow[]) {
+function buildDailySheet(
+  ws: Worksheet,
+  driverName: string,
+  subtitle: string,
+  rows: DriverDailyTripRow[],
+) {
   const windowAvgEff =
     rows.length > 0
-      ? rows.reduce((s, r) => s + r.avgEfficiencyKwhPerKm * r.tripCount, 0)
-        / Math.max(1, rows.reduce((s, r) => s + r.tripCount, 0))
+      ? rows.reduce((s, r) => s + r.avgEfficiencyKwhPerKm * r.tripCount, 0) /
+        Math.max(
+          1,
+          rows.reduce((s, r) => s + r.tripCount, 0),
+        )
       : 0;
 
   buildSheet(ws, `Daily summary — ${driverName}`, subtitle, DAILY_COLUMNS, rows, {
@@ -268,11 +336,15 @@ export async function exportDriverTrips(
 
   const now = new Date();
   const stamp = now.toLocaleString(undefined, {
-    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const dateSpan =
-    options?.dateSpan
-    ?? (tripRows.length > 0
+    options?.dateSpan ??
+    (tripRows.length > 0
       ? `${tripRows[0].schedulingDate} → ${tripRows[tripRows.length - 1].schedulingDate}`
       : "no dates");
   const tripSubtitle = `Generated ${stamp} · ${tripRows.length} trips · ${dateSpan}`;

@@ -12,19 +12,35 @@ export function RiskBadge({ level }: { level: RiskLevel }) {
         ? "bg-warning/15 text-warning ring-warning/30"
         : "bg-success/15 text-success ring-success/30";
   return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${styles}`}>
+    <span
+      className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${styles}`}
+    >
       {level}
     </span>
   );
 }
 
-export function MiniSpark({ data, color = "var(--color-primary)" }: { data: { v: number }[]; color?: string }) {
+export function MiniSpark({
+  data,
+  color = "var(--color-primary)",
+}: {
+  data: { v: number }[];
+  color?: string;
+}) {
   if (!data.length) return null;
   return (
     <div className="h-8 w-[4.5rem]">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
-          <Area type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} fill={color} fillOpacity={0.15} isAnimationActive={false} />
+          <Area
+            type="monotone"
+            dataKey="v"
+            stroke={color}
+            strokeWidth={1.5}
+            fill={color}
+            fillOpacity={0.15}
+            isAnimationActive={false}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -58,9 +74,17 @@ export function TrendSpark({ values }: { values: number[] }) {
   );
 }
 
-export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Panel({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={`card-interactive overflow-hidden rounded-2xl border border-border/50 bg-card shadow-elevated ${className}`}>
+    <div
+      className={`card-interactive overflow-hidden rounded-2xl border border-border/50 bg-card shadow-elevated ${className}`}
+    >
       {children}
     </div>
   );

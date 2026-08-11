@@ -13,7 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { fmtDate, personById } from "@/lib/esg-data";
@@ -22,7 +28,13 @@ import { A, PanelCard, ProvenanceChip, useEsg } from "./primitives";
 
 const SCOPE_LABEL: Record<1 | 2 | 3, string> = { 1: "Scope 1", 2: "Scope 2", 3: "Scope 3" };
 
-function FactorCell({ row, onCommit }: { row: GhgParamRow; onCommit: (factor: number, source: string, note: string) => void }) {
+function FactorCell({
+  row,
+  onCommit,
+}: {
+  row: GhgParamRow;
+  onCommit: (factor: number, source: string, note: string) => void;
+}) {
   const [factor, setFactor] = useState(String(row.factor));
   const [source, setSource] = useState(row.factorSource);
   const [note, setNote] = useState("");
@@ -55,26 +67,45 @@ function FactorCell({ row, onCommit }: { row: GhgParamRow; onCommit: (factor: nu
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[12px]">Factor (kgCO₂e/{row.unit})</Label>
-              <Input inputMode="decimal" value={factor} onChange={(e) => setFactor(e.target.value)} className="h-9 text-[12.5px]" />
+              <Input
+                inputMode="decimal"
+                value={factor}
+                onChange={(e) => setFactor(e.target.value)}
+                className="h-9 text-[12.5px]"
+              />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px]">Source</Label>
-              <Input value={source} onChange={(e) => setSource(e.target.value)} className="h-9 text-[12.5px]" />
+              <Input
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                className="h-9 text-[12.5px]"
+              />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[12px]">Version note <span className="text-destructive">— required</span></Label>
+            <Label className="text-[12px]">
+              Version note <span className="text-destructive">— required</span>
+            </Label>
             <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Why is this changing? e.g. CEA 2026 baseline update"
               className="h-9 text-[12.5px]"
             />
-            <p className="text-[11px] text-muted-foreground">A changed factor is traceable — GHG numbers that silently change are a credibility risk.</p>
+            <p className="text-[11px] text-muted-foreground">
+              A changed factor is traceable — GHG numbers that silently change are a credibility
+              risk.
+            </p>
           </div>
         </div>
         <DialogFooter>
-          <Button size="sm" onClick={submit} disabled={!note.trim() || !Number.isFinite(Number(factor))} className="text-[12px]">
+          <Button
+            size="sm"
+            onClick={submit}
+            disabled={!note.trim() || !Number.isFinite(Number(factor))}
+            className="text-[12px]"
+          >
             Save with note
           </Button>
         </DialogFooter>
@@ -83,7 +114,18 @@ function FactorCell({ row, onCommit }: { row: GhgParamRow; onCommit: (factor: nu
   );
 }
 
-function AddParamDialog({ onAdd }: { onAdd: (p: { label: string; scope: 1 | 2 | 3; unit: string; factor: number; factorSource: string; mode: "manual" | "auto" }) => void }) {
+function AddParamDialog({
+  onAdd,
+}: {
+  onAdd: (p: {
+    label: string;
+    scope: 1 | 2 | 3;
+    unit: string;
+    factor: number;
+    factorSource: string;
+    mode: "manual" | "auto";
+  }) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState("");
   const [scope, setScope] = useState<"1" | "2" | "3">("1");
@@ -91,11 +133,19 @@ function AddParamDialog({ onAdd }: { onAdd: (p: { label: string; scope: 1 | 2 | 
   const [factor, setFactor] = useState("");
   const [factorSource, setFactorSource] = useState("");
 
-  const valid = label.trim() && unit.trim() && Number.isFinite(Number(factor)) && factorSource.trim();
+  const valid =
+    label.trim() && unit.trim() && Number.isFinite(Number(factor)) && factorSource.trim();
 
   const submit = () => {
     if (!valid) return;
-    onAdd({ label: label.trim(), scope: Number(scope) as 1 | 2 | 3, unit: unit.trim(), factor: Number(factor), factorSource: factorSource.trim(), mode: "manual" });
+    onAdd({
+      label: label.trim(),
+      scope: Number(scope) as 1 | 2 | 3,
+      unit: unit.trim(),
+      factor: Number(factor),
+      factorSource: factorSource.trim(),
+      mode: "manual",
+    });
     setLabel("");
     setUnit("");
     setFactor("");
@@ -117,7 +167,12 @@ function AddParamDialog({ onAdd }: { onAdd: (p: { label: string; scope: 1 | 2 | 
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label className="text-[12px]">Label</Label>
-            <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Biomass fuel" className="h-9 text-[12.5px]" />
+            <Input
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="Biomass fuel"
+              className="h-9 text-[12.5px]"
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -127,25 +182,46 @@ function AddParamDialog({ onAdd }: { onAdd: (p: { label: string; scope: 1 | 2 | 
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1" className="text-[12.5px]">Scope 1</SelectItem>
-                  <SelectItem value="2" className="text-[12.5px]">Scope 2</SelectItem>
-                  <SelectItem value="3" className="text-[12.5px]">Scope 3</SelectItem>
+                  <SelectItem value="1" className="text-[12.5px]">
+                    Scope 1
+                  </SelectItem>
+                  <SelectItem value="2" className="text-[12.5px]">
+                    Scope 2
+                  </SelectItem>
+                  <SelectItem value="3" className="text-[12.5px]">
+                    Scope 3
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px]">Unit</Label>
-              <Input value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="kg" className="h-9 text-[12.5px]" />
+              <Input
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                placeholder="kg"
+                className="h-9 text-[12.5px]"
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[12px]">Factor</Label>
-              <Input inputMode="decimal" value={factor} onChange={(e) => setFactor(e.target.value)} className="h-9 text-[12.5px]" />
+              <Input
+                inputMode="decimal"
+                value={factor}
+                onChange={(e) => setFactor(e.target.value)}
+                className="h-9 text-[12.5px]"
+              />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px]">Factor source</Label>
-              <Input value={factorSource} onChange={(e) => setFactorSource(e.target.value)} placeholder="DEFRA 2026" className="h-9 text-[12.5px]" />
+              <Input
+                value={factorSource}
+                onChange={(e) => setFactorSource(e.target.value)}
+                placeholder="DEFRA 2026"
+                className="h-9 text-[12.5px]"
+              />
             </div>
           </div>
         </div>
@@ -159,14 +235,21 @@ function AddParamDialog({ onAdd }: { onAdd: (p: { label: string; scope: 1 | 2 | 
   );
 }
 
-function ImportFactorsDialog({ open, onOpenChange, rows, onConfirm }: {
+function ImportFactorsDialog({
+  open,
+  onOpenChange,
+  rows,
+  onConfirm,
+}: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   rows: GhgParamRow[];
   onConfirm: (rows: { id: string; factor: number; factorSource?: string }[]) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [parsed, setParsed] = useState<{ id: string; label: string; factor: number; matched: boolean }[] | null>(null);
+  const [parsed, setParsed] = useState<
+    { id: string; label: string; factor: number; matched: boolean }[] | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   const reset = () => {
@@ -192,7 +275,12 @@ function ImportFactorsDialog({ open, onOpenChange, rows, onConfirm }: {
             const id = String(r.id ?? r.paramId ?? "").trim();
             const factor = Number(r.factor ?? r.Factor);
             const match = rows.find((x) => x.id === id);
-            return { id, label: match?.label ?? id, factor, matched: !!match && Number.isFinite(factor) };
+            return {
+              id,
+              label: match?.label ?? id,
+              factor,
+              matched: !!match && Number.isFinite(factor),
+            };
           })
           .filter((r) => r.id);
         if (!out.length) {
@@ -210,12 +298,27 @@ function ImportFactorsDialog({ open, onOpenChange, rows, onConfirm }: {
   const matched = parsed?.filter((r) => r.matched) ?? [];
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) reset();
+        onOpenChange(o);
+      }}
+    >
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle className="text-[15px]">Import emission factors from Excel</DialogTitle>
         </DialogHeader>
-        <input ref={fileRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) parse(f); }} />
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".xlsx,.xls"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) parse(f);
+          }}
+        />
         {!parsed ? (
           <button
             type="button"
@@ -224,15 +327,25 @@ function ImportFactorsDialog({ open, onOpenChange, rows, onConfirm }: {
           >
             <Upload className="h-6 w-6 text-muted-foreground" aria-hidden />
             <span className="text-[12.5px] font-medium">Drop an .xlsx or click to choose</span>
-            <span className="text-[11px] text-muted-foreground">Columns: id, factor, factorSource (optional)</span>
+            <span className="text-[11px] text-muted-foreground">
+              Columns: id, factor, factorSource (optional)
+            </span>
           </button>
         ) : (
           <div className="max-h-[240px] space-y-1.5 overflow-y-auto text-[12px]">
             {parsed.map((r, i) => (
-              <div key={i} className={cn("flex items-center justify-between rounded-lg border border-border/50 px-3 py-1.5", !r.matched && "bg-warning/6")}>
+              <div
+                key={i}
+                className={cn(
+                  "flex items-center justify-between rounded-lg border border-border/50 px-3 py-1.5",
+                  !r.matched && "bg-warning/6",
+                )}
+              >
                 <span>{r.label}</span>
                 <span className="num">{Number.isFinite(r.factor) ? r.factor : "—"}</span>
-                <span className={r.matched ? "text-success" : "text-warning"}>{r.matched ? "will import" : "unmatched — skipped"}</span>
+                <span className={r.matched ? "text-success" : "text-warning"}>
+                  {r.matched ? "will import" : "unmatched — skipped"}
+                </span>
               </div>
             ))}
           </div>
@@ -273,14 +386,20 @@ export function GhgMastersPanel() {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
         <div>
           <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-            <FlaskConical className="h-4 w-4 text-primary" aria-hidden /> <A t="GHG" /> scope &amp; emission factors
+            <FlaskConical className="h-4 w-4 text-primary" aria-hidden /> <A t="GHG" /> scope &amp;
+            emission factors
           </h3>
           <p className="text-[12px] text-muted-foreground">
             Master data supplied by Diganta, maintained here — every factor change carries a note.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1.5 text-[12px]" onClick={() => setImportOpen(true)}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1.5 text-[12px]"
+            onClick={() => setImportOpen(true)}
+          >
             <Upload className="h-3.5 w-3.5" aria-hidden /> Import Excel
           </Button>
           <AddParamDialog onAdd={(p) => masters.addGhgParam(p)} />
@@ -300,7 +419,10 @@ export function GhgMastersPanel() {
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className={cn("border-b border-border/40 last:border-0", !r.active && "opacity-50")}>
+              <tr
+                key={r.id}
+                className={cn("border-b border-border/40 last:border-0", !r.active && "opacity-50")}
+              >
                 <td className="px-5 py-2.5 font-medium">
                   {r.label}
                   {r.prov ? (
@@ -317,14 +439,27 @@ export function GhgMastersPanel() {
                 </td>
                 <td className="px-3 py-2.5 text-muted-foreground">{SCOPE_LABEL[r.scope]}</td>
                 <td className="px-3 py-2.5 text-right">
-                  <FactorCell row={r} onCommit={(factor, source, note) => masters.setGhgFactor(r.id, factor, source, note)} />
+                  <FactorCell
+                    row={r}
+                    onCommit={(factor, source, note) =>
+                      masters.setGhgFactor(r.id, factor, source, note)
+                    }
+                  />
                 </td>
-                <td className="px-3 py-2.5 text-[11.5px] text-muted-foreground">{r.factorSource}</td>
+                <td className="px-3 py-2.5 text-[11.5px] text-muted-foreground">
+                  {r.factorSource}
+                </td>
                 <td className="px-3 py-2.5 text-[11px] text-muted-foreground">
-                  {r.updatedOn ? `${fmtDate(r.updatedOn)}${r.updatedBy ? ` · ${personById(r.updatedBy)?.name ?? r.updatedBy}` : ""}` : "—"}
+                  {r.updatedOn
+                    ? `${fmtDate(r.updatedOn)}${r.updatedBy ? ` · ${personById(r.updatedBy)?.name ?? r.updatedBy}` : ""}`
+                    : "—"}
                 </td>
                 <td className="px-5 py-2.5 text-right">
-                  <Switch checked={r.active} onCheckedChange={(v) => masters.setGhgActive(r.id, v)} aria-label={`${r.label} active`} />
+                  <Switch
+                    checked={r.active}
+                    onCheckedChange={(v) => masters.setGhgActive(r.id, v)}
+                    aria-label={`${r.label} active`}
+                  />
                 </td>
               </tr>
             ))}
@@ -337,7 +472,9 @@ export function GhgMastersPanel() {
         rows={rows}
         onConfirm={(imported) => {
           masters.importGhgFactors(imported);
-          toast.success("Emission factors imported", { description: `${imported.length} factors updated from Excel.` });
+          toast.success("Emission factors imported", {
+            description: `${imported.length} factors updated from Excel.`,
+          });
         }}
       />
     </PanelCard>

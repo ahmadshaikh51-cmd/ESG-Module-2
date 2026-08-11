@@ -57,7 +57,9 @@ export function KpiCard({
         <div className="space-y-1.5">
           <div className="section-label">{label}</div>
           <div className="flex items-baseline gap-1.5">
-            <span className="num text-[27px] font-semibold tracking-tight text-foreground">{value}</span>
+            <span className="num text-[27px] font-semibold tracking-tight text-foreground">
+              {value}
+            </span>
             {unit && <span className="text-[12px] font-medium text-muted-foreground">{unit}</span>}
           </div>
           {medianBenchmark && (
@@ -81,7 +83,11 @@ export function KpiCard({
             good ? "bg-success/12 text-success" : "bg-destructive/12 text-destructive"
           }`}
         >
-          {delta >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+          {delta >= 0 ? (
+            <ArrowUpRight className="h-3 w-3" />
+          ) : (
+            <ArrowDownRight className="h-3 w-3" />
+          )}
           {Math.abs(delta).toFixed(1)}%
           <span className="ml-0.5 font-normal opacity-65">vs prev</span>
         </div>

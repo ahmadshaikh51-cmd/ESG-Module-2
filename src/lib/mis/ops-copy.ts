@@ -2,7 +2,8 @@
 
 export const OPS = {
   pageTitle: "Daily running report",
-  pageSubtitle: "Pick your depot, load the day’s trips, check kilometres, fix trips if needed, then download.",
+  pageSubtitle:
+    "Pick your depot, load the day’s trips, check kilometres, fix trips if needed, then download.",
 
   step1: "1. Choose depot & report style",
   step2: "2. Load & review trips",

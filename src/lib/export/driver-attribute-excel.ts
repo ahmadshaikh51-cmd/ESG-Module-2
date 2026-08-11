@@ -27,7 +27,11 @@ const RATING_STYLE: Record<string, { fill: string; font: string }> = {
   Poor: { fill: "FFFEE2E2", font: "FF991B1B" },
 };
 
-const solid = (argb: string) => ({ type: "pattern" as const, pattern: "solid" as const, fgColor: { argb } });
+const solid = (argb: string) => ({
+  type: "pattern" as const,
+  pattern: "solid" as const,
+  fgColor: { argb },
+});
 const thinBorder = {
   top: { style: "thin" as const, color: { argb: C.border } },
   left: { style: "thin" as const, color: { argb: C.border } },
@@ -58,20 +62,45 @@ const COLUMNS: ColDef[] = [
   { header: "Company", width: 12, type: "text", value: (e) => e.company_name },
   { header: "Year", width: 8, type: "int", value: (e) => e.attribute.year },
   { header: "Month", width: 8, type: "int", value: (e) => e.attribute.month },
-  { header: "Attribute score", width: 14, type: "num1", value: (e) => e.attribute.totalAttributeScore },
+  {
+    header: "Attribute score",
+    width: 14,
+    type: "num1",
+    value: (e) => e.attribute.totalAttributeScore,
+  },
   { header: "Rating", width: 12, type: "text", value: (e) => e.attribute.rating },
   { header: "Marks lost", width: 11, type: "num1", value: (e) => e.attribute.marksLost },
-  { header: "Dominant weakness", width: 18, type: "text", value: (e) => e.attribute.dominantWeakness },
+  {
+    header: "Dominant weakness",
+    width: 18,
+    type: "text",
+    value: (e) => e.attribute.dominantWeakness,
+  },
   { header: "Accidents /30", width: 12, type: "num1", value: (e) => e.attribute.accidentScore },
   { header: "Accident count", width: 12, type: "int", value: (e) => e.attribute.accidentCount },
-  { header: "Major accidents", width: 13, type: "int", value: (e) => e.attribute.majorAccidentCount },
+  {
+    header: "Major accidents",
+    width: 13,
+    type: "int",
+    value: (e) => e.attribute.majorAccidentCount,
+  },
   { header: "soc/km /20", width: 11, type: "num1", value: (e) => e.attribute.socScore },
   { header: "soc/km", width: 10, type: "num3", value: (e) => e.attribute.socPerKm },
   { header: "soc excess %", width: 12, type: "pct", value: (e) => e.attribute.socExcessPct },
   { header: "ADAS /20", width: 10, type: "num1", value: (e) => e.attribute.adasScore },
-  { header: "Hard braking /7", width: 13, type: "num1", value: (e) => e.attribute.hardBrakingScore },
+  {
+    header: "Hard braking /7",
+    width: 13,
+    type: "num1",
+    value: (e) => e.attribute.hardBrakingScore,
+  },
   { header: "Hard accel /7", width: 12, type: "num1", value: (e) => e.attribute.hardAccelScore },
-  { header: "Hard accel events", width: 14, type: "int", value: (e) => e.attribute.hardAccelEvents },
+  {
+    header: "Hard accel events",
+    width: 14,
+    type: "int",
+    value: (e) => e.attribute.hardAccelEvents,
+  },
   { header: "Seatbelt /6", width: 11, type: "num1", value: (e) => e.attribute.seatbeltScore },
   { header: "Attendance /15", width: 13, type: "num1", value: (e) => e.attribute.attendanceScore },
   { header: "Attendance %", width: 12, type: "pct", value: (e) => e.attribute.attendancePct },
@@ -128,7 +157,11 @@ function buildLeaderboardSheet(
     const cell = headerRow.getCell(i + 1);
     cell.value = col.header;
     setCellFill(cell, C.brandDeep, C.white, true);
-    cell.alignment = { vertical: "middle", horizontal: col.type === "text" ? "left" : "center", wrapText: true };
+    cell.alignment = {
+      vertical: "middle",
+      horizontal: col.type === "text" ? "left" : "center",
+      wrapText: true,
+    };
     cell.border = thinBorder;
     ws.getColumn(i + 1).width = col.width;
   });
@@ -162,7 +195,9 @@ function buildLeaderboardSheet(
     row.height = 18;
   });
 
-  ws.views = [{ state: "frozen", xSplit: 2, ySplit: headerRowIdx, topLeftCell: `C${headerRowIdx + 1}` }];
+  ws.views = [
+    { state: "frozen", xSplit: 2, ySplit: headerRowIdx, topLeftCell: `C${headerRowIdx + 1}` },
+  ];
   ws.autoFilter = {
     from: { row: headerRowIdx, column: 1 },
     to: { row: headerRowIdx, column: COLUMNS.length },
@@ -178,32 +213,39 @@ function buildSummarySheet(
   ws.getColumn(1).width = 34;
   ws.getColumn(2).width = 16;
   ws.getColumn(3).width = 16;
-  paintTitleBand(ws, "C", "Driver Attribute Score — Summary", `MBMT · ${monthLabel} · ${generatedAt}`);
+  paintTitleBand(
+    ws,
+    "C",
+    "Driver Attribute Score — Summary",
+    `MBMT · ${monthLabel} · ${generatedAt}`,
+  );
 
   const total = entries.length;
   const avgScore = total
     ? entries.reduce((s, e) => s + e.attribute.totalAttributeScore, 0) / total
     : 0;
-  const avgSoc = total
-    ? entries.reduce((s, e) => s + e.attribute.socPerKm, 0) / total
-    : 0;
-  const avgLost = total
-    ? entries.reduce((s, e) => s + e.attribute.marksLost, 0) / total
-    : 0;
+  const avgSoc = total ? entries.reduce((s, e) => s + e.attribute.socPerKm, 0) / total : 0;
+  const avgLost = total ? entries.reduce((s, e) => s + e.attribute.marksLost, 0) / total : 0;
 
   const kpis: { label: string; value: string | number; fmt?: string }[] = [
     { label: "Scored drivers", value: total },
     { label: "Average attribute score", value: +avgScore.toFixed(1), fmt: "0.0" },
     { label: "Average soc/km", value: +avgSoc.toFixed(3), fmt: "0.000" },
     { label: "Average marks lost", value: +avgLost.toFixed(1), fmt: "0.0" },
-    { label: "Excellent", value: entries.filter((e) => /excellent/i.test(e.attribute.rating)).length },
+    {
+      label: "Excellent",
+      value: entries.filter((e) => /excellent/i.test(e.attribute.rating)).length,
+    },
     { label: "Good", value: entries.filter((e) => /^good$/i.test(e.attribute.rating)).length },
     { label: "Average", value: entries.filter((e) => /average/i.test(e.attribute.rating)).length },
     { label: "Poor", value: entries.filter((e) => /poor/i.test(e.attribute.rating)).length },
     {
       label: "With dominant weakness",
       value: entries.filter(
-        (e) => e.attribute.dominantWeakness && e.attribute.dominantWeakness !== "None" && e.attribute.marksLost > 0,
+        (e) =>
+          e.attribute.dominantWeakness &&
+          e.attribute.dominantWeakness !== "None" &&
+          e.attribute.marksLost > 0,
       ).length,
     },
   ];
@@ -314,8 +356,16 @@ function buildLegendSheet(ws: Worksheet) {
 
   const rows: [string, string, string][] = [
     ["Section", "Marks", "Notes"],
-    ["Eligibility gates", "—", "MBMT only · ≥10 attendance days · ≥50 trips. Fail any gate → unscored (not zero)."],
-    ["Data quality", "—", "Exclude lost/dead/deleted/short/outlier trips; min 5 km. Applied to route benchmarks too."],
+    [
+      "Eligibility gates",
+      "—",
+      "MBMT only · ≥10 attendance days · ≥50 trips. Fail any gate → unscored (not zero).",
+    ],
+    [
+      "Data quality",
+      "—",
+      "Exclude lost/dead/deleted/short/outlier trips; min 5 km. Applied to route benchmarks too.",
+    ],
     ["Accidents — no accidents", "30", ""],
     ["Accidents — 1 minor", "20", ""],
     ["Accidents — 2 minor", "5", ""],

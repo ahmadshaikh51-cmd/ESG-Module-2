@@ -105,10 +105,7 @@ export function mapGraphQlPivotRow(raw: GraphQlPivotRow): PivotRow & {
   };
 }
 
-export async function fetchDynamicPivot(
-  dim: PivotDim,
-  filters: Filters,
-): Promise<PivotRow[]> {
+export async function fetchDynamicPivot(dim: PivotDim, filters: Filters): Promise<PivotRow[]> {
   let pivotDim = "";
   let keyCol = "entity_id";
   let labelCol = "COALESCE(entity_name, entity_id)";
@@ -145,19 +142,19 @@ export async function fetchDynamicPivot(
       whereClauses.push(`snapshot_date <= '${filters.to}'`);
     }
     if (filters.companies && filters.companies.length > 0) {
-      const list = filters.companies.map(c => `'${c.replace(/'/g, "''")}'`).join(",");
+      const list = filters.companies.map((c) => `'${c.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`companyname IN (${list})`);
     }
     if (dim === "driver_name" && filters.drivers && filters.drivers.length > 0) {
-      const list = filters.drivers.map(d => `'${d.replace(/'/g, "''")}'`).join(",");
+      const list = filters.drivers.map((d) => `'${d.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`entity_name IN (${list})`);
     }
     if (dim === "route_code" && filters.routes && filters.routes.length > 0) {
-      const list = filters.routes.map(r => `'${r.replace(/'/g, "''")}'`).join(",");
+      const list = filters.routes.map((r) => `'${r.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`entity_id IN (${list})`);
     }
     if (dim === "vehiclenumber" && filters.vehicles && filters.vehicles.length > 0) {
-      const list = filters.vehicles.map(v => `'${v.replace(/'/g, "''")}'`).join(",");
+      const list = filters.vehicles.map((v) => `'${v.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`entity_id IN (${list})`);
     }
   }

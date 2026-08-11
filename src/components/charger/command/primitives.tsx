@@ -33,7 +33,9 @@ export function RiskPill({ level }: { level: RiskLevel }) {
         ? "bg-warning/15 text-warning ring-warning/35"
         : "bg-success/15 text-success ring-success/35";
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${cls}`}>
+    <span
+      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 ${cls}`}
+    >
       {level}
     </span>
   );
@@ -50,11 +52,17 @@ export function GlassPanel({
 }) {
   const glowStyle =
     glow === "critical"
-      ? { boxShadow: "0 0 40px -12px color-mix(in oklab, var(--color-destructive) 55%, transparent)" }
+      ? {
+          boxShadow:
+            "0 0 40px -12px color-mix(in oklab, var(--color-destructive) 55%, transparent)",
+        }
       : glow === "warning"
         ? { boxShadow: "0 0 36px -12px color-mix(in oklab, var(--color-warning) 45%, transparent)" }
         : glow === "primary"
-          ? { boxShadow: "0 0 36px -12px color-mix(in oklab, var(--color-primary) 35%, transparent)" }
+          ? {
+              boxShadow:
+                "0 0 36px -12px color-mix(in oklab, var(--color-primary) 35%, transparent)",
+            }
           : undefined;
   return (
     <div
@@ -116,13 +124,7 @@ export function InsightTooltip({ text }: { text: string }) {
   );
 }
 
-export function DeltaBadge({
-  delta,
-  positiveIsGood,
-}: {
-  delta: number;
-  positiveIsGood: boolean;
-}) {
+export function DeltaBadge({ delta, positiveIsGood }: { delta: number; positiveIsGood: boolean }) {
   const good = positiveIsGood ? delta >= 0 : delta <= 0;
   return (
     <span

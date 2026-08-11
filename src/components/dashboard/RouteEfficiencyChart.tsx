@@ -17,7 +17,11 @@ import { median, type Filters } from "@/lib/analytics";
 import { CHART_ENTER } from "@/lib/chart-motion";
 
 export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filters?: Filters }) {
-  const { data: graphQlRanking, isLoading, error } = useQuery({
+  const {
+    data: graphQlRanking,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["route_efficiency_ranking", filters],
     queryFn: () => fetchRouteEfficiencyRanking(10, filters),
   });
@@ -55,7 +59,7 @@ export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filter
 
   const fleetMedian = useMemo(() => {
     if (graphQlRanking && graphQlRanking.length > 0) {
-      return graphQlRanking[0].fleet_median || 1.10;
+      return graphQlRanking[0].fleet_median || 1.1;
     }
     return localRows.length ? median(localRows.map((r) => r.kwhPerKm)) : 0;
   }, [graphQlRanking, localRows]);
@@ -71,16 +75,17 @@ export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filter
             </span>
           )}
           {error && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20" title={error instanceof Error ? error.message : String(error)}>
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20"
+              title={error instanceof Error ? error.message : String(error)}
+            >
               Offline Fallback
             </span>
           )}
         </div>
         <p className="mt-0.5 text-[12.5px] text-muted-foreground">
           kWh/km per route vs fleet median{" "}
-          <span className="num font-medium text-foreground">
-            ({fleetMedian.toFixed(2)} kWh/km)
-          </span>
+          <span className="num font-medium text-foreground">({fleetMedian.toFixed(2)} kWh/km)</span>
         </p>
       </div>
 
@@ -91,8 +96,17 @@ export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filter
       ) : (
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 12, left: 4, bottom: 0 }}>
-              <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" horizontal={false} opacity={0.45} />
+            <BarChart
+              data={rows}
+              layout="vertical"
+              margin={{ top: 4, right: 12, left: 4, bottom: 0 }}
+            >
+              <CartesianGrid
+                stroke="var(--color-border)"
+                strokeDasharray="3 3"
+                horizontal={false}
+                opacity={0.45}
+              />
               <XAxis
                 type="number"
                 tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
@@ -104,7 +118,11 @@ export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filter
                 type="category"
                 dataKey="route"
                 width={52}
-                tick={{ fontSize: 11, fill: "var(--color-muted-foreground)", fontFamily: "var(--font-mono)" }}
+                tick={{
+                  fontSize: 11,
+                  fill: "var(--color-muted-foreground)",
+                  fontFamily: "var(--font-mono)",
+                }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -129,15 +147,25 @@ export function RouteEfficiencyChart({ trips, filters }: { trips: Trip[]; filter
                     <div className="rounded-lg border border-border/70 bg-popover/95 px-3 py-2 text-[12px] shadow-elevated backdrop-blur-sm max-w-[220px]">
                       <div className="num font-semibold">{d.route}</div>
                       {d.routeName && (
-                        <div className="text-[11px] text-muted-foreground mb-1 leading-tight">{d.routeName}</div>
+                        <div className="text-[11px] text-muted-foreground mb-1 leading-tight">
+                          {d.routeName}
+                        </div>
                       )}
-                      <div className="mt-1 num font-medium text-foreground">{d.kwhPerKm.toFixed(2)} kWh/km</div>
+                      <div className="mt-1 num font-medium text-foreground">
+                        {d.kwhPerKm.toFixed(2)} kWh/km
+                      </div>
                       <div className="text-muted-foreground">{d.trips.toLocaleString()} trips</div>
                     </div>
                   );
                 }}
               />
-              <Bar dataKey="kwhPerKm" name="kWh/km" radius={[0, 4, 4, 0]} maxBarSize={22} {...CHART_ENTER}>
+              <Bar
+                dataKey="kwhPerKm"
+                name="kWh/km"
+                radius={[0, 4, 4, 0]}
+                maxBarSize={22}
+                {...CHART_ENTER}
+              >
                 {rows.map((r) => (
                   <Cell
                     key={r.route}

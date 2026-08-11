@@ -24,6 +24,8 @@ import { useTrainingWorkflow } from "@/lib/esg-training";
 import { useMonitoringWorkflow } from "@/lib/esg-monitoring";
 import { useMastersWorkflow } from "@/lib/esg-masters";
 import { personById } from "@/lib/esg-data";
+import { getCurrentUser } from "@/lib/auth";
+import { getRoleFromEmail, ESG_ROLES_CONFIG } from "@/lib/esg-roles";
 
 type EsgSearch = { area?: string; sub?: string; record?: string };
 
@@ -60,6 +62,27 @@ function EsgPage() {
   const [audience, setAudience] = useState<Audience>("internal");
   const [role, setRole] = useState<Role>("maintainer");
   const [drawerId, setDrawerId] = useState<string | null>(null);
+
+  const currentUser = getCurrentUser();
+  const esgRole = currentUser ? getRoleFromEmail(currentUser.email) : "esg_team";
+  const roleConfig = ESG_ROLES_CONFIG[esgRole] || ESG_ROLES_CONFIG.esg_team;
+
+  // Auto redirect area if not allowed
+  useEffect(() => {
+    if (roleConfig.tabs.length > 0 && !roleConfig.tabs.includes(area)) {
+      void navigate({ search: { area: roleConfig.tabs[0], sub: undefined } });
+    }
+  }, [esgRole, area, roleConfig.tabs, navigate]);
+
+  // Sync context role with user type
+  useEffect(() => {
+    if (esgRole === "approver") {
+      setRole("approver");
+    } else {
+      setRole("maintainer");
+    }
+  }, [esgRole]);
+
   const policy = usePolicyWorkflow();
   const audit = useAuditWorkflow();
   const training = useTrainingWorkflow(trainingPersonLabel);

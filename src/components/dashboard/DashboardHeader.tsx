@@ -20,7 +20,9 @@ export function DashboardHeader() {
           </div>
           <div className="leading-tight">
             <div className="text-[13px] font-semibold tracking-tight">Voltline</div>
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">EV Fleet Intelligence</div>
+            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              EV Fleet Intelligence
+            </div>
           </div>
         </div>
 
@@ -44,7 +46,11 @@ export function DashboardHeader() {
               <Command className="h-2.5 w-2.5" />K
             </kbd>
           </button>
-          <Button variant="outline" size="sm" className="h-8 gap-1.5 border-border/70 text-[12.5px]">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 border-border/70 text-[12.5px]"
+          >
             <Download className="h-3.5 w-3.5" /> Export
           </Button>
           <Button

@@ -91,20 +91,23 @@ export function MisSiteTemplateProvider({ children }: { children: ReactNode }) {
     [templates, persist],
   );
 
-  const setActiveSite = useCallback((siteId: string) => {
-    setActiveSiteId(siteId);
-    const siteTemplates = templatesForSite(loadSiteTemplates(), siteId);
-    if (siteTemplates[0]) setActiveTemplateId(siteTemplates[0].id);
-    else {
-      const site = MIS_SITES.find((s) => s.id === siteId);
-      if (site) {
-        const created = createDefaultTemplate(site);
-        const next = [...loadSiteTemplates(), created];
-        persist(next);
-        setActiveTemplateId(created.id);
+  const setActiveSite = useCallback(
+    (siteId: string) => {
+      setActiveSiteId(siteId);
+      const siteTemplates = templatesForSite(loadSiteTemplates(), siteId);
+      if (siteTemplates[0]) setActiveTemplateId(siteTemplates[0].id);
+      else {
+        const site = MIS_SITES.find((s) => s.id === siteId);
+        if (site) {
+          const created = createDefaultTemplate(site);
+          const next = [...loadSiteTemplates(), created];
+          persist(next);
+          setActiveTemplateId(created.id);
+        }
       }
-    }
-  }, [persist]);
+    },
+    [persist],
+  );
 
   const createTemplate = useCallback(
     (siteId: string, name: string) => {

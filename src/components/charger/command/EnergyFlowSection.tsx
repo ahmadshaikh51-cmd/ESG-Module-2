@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, Bus, PlugZap } from "lucide-react";
-import type {
-  BusLeaderboardRow,
-  ChargerLeaderboardRow,
-} from "@/lib/charger-analytics";
+import type { BusLeaderboardRow, ChargerLeaderboardRow } from "@/lib/charger-analytics";
 import {
   abnormalBusRows,
   abnormalChargerRows,
@@ -78,14 +75,18 @@ function LossBreakdown({
           label: "Charger-stage loss",
           value: lc,
           pct: (lc / total) * 100,
-          highlight: dominant === "charger" || highlightStage === "charger" || highlightStage === "grid_charger",
+          highlight:
+            dominant === "charger" ||
+            highlightStage === "charger" ||
+            highlightStage === "grid_charger",
           color: "bg-cyan-500",
         },
         {
           label: "Bus-stage loss",
           value: lb,
           pct: (lb / total) * 100,
-          highlight: dominant === "bus" || highlightStage === "bus" || highlightStage === "charger_bus",
+          highlight:
+            dominant === "bus" || highlightStage === "bus" || highlightStage === "charger_bus",
           color: "bg-amber-500",
         },
         {
@@ -109,9 +110,14 @@ function LossBreakdown({
           </div>
           <div className="num mt-1 text-[18px] font-semibold">{fmt(item.value, 0)} kWh</div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-            <div className={`h-full rounded-full ${item.color}`} style={{ width: `${item.pct}%` }} />
+            <div
+              className={`h-full rounded-full ${item.color}`}
+              style={{ width: `${item.pct}%` }}
+            />
           </div>
-          <div className="mt-1 text-[10px] text-muted-foreground">{fmt(item.pct, 0)}% of total loss</div>
+          <div className="mt-1 text-[10px] text-muted-foreground">
+            {fmt(item.pct, 0)}% of total loss
+          </div>
         </div>
       ))}
     </div>
@@ -187,7 +193,7 @@ function HoverInsightPanel({
     >
       <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
         {isLive ? (
-            <span className="inline-flex items-center gap-1 text-primary">
+          <span className="inline-flex items-center gap-1 text-primary">
             <span className="cc-energy-sync-live h-1.5 w-1.5 rounded-full bg-primary" />
             Live sync
           </span>
@@ -197,7 +203,9 @@ function HoverInsightPanel({
         <span className="num font-medium text-foreground">{snapshot.label}</span>
         <span
           className={`rounded-full px-2 py-0.5 text-[9px] font-medium ${
-            hot ? "bg-amber-500/20 text-amber-600 dark:text-amber-400" : "bg-primary/15 text-primary"
+            hot
+              ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+              : "bg-primary/15 text-primary"
           }`}
         >
           {pattern.replace("_", " ")}
@@ -209,10 +217,12 @@ function HoverInsightPanel({
           Grid <span className="num font-medium text-indigo-400">{fmt(snapshot.grid, 0)}</span> kWh
         </span>
         <span>
-          Chargers <span className="num font-medium text-cyan-400">{fmt(snapshot.output, 0)}</span> kWh
+          Chargers <span className="num font-medium text-cyan-400">{fmt(snapshot.output, 0)}</span>{" "}
+          kWh
         </span>
         <span>
-          Buses <span className="num font-medium text-amber-400">{fmt(snapshot.demand, 0)}</span> kWh
+          Buses <span className="num font-medium text-amber-400">{fmt(snapshot.demand, 0)}</span>{" "}
+          kWh
         </span>
         <span>
           Gap <span className="num font-medium text-destructive">{fmt(snapshot.gap, 0)}</span> kWh
@@ -242,10 +252,19 @@ export function EnergyFlowSection({
   const busLb = useMemo(() => busLeaderboard(buses), [buses]);
   const chargerLb = useMemo(() => chargerLeaderboard(chargers), [chargers]);
   const faultyBuses = useMemo(() => abnormalBusRows(buses, busLb), [buses, busLb]);
-  const faultyChargers = useMemo(() => abnormalChargerRows(chargers, chargerLb), [chargers, chargerLb]);
+  const faultyChargers = useMemo(
+    () => abnormalChargerRows(chargers, chargerLb),
+    [chargers, chargerLb],
+  );
 
-  const busFlows = useMemo(() => faultyBusEnergyFlows(sessions, faultyBuses), [sessions, faultyBuses]);
-  const chargerFlows = useMemo(() => faultyChargerEnergyFlows(sessions, faultyChargers), [sessions, faultyChargers]);
+  const busFlows = useMemo(
+    () => faultyBusEnergyFlows(sessions, faultyBuses),
+    [sessions, faultyBuses],
+  );
+  const chargerFlows = useMemo(
+    () => faultyChargerEnergyFlows(sessions, faultyChargers),
+    [sessions, faultyChargers],
+  );
   const entityFlows = scope === "faulty_bus" ? busFlows : chargerFlows;
 
   useEffect(() => {
@@ -350,7 +369,8 @@ export function EnergyFlowSection({
         value: activeSnapshot.gap,
         unit: "kWh",
         color: activeSnapshot.gap > activeSnapshot.grid * 0.1 ? "text-red-400" : "text-slate-400",
-        border: activeSnapshot.gap > activeSnapshot.grid * 0.1 ? "border-red-500/30" : "border-border/40",
+        border:
+          activeSnapshot.gap > activeSnapshot.grid * 0.1 ? "border-red-500/30" : "border-border/40",
         bg: "from-red-500/10 to-transparent",
         stage: "charger_bus" as const,
       },
@@ -369,7 +389,11 @@ export function EnergyFlowSection({
   );
 
   const windowLabel =
-    hoverIndex != null ? `Period · ${activeSnapshot.label}` : scope === "fleet" ? "7-day fleet total" : "7-day asset total";
+    hoverIndex != null
+      ? `Period · ${activeSnapshot.label}`
+      : scope === "fleet"
+        ? "7-day fleet total"
+        : "7-day asset total";
 
   const handleChartHover = (index: number | null) => {
     setHoverIndex(index);
@@ -482,9 +506,7 @@ export function EnergyFlowSection({
               <div
                 key={m.id}
                 className={`rounded-xl border bg-gradient-to-br ${m.bg} ${m.border} px-4 py-3 transition-all ${
-                  lit || (hoverIndex != null && m.id !== "eff")
-                    ? "ring-2 ring-primary/35"
-                    : ""
+                  lit || (hoverIndex != null && m.id !== "eff") ? "ring-2 ring-primary/35" : ""
                 }`}
                 onMouseEnter={() => m.stage && handleStageHover(m.stage)}
                 onMouseLeave={() => m.stage && handleStageHover(null)}
@@ -494,7 +516,9 @@ export function EnergyFlowSection({
                 </div>
                 <div className={`num mt-1 text-[22px] font-semibold tracking-tight ${m.color}`}>
                   {fmt(m.value, m.unit === "%" ? 1 : 0)}
-                  <span className="ml-1 text-[12px] font-normal text-muted-foreground">{m.unit}</span>
+                  <span className="ml-1 text-[12px] font-normal text-muted-foreground">
+                    {m.unit}
+                  </span>
                 </div>
                 <div className="mt-1 text-[10px] text-muted-foreground">{windowLabel}</div>
               </div>

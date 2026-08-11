@@ -39,11 +39,7 @@ export function VsMedianCell({
         {display}
       </span>
       {!tie && (
-        <span
-          className={`num text-[10px] ${
-            better ? "text-success/80" : "text-destructive/80"
-          }`}
-        >
+        <span className={`num text-[10px] ${better ? "text-success/80" : "text-destructive/80"}`}>
           {diffPct > 0 ? "+" : ""}
           {diffPct.toFixed(0)}% vs median
         </span>
@@ -70,8 +66,11 @@ export function MedianRangeBar({
   const medPos = ((median - min) / span) * 100;
   const valPos = ((value - min) / span) * 100;
   const { better, tie } = vsMedian(value, median, lowerIsBetter);
-  const fill =
-    tie ? "var(--color-muted-foreground)" : better ? "var(--color-success)" : "var(--color-destructive)";
+  const fill = tie
+    ? "var(--color-muted-foreground)"
+    : better
+      ? "var(--color-success)"
+      : "var(--color-destructive)";
 
   return (
     <div className="relative mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted/50">
@@ -124,9 +123,15 @@ export function PivotMedianFooter({ medians }: { medians: PivotMedians }) {
         </td>
         <td className="px-4 py-3 text-right num text-primary">{medians.netKwh.toLocaleString()}</td>
         <td className="px-4 py-3 text-right num text-primary">{medians.kwhPerKm.toFixed(2)}</td>
-        <td className="px-4 py-3 text-right num text-muted-foreground">{medians.regenRatio.toFixed(1)}%</td>
-        <td className="px-4 py-3 text-right num text-muted-foreground">{medians.idleShare.toFixed(1)}%</td>
-        <td className="px-4 py-3 text-right num text-muted-foreground">{medians.anomalies.toFixed(0)}</td>
+        <td className="px-4 py-3 text-right num text-muted-foreground">
+          {medians.regenRatio.toFixed(1)}%
+        </td>
+        <td className="px-4 py-3 text-right num text-muted-foreground">
+          {medians.idleShare.toFixed(1)}%
+        </td>
+        <td className="px-4 py-3 text-right num text-muted-foreground">
+          {medians.anomalies.toFixed(0)}
+        </td>
       </tr>
     </tfoot>
   );

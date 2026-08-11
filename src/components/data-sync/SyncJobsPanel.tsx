@@ -27,8 +27,12 @@ export function SyncJobsPanel({ apiReady }: { apiReady: boolean }) {
       subtitle="Background and table sync history"
       icon={<History className="h-[18px] w-[18px]" />}
       actions={
-        <Button variant="outline" size="sm" disabled={!apiReady || jobsQuery.isFetching}
-          onClick={() => jobsQuery.refetch()}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!apiReady || jobsQuery.isFetching}
+          onClick={() => jobsQuery.refetch()}
+        >
           <RefreshCw className={`h-3.5 w-3.5 ${jobsQuery.isFetching ? "animate-spin" : ""}`} />
           Refresh
         </Button>
@@ -55,7 +59,9 @@ export function SyncJobsPanel({ apiReady }: { apiReady: boolean }) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 text-[13px]">
                       <span className="font-medium">
-                        {isDb ? `${job.database} · ${job.total_tables ?? job.tables?.length ?? 0} tables` : job.target}
+                        {isDb
+                          ? `${job.database} · ${job.total_tables ?? job.tables?.length ?? 0} tables`
+                          : job.target}
                       </span>
                       <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
                         {job.type}
@@ -71,9 +77,15 @@ export function SyncJobsPanel({ apiReady }: { apiReady: boolean }) {
                     </div>
                   </div>
                   {isDb && job.details?.length ? (
-                    <Button variant="ghost" size="sm" className="h-7 px-2"
-                      onClick={() => setExpanded(open ? null : job.job_id)}>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2"
+                      onClick={() => setExpanded(open ? null : job.job_id)}
+                    >
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+                      />
                     </Button>
                   ) : null}
                 </div>
@@ -99,9 +111,15 @@ export function SyncJobsPanel({ apiReady }: { apiReady: boolean }) {
                         {job.details.map((d) => (
                           <tr key={d.table} className="border-t border-border/40">
                             <td className="px-3 py-1.5 font-mono">{d.target_table || d.table}</td>
-                            <td className="px-3 py-1.5"><StatusBadge status={d.status} /></td>
-                            <td className="px-3 py-1.5 text-right num">{d.rows_synced?.toLocaleString() ?? "—"}</td>
-                            <td className="px-3 py-1.5 text-right num text-muted-foreground">{d.elapsed_ms}ms</td>
+                            <td className="px-3 py-1.5">
+                              <StatusBadge status={d.status} />
+                            </td>
+                            <td className="px-3 py-1.5 text-right num">
+                              {d.rows_synced?.toLocaleString() ?? "—"}
+                            </td>
+                            <td className="px-3 py-1.5 text-right num text-muted-foreground">
+                              {d.elapsed_ms}ms
+                            </td>
                           </tr>
                         ))}
                       </tbody>

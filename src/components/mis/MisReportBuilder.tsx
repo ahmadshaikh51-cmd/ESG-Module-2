@@ -61,21 +61,27 @@ function MisGuidedSteps() {
         <StepNum n={1} />
         <span>
           <strong className="font-semibold">{OPS.step1}</strong>
-          <span className="mt-0.5 block text-muted-foreground">Pick depot and report style below.</span>
+          <span className="mt-0.5 block text-muted-foreground">
+            Pick depot and report style below.
+          </span>
         </span>
       </li>
       <li className="flex gap-3 text-[13px]">
         <StepNum n={2} />
         <span>
           <strong className="font-semibold">{OPS.step2}</strong>
-          <span className="mt-0.5 block text-muted-foreground">Choose dates, then press Load today&apos;s trips.</span>
+          <span className="mt-0.5 block text-muted-foreground">
+            Choose dates, then press Load today&apos;s trips.
+          </span>
         </span>
       </li>
       <li className="flex gap-3 text-[13px]">
         <StepNum n={3} />
         <span>
           <strong className="font-semibold">{OPS.step3}</strong>
-          <span className="mt-0.5 block text-muted-foreground">Fix trips if needed, then download Excel or PDF.</span>
+          <span className="mt-0.5 block text-muted-foreground">
+            Fix trips if needed, then download Excel or PDF.
+          </span>
         </span>
       </li>
     </ol>

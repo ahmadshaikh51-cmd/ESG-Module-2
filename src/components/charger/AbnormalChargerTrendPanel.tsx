@@ -32,8 +32,7 @@ function KpiTrendChart({
   const meta = CHARGER_KPI_TREND_META[metric];
   const latest = data[data.length - 1]?.value ?? 0;
   const median = data[data.length - 1]?.fleetMedian ?? 0;
-  const worse =
-    meta.lowerIsBetter ? latest > median * 1.05 : latest < median * 0.95;
+  const worse = meta.lowerIsBetter ? latest > median * 1.05 : latest < median * 0.95;
 
   return (
     <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
@@ -41,7 +40,9 @@ function KpiTrendChart({
         <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
           {meta.label}
         </span>
-        <span className={`num text-[12px] font-semibold ${worse ? "text-destructive" : "text-foreground"}`}>
+        <span
+          className={`num text-[12px] font-semibold ${worse ? "text-destructive" : "text-foreground"}`}
+        >
           {fmt(latest, metric.includes("score") ? 0 : 1)}
           <span className="ml-0.5 text-[10px] font-normal text-muted-foreground">{meta.unit}</span>
         </span>
@@ -49,7 +50,12 @@ function KpiTrendChart({
       <div className="mt-2 h-[100px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" opacity={0.35} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--color-border)"
+              opacity={0.35}
+            />
             <XAxis dataKey="date" tick={{ fontSize: 9 }} interval="preserveStartEnd" />
             <YAxis tick={{ fontSize: 9 }} width={32} domain={["auto", "auto"]} />
             <Tooltip
@@ -59,7 +65,11 @@ function KpiTrendChart({
                 name === "value" ? "Charger" : "Fleet median",
               ]}
             />
-            <ReferenceLine y={median} stroke="var(--color-muted-foreground)" strokeDasharray="4 3" />
+            <ReferenceLine
+              y={median}
+              stroke="var(--color-muted-foreground)"
+              strokeDasharray="4 3"
+            />
             <Line
               type="monotone"
               dataKey="fleetMedian"
@@ -100,7 +110,10 @@ export function AbnormalChargerTrendPanel({
   className?: string;
   variant?: "card" | "glass";
 }) {
-  const abnormal = useMemo(() => abnormalChargerRows(chargers, leaderboard), [chargers, leaderboard]);
+  const abnormal = useMemo(
+    () => abnormalChargerRows(chargers, leaderboard),
+    [chargers, leaderboard],
+  );
   const [internalId, setInternalId] = useState<string | null>(null);
   const selectedId = selectedChargerId ?? internalId;
   const setSelectedId = onSelectCharger ?? setInternalId;
@@ -113,7 +126,7 @@ export function AbnormalChargerTrendPanel({
     if (!selectedId || !abnormal.some((b) => b.charger_id === selectedId)) {
       setSelectedId(abnormal[0].charger_id);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- auto-pick top abnormal charger when list changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- auto-pick top abnormal charger when list changes
   }, [abnormal, selectedId]);
 
   const selected = abnormal.find((b) => b.charger_id === selectedId);
@@ -133,7 +146,8 @@ export function AbnormalChargerTrendPanel({
         <div className="min-w-[200px] flex-1">
           <h3 className="text-[14px] font-semibold">Unhealthy charger KPI trends</h3>
           <p className="text-[11px] text-muted-foreground">
-            30-day daily series vs fleet median — energy, duration, power, disconnects, health & abnormality
+            30-day daily series vs fleet median — energy, duration, power, disconnects, health &
+            abnormality
           </p>
         </div>
       </div>
@@ -160,10 +174,17 @@ export function AbnormalChargerTrendPanel({
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2 text-[12px]">
             <div>
-              <span className="font-semibold">{selected.charger_id}</span><span className="mx-2 text-muted-foreground">·</span><span className="text-muted-foreground">{selected.depot_name}</span><span className="mx-2 text-muted-foreground">·</span><span className="num text-muted-foreground">{selected.transformer_id}</span>
+              <span className="font-semibold">{selected.charger_id}</span>
+              <span className="mx-2 text-muted-foreground">·</span>
+              <span className="text-muted-foreground">{selected.depot_name}</span>
+              <span className="mx-2 text-muted-foreground">·</span>
+              <span className="num text-muted-foreground">{selected.transformer_id}</span>
             </div>
             <span className="text-muted-foreground">
-              Abnormality <span className="num font-medium text-destructive">{fmt(selected.abnormality_score, 0)}</span>
+              Abnormality{" "}
+              <span className="num font-medium text-destructive">
+                {fmt(selected.abnormality_score, 0)}
+              </span>
               {" · "}
               Health <span className="num font-medium">{fmt(selected.health_score, 0)}</span>
             </span>
@@ -180,14 +201,18 @@ export function AbnormalChargerTrendPanel({
 
   if (variant === "glass") {
     return (
-      <section className={`overflow-hidden rounded-2xl border border-destructive/25 bg-card/40 ${className}`}>
+      <section
+        className={`overflow-hidden rounded-2xl border border-destructive/25 bg-card/40 ${className}`}
+      >
         {inner}
       </section>
     );
   }
 
   return (
-    <div className={`overflow-hidden rounded-2xl border border-destructive/25 bg-card shadow-elevated ${className}`}>
+    <div
+      className={`overflow-hidden rounded-2xl border border-destructive/25 bg-card shadow-elevated ${className}`}
+    >
       {inner}
     </div>
   );

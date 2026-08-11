@@ -15,19 +15,19 @@ export async function fetchDbTrips(limit = 300, filters?: Filters): Promise<Trip
       whereClauses.push(`scheduling_date <= '${filters.to}'`);
     }
     if (filters.companies && filters.companies.length > 0) {
-      const list = filters.companies.map(c => `'${c.replace(/'/g, "''")}'`).join(",");
+      const list = filters.companies.map((c) => `'${c.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`companyname IN (${list})`);
     }
     if (filters.drivers && filters.drivers.length > 0) {
-      const list = filters.drivers.map(d => `'${d.replace(/'/g, "''")}'`).join(",");
+      const list = filters.drivers.map((d) => `'${d.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`driver_name IN (${list})`);
     }
     if (filters.routes && filters.routes.length > 0) {
-      const list = filters.routes.map(r => `'${r.replace(/'/g, "''")}'`).join(",");
+      const list = filters.routes.map((r) => `'${r.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`route_code IN (${list})`);
     }
     if (filters.vehicles && filters.vehicles.length > 0) {
-      const list = filters.vehicles.map(v => `'${v.replace(/'/g, "''")}'`).join(",");
+      const list = filters.vehicles.map((v) => `'${v.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`vehiclenumber IN (${list})`);
     }
   }
@@ -73,7 +73,11 @@ export function mapDbRowToTrip(row: any): Trip {
   const eventTs = row.trip_start_time || new Date().toISOString();
 
   return {
-    trip_id: row.trip_id ? `T-${row.trip_id}` : (row.schedule_id ? `S-${row.schedule_id}` : `T-gen-${Math.round(Math.random() * 100000)}`),
+    trip_id: row.trip_id
+      ? `T-${row.trip_id}`
+      : row.schedule_id
+        ? `S-${row.schedule_id}`
+        : `T-gen-${Math.round(Math.random() * 100000)}`,
     schedule_id: row.schedule_id ? `S-${row.schedule_id}` : "",
     scheduling_date: row.scheduling_date ? row.scheduling_date.slice(0, 10) : "",
     vehiclenumber: row.vehiclenumber || "",
@@ -118,7 +122,9 @@ export function mapDbRowToTrip(row: any): Trip {
   };
 }
 
-export async function fetchDbTripStats(filters: Filters): Promise<{ totalTrips: number; totalDistance: number }> {
+export async function fetchDbTripStats(
+  filters: Filters,
+): Promise<{ totalTrips: number; totalDistance: number }> {
   let whereClauses: string[] = [];
   if (filters) {
     if (filters.from) {
@@ -128,19 +134,19 @@ export async function fetchDbTripStats(filters: Filters): Promise<{ totalTrips: 
       whereClauses.push(`scheduling_date <= '${filters.to}'`);
     }
     if (filters.companies && filters.companies.length > 0) {
-      const list = filters.companies.map(c => `'${c.replace(/'/g, "''")}'`).join(",");
+      const list = filters.companies.map((c) => `'${c.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`companyname IN (${list})`);
     }
     if (filters.drivers && filters.drivers.length > 0) {
-      const list = filters.drivers.map(d => `'${d.replace(/'/g, "''")}'`).join(",");
+      const list = filters.drivers.map((d) => `'${d.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`driver_name IN (${list})`);
     }
     if (filters.routes && filters.routes.length > 0) {
-      const list = filters.routes.map(r => `'${r.replace(/'/g, "''")}'`).join(",");
+      const list = filters.routes.map((r) => `'${r.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`route_code IN (${list})`);
     }
     if (filters.vehicles && filters.vehicles.length > 0) {
-      const list = filters.vehicles.map(v => `'${v.replace(/'/g, "''")}'`).join(",");
+      const list = filters.vehicles.map((v) => `'${v.replace(/'/g, "''")}'`).join(",");
       whereClauses.push(`vehiclenumber IN (${list})`);
     }
   }

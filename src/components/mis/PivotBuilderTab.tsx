@@ -98,11 +98,7 @@ export function PivotBuilderTab() {
       )}
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-card/40 px-4 py-3">
         <div className="flex items-center gap-2">
-          <Switch
-            id="adj"
-            checked={applyAdjustments}
-            onCheckedChange={setApplyAdjustments}
-          />
+          <Switch id="adj" checked={applyAdjustments} onCheckedChange={setApplyAdjustments} />
           <Label htmlFor="adj" className="text-[13px]">
             Include trip fixes you made
           </Label>
@@ -184,9 +180,7 @@ export function PivotBuilderTab() {
                 onCheckedChange={(checked) => {
                   setConfig((c) => ({
                     ...c,
-                    metrics: checked
-                      ? [...c.metrics, m.id]
-                      : c.metrics.filter((x) => x !== m.id),
+                    metrics: checked ? [...c.metrics, m.id] : c.metrics.filter((x) => x !== m.id),
                   }));
                 }}
               />

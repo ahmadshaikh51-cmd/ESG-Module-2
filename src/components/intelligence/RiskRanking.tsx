@@ -1,8 +1,17 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Panel, PanelHeader, fmt } from "@/components/charger/charger-shared";
-import { busLeaderboard, chargerLeaderboard, type BusLeaderboardRow, type ChargerLeaderboardRow } from "@/lib/charger-analytics";
-import type { BusOperationalHealthDaily, ChargerHealthDaily, DepotEnergyDaily } from "@/lib/charger-data";
+import {
+  busLeaderboard,
+  chargerLeaderboard,
+  type BusLeaderboardRow,
+  type ChargerLeaderboardRow,
+} from "@/lib/charger-analytics";
+import type {
+  BusOperationalHealthDaily,
+  ChargerHealthDaily,
+  DepotEnergyDaily,
+} from "@/lib/charger-data";
 
 type Tab = "buses" | "chargers" | "depots";
 
@@ -19,7 +28,10 @@ export function RiskRanking({
   const busLb = useMemo(() => busLeaderboard(buses).slice(0, 8), [buses]);
   const chgLb = useMemo(() => chargerLeaderboard(chargers).slice(0, 8), [chargers]);
   const depotAgg = useMemo(() => {
-    const map = new Map<string, { name: string; energy: number; stress: number; abn: number; n: number }>();
+    const map = new Map<
+      string,
+      { name: string; energy: number; stress: number; abn: number; n: number }
+    >();
     depots.forEach((d) => {
       const e = map.get(d.depot_id) ?? { name: d.depot_name, energy: 0, stress: 0, abn: 0, n: 0 };
       e.energy += d.total_energy_kwh;
@@ -68,13 +80,25 @@ export function RiskRanking({
               className="flex items-center justify-between gap-3 px-4 py-2.5"
             >
               <div className="flex items-center gap-3">
-                <span className="num w-6 text-right text-[11px] text-muted-foreground">{i + 1}</span>
+                <span className="num w-6 text-right text-[11px] text-muted-foreground">
+                  {i + 1}
+                </span>
                 <span className="text-[13px] font-medium">{d.name}</span>
               </div>
               <div className="flex items-center gap-4 text-[11px]">
-                <span className="text-muted-foreground">Energy <span className="num font-semibold text-foreground">{fmt(d.energy, 0)} kWh</span></span>
-                <span className="text-muted-foreground">Abnormal <span className="num font-semibold text-foreground">{d.abn}</span></span>
-                <span className="num font-semibold" style={{ color: d.stress > 6 ? "var(--color-destructive)" : "var(--color-warning)" }}>
+                <span className="text-muted-foreground">
+                  Energy{" "}
+                  <span className="num font-semibold text-foreground">{fmt(d.energy, 0)} kWh</span>
+                </span>
+                <span className="text-muted-foreground">
+                  Abnormal <span className="num font-semibold text-foreground">{d.abn}</span>
+                </span>
+                <span
+                  className="num font-semibold"
+                  style={{
+                    color: d.stress > 6 ? "var(--color-destructive)" : "var(--color-warning)",
+                  }}
+                >
                   {fmt(d.stress, 1)}% disc
                 </span>
               </div>
@@ -87,7 +111,12 @@ export function RiskRanking({
 
 function BusRow({ r, i }: { r: BusLeaderboardRow; i: number }) {
   const stress = r.abnormality_score;
-  const color = stress > 70 ? "var(--color-destructive)" : stress > 50 ? "var(--color-warning)" : "var(--color-success)";
+  const color =
+    stress > 70
+      ? "var(--color-destructive)"
+      : stress > 50
+        ? "var(--color-warning)"
+        : "var(--color-success)";
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
@@ -97,13 +126,17 @@ function BusRow({ r, i }: { r: BusLeaderboardRow; i: number }) {
     >
       <span className="num text-right text-[11px] text-muted-foreground">{i + 1}</span>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-medium">Bus {r.vehicle_number} <span className="text-muted-foreground">· {r.depot_name}</span></div>
+        <div className="text-[12.5px] font-medium">
+          Bus {r.vehicle_number} <span className="text-muted-foreground">· {r.depot_name}</span>
+        </div>
         <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted/40">
           <div className="h-full rounded-full" style={{ width: `${stress}%`, background: color }} />
         </div>
       </div>
       <div className="text-right">
-        <div className="num text-[14px] font-semibold" style={{ color }}>{fmt(stress, 0)}</div>
+        <div className="num text-[14px] font-semibold" style={{ color }}>
+          {fmt(stress, 0)}
+        </div>
         <div className="text-[9.5px] text-muted-foreground">stress</div>
       </div>
     </motion.div>
@@ -112,7 +145,12 @@ function BusRow({ r, i }: { r: BusLeaderboardRow; i: number }) {
 
 function ChargerRow({ r, i }: { r: ChargerLeaderboardRow; i: number }) {
   const stress = r.abnormality_score;
-  const color = stress > 70 ? "var(--color-destructive)" : stress > 50 ? "var(--color-warning)" : "var(--color-success)";
+  const color =
+    stress > 70
+      ? "var(--color-destructive)"
+      : stress > 50
+        ? "var(--color-warning)"
+        : "var(--color-success)";
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
@@ -122,13 +160,17 @@ function ChargerRow({ r, i }: { r: ChargerLeaderboardRow; i: number }) {
     >
       <span className="num text-right text-[11px] text-muted-foreground">{i + 1}</span>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-medium">{r.charger_id} <span className="text-muted-foreground">· {r.depot_name}</span></div>
+        <div className="text-[12.5px] font-medium">
+          {r.charger_id} <span className="text-muted-foreground">· {r.depot_name}</span>
+        </div>
         <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted/40">
           <div className="h-full rounded-full" style={{ width: `${stress}%`, background: color }} />
         </div>
       </div>
       <div className="text-right">
-        <div className="num text-[14px] font-semibold" style={{ color }}>{fmt(stress, 0)}</div>
+        <div className="num text-[14px] font-semibold" style={{ color }}>
+          {fmt(stress, 0)}
+        </div>
         <div className="text-[9.5px] text-muted-foreground">stress</div>
       </div>
     </motion.div>

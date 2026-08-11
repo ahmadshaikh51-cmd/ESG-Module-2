@@ -3,20 +3,34 @@ import { Activity, Database, HardDrive, Layers, Cpu } from "lucide-react";
 import { getHealth, getStats } from "@/lib/api/data-admin";
 import { formatBytes } from "./shared";
 
-function Pill({ icon, label, value, tone = "default" }: {
-  icon: React.ReactNode; label: string; value: string;
+function Pill({
+  icon,
+  label,
+  value,
+  tone = "default",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
   tone?: "default" | "success" | "destructive" | "warning";
 }) {
   const toneClass =
-    tone === "success" ? "text-success"
-      : tone === "destructive" ? "text-destructive"
-      : tone === "warning" ? "text-warning"
-      : "text-foreground";
+    tone === "success"
+      ? "text-success"
+      : tone === "destructive"
+        ? "text-destructive"
+        : tone === "warning"
+          ? "text-warning"
+          : "text-foreground";
   return (
     <div className="flex items-center gap-2.5 rounded-xl border border-border/60 bg-card px-3.5 py-2.5 shadow-elevated">
-      <span className="grid h-8 w-8 place-items-center rounded-lg bg-muted/60 text-muted-foreground">{icon}</span>
+      <span className="grid h-8 w-8 place-items-center rounded-lg bg-muted/60 text-muted-foreground">
+        {icon}
+      </span>
       <div className="leading-tight">
-        <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+        <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </div>
         <div className={`text-[13px] font-semibold ${toneClass}`}>{value}</div>
       </div>
     </div>

@@ -7,14 +7,8 @@ import { Button } from "@/components/ui/button";
 import { MisTemplateEditorDialog } from "./MisTemplateEditorDialog";
 
 export function MisSiteTemplateBar() {
-  const {
-    sites,
-    templates,
-    activeSiteId,
-    activeTemplate,
-    setActiveSite,
-    setActiveTemplateId,
-  } = useMisSiteTemplate();
+  const { sites, templates, activeSiteId, activeTemplate, setActiveSite, setActiveTemplateId } =
+    useMisSiteTemplate();
   const [editorOpen, setEditorOpen] = useState(false);
 
   const siteTemplates = templatesForSite(templates, activeSiteId);

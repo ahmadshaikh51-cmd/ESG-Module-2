@@ -19,7 +19,10 @@ function parseSqlQueryResult<T>(result: T[] | { error?: string } | null | undefi
   return result;
 }
 
-async function runSql<T = Record<string, unknown>>(sql: string, opName = "SegmentRiskMapQuery"): Promise<T[]> {
+async function runSql<T = Record<string, unknown>>(
+  sql: string,
+  opName = "SegmentRiskMapQuery",
+): Promise<T[]> {
   const res = await fetch(GRAPHQL_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -237,7 +240,9 @@ function dedupeBySegment(rows: Record<string, unknown>[]): SegmentRiskMapRow[] {
  * highest-scoring row), since the table can carry multiple route-join rows per
  * spatial bin.
  */
-export async function fetchSegmentRiskMap(filters?: SegmentRiskMapFilters): Promise<SegmentRiskMapRow[]> {
+export async function fetchSegmentRiskMap(
+  filters?: SegmentRiskMapFilters,
+): Promise<SegmentRiskMapRow[]> {
   const where = buildWhereClause(filters);
   const limit = filters?.limit && filters.limit > 0 ? Math.trunc(filters.limit) : 4000;
   const sql = `

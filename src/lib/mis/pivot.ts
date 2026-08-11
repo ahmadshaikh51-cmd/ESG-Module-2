@@ -93,7 +93,8 @@ export function buildPivot(
 
   merged.forEach((t) => {
     const row = dimValue(t, config.rowDim);
-    const col = config.colDim === "none" ? "_" : dimValue(t, config.colDim as PivotConfig["rowDim"]);
+    const col =
+      config.colDim === "none" ? "_" : dimValue(t, config.colDim as PivotConfig["rowDim"]);
     const k = `${row}\0${col}`;
     const arr = buckets.get(k) ?? [];
     arr.push(t);
@@ -151,9 +152,5 @@ export function buildPivotFromSchedules(
   config: PivotConfig,
 ): PivotTableResult {
   const trips: MergedTrip[] = reports.flatMap((r) => r.trips);
-  return buildPivot(
-    trips.filter((t) => t.status !== "extra") as MisTripRow[],
-    new Map(),
-    config,
-  );
+  return buildPivot(trips.filter((t) => t.status !== "extra") as MisTripRow[], new Map(), config);
 }

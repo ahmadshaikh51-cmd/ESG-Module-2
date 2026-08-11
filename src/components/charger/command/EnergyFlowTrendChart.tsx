@@ -43,7 +43,12 @@ export function EnergyFlowTrendChart({
 
   const shared = (
     <>
-      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" opacity={0.4} />
+      <CartesianGrid
+        strokeDasharray="3 3"
+        vertical={false}
+        stroke="var(--color-border)"
+        opacity={0.4}
+      />
       <XAxis
         dataKey="label"
         interval="preserveStartEnd"
@@ -76,7 +81,12 @@ export function EnergyFlowTrendChart({
         />
       )}
       {activeLabel != null && (
-        <ReferenceLine x={activeLabel} stroke="var(--color-primary)" strokeWidth={2} strokeDasharray="4 3" />
+        <ReferenceLine
+          x={activeLabel}
+          stroke="var(--color-primary)"
+          strokeWidth={2}
+          strokeDasharray="4 3"
+        />
       )}
       <Tooltip
         cursor={{ stroke: "var(--color-primary)", strokeWidth: 1, strokeDasharray: "4 4" }}
@@ -89,10 +99,7 @@ export function EnergyFlowTrendChart({
   );
 
   return (
-    <div
-      className="h-full w-full"
-      onMouseLeave={() => onHoverIndex(null)}
-    >
+    <div className="h-full w-full" onMouseLeave={() => onHoverIndex(null)}>
       <ResponsiveContainer width="100%" height="100%">
         {entityMode ? (
           <ComposedChart
@@ -177,8 +184,20 @@ export function EnergyFlowTrendChart({
               activeDot={{ r: 6 }}
               {...CHART_ENTER}
             />
-            <Bar dataKey="lossCharger" name="Charger loss" stackId="loss" fill="#22d3ee" fillOpacity={activeIndex != null ? 0.5 : 0.35} />
-            <Bar dataKey="lossBus" name="Bus loss" stackId="loss" fill="#fbbf24" fillOpacity={activeIndex != null ? 0.55 : 0.45} />
+            <Bar
+              dataKey="lossCharger"
+              name="Charger loss"
+              stackId="loss"
+              fill="#22d3ee"
+              fillOpacity={activeIndex != null ? 0.5 : 0.35}
+            />
+            <Bar
+              dataKey="lossBus"
+              name="Bus loss"
+              stackId="loss"
+              fill="#fbbf24"
+              fillOpacity={activeIndex != null ? 0.55 : 0.45}
+            />
           </ComposedChart>
         ) : (
           <LineChart

@@ -24,10 +24,7 @@ function inRange(date: string, from: string, to: string) {
   return date >= from && date <= to;
 }
 
-export function filterEnergyFlowRows(
-  rows: EnergyFlowIntelligenceDaily[],
-  f: ChargerFilters,
-) {
+export function filterEnergyFlowRows(rows: EnergyFlowIntelligenceDaily[], f: ChargerFilters) {
   return rows.filter((r) => {
     if (!inRange(r.date, f.from, f.to)) return false;
     if (f.depotIds.length && !f.depotIds.includes(r.depot_id)) return false;
@@ -186,32 +183,36 @@ export function faultyBusEnergyFlows(
   sessions: ChargingSession[],
   faultyBuses: BusLeaderboardRow[],
 ): EntityEnergyFlowSummary[] {
-  return faultyBuses.slice(0, 12).map((b) =>
-    entityEnergyFlow7d(
-      sessions,
-      "bus",
-      b.vehicle_id,
-      `Bus ${b.vehicle_number}`,
-      b.depot_name,
-      b.risk !== "healthy",
-    ),
-  );
+  return faultyBuses
+    .slice(0, 12)
+    .map((b) =>
+      entityEnergyFlow7d(
+        sessions,
+        "bus",
+        b.vehicle_id,
+        `Bus ${b.vehicle_number}`,
+        b.depot_name,
+        b.risk !== "healthy",
+      ),
+    );
 }
 
 export function faultyChargerEnergyFlows(
   sessions: ChargingSession[],
   faultyChargers: ChargerLeaderboardRow[],
 ): EntityEnergyFlowSummary[] {
-  return faultyChargers.slice(0, 12).map((c) =>
-    entityEnergyFlow7d(
-      sessions,
-      "charger",
-      c.charger_id,
-      c.charger_id,
-      c.depot_name,
-      c.risk !== "healthy",
-    ),
-  );
+  return faultyChargers
+    .slice(0, 12)
+    .map((c) =>
+      entityEnergyFlow7d(
+        sessions,
+        "charger",
+        c.charger_id,
+        c.charger_id,
+        c.depot_name,
+        c.risk !== "healthy",
+      ),
+    );
 }
 
 export function entityFlowToTrend(days: EntityEnergyFlowDay[]) {
@@ -265,7 +266,9 @@ export function busOperationalStory(
   buses: BusOperationalHealthDaily[],
   vehicleId: string,
 ): BusOperationalStory | null {
-  const rows = buses.filter((b) => b.vehicle_id === vehicleId).sort((a, b) => a.date.localeCompare(b.date));
+  const rows = buses
+    .filter((b) => b.vehicle_id === vehicleId)
+    .sort((a, b) => a.date.localeCompare(b.date));
   if (!rows.length) return null;
   const latest = rows[rows.length - 1]!;
   const prev = rows[rows.length - 2] ?? latest;
@@ -359,26 +362,32 @@ export function chargingCurveOverlays(
   series: CurveOverlaySeries[];
   metrics: ChargingCurveAnalytics | null;
 } {
-  const current = CHARGING_CURVE_ANALYTICS.find((c) => c.vehicle_id === vehicleId && !c.is_reference) ?? null;
-  const previous = CHARGING_CURVE_ANALYTICS.find((c) => c.vehicle_id === vehicleId && c.is_reference) ?? null;
+  const current =
+    CHARGING_CURVE_ANALYTICS.find((c) => c.vehicle_id === vehicleId && !c.is_reference) ?? null;
+  const previous =
+    CHARGING_CURVE_ANALYTICS.find((c) => c.vehicle_id === vehicleId && c.is_reference) ?? null;
   const fleet = fleetAvgCurve();
   const socSet = new Set<number>();
-  [current, previous, { points: fleet }].forEach((c) => c?.points.forEach((p) => socSet.add(p.soc_pct)));
-  const series: CurveOverlaySeries[] = [...socSet].sort((a, b) => a - b).map((soc_pct) => {
-    const cPt = current?.points.find((p) => p.soc_pct === soc_pct);
-    const pPt = previous?.points.find((p) => p.soc_pct === soc_pct);
-    const fPt = fleet.find((p) => p.soc_pct === soc_pct);
-    return {
-      soc_pct,
-      current: cPt?.power_kw,
-      previous: pPt?.power_kw,
-      fleet: fPt?.power_kw,
-      chargerAvg: chargerAvgBySoc?.get(soc_pct),
-      temperature: cPt?.temperature_c,
-      current_a: cPt?.current_a,
-      voltage_v: cPt?.voltage_v,
-    };
-  });
+  [current, previous, { points: fleet }].forEach((c) =>
+    c?.points.forEach((p) => socSet.add(p.soc_pct)),
+  );
+  const series: CurveOverlaySeries[] = [...socSet]
+    .sort((a, b) => a - b)
+    .map((soc_pct) => {
+      const cPt = current?.points.find((p) => p.soc_pct === soc_pct);
+      const pPt = previous?.points.find((p) => p.soc_pct === soc_pct);
+      const fPt = fleet.find((p) => p.soc_pct === soc_pct);
+      return {
+        soc_pct,
+        current: cPt?.power_kw,
+        previous: pPt?.power_kw,
+        fleet: fPt?.power_kw,
+        chargerAvg: chargerAvgBySoc?.get(soc_pct),
+        temperature: cPt?.temperature_c,
+        current_a: cPt?.current_a,
+        voltage_v: cPt?.voltage_v,
+      };
+    });
   return { current, previous, fleet, series, metrics: current };
 }
 
@@ -400,7 +409,9 @@ export function chargerOperationalStory(
   chargers: ChargerHealthDaily[],
   chargerId: string,
 ): ChargerOperationalStory | null {
-  const rows = chargers.filter((c) => c.charger_id === chargerId).sort((a, b) => a.date.localeCompare(b.date));
+  const rows = chargers
+    .filter((c) => c.charger_id === chargerId)
+    .sort((a, b) => a.date.localeCompare(b.date));
   if (!rows.length) return null;
   const latest = rows[rows.length - 1]!;
   const prev = rows[rows.length - 2] ?? latest;
@@ -471,12 +482,15 @@ export function chargerOperationalStory(
 }
 
 /** Representative session curve for a charger (highest abnormality bus on that charger). */
-export function chargingCurveOverlaysForCharger(chargerId: string): ReturnType<typeof chargingCurveOverlays> {
+export function chargingCurveOverlaysForCharger(
+  chargerId: string,
+): ReturnType<typeof chargingCurveOverlays> {
   const candidates = CHARGING_CURVE_ANALYTICS.filter(
     (c) => c.charger_id === chargerId && !c.is_reference,
   );
   const current =
-    [...candidates].sort((a, b) => b.curve_abnormality_score - a.curve_abnormality_score)[0] ?? null;
+    [...candidates].sort((a, b) => b.curve_abnormality_score - a.curve_abnormality_score)[0] ??
+    null;
   if (!current) {
     return { current: null, previous: null, fleet: fleetAvgCurve(), series: [], metrics: null };
   }
@@ -488,21 +502,25 @@ export function chargingCurveOverlaysForCharger(chargerId: string): ReturnType<t
     null;
   const fleet = fleetAvgCurve();
   const socSet = new Set<number>();
-  [current, previous, { points: fleet }].forEach((c) => c?.points.forEach((p) => socSet.add(p.soc_pct)));
-  const series: CurveOverlaySeries[] = [...socSet].sort((a, b) => a - b).map((soc_pct) => {
-    const cPt = current.points.find((p) => p.soc_pct === soc_pct);
-    const pPt = previous?.points.find((p) => p.soc_pct === soc_pct);
-    const fPt = fleet.find((p) => p.soc_pct === soc_pct);
-    return {
-      soc_pct,
-      current: cPt?.power_kw,
-      previous: pPt?.power_kw,
-      fleet: fPt?.power_kw,
-      temperature: cPt?.temperature_c,
-      current_a: cPt?.current_a,
-      voltage_v: cPt?.voltage_v,
-    };
-  });
+  [current, previous, { points: fleet }].forEach((c) =>
+    c?.points.forEach((p) => socSet.add(p.soc_pct)),
+  );
+  const series: CurveOverlaySeries[] = [...socSet]
+    .sort((a, b) => a - b)
+    .map((soc_pct) => {
+      const cPt = current.points.find((p) => p.soc_pct === soc_pct);
+      const pPt = previous?.points.find((p) => p.soc_pct === soc_pct);
+      const fPt = fleet.find((p) => p.soc_pct === soc_pct);
+      return {
+        soc_pct,
+        current: cPt?.power_kw,
+        previous: pPt?.power_kw,
+        fleet: fPt?.power_kw,
+        temperature: cPt?.temperature_c,
+        current_a: cPt?.current_a,
+        voltage_v: cPt?.voltage_v,
+      };
+    });
   return { current, previous, fleet, series, metrics: current };
 }
 
@@ -625,17 +643,15 @@ export function energyFlowDailyTrend(
   granularity: "hourly" | "daily" = "daily",
 ) {
   if (granularity === "hourly") {
-    return rows
-      .slice(-48)
-      .map((r) => ({
-        label: `${r.date.slice(5)} ${String(r.hour).padStart(2, "0")}:00`,
-        grid: r.grid_intake_kwh,
-        output: r.charger_output_kwh,
-        demand: r.bus_demand_kwh,
-        gap: r.energy_gap_kwh,
-        stress: r.infrastructure_stress,
-        efficiency: r.delivery_efficiency_pct,
-      }));
+    return rows.slice(-48).map((r) => ({
+      label: `${r.date.slice(5)} ${String(r.hour).padStart(2, "0")}:00`,
+      grid: r.grid_intake_kwh,
+      output: r.charger_output_kwh,
+      demand: r.bus_demand_kwh,
+      gap: r.energy_gap_kwh,
+      stress: r.infrastructure_stress,
+      efficiency: r.delivery_efficiency_pct,
+    }));
   }
   const byDate = new Map<string, EnergyFlowIntelligenceDaily[]>();
   rows.forEach((r) => {
@@ -657,15 +673,12 @@ export function energyFlowDailyTrend(
     }));
 }
 
-export type EnergyFlowPattern =
-  | "stable"
-  | "charger_bottleneck"
-  | "bus_instability"
-  | "grid_stress";
+export type EnergyFlowPattern = "stable" | "charger_bottleneck" | "bus_instability" | "grid_stress";
 
-export function classifyEnergyFlow(
-  trend: ReturnType<typeof energyFlowDailyTrend>,
-): { pattern: EnergyFlowPattern; interpretation: string } {
+export function classifyEnergyFlow(trend: ReturnType<typeof energyFlowDailyTrend>): {
+  pattern: EnergyFlowPattern;
+  interpretation: string;
+} {
   const last = trend.slice(-7);
   if (!last.length) return { pattern: "stable", interpretation: "Insufficient data in window." };
   const grid = avg(last.map((t) => t.grid));
@@ -677,7 +690,8 @@ export function classifyEnergyFlow(
   if (gridVar > grid * 0.2 && gridVar > demandVar) {
     return {
       pattern: "grid_stress",
-      interpretation: "Grid fluctuations impacting chargers — transformer or upstream power instability.",
+      interpretation:
+        "Grid fluctuations impacting chargers — transformer or upstream power instability.",
     };
   }
   if (demand > out * 1.12 && grid > out * 1.05) {
@@ -689,12 +703,14 @@ export function classifyEnergyFlow(
   if (demandVar > demand * 0.18 && out < grid * 0.95) {
     return {
       pattern: "bus_instability",
-      interpretation: "Bus demand oscillating while infrastructure stable — charging instability likely bus-side.",
+      interpretation:
+        "Bus demand oscillating while infrastructure stable — charging instability likely bus-side.",
     };
   }
   return {
     pattern: "stable",
-    interpretation: "Grid intake, charger output, and bus demand aligned — stable charging ecosystem.",
+    interpretation:
+      "Grid intake, charger output, and bus demand aligned — stable charging ecosystem.",
   };
 }
 
@@ -721,10 +737,14 @@ export function operationalNarratives(
 
   narratives.push({
     id: "flow",
-    severity: pattern === "stable" ? "healthy" : pattern === "charger_bottleneck" ? "warning" : "critical",
+    severity:
+      pattern === "stable" ? "healthy" : pattern === "charger_bottleneck" ? "warning" : "critical",
     title: "Energy flow intelligence",
     body: interpretation,
-    action: pattern === "charger_bottleneck" ? "Rebalance charger allocation during peak windows" : undefined,
+    action:
+      pattern === "charger_bottleneck"
+        ? "Rebalance charger allocation during peak windows"
+        : undefined,
   });
 
   const worstBus = [...busLb].sort((a, b) => b.abnormality_score - a.abnormality_score)[0];
@@ -853,12 +873,8 @@ export function explainabilityRibbonKpis(
   const curveStabDelta = -2.4;
   const thermalStability = 100 - avg(buses.map((b) => b.thermal_stress));
   const thermalDelta = -4.1;
-  const deliveryStab = avg(
-    buses.map((b) => b.charging_consistency),
-  );
-  const chargeEff = buses.length
-    ? 100 - avg(buses.map((b) => b.energy_per_soc_pct)) * 28
-    : 0;
+  const deliveryStab = avg(buses.map((b) => b.charging_consistency));
+  const chargeEff = buses.length ? 100 - avg(buses.map((b) => b.energy_per_soc_pct)) * 28 : 0;
   const chargingEffDelta = 1.2;
 
   const sev = (v: number, warn: number, crit: number): RiskLevel | "neutral" => {
@@ -916,7 +932,8 @@ export function explainabilityRibbonKpis(
       positiveIsGood: true,
       severity: sev(deliveryStab, 60, 48),
       spark: base.sparkSessions,
-      insight: "Session-to-session delivery consistency — proxy for infrastructure + bus stability.",
+      insight:
+        "Session-to-session delivery consistency — proxy for infrastructure + bus stability.",
     },
   ];
 

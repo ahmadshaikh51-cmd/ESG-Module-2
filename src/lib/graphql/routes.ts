@@ -98,8 +98,10 @@ export function aggregateRouteLeaderboard(rows: RouteLeaderboardRow[]): RouteLea
     avgDmsPer100km: weight((r) => r.avg_dms_per_100km),
     avgPeakDeltaPct: weight((r) => r.peak_delta_pct),
     totalLeakageKwh: rows.reduce((s, r) => s + Math.max(0, r.energy_leakage_kwh_30d), 0),
-    highRiskRoutes: rows.filter((r) => routeDifficultyLabel(r.peak_difficulty_score) === "hard").length,
-    mediumRiskRoutes: rows.filter((r) => routeDifficultyLabel(r.peak_difficulty_score) === "medium").length,
+    highRiskRoutes: rows.filter((r) => routeDifficultyLabel(r.peak_difficulty_score) === "hard")
+      .length,
+    mediumRiskRoutes: rows.filter((r) => routeDifficultyLabel(r.peak_difficulty_score) === "medium")
+      .length,
   };
 }
 
@@ -279,7 +281,10 @@ export interface RouteEfficiencyRankingRow {
  * Schema args: snapshotDate, timeframeDays, companyid, companyname, routeId, routeName,
  * tripCount, totalKwh, totalDistanceKm, kwhPerKm, fleetMedian, category, barColor, routeRank, limit.
  */
-export async function fetchRouteEfficiencyRanking(limit = 10, filters?: Filters): Promise<RouteEfficiencyRankingRow[]> {
+export async function fetchRouteEfficiencyRanking(
+  limit = 10,
+  filters?: Filters,
+): Promise<RouteEfficiencyRankingRow[]> {
   let timeframeDays: number | null = 30;
   if (filters?.from && filters?.to) {
     const fromDate = new Date(filters.from);
@@ -485,7 +490,11 @@ function parseGeojsonCoordinates(raw: unknown): LngLatTuple[] {
       return [];
     }
   }
-  const geom = obj as { type?: string; coordinates?: unknown; geometry?: { coordinates?: unknown } } | null;
+  const geom = obj as {
+    type?: string;
+    coordinates?: unknown;
+    geometry?: { coordinates?: unknown };
+  } | null;
   // Support bare LineString, or a Feature wrapping the geometry.
   const coords = (geom?.coordinates ?? geom?.geometry?.coordinates) as unknown;
   if (!Array.isArray(coords)) return [];

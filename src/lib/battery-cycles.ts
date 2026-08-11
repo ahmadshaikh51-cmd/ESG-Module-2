@@ -83,7 +83,13 @@ export const BAND_COLOR: Record<Band, string> = {
   ATTENTION: "var(--destructive)",
 };
 
-export const PALETTE = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+export const PALETTE = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
 
 /**
  * Site color by position in the dataset's `depots` list — cycles the chart
@@ -100,8 +106,18 @@ export function depotColor(site: string, depots: readonly string[]): string {
  * Month-key helpers (keys are "YYYY-MM")                             *
  * ------------------------------------------------------------------ */
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export function keyToName(key: string): string {
@@ -117,7 +133,10 @@ function keyToMM(key: string): string {
 function prevMonthKey(key: string): string {
   let y = Number(key.slice(0, 4));
   let m = Number(key.slice(5, 7)) - 1;
-  if (m < 1) { m = 12; y -= 1; }
+  if (m < 1) {
+    m = 12;
+    y -= 1;
+  }
   return `${y}-${String(m).padStart(2, "0")}`;
 }
 
@@ -178,7 +197,9 @@ function aggregate(rows: BusRow[]): DepotMonth {
 }
 
 function bandCounts(rows: BusRow[]): [number, number, number] {
-  let h = 0, m = 0, a = 0;
+  let h = 0,
+    m = 0,
+    a = 0;
   for (const r of rows) {
     if (r.band === "HEALTHY") h++;
     else if (r.band === "MONITOR") m++;
@@ -210,7 +231,10 @@ export function buildBatteryDataset(rows: CycleRow[]): BatteryDataset {
 
   const mname: Record<string, string> = {};
   const mshort: Record<string, string> = {};
-  for (const k of timeline) { mname[k] = keyToName(k); mshort[k] = keyToShort(k); }
+  for (const k of timeline) {
+    mname[k] = keyToName(k);
+    mshort[k] = keyToShort(k);
+  }
   const mm: Record<string, string> = {};
   for (const k of dataKeys) mm[keyToName(k)] = keyToMM(k);
 
@@ -226,7 +250,19 @@ export function buildBatteryDataset(rows: CycleRow[]): BatteryDataset {
     }
   }
 
-  return { source: "live", depots, dataMonths, timeline, dataKeys, mname, mshort, mm, summary, health, detail };
+  return {
+    source: "live",
+    depots,
+    dataMonths,
+    timeline,
+    dataKeys,
+    mname,
+    mshort,
+    mm,
+    summary,
+    health,
+    detail,
+  };
 }
 
 /* ------------------------------------------------------------------ *
@@ -272,7 +308,9 @@ export function fleetAgg(ds: BatteryDataset, key: string): FleetAgg | null {
     (Object.keys(acc) as (keyof typeof acc)[]).forEach((k) => (acc[k] += s[k] * s.buses));
   }
   const out = { buses } as FleetAgg;
-  (Object.keys(acc) as (keyof typeof acc)[]).forEach((k) => ((out as Record<string, number>)[k] = buses ? acc[k] / buses : 0));
+  (Object.keys(acc) as (keyof typeof acc)[]).forEach(
+    (k) => ((out as Record<string, number>)[k] = buses ? acc[k] / buses : 0),
+  );
   return out;
 }
 
@@ -284,8 +322,13 @@ export function siteAgg(ds: BatteryDataset, key: string, scope: "ALL" | string):
 }
 
 /** All per-bus rows for a month name, scoped to one company or the whole fleet. */
-export function rowsForScope(ds: BatteryDataset, monthName: string, company: "ALL" | string): BusRow[] {
-  if (!company || company === "ALL") return ds.depots.flatMap((d) => ds.detail[`${d}|${monthName}`] || []);
+export function rowsForScope(
+  ds: BatteryDataset,
+  monthName: string,
+  company: "ALL" | string,
+): BusRow[] {
+  if (!company || company === "ALL")
+    return ds.depots.flatMap((d) => ds.detail[`${d}|${monthName}`] || []);
   return ds.detail[`${company}|${monthName}`] || [];
 }
 
@@ -327,7 +370,12 @@ export function breakdownBy(rows: BusRow[], keyOf: (r: BusRow) => string): Categ
 }
 
 /** Roll up health bands across a set of rows. */
-export function healthTotals(rows: BusRow[]): { healthy: number; monitor: number; attention: number; total: number } {
+export function healthTotals(rows: BusRow[]): {
+  healthy: number;
+  monitor: number;
+  attention: number;
+  total: number;
+} {
   const [healthy, monitor, attention] = bandCounts(rows);
   return { healthy, monitor, attention, total: rows.length };
 }
@@ -337,19 +385,109 @@ export function healthTotals(rows: BusRow[]): { healthy: number; monitor: number
  * ================================================================== */
 const SAMPLE_SUMMARY: Record<string, Record<string, DepotMonth>> = {
   MBMT: {
-    March: { buses: 53, gross: 5273, efcG: 21.2, efcN: 17.4, regen: 18.2, idle: 8, rte: 90, spread: 33.2, temp: 44.4 },
-    April: { buses: 54, gross: 5696, efcG: 22.63, efcN: 18.8, regen: 17.3, idle: 8, rte: 90, spread: 28.5, temp: 44.4 },
-    May: { buses: 54, gross: 5534, efcG: 22.37, efcN: 18.7, regen: 17, idle: 7.4, rte: 89.7, spread: 29.8, temp: 45 },
+    March: {
+      buses: 53,
+      gross: 5273,
+      efcG: 21.2,
+      efcN: 17.4,
+      regen: 18.2,
+      idle: 8,
+      rte: 90,
+      spread: 33.2,
+      temp: 44.4,
+    },
+    April: {
+      buses: 54,
+      gross: 5696,
+      efcG: 22.63,
+      efcN: 18.8,
+      regen: 17.3,
+      idle: 8,
+      rte: 90,
+      spread: 28.5,
+      temp: 44.4,
+    },
+    May: {
+      buses: 54,
+      gross: 5534,
+      efcG: 22.37,
+      efcN: 18.7,
+      regen: 17,
+      idle: 7.4,
+      rte: 89.7,
+      spread: 29.8,
+      temp: 45,
+    },
   },
   UMT: {
-    March: { buses: 19, gross: 7532, efcG: 28.64, efcN: 24.8, regen: 14.6, idle: 22.4, rte: 89.8, spread: 31, temp: 44.5 },
-    April: { buses: 19, gross: 6726, efcG: 25.73, efcN: 22.4, regen: 13.7, idle: 25.2, rte: 88.2, spread: 31.2, temp: 44.5 },
-    May: { buses: 19, gross: 7236, efcG: 28, efcN: 24.2, regen: 14.2, idle: 25.3, rte: 90.7, spread: 30.2, temp: 45.6 },
+    March: {
+      buses: 19,
+      gross: 7532,
+      efcG: 28.64,
+      efcN: 24.8,
+      regen: 14.6,
+      idle: 22.4,
+      rte: 89.8,
+      spread: 31,
+      temp: 44.5,
+    },
+    April: {
+      buses: 19,
+      gross: 6726,
+      efcG: 25.73,
+      efcN: 22.4,
+      regen: 13.7,
+      idle: 25.2,
+      rte: 88.2,
+      spread: 31.2,
+      temp: 44.5,
+    },
+    May: {
+      buses: 19,
+      gross: 7236,
+      efcG: 28,
+      efcN: 24.2,
+      regen: 14.2,
+      idle: 25.3,
+      rte: 90.7,
+      spread: 30.2,
+      temp: 45.6,
+    },
   },
   NTSPL: {
-    March: { buses: 183, gross: 4466, efcG: 14.89, efcN: 13.2, regen: 7.9, idle: 37.8, rte: 91.9, spread: 17.7, temp: 39.7 },
-    April: { buses: 194, gross: 4776, efcG: 15.92, efcN: 14.2, regen: 10.7, idle: 16.8, rte: 82, spread: 18.5, temp: 43.3 },
-    May: { buses: 241, gross: 6731, efcG: 22.44, efcN: 20, regen: 10.5, idle: 18, rte: 90.4, spread: 17.65, temp: 44.34 },
+    March: {
+      buses: 183,
+      gross: 4466,
+      efcG: 14.89,
+      efcN: 13.2,
+      regen: 7.9,
+      idle: 37.8,
+      rte: 91.9,
+      spread: 17.7,
+      temp: 39.7,
+    },
+    April: {
+      buses: 194,
+      gross: 4776,
+      efcG: 15.92,
+      efcN: 14.2,
+      regen: 10.7,
+      idle: 16.8,
+      rte: 82,
+      spread: 18.5,
+      temp: 43.3,
+    },
+    May: {
+      buses: 241,
+      gross: 6731,
+      efcG: 22.44,
+      efcN: 20,
+      regen: 10.5,
+      idle: 18,
+      rte: 90.4,
+      spread: 17.65,
+      temp: 44.34,
+    },
   },
 };
 
@@ -367,7 +505,10 @@ export function buildSampleDataset(detail: DetailData): BatteryDataset {
   const timeline = ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05"];
   const mname: Record<string, string> = {};
   const mshort: Record<string, string> = {};
-  for (const k of timeline) { mname[k] = keyToName(k); mshort[k] = keyToShort(k); }
+  for (const k of timeline) {
+    mname[k] = keyToName(k);
+    mshort[k] = keyToShort(k);
+  }
   const mm: Record<string, string> = { March: "03", April: "04", May: "05" };
   return {
     source: "sample",
@@ -401,19 +542,56 @@ export async function exportBatteryWorkbook(ds: BatteryDataset, monthsIn?: strin
   const bd = { style: "thin", color: { rgb: "D7DCE3" } };
   const BORDER = { top: bd, bottom: bd, left: bd, right: bd };
   const S = {
-    title: { font: { bold: true, sz: 13, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "0E7C86" } }, alignment: { vertical: "center", horizontal: "left" } },
-    sub: { font: { italic: true, sz: 10, color: { rgb: "5B6573" } }, alignment: { vertical: "center" } },
+    title: {
+      font: { bold: true, sz: 13, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "0E7C86" } },
+      alignment: { vertical: "center", horizontal: "left" },
+    },
+    sub: {
+      font: { italic: true, sz: 10, color: { rgb: "5B6573" } },
+      alignment: { vertical: "center" },
+    },
     section: { font: { bold: true, sz: 11, color: { rgb: "0E7C86" } } },
-    head: { font: { bold: true, sz: 10, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "1F2A37" } }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: BORDER },
-    subhead: { font: { bold: true, sz: 10, color: { rgb: "24303D" } }, fill: { fgColor: { rgb: "E7EDF1" } }, alignment: { horizontal: "center", vertical: "center", wrapText: true }, border: BORDER },
-    val: { font: { sz: 10, color: { rgb: "24303D" } }, fill: { fgColor: { rgb: "F4F7F9" } }, alignment: { horizontal: "center" }, border: BORDER },
+    head: {
+      font: { bold: true, sz: 10, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "1F2A37" } },
+      alignment: { horizontal: "center", vertical: "center", wrapText: true },
+      border: BORDER,
+    },
+    subhead: {
+      font: { bold: true, sz: 10, color: { rgb: "24303D" } },
+      fill: { fgColor: { rgb: "E7EDF1" } },
+      alignment: { horizontal: "center", vertical: "center", wrapText: true },
+      border: BORDER,
+    },
+    val: {
+      font: { sz: 10, color: { rgb: "24303D" } },
+      fill: { fgColor: { rgb: "F4F7F9" } },
+      alignment: { horizontal: "center" },
+      border: BORDER,
+    },
     cell: { font: { sz: 10 }, alignment: { horizontal: "right" }, border: BORDER },
     cellL: { font: { sz: 10, bold: true }, alignment: { horizontal: "left" }, border: BORDER },
     cellC: { font: { sz: 10 }, alignment: { horizontal: "center" }, border: BORDER },
     band: {
-      HEALTHY: { font: { bold: true, sz: 10, color: { rgb: "1B7A4B" } }, fill: { fgColor: { rgb: "DAF1E4" } }, alignment: { horizontal: "center" }, border: BORDER },
-      MONITOR: { font: { bold: true, sz: 10, color: { rgb: "966310" } }, fill: { fgColor: { rgb: "FBECCC" } }, alignment: { horizontal: "center" }, border: BORDER },
-      ATTENTION: { font: { bold: true, sz: 10, color: { rgb: "B23121" } }, fill: { fgColor: { rgb: "F7D9D4" } }, alignment: { horizontal: "center" }, border: BORDER },
+      HEALTHY: {
+        font: { bold: true, sz: 10, color: { rgb: "1B7A4B" } },
+        fill: { fgColor: { rgb: "DAF1E4" } },
+        alignment: { horizontal: "center" },
+        border: BORDER,
+      },
+      MONITOR: {
+        font: { bold: true, sz: 10, color: { rgb: "966310" } },
+        fill: { fgColor: { rgb: "FBECCC" } },
+        alignment: { horizontal: "center" },
+        border: BORDER,
+      },
+      ATTENTION: {
+        font: { bold: true, sz: 10, color: { rgb: "B23121" } },
+        fill: { fgColor: { rgb: "F7D9D4" } },
+        alignment: { horizontal: "center" },
+        border: BORDER,
+      },
     } as Record<Band, unknown>,
   };
   const setC = (ws: Record<string, any>, r: number, c: number, style?: unknown, z?: string) => {
@@ -439,86 +617,263 @@ export async function exportBatteryWorkbook(ds: BatteryDataset, monthsIn?: strin
     A.push([]);
     const rSum = A.length;
     A.push(["1.  FLEET SUMMARY — MONTHLY AVERAGES BY SITE"]);
-    const sumHead = ["Site", "Month", "Buses", "Avg Gross kWh", "EFC Gross", "EFC Net", "Regen %", "Idle %", "RTE %", "Cell Spread (mV)", "Peak Temp (°C)"];
+    const sumHead = [
+      "Site",
+      "Month",
+      "Buses",
+      "Avg Gross kWh",
+      "EFC Gross",
+      "EFC Net",
+      "Regen %",
+      "Idle %",
+      "RTE %",
+      "Cell Spread (mV)",
+      "Peak Temp (°C)",
+    ];
     A.push(sumHead);
     const sumStart = A.length;
-    for (const dep of DEPOTS) for (const m of months) {
-      const s = SUMMARY[dep]?.[m]; if (!s) continue;
-      A.push([dep, m, s.buses, Math.round(s.gross), s.efcG, s.efcN, s.regen, s.idle, s.rte, s.spread, s.temp]);
-    }
+    for (const dep of DEPOTS)
+      for (const m of months) {
+        const s = SUMMARY[dep]?.[m];
+        if (!s) continue;
+        A.push([
+          dep,
+          m,
+          s.buses,
+          Math.round(s.gross),
+          s.efcG,
+          s.efcN,
+          s.regen,
+          s.idle,
+          s.rte,
+          s.spread,
+          s.temp,
+        ]);
+      }
     const sumEnd = A.length;
     A.push([]);
     const rH = A.length;
     A.push(["2.  HEALTH BAND DISTRIBUTION BY SITE & MONTH"]);
-    const hHead = ["Site", "Month", "Total Buses", "Healthy", "Monitor", "Attention", "Healthy %", "Monitor %", "Attention %"];
+    const hHead = [
+      "Site",
+      "Month",
+      "Total Buses",
+      "Healthy",
+      "Monitor",
+      "Attention",
+      "Healthy %",
+      "Monitor %",
+      "Attention %",
+    ];
     A.push(hHead);
     const hStart = A.length;
-    for (const dep of DEPOTS) for (const m of months) {
-      const h = HEALTH[dep]?.[m]; if (!h) continue;
-      const tot = h[0] + h[1] + h[2] || 1;
-      A.push([dep, m, tot, h[0], h[1], h[2], h[0] / tot, h[1] / tot, h[2] / tot]);
-    }
+    for (const dep of DEPOTS)
+      for (const m of months) {
+        const h = HEALTH[dep]?.[m];
+        if (!h) continue;
+        const tot = h[0] + h[1] + h[2] || 1;
+        A.push([dep, m, tot, h[0], h[1], h[2], h[0] / tot, h[1] / tot, h[2] / tot]);
+      }
     const hEnd = A.length;
     const ws = XLSX.utils.aoa_to_sheet(A);
-    ws["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 14 }, { wch: 11 }, { wch: 11 }, { wch: 11 }, { wch: 11 }, { wch: 11 }];
-    ws["!merges"] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } },
-      { s: { r: rEfc, c: 0 }, e: { r: rEfc, c: 10 } }, { s: { r: rSum, c: 0 }, e: { r: rSum, c: 10 } }, { s: { r: rH, c: 0 }, e: { r: rH, c: 10 } },
+    ws["!cols"] = [
+      { wch: 12 },
+      { wch: 10 },
+      { wch: 12 },
+      { wch: 14 },
+      { wch: 11 },
+      { wch: 11 },
+      { wch: 11 },
+      { wch: 11 },
+      { wch: 11 },
     ];
-    ws["!rows"] = []; ws["!rows"][0] = { hpt: 24 };
-    setC(ws, 0, 0, S.title); setC(ws, 1, 0, S.sub);
-    setC(ws, rEfc, 0, S.section); setC(ws, rSum, 0, S.section); setC(ws, rH, 0, S.section);
+    ws["!merges"] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } },
+      { s: { r: rEfc, c: 0 }, e: { r: rEfc, c: 10 } },
+      { s: { r: rSum, c: 0 }, e: { r: rSum, c: 10 } },
+      { s: { r: rH, c: 0 }, e: { r: rH, c: 10 } },
+    ];
+    ws["!rows"] = [];
+    ws["!rows"][0] = { hpt: 24 };
+    setC(ws, 0, 0, S.title);
+    setC(ws, 1, 0, S.sub);
+    setC(ws, rEfc, 0, S.section);
+    setC(ws, rSum, 0, S.section);
+    setC(ws, rH, 0, S.section);
     for (let c = 0; c <= months.length; c++) setC(ws, rEfc + 1, c, S.head);
-    for (let i = 0; i < DEPOTS.length; i++) { setC(ws, rEfc + 2 + i, 0, S.cellL); for (let c = 1; c <= months.length; c++) setC(ws, rEfc + 2 + i, c, S.cell, "0.00"); }
+    for (let i = 0; i < DEPOTS.length; i++) {
+      setC(ws, rEfc + 2 + i, 0, S.cellL);
+      for (let c = 1; c <= months.length; c++) setC(ws, rEfc + 2 + i, c, S.cell, "0.00");
+    }
     for (let c = 0; c < sumHead.length; c++) setC(ws, rSum + 1, c, S.head);
     const zSum = [null, null, "0", "#,##0", "0.00", "0.00", "0.0", "0.0", "0.0", "0.0", "0.0"];
-    for (let r = sumStart; r < sumEnd; r++) { setC(ws, r, 0, S.cellL); setC(ws, r, 1, S.cellC); for (let c = 2; c < sumHead.length; c++) setC(ws, r, c, S.cell, zSum[c] as string); }
+    for (let r = sumStart; r < sumEnd; r++) {
+      setC(ws, r, 0, S.cellL);
+      setC(ws, r, 1, S.cellC);
+      for (let c = 2; c < sumHead.length; c++) setC(ws, r, c, S.cell, zSum[c] as string);
+    }
     for (let c = 0; c < hHead.length; c++) setC(ws, rH + 1, c, S.head);
     const zH = [null, null, "0", "0", "0", "0", "0.0%", "0.0%", "0.0%"];
-    for (let r = hStart; r < hEnd; r++) { setC(ws, r, 0, S.cellL); setC(ws, r, 1, S.cellC); for (let c = 2; c < hHead.length; c++) setC(ws, r, c, S.cell, zH[c] as string); }
+    for (let r = hStart; r < hEnd; r++) {
+      setC(ws, r, 0, S.cellL);
+      setC(ws, r, 1, S.cellC);
+      for (let c = 2; c < hHead.length; c++) setC(ws, r, c, S.cell, zH[c] as string);
+    }
     XLSX.utils.book_append_sheet(wb, ws, "Analysis");
   }
 
   // ---- DETAIL SHEETS (site × month, trips removed) ----
-  const COLS = ["Registration No.", "Vehicle Type", "Active Days", "Gross Discharge (kWh)", "Charged (kWh)", "EFC (Gross)", "EFC (Net)", "EFC (Gross Annual)", "Regen %", "Idle % (Aux)", "Daily RTE %", "Cell Spread (mV)", "Peak Temp (°C)", "Subzero Days", "Health Score", "Health Band"];
+  const COLS = [
+    "Registration No.",
+    "Vehicle Type",
+    "Active Days",
+    "Gross Discharge (kWh)",
+    "Charged (kWh)",
+    "EFC (Gross)",
+    "EFC (Net)",
+    "EFC (Gross Annual)",
+    "Regen %",
+    "Idle % (Aux)",
+    "Daily RTE %",
+    "Cell Spread (mV)",
+    "Peak Temp (°C)",
+    "Subzero Days",
+    "Health Score",
+    "Health Band",
+  ];
   const NC = COLS.length;
-  const zCol = [null, null, "0", "#,##0", "#,##0", "0.00", "0.00", "0", "0.0", "0.0", "0.0", "0.0", "0.0", "0", "0.0", null];
-  const widths = [16, 12, 10, 17, 12, 11, 10, 15, 9, 11, 11, 13, 12, 11, 11, 13].map((w) => ({ wch: w }));
+  const zCol = [
+    null,
+    null,
+    "0",
+    "#,##0",
+    "#,##0",
+    "0.00",
+    "0.00",
+    "0",
+    "0.0",
+    "0.0",
+    "0.0",
+    "0.0",
+    "0.0",
+    "0",
+    "0.0",
+    null,
+  ];
+  const widths = [16, 12, 10, 17, 12, 11, 10, 15, 9, 11, 11, 13, 12, 11, 11, 13].map((w) => ({
+    wch: w,
+  }));
 
-  for (const dep of DEPOTS) for (const mo of months) {
-    const rows = detail[`${dep}|${mo}`] || [];
-    const s = SUMMARY[dep]?.[mo];
-    if (!s) continue;
-    const totalGross = rows.reduce((a, r) => a + (r.grossKwh || 0), 0);
-    const mm = ds.mm[mo];
-    const A: unknown[][] = [];
-    A.push([`TRANSVOLT MOBILITY — HV DISCHARGE CYCLE DATA  ·  ${dep}  ·  2026-${mm}`]);
-    A.push([`FLEET AVERAGE — 2026-${mm}`]);
-    A.push(["Site", "Buses", "Avg Gross kWh", "Avg EFC Gross", "Avg EFC Net", "Avg Regen %", "Avg Idle %", "Avg RTE %", "Avg Spread mV", "Avg Peak Temp", "Total Gross kWh"]);
-    A.push([dep, s.buses, Math.round(s.gross), s.efcG, s.efcN, s.regen, s.idle, s.rte, s.spread, s.temp, Math.round(totalGross)]);
-    A.push([]);
-    A.push(COLS);
-    for (const r of rows) A.push([r.reg, r.type, r.activeDays, r.grossKwh, r.chargedKwh, r.efcGross, r.efcNet, r.efcAnnual, r.regen, r.idle, r.rte, r.spread, r.peakTemp, r.subzero, r.healthScore, r.band]);
-    const ws = XLSX.utils.aoa_to_sheet(A);
-    ws["!cols"] = widths;
-    ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NC - 1 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: NC - 1 } }];
-    ws["!rows"] = []; ws["!rows"][0] = { hpt: 22 }; ws["!rows"][5] = { hpt: 30 };
-    ws["!autofilter"] = { ref: XLSX.utils.encode_range({ s: { r: 5, c: 0 }, e: { r: 5 + rows.length, c: NC - 1 } }) };
-    ws["!freeze"] = { xSplit: 0, ySplit: 6, topLeftCell: "A7", activePane: "bottomLeft", state: "frozen" };
-    setC(ws, 0, 0, S.title); setC(ws, 1, 0, S.sub);
-    for (let c = 0; c <= 10; c++) setC(ws, 2, c, S.subhead);
-    const zFleet = [null, "0", "#,##0", "0.00", "0.00", "0.0", "0.0", "0.0", "0.0", "0.0", "#,##0"];
-    setC(ws, 3, 0, S.cellL); for (let c = 1; c <= 10; c++) setC(ws, 3, c, S.val, zFleet[c] as string);
-    for (let c = 0; c < NC; c++) setC(ws, 5, c, S.head);
-    for (let i = 0; i < rows.length; i++) {
-      const rr = 6 + i;
-      const band = rows[i].band;
-      setC(ws, rr, 0, S.cellL); setC(ws, rr, 1, S.cellC);
-      for (let c = 2; c < NC - 1; c++) setC(ws, rr, c, S.cell, zCol[c] as string);
-      setC(ws, rr, NC - 1, S.band[band] || S.cellC);
+  for (const dep of DEPOTS)
+    for (const mo of months) {
+      const rows = detail[`${dep}|${mo}`] || [];
+      const s = SUMMARY[dep]?.[mo];
+      if (!s) continue;
+      const totalGross = rows.reduce((a, r) => a + (r.grossKwh || 0), 0);
+      const mm = ds.mm[mo];
+      const A: unknown[][] = [];
+      A.push([`TRANSVOLT MOBILITY — HV DISCHARGE CYCLE DATA  ·  ${dep}  ·  2026-${mm}`]);
+      A.push([`FLEET AVERAGE — 2026-${mm}`]);
+      A.push([
+        "Site",
+        "Buses",
+        "Avg Gross kWh",
+        "Avg EFC Gross",
+        "Avg EFC Net",
+        "Avg Regen %",
+        "Avg Idle %",
+        "Avg RTE %",
+        "Avg Spread mV",
+        "Avg Peak Temp",
+        "Total Gross kWh",
+      ]);
+      A.push([
+        dep,
+        s.buses,
+        Math.round(s.gross),
+        s.efcG,
+        s.efcN,
+        s.regen,
+        s.idle,
+        s.rte,
+        s.spread,
+        s.temp,
+        Math.round(totalGross),
+      ]);
+      A.push([]);
+      A.push(COLS);
+      for (const r of rows)
+        A.push([
+          r.reg,
+          r.type,
+          r.activeDays,
+          r.grossKwh,
+          r.chargedKwh,
+          r.efcGross,
+          r.efcNet,
+          r.efcAnnual,
+          r.regen,
+          r.idle,
+          r.rte,
+          r.spread,
+          r.peakTemp,
+          r.subzero,
+          r.healthScore,
+          r.band,
+        ]);
+      const ws = XLSX.utils.aoa_to_sheet(A);
+      ws["!cols"] = widths;
+      ws["!merges"] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: NC - 1 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: NC - 1 } },
+      ];
+      ws["!rows"] = [];
+      ws["!rows"][0] = { hpt: 22 };
+      ws["!rows"][5] = { hpt: 30 };
+      ws["!autofilter"] = {
+        ref: XLSX.utils.encode_range({ s: { r: 5, c: 0 }, e: { r: 5 + rows.length, c: NC - 1 } }),
+      };
+      ws["!freeze"] = {
+        xSplit: 0,
+        ySplit: 6,
+        topLeftCell: "A7",
+        activePane: "bottomLeft",
+        state: "frozen",
+      };
+      setC(ws, 0, 0, S.title);
+      setC(ws, 1, 0, S.sub);
+      for (let c = 0; c <= 10; c++) setC(ws, 2, c, S.subhead);
+      const zFleet = [
+        null,
+        "0",
+        "#,##0",
+        "0.00",
+        "0.00",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "#,##0",
+      ];
+      setC(ws, 3, 0, S.cellL);
+      for (let c = 1; c <= 10; c++) setC(ws, 3, c, S.val, zFleet[c] as string);
+      for (let c = 0; c < NC; c++) setC(ws, 5, c, S.head);
+      for (let i = 0; i < rows.length; i++) {
+        const rr = 6 + i;
+        const band = rows[i].band;
+        setC(ws, rr, 0, S.cellL);
+        setC(ws, rr, 1, S.cellC);
+        for (let c = 2; c < NC - 1; c++) setC(ws, rr, c, S.cell, zCol[c] as string);
+        setC(ws, rr, NC - 1, S.band[band] || S.cellC);
+      }
+      XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        `${dep}-${mo}26`.replace(/[\\/?*[\]:]/g, "").slice(0, 31),
+      );
     }
-    XLSX.utils.book_append_sheet(wb, ws, `${dep}-${mo}26`.replace(/[\\/?*[\]:]/g, "").slice(0, 31));
-  }
 
   const first = (months[0] ?? "").slice(0, 3);
   const last = (months[months.length - 1] ?? "").slice(0, 3);

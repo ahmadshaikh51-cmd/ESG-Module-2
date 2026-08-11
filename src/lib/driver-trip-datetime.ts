@@ -10,7 +10,14 @@ export function parseUtcTimestamp(raw: string): Date | null {
   const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{1,2}):(\d{2})(?::(\d{2}))?/);
   if (m) {
     return new Date(
-      Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6] ?? 0)),
+      Date.UTC(
+        Number(m[1]),
+        Number(m[2]) - 1,
+        Number(m[3]),
+        Number(m[4]),
+        Number(m[5]),
+        Number(m[6] ?? 0),
+      ),
     );
   }
   const dt = new Date(raw);

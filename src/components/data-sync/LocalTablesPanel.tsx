@@ -5,11 +5,21 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { deleteTable, listTables, runQuery, type LocalTable } from "@/lib/api/data-admin";
 import { EmptyState, Panel } from "./shared";
@@ -48,8 +58,12 @@ export function LocalTablesPanel({ apiReady }: { apiReady: boolean }) {
       subtitle="Tables and views materialised in DuckDB"
       icon={<Table2 className="h-[18px] w-[18px]" />}
       actions={
-        <Button variant="outline" size="sm" disabled={!apiReady || tablesQuery.isFetching}
-          onClick={() => tablesQuery.refetch()}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!apiReady || tablesQuery.isFetching}
+          onClick={() => tablesQuery.refetch()}
+        >
           <RefreshCw className={`h-3.5 w-3.5 ${tablesQuery.isFetching ? "animate-spin" : ""}`} />
           Refresh
         </Button>
@@ -66,8 +80,12 @@ export function LocalTablesPanel({ apiReady }: { apiReady: boolean }) {
           <div className="border-b border-border/60 px-4 py-2.5">
             <div className="relative">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <Input value={search} onChange={(e) => setSearch(e.target.value)}
-                placeholder={`Filter ${tablesQuery.data?.length ?? 0} tables…`} className="h-8 pl-8 text-[13px]" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Filter ${tablesQuery.data?.length ?? 0} tables…`}
+                className="h-8 pl-8 text-[13px]"
+              />
             </div>
           </div>
           <div className="max-h-[460px] overflow-auto">
@@ -85,24 +103,41 @@ export function LocalTablesPanel({ apiReady }: { apiReady: boolean }) {
                 </thead>
                 <tbody>
                   {filtered.map((t: LocalTable) => (
-                    <tr key={t.table_name} className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/40">
+                    <tr
+                      key={t.table_name}
+                      className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/40"
+                    >
                       <td className="px-4 py-2.5 font-medium text-foreground">{t.table_name}</td>
                       <td className="px-3 py-2.5">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[10.5px] font-medium uppercase tracking-wide ${
-                          t.table_type === "VIEW" ? "bg-chart-2/15 text-chart-2" : "bg-primary/10 text-primary"
-                        }`}>
+                        <span
+                          className={`rounded-md px-1.5 py-0.5 text-[10.5px] font-medium uppercase tracking-wide ${
+                            t.table_type === "VIEW"
+                              ? "bg-chart-2/15 text-chart-2"
+                              : "bg-primary/10 text-primary"
+                          }`}
+                        >
                           {t.table_type === "VIEW" ? "View" : "Table"}
                         </span>
                       </td>
-                      <td className="px-3 py-2.5 text-right num text-muted-foreground">{t.column_count}</td>
+                      <td className="px-3 py-2.5 text-right num text-muted-foreground">
+                        {t.column_count}
+                      </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center justify-end gap-1.5">
-                          <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => setPreview(t.table_name)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2"
+                            onClick={() => setPreview(t.table_name)}
+                          >
                             <Eye className="h-3.5 w-3.5" /> Preview
                           </Button>
-                          <Button variant="ghost" size="sm"
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             className="h-7 px-2 text-destructive hover:text-destructive"
-                            onClick={() => setPendingDelete(t.table_name)}>
+                            onClick={() => setPendingDelete(t.table_name)}
+                          >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
@@ -123,14 +158,16 @@ export function LocalTablesPanel({ apiReady }: { apiReady: boolean }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Drop “{pendingDelete}”?</AlertDialogTitle>
             <AlertDialogDescription>
-              This removes the table or reference view from DuckDB. You can re-sync it from the remote catalog.
+              This removes the table or reference view from DuckDB. You can re-sync it from the
+              remote catalog.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => pendingDelete && del.mutate(pendingDelete)}>
+              onClick={() => pendingDelete && del.mutate(pendingDelete)}
+            >
               Drop table
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -168,7 +205,12 @@ function PreviewSheet({ table, onClose }: { table: string | null; onClose: () =>
               <thead className="sticky top-0 z-10 bg-muted">
                 <tr>
                   {preview.data.columns.map((c) => (
-                    <th key={c} className="whitespace-nowrap border-b border-border/60 px-3 py-2 text-left font-semibold">{c}</th>
+                    <th
+                      key={c}
+                      className="whitespace-nowrap border-b border-border/60 px-3 py-2 text-left font-semibold"
+                    >
+                      {c}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -176,8 +218,11 @@ function PreviewSheet({ table, onClose }: { table: string | null; onClose: () =>
                 {preview.data.rows.map((row, i) => (
                   <tr key={i} className="border-b border-border/30 hover:bg-muted/40">
                     {preview.data!.columns.map((c) => (
-                      <td key={c} className="max-w-[260px] truncate whitespace-nowrap px-3 py-1.5 font-mono text-[11px]"
-                        title={fmtCell(row[c])}>
+                      <td
+                        key={c}
+                        className="max-w-[260px] truncate whitespace-nowrap px-3 py-1.5 font-mono text-[11px]"
+                        title={fmtCell(row[c])}
+                      >
                         {fmtCell(row[c])}
                       </td>
                     ))}

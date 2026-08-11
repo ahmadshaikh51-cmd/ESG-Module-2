@@ -1,7 +1,15 @@
 import { useState } from "react";
 import {
-  Area, AreaChart, CartesianGrid, Legend, Line, ReferenceLine, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 import { useMemo } from "react";
 import { median } from "@/lib/analytics";
@@ -24,7 +32,7 @@ const METRICS = [
   { key: "idleShare", label: "Idle Share", unit: "%", color: "var(--color-chart-5)" },
 ] as const;
 
-type MetricKey = typeof METRICS[number]["key"];
+type MetricKey = (typeof METRICS)[number]["key"];
 
 function CustomTooltip({ active, payload, label, unit }: any) {
   if (!active || !payload?.length) return null;
@@ -45,12 +53,15 @@ function CustomTooltip({ active, payload, label, unit }: any) {
 }
 
 export function MetricTrendChart({
-  data, prevData, isGraphQl, error,
-}: { 
-  data: TrendPoint[]; 
-  prevData?: TrendPoint[]; 
-  isGraphQl?: boolean; 
-  error?: any; 
+  data,
+  prevData,
+  isGraphQl,
+  error,
+}: {
+  data: TrendPoint[];
+  prevData?: TrendPoint[];
+  isGraphQl?: boolean;
+  error?: any;
 }) {
   const [metric, setMetric] = useState<MetricKey>("kwhPerKm");
   const [compare, setCompare] = useState(false);
@@ -62,10 +73,7 @@ export function MetricTrendChart({
     previous: compare && prevData?.[i] ? prevData[i][metric] : undefined,
   }));
 
-  const periodMedian = useMemo(
-    () => median(data.map((d) => d[metric])),
-    [data, metric],
-  );
+  const periodMedian = useMemo(() => median(data.map((d) => d[metric])), [data, metric]);
 
   return (
     <div className="card-interactive chart-enter rounded-2xl border border-border/50 bg-card p-5 shadow-elevated">
@@ -79,7 +87,10 @@ export function MetricTrendChart({
               </span>
             )}
             {error && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20" title={error instanceof Error ? error.message : String(error)}>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20"
+                title={error instanceof Error ? error.message : String(error)}
+              >
                 Offline Fallback
               </span>
             )}
@@ -131,9 +142,26 @@ export function MetricTrendChart({
                 <stop offset="100%" stopColor={m.color} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} opacity={0.5} />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
-            <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} axisLine={false} tickLine={false} width={48} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--color-border)"
+              vertical={false}
+              opacity={0.5}
+            />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              axisLine={false}
+              tickLine={false}
+              interval="preserveStartEnd"
+              minTickGap={24}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              axisLine={false}
+              tickLine={false}
+              width={48}
+            />
             <ReferenceLine
               y={periodMedian}
               stroke="var(--color-muted-foreground)"
@@ -146,7 +174,10 @@ export function MetricTrendChart({
                 fontSize: 10,
               }}
             />
-            <Tooltip content={<CustomTooltip unit={m.unit} />} cursor={{ stroke: "var(--color-border)", strokeDasharray: "3 3" }} />
+            <Tooltip
+              content={<CustomTooltip unit={m.unit} />}
+              cursor={{ stroke: "var(--color-border)", strokeDasharray: "3 3" }}
+            />
             {compare && (
               <Line
                 type="monotone"

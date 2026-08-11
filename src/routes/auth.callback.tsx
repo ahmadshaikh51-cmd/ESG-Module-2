@@ -22,7 +22,11 @@ function AuthCallbackPage() {
 
   useEffect(() => {
     if (!getCurrentUser()) {
-      setCurrentUser({ email: "esg.demo@transvolt.in", provider: "microsoft", name: "ESG Demo User" });
+      setCurrentUser({
+        email: "esg.demo@transvolt.in",
+        provider: "microsoft",
+        name: "ESG Demo User",
+      });
     }
     void navigate({ to: "/esg" });
   }, [navigate]);

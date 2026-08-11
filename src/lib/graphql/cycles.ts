@@ -17,7 +17,10 @@ function parseSqlQueryResult<T>(result: T[] | { error?: string } | null | undefi
   return result;
 }
 
-async function runSql<T = Record<string, unknown>>(sql: string, opName = "CycleQuery"): Promise<T[]> {
+async function runSql<T = Record<string, unknown>>(
+  sql: string,
+  opName = "CycleQuery",
+): Promise<T[]> {
   const res = await fetch(GRAPHQL_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -174,7 +177,10 @@ export interface DailyTrendPoint {
  * Daily fleet aggregate for a report month, optionally scoped to one company
  * (spv). Aggregated server-side so the payload is one row per day.
  */
-export async function fetchDailyTrend(company: string | null, reportMonth: string): Promise<DailyTrendPoint[]> {
+export async function fetchDailyTrend(
+  company: string | null,
+  reportMonth: string,
+): Promise<DailyTrendPoint[]> {
   const scope = company && company !== "ALL" ? `AND spv = ${sqlStr(company)}` : "";
   const sql = `
     SELECT session_date,
@@ -192,7 +198,11 @@ export async function fetchDailyTrend(company: string | null, reportMonth: strin
 }
 
 /** Trip segments for a single bus within a report month, ordered by start time. */
-export async function fetchCycleTrips(reg: string, reportMonth: string, limit = 2000): Promise<CycleTripRow[]> {
+export async function fetchCycleTrips(
+  reg: string,
+  reportMonth: string,
+  limit = 2000,
+): Promise<CycleTripRow[]> {
   const sql = `
     SELECT segment_id, segment_type, segment_flag, trip_date, trip_start, trip_end, duration_min,
            gross_discharge_kwh, net_discharge_kwh, regen_kwh, efc_gross_trip, regen_pct,

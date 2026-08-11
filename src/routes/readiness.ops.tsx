@@ -18,10 +18,7 @@ function ReadinessOpsPage() {
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-4">
-        <Link
-          to="/readiness"
-          className="text-[12px] font-medium text-primary hover:underline"
-        >
+        <Link to="/readiness" className="text-[12px] font-medium text-primary hover:underline">
           ← Back to executive view
         </Link>
         <Link

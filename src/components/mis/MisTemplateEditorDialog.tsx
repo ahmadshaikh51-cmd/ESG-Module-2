@@ -131,7 +131,12 @@ export function MisTemplateEditorDialog({
           </DialogDescription>
           <div className="mt-3 flex flex-wrap gap-2">
             <StepChip n={1} label="Name & routes" active={step === 1} onClick={() => setStep(1)} />
-            <StepChip n={2} label="Columns & preview" active={step === 2} onClick={() => setStep(2)} />
+            <StepChip
+              n={2}
+              label="Columns & preview"
+              active={step === 2}
+              onClick={() => setStep(2)}
+            />
           </div>
         </DialogHeader>
 
@@ -173,7 +178,8 @@ export function MisTemplateEditorDialog({
                   ← Back to routes
                 </Button>
                 <p className="text-[13px] text-muted-foreground">
-                  Turn sections on/off and rename column titles. Use words your depot team already knows.
+                  Turn sections on/off and rename column titles. Use words your depot team already
+                  knows.
                 </p>
                 {(Object.keys(COLUMN_GROUPS) as ColumnGroupKey[]).map((group) => {
                   const cols = KMS_COLUMN_CATALOG.filter((c) => c.group === group);
@@ -187,7 +193,10 @@ export function MisTemplateEditorDialog({
                       >
                         <span className="text-[13px] font-semibold">{GROUP_PLAIN[group]}</span>
                         <label className="flex items-center gap-2 text-[12px] font-normal">
-                          <Checkbox checked={allOn} onCheckedChange={(c) => toggleGroup(group, !!c)} />
+                          <Checkbox
+                            checked={allOn}
+                            onCheckedChange={(c) => toggleGroup(group, !!c)}
+                          />
                           {OPS.showColumn}
                         </label>
                       </div>
@@ -209,7 +218,9 @@ export function MisTemplateEditorDialog({
                                 />
                               )}
                               <div>
-                                <span className="text-[11px] text-muted-foreground">{OPS.columnTitle}</span>
+                                <span className="text-[11px] text-muted-foreground">
+                                  {OPS.columnTitle}
+                                </span>
                                 <Input
                                   value={cfg?.header ?? col.defaultHeader}
                                   onChange={(e) => setColumn(col.id, { header: e.target.value })}
@@ -317,11 +328,17 @@ export function MisTemplateEditorDialog({
             <Button
               type="button"
               variant="outline"
-              onClick={() => createTemplate(activeSiteId, `${siteName} report ${siteTemplateCount + 1}`)}
+              onClick={() =>
+                createTemplate(activeSiteId, `${siteName} report ${siteTemplateCount + 1}`)
+              }
             >
               New style
             </Button>
-            <Button type="button" variant="outline" onClick={() => duplicateActiveTemplate(`${draftName} (copy)`)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => duplicateActiveTemplate(`${draftName} (copy)`)}
+            >
               Copy style
             </Button>
             <Button
@@ -364,7 +381,9 @@ function StepChip({
       type="button"
       onClick={onClick}
       className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
-        active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:bg-muted/80"
       }`}
     >
       <span className="flex h-5 w-5 items-center justify-center rounded-full bg-background/20 text-[11px]">

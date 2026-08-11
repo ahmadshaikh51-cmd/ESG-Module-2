@@ -20,28 +20,94 @@ export function CurveExplainability({ vehicle_number }: { vehicle_number: string
 
   const fleetPeak = Math.max(...fleet.map((p) => p.power_kw));
   const metrics: Metric[] = [
-    { label: "CC duration", value: last.cc_duration_min, unit: "min", baseline: 38, betterWhen: "higher",
-      explain: "Longer CC phase = healthier charge acceptance" },
-    { label: "CV duration", value: last.cv_duration_min, unit: "min", baseline: 22, betterWhen: "lower",
-      explain: "Extended CV phase indicates premature current taper" },
-    { label: "CV entry SOC", value: last.cv_entry_soc, unit: "%", baseline: 72, betterWhen: "higher",
-      explain: "Earlier CV entry signals reduced acceptance" },
-    { label: "Taper rate", value: last.taper_rate, unit: "kW/%", baseline: 1.2, betterWhen: "lower",
-      explain: "Aggressive taper = thermal or BMS stress" },
-    { label: "Acceptance", value: last.charge_acceptance, unit: "%", baseline: 82, betterWhen: "higher",
-      explain: "BMS-reported charge acceptance vs fleet norm" },
-    { label: "Peak power", value: last.peak_power, unit: "kW", baseline: fleetPeak, betterWhen: "higher",
-      explain: "Max power achieved during CC phase" },
-    { label: "Peak current", value: last.peak_current, unit: "A", baseline: 220, betterWhen: "higher",
-      explain: "Current capacity reaching the pack" },
-    { label: "Peak voltage", value: last.peak_voltage, unit: "V", baseline: 620, betterWhen: "higher",
-      explain: "Pack voltage at peak charge" },
-    { label: "Thermal rise", value: last.thermal_rise, unit: "°C", baseline: 14, betterWhen: "lower",
-      explain: "Temperature delta start-to-end of session" },
-    { label: "Curve stability", value: last.curve_stability, unit: "/100", baseline: 82, betterWhen: "higher",
-      explain: "Session-to-session consistency score" },
-    { label: "Curve abnormality", value: last.curve_abnormality, unit: "/100", baseline: 30, betterWhen: "lower",
-      explain: "Composite divergence from healthy profile" },
+    {
+      label: "CC duration",
+      value: last.cc_duration_min,
+      unit: "min",
+      baseline: 38,
+      betterWhen: "higher",
+      explain: "Longer CC phase = healthier charge acceptance",
+    },
+    {
+      label: "CV duration",
+      value: last.cv_duration_min,
+      unit: "min",
+      baseline: 22,
+      betterWhen: "lower",
+      explain: "Extended CV phase indicates premature current taper",
+    },
+    {
+      label: "CV entry SOC",
+      value: last.cv_entry_soc,
+      unit: "%",
+      baseline: 72,
+      betterWhen: "higher",
+      explain: "Earlier CV entry signals reduced acceptance",
+    },
+    {
+      label: "Taper rate",
+      value: last.taper_rate,
+      unit: "kW/%",
+      baseline: 1.2,
+      betterWhen: "lower",
+      explain: "Aggressive taper = thermal or BMS stress",
+    },
+    {
+      label: "Acceptance",
+      value: last.charge_acceptance,
+      unit: "%",
+      baseline: 82,
+      betterWhen: "higher",
+      explain: "BMS-reported charge acceptance vs fleet norm",
+    },
+    {
+      label: "Peak power",
+      value: last.peak_power,
+      unit: "kW",
+      baseline: fleetPeak,
+      betterWhen: "higher",
+      explain: "Max power achieved during CC phase",
+    },
+    {
+      label: "Peak current",
+      value: last.peak_current,
+      unit: "A",
+      baseline: 220,
+      betterWhen: "higher",
+      explain: "Current capacity reaching the pack",
+    },
+    {
+      label: "Peak voltage",
+      value: last.peak_voltage,
+      unit: "V",
+      baseline: 620,
+      betterWhen: "higher",
+      explain: "Pack voltage at peak charge",
+    },
+    {
+      label: "Thermal rise",
+      value: last.thermal_rise,
+      unit: "°C",
+      baseline: 14,
+      betterWhen: "lower",
+      explain: "Temperature delta start-to-end of session",
+    },
+    {
+      label: "Curve stability",
+      value: last.curve_stability,
+      unit: "/100",
+      baseline: 82,
+      betterWhen: "higher",
+      explain: "Session-to-session consistency score",
+    },
+    {
+      label: "Curve abnormality",
+      value: last.curve_abnormality,
+      unit: "/100",
+      baseline: 30,
+      betterWhen: "lower",
+      explain: "Composite divergence from healthy profile",
+    },
   ];
 
   return (
@@ -77,13 +143,25 @@ export function CurveExplainability({ vehicle_number }: { vehicle_number: string
                 </span>
               </div>
               <div className="num mt-1 text-[18px] font-semibold leading-tight">
-                {fmt(m.value, m.unit === "%" || m.unit === "kW" || m.unit === "A" || m.unit === "V" || m.unit === "min" || m.unit === "/100" ? 0 : 1)}
+                {fmt(
+                  m.value,
+                  m.unit === "%" ||
+                    m.unit === "kW" ||
+                    m.unit === "A" ||
+                    m.unit === "V" ||
+                    m.unit === "min" ||
+                    m.unit === "/100"
+                    ? 0
+                    : 1,
+                )}
                 <span className="ml-1 text-[10px] font-normal text-muted-foreground">{m.unit}</span>
               </div>
               <div className="mt-0.5 text-[10px] text-muted-foreground">
                 Baseline {fmt(m.baseline, 0)} {m.unit}
               </div>
-              <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground/90">{m.explain}</p>
+              <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground/90">
+                {m.explain}
+              </p>
             </motion.div>
           );
         })}

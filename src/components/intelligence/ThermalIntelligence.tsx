@@ -37,8 +37,12 @@ export function ThermalIntelligence({ vehicle_number }: { vehicle_number: string
     previous: prev?.curve[i]?.temp_c ?? null,
   }));
 
-  const ccTherm = last.curve.filter((p) => p.phase === "CC").reduce((s, p) => s + p.temp_c, 0) / Math.max(last.curve.filter((p) => p.phase === "CC").length, 1);
-  const cvTherm = last.curve.filter((p) => p.phase !== "CC").reduce((s, p) => s + p.temp_c, 0) / Math.max(last.curve.filter((p) => p.phase !== "CC").length, 1);
+  const ccTherm =
+    last.curve.filter((p) => p.phase === "CC").reduce((s, p) => s + p.temp_c, 0) /
+    Math.max(last.curve.filter((p) => p.phase === "CC").length, 1);
+  const cvTherm =
+    last.curve.filter((p) => p.phase !== "CC").reduce((s, p) => s + p.temp_c, 0) /
+    Math.max(last.curve.filter((p) => p.phase !== "CC").length, 1);
 
   return (
     <Panel>
@@ -50,7 +54,11 @@ export function ThermalIntelligence({ vehicle_number }: { vehicle_number: string
       <div className="grid grid-cols-3 gap-2 border-b border-border/40 px-4 py-2.5">
         <Stat label="CC avg temp" value={`${fmt(ccTherm, 1)}°C`} accent />
         <Stat label="CV/Taper avg" value={`${fmt(cvTherm, 1)}°C`} hot={cvTherm - ccTherm > 8} />
-        <Stat label="Thermal rise" value={`${fmt(last.thermal_rise, 1)}°C`} hot={last.thermal_rise > 18} />
+        <Stat
+          label="Thermal rise"
+          value={`${fmt(last.thermal_rise, 1)}°C`}
+          hot={last.thermal_rise > 18}
+        />
       </div>
       <div className="grid grid-cols-1 gap-3 p-4 xl:grid-cols-2">
         <div className="h-64 rounded-xl bg-card/40 p-2 ring-1 ring-border/40">
@@ -67,11 +75,15 @@ export function ThermalIntelligence({ vehicle_number }: { vehicle_number: string
                 cursor={{ strokeDasharray: "3 3" }}
                 content={({ payload }) => {
                   if (!payload?.[0]) return null;
-                  const d = payload[0].payload as typeof scatter[0];
+                  const d = payload[0].payload as (typeof scatter)[0];
                   return (
                     <div className="rounded-lg border border-border bg-popover p-2 text-[11px]">
-                      <div className="font-semibold">{d.phase} · SOC {d.soc}%</div>
-                      <div>{d.power} kW @ {d.temp.toFixed(1)}°C</div>
+                      <div className="font-semibold">
+                        {d.phase} · SOC {d.soc}%
+                      </div>
+                      <div>
+                        {d.power} kW @ {d.temp.toFixed(1)}°C
+                      </div>
                     </div>
                   );
                 }}
@@ -96,8 +108,21 @@ export function ThermalIntelligence({ vehicle_number }: { vehicle_number: string
               <XAxis dataKey="soc" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} domain={[20, 80]} />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-              <Line type="monotone" dataKey="previous" stroke="var(--color-muted-foreground)" strokeWidth={1.4} strokeDasharray="4 4" dot={false} />
-              <Line type="monotone" dataKey="current" stroke="var(--color-destructive)" strokeWidth={2} dot={false} />
+              <Line
+                type="monotone"
+                dataKey="previous"
+                stroke="var(--color-muted-foreground)"
+                strokeWidth={1.4}
+                strokeDasharray="4 4"
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="current"
+                stroke="var(--color-destructive)"
+                strokeWidth={2}
+                dot={false}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -112,11 +137,25 @@ export function ThermalIntelligence({ vehicle_number }: { vehicle_number: string
   );
 }
 
-function Stat({ label, value, hot, accent }: { label: string; value: string; hot?: boolean; accent?: boolean }) {
+function Stat({
+  label,
+  value,
+  hot,
+  accent,
+}: {
+  label: string;
+  value: string;
+  hot?: boolean;
+  accent?: boolean;
+}) {
   return (
     <div className="rounded-lg bg-card/60 px-3 py-2 ring-1 ring-border/40">
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`num text-[16px] font-semibold ${hot ? "text-destructive" : accent ? "text-primary" : ""}`}>{value}</div>
+      <div
+        className={`num text-[16px] font-semibold ${hot ? "text-destructive" : accent ? "text-primary" : ""}`}
+      >
+        {value}
+      </div>
     </div>
   );
 }

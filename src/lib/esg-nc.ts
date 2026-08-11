@@ -55,7 +55,10 @@ export type NcItem = {
 
 const ageOf = (iso: string) => Math.max(0, daysUntil(iso) * -1);
 
-function actionStatusFor(actionId: string | undefined, extraActions: EsapAction[]): NcItem["actionStatus"] {
+function actionStatusFor(
+  actionId: string | undefined,
+  extraActions: EsapAction[],
+): NcItem["actionStatus"] {
   if (!actionId) return "none";
   const action = [...ESAP_ACTIONS, ...extraActions].find((a) => a.id === actionId);
   return action?.status ?? "none";
@@ -93,7 +96,9 @@ export function buildNcRegister(
   // ---- internal + external audit NCs ----
   const auditActions = audit.auditEsapActions();
   for (const kind of ["internal", "external"] as const) {
-    for (const a of audit.auditsFor(kind).filter((a) => inScope({ entityId: a.entityId, depotId: a.depotId }, sel))) {
+    for (const a of audit
+      .auditsFor(kind)
+      .filter((a) => inScope({ entityId: a.entityId, depotId: a.depotId }, sel))) {
       for (const f of audit.findingsFor(a.id).filter((f) => f.result === "nc")) {
         const linkedAction = [...ESAP_ACTIONS, ...auditActions].find((x) => x.id === f.actionId);
         items.push({
@@ -112,7 +117,10 @@ export function buildNcRegister(
           // The whole module withholds every NC (any source) from the external
           // audience by default — see AuditDetail's identical rule.
           withheldExternal: true,
-          backlink: { kind: "esms", sub: kind === "internal" ? "audit-internal" : "audit-external" },
+          backlink: {
+            kind: "esms",
+            sub: kind === "internal" ? "audit-internal" : "audit-external",
+          },
         });
       }
     }
@@ -141,7 +149,8 @@ export function buildNcRegister(
 }
 
 export type AgeBucket = "0-30" | "31-90" | "90+";
-export const ageBucket = (days: number): AgeBucket => (days <= 30 ? "0-30" : days <= 90 ? "31-90" : "90+");
+export const ageBucket = (days: number): AgeBucket =>
+  days <= 30 ? "0-30" : days <= 90 ? "31-90" : "90+";
 
 /** Oldest open first — age is the risk signal; closed items sink to the bottom. */
 export function sortNcRegister(items: NcItem[]): NcItem[] {

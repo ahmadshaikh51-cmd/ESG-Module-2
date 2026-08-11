@@ -33,7 +33,8 @@ function ComparePlaceholder({ slot }: { slot: "A" | "B" }) {
         </div>
         <p className="text-[14px] font-semibold">Select {accent.label}</p>
         <p className="mt-1 max-w-[240px] text-[12px] text-muted-foreground">
-          Pick a second route below to compare full corridors, DMS footprints, and metrics side-by-side.
+          Pick a second route below to compare full corridors, DMS footprints, and metrics
+          side-by-side.
         </p>
       </div>
     </div>
@@ -112,7 +113,14 @@ function RouteMetricsBlock({
   const peerStats = peer ? computeRouteStats(peer, segments) : null;
 
   const winnerTone = (
-    metric: keyof Pick<RouteContext, "difficulty_score" | "efficiency_kwh_per_km" | "congestion_score" | "peak_dms_index" | "avg_speed_kmh">,
+    metric: keyof Pick<
+      RouteContext,
+      | "difficulty_score"
+      | "efficiency_kwh_per_km"
+      | "congestion_score"
+      | "peak_dms_index"
+      | "avg_speed_kmh"
+    >,
     lowerIsBetter: boolean,
   ): "default" | "good" | "bad" => {
     if (!peer) return "default";
@@ -151,7 +159,8 @@ function RouteMetricsBlock({
             peerStats
               ? compareWinner(stats.highRiskSegments, peerStats.highRiskSegments, true) === "tie"
                 ? "default"
-                : (compareWinner(stats.highRiskSegments, peerStats.highRiskSegments, true) === "a") ===
+                : (compareWinner(stats.highRiskSegments, peerStats.highRiskSegments, true) ===
+                      "a") ===
                     (slot === "A")
                   ? "good"
                   : "bad"
@@ -195,11 +204,9 @@ function RouteMetricsBlock({
           </span>
         )}
       </div>
-      <div
-        className="mt-2 text-[10px] font-medium"
-        style={{ color: accent.color }}
-      >
-        {route.stop_count ? `${route.stop_count} stages` : `${stats.segmentCount} segments`} · {fmt(stats.pathKm, 1)} km corridor
+      <div className="mt-2 text-[10px] font-medium" style={{ color: accent.color }}>
+        {route.stop_count ? `${route.stop_count} stages` : `${stats.segmentCount} segments`} ·{" "}
+        {fmt(stats.pathKm, 1)} km corridor
       </div>
     </div>
   );
@@ -267,7 +274,9 @@ function CompareRouteColumn({
           </div>
         </div>
         <div className="text-right text-[11px] text-muted-foreground">
-          <div className="num text-[18px] font-semibold text-foreground">{fmt(route.difficulty_score)}</div>
+          <div className="num text-[18px] font-semibold text-foreground">
+            {fmt(route.difficulty_score)}
+          </div>
           <div>difficulty / 100</div>
         </div>
       </div>
@@ -286,7 +295,11 @@ function CompareRouteColumn({
         dmsMode="full"
         accentColor={accent.color}
         panelTitle={`${start} → ${end}`}
-        panelSubtitle={route.stop_count ? `${route.stop_count} stages · real geometry` : `${stats.dmsTotal} DMS footprints · full corridor`}
+        panelSubtitle={
+          route.stop_count
+            ? `${route.stop_count} stages · real geometry`
+            : `${stats.dmsTotal} DMS footprints · full corridor`
+        }
         fitTrigger={`${mapFitTrigger}|${route.route_id}|${slot}`}
       />
 
@@ -413,14 +426,22 @@ function HeadToHeadBar({
                 <td className="py-2.5 pr-4 text-muted-foreground">{row.label}</td>
                 <td
                   className={`num py-2.5 pr-4 font-medium ${
-                    row.winner === "a" ? "text-success" : row.winner === "b" ? "text-muted-foreground" : ""
+                    row.winner === "a"
+                      ? "text-success"
+                      : row.winner === "b"
+                        ? "text-muted-foreground"
+                        : ""
                   }`}
                 >
                   {row.a}
                 </td>
                 <td
                   className={`num py-2.5 pr-4 font-medium ${
-                    row.winner === "b" ? "text-success" : row.winner === "a" ? "text-muted-foreground" : ""
+                    row.winner === "b"
+                      ? "text-success"
+                      : row.winner === "a"
+                        ? "text-muted-foreground"
+                        : ""
                   }`}
                 >
                   {row.b}
@@ -469,7 +490,8 @@ export function RouteComparePanel({
           <div>
             <h2 className="text-[16px] font-semibold tracking-tight">Mumbai fleet map</h2>
             <p className="text-[12.5px] text-muted-foreground">
-              Select up to 2 routes below for side-by-side corridor maps with DMS footprints and metrics.
+              Select up to 2 routes below for side-by-side corridor maps with DMS footprints and
+              metrics.
             </p>
           </div>
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[11px] font-medium text-primary">
@@ -495,9 +517,12 @@ export function RouteComparePanel({
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-[16px] font-semibold tracking-tight">Route comparison · full corridor</h2>
+          <h2 className="text-[16px] font-semibold tracking-tight">
+            Route comparison · full corridor
+          </h2>
           <p className="text-[12.5px] text-muted-foreground">
-            Each panel shows the complete route start-to-end with segment overlays and DMS event footprints.
+            Each panel shows the complete route start-to-end with segment overlays and DMS event
+            footprints.
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px]">
@@ -509,7 +534,10 @@ export function RouteComparePanel({
               borderColor: `color-mix(in oklab, ${COMPARE_ACCENT.A.color} 30%, transparent)`,
             }}
           >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: COMPARE_ACCENT.A.color }} />
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: COMPARE_ACCENT.A.color }}
+            />
             {routeA?.route_code ?? "Route A"}
           </span>
           <span className="text-muted-foreground">vs</span>
@@ -521,7 +549,10 @@ export function RouteComparePanel({
               borderColor: `color-mix(in oklab, ${COMPARE_ACCENT.B.color} 30%, transparent)`,
             }}
           >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: COMPARE_ACCENT.B.color }} />
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: COMPARE_ACCENT.B.color }}
+            />
             {routeB?.route_code ?? "Route B"}
           </span>
         </div>
@@ -554,9 +585,7 @@ export function RouteComparePanel({
         )}
       </div>
 
-      {routeA && routeB && (
-        <HeadToHeadBar routeA={routeA} routeB={routeB} segments={segments} />
-      )}
+      {routeA && routeB && <HeadToHeadBar routeA={routeA} routeB={routeB} segments={segments} />}
     </div>
   );
 }

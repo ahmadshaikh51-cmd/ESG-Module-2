@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +21,13 @@ export interface EditCellValue {
 }
 
 export function EditCellDialog({
-  open, onOpenChange, itemName, site, value, onSave, isSaving
+  open,
+  onOpenChange,
+  itemName,
+  site,
+  value,
+  onSave,
+  isSaving,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -45,17 +56,42 @@ export function EditCellDialog({
 
         <div className="space-y-4 py-2">
           <div>
-            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">Status</Label>
+            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              Status
+            </Label>
             <div className="mt-1.5 grid grid-cols-3 gap-2">
-              <StatusBtn icon={CheckCircle2} label="Yes" active={draft.status === "yes"} tone="success" onClick={() => set({ status: "yes" })} />
-              <StatusBtn icon={XCircle} label="No" active={draft.status === "no"} tone="destructive" onClick={() => set({ status: "no" })} />
-              <StatusBtn icon={MinusCircle} label="N/A" active={draft.status === "na"} tone="muted" onClick={() => set({ status: "na" })} />
+              <StatusBtn
+                icon={CheckCircle2}
+                label="Yes"
+                active={draft.status === "yes"}
+                tone="success"
+                onClick={() => set({ status: "yes" })}
+              />
+              <StatusBtn
+                icon={XCircle}
+                label="No"
+                active={draft.status === "no"}
+                tone="destructive"
+                onClick={() => set({ status: "no" })}
+              />
+              <StatusBtn
+                icon={MinusCircle}
+                label="N/A"
+                active={draft.status === "na"}
+                tone="muted"
+                onClick={() => set({ status: "na" })}
+              />
             </div>
           </div>
 
           <div>
             <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Deadline {completed && <span className="ml-1 text-[10px] normal-case tracking-normal">(only for incomplete items)</span>}
+              Deadline{" "}
+              {completed && (
+                <span className="ml-1 text-[10px] normal-case tracking-normal">
+                  (only for incomplete items)
+                </span>
+              )}
             </Label>
             <Input
               type="date"
@@ -67,7 +103,9 @@ export function EditCellDialog({
           </div>
 
           <div>
-            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">Owner override</Label>
+            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              Owner override
+            </Label>
             <Input
               placeholder="e.g. A. Mehta"
               value={draft.owner ?? ""}
@@ -77,7 +115,9 @@ export function EditCellDialog({
           </div>
 
           <div>
-            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">Notes</Label>
+            <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              Notes
+            </Label>
             <Textarea
               placeholder="Context, blockers, vendor updates…"
               value={draft.notes ?? ""}
@@ -88,7 +128,9 @@ export function EditCellDialog({
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSaving}>
+            Cancel
+          </Button>
           <Button onClick={() => onSave(draft)} disabled={isSaving}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save changes
@@ -100,15 +142,25 @@ export function EditCellDialog({
 }
 
 function StatusBtn({
-  icon: Icon, label, active, onClick, tone,
+  icon: Icon,
+  label,
+  active,
+  onClick,
+  tone,
 }: {
   icon: React.ComponentType<{ className?: string }>;
-  label: string; active: boolean; onClick: () => void;
+  label: string;
+  active: boolean;
+  onClick: () => void;
   tone: "success" | "destructive" | "muted";
 }) {
   const tones: Record<string, string> = {
-    success: active ? "bg-success/15 text-success ring-success/40" : "ring-border/50 hover:bg-success/8 hover:text-success",
-    destructive: active ? "bg-destructive/12 text-destructive ring-destructive/40" : "ring-border/50 hover:bg-destructive/8 hover:text-destructive",
+    success: active
+      ? "bg-success/15 text-success ring-success/40"
+      : "ring-border/50 hover:bg-success/8 hover:text-success",
+    destructive: active
+      ? "bg-destructive/12 text-destructive ring-destructive/40"
+      : "ring-border/50 hover:bg-destructive/8 hover:text-destructive",
     muted: active ? "bg-muted text-foreground ring-border" : "ring-border/50 hover:bg-muted/60",
   };
   return (

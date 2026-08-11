@@ -2,12 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Brain, Stethoscope } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import { Panel, fmt } from "@/components/charger/charger-shared";
-import {
-  busLatest,
-  busPrevious,
-  busTrend,
-  curveSessionsForVehicle,
-} from "@/lib/intelligence-data";
+import { busLatest, busPrevious, busTrend, curveSessionsForVehicle } from "@/lib/intelligence-data";
 
 export function BusHealthStory({ vehicle_number }: { vehicle_number: string }) {
   const latest = busLatest(vehicle_number);
@@ -18,11 +13,15 @@ export function BusHealthStory({ vehicle_number }: { vehicle_number: string }) {
   const pre = sessions[sessions.length - 2];
 
   if (!latest || !last) return null;
-  const delta = latest.operational_health_score - (prev?.operational_health_score ?? latest.operational_health_score);
+  const delta =
+    latest.operational_health_score -
+    (prev?.operational_health_score ?? latest.operational_health_score);
   const declining = delta < 0;
   const reasons: string[] = [];
   if (pre && last.cv_entry_soc < pre.cv_entry_soc - 2)
-    reasons.push(`CV phase begins ${(pre.cv_entry_soc - last.cv_entry_soc).toFixed(0)}% earlier than yesterday`);
+    reasons.push(
+      `CV phase begins ${(pre.cv_entry_soc - last.cv_entry_soc).toFixed(0)}% earlier than yesterday`,
+    );
   if (latest.thermal_rise_per_kwh > 2.4)
     reasons.push(`Thermal rise ${latest.thermal_rise_per_kwh.toFixed(2)}°C/kWh — above fleet norm`);
   if (latest.charge_acceptance_rate < 75)
@@ -31,7 +30,8 @@ export function BusHealthStory({ vehicle_number }: { vehicle_number: string }) {
     reasons.push(`${latest.disconnect_sessions} disconnect events today — repeated instability`);
   if (latest.charging_consistency < 75)
     reasons.push(`Session-to-session consistency at ${latest.charging_consistency.toFixed(0)}/100`);
-  if (!reasons.length) reasons.push("Operating within expected parameters — no abnormal drivers detected");
+  if (!reasons.length)
+    reasons.push("Operating within expected parameters — no abnormal drivers detected");
 
   return (
     <Panel className="p-5">
@@ -51,20 +51,28 @@ export function BusHealthStory({ vehicle_number }: { vehicle_number: string }) {
         </div>
         <div className="flex items-center gap-4 rounded-2xl border border-border/50 bg-card/50 px-4 py-2.5">
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Health today</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Health today
+            </div>
             <div className="num text-[22px] font-semibold leading-none">
               {fmt(latest.operational_health_score, 0)}
               <span className="ml-1 text-[10px] font-normal text-muted-foreground">/100</span>
             </div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">vs yesterday</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              vs yesterday
+            </div>
             <div
               className={`num flex items-center gap-1 text-[16px] font-semibold ${
                 declining ? "text-destructive" : "text-success"
               }`}
             >
-              {declining ? <ArrowDownRight className="h-4 w-4" /> : <ArrowUpRight className="h-4 w-4" />}
+              {declining ? (
+                <ArrowDownRight className="h-4 w-4" />
+              ) : (
+                <ArrowUpRight className="h-4 w-4" />
+              )}
               {delta.toFixed(1)}
             </div>
           </div>

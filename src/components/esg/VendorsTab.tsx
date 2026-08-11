@@ -2,9 +2,21 @@ import { useMemo, useState } from "react";
 import { Check, ExternalLink, PackageOpen, ShieldQuestion, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   VENDOR_CATEGORY_META,
@@ -35,12 +47,15 @@ function VendorFormPreview({ onClose }: { onClose: () => void }) {
         <DialogHeader className="border-b border-border/60 px-5 py-4">
           <DialogTitle className="text-[16px] tracking-tight">Vendor compliance sheet</DialogTitle>
           <DialogDescription className="text-[12px]">
-            What the vendor sees — identity and registration always; category-dependent sections appear only when relevant.
+            What the vendor sees — identity and registration always; category-dependent sections
+            appear only when relevant.
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] space-y-4 overflow-auto px-5 py-4">
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Vendor category</label>
+            <label className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Vendor category
+            </label>
             <Select value={category} onValueChange={(v) => setCategory(v as VendorCategory)}>
               <SelectTrigger className="mt-1.5 h-9 bg-muted/40 text-[12.5px]">
                 <SelectValue />
@@ -61,7 +76,11 @@ function VendorFormPreview({ onClose }: { onClose: () => void }) {
               {["Legal entity name", "GST number", "PAN", "Registered address"].map((f) => (
                 <div key={f}>
                   <label className="text-[11px] font-medium text-muted-foreground">{f}</label>
-                  <Input placeholder={f} className="mt-1 h-9 bg-muted/40 text-[12.5px]" aria-label={f} />
+                  <Input
+                    placeholder={f}
+                    className="mt-1 h-9 bg-muted/40 text-[12.5px]"
+                    aria-label={f}
+                  />
                 </div>
               ))}
             </div>
@@ -73,7 +92,10 @@ function VendorFormPreview({ onClose }: { onClose: () => void }) {
             </div>
             <div className="space-y-2.5">
               {meta.conditional.map((s) => (
-                <div key={s} className="flex items-center justify-between gap-3 rounded-lg border border-border/50 bg-card px-3 py-2.5">
+                <div
+                  key={s}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border/50 bg-card px-3 py-2.5"
+                >
                   <span className="text-[12.5px] font-medium">
                     <Gloss text={s} /> compliance document
                   </span>
@@ -86,8 +108,10 @@ function VendorFormPreview({ onClose }: { onClose: () => void }) {
           </div>
 
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Self-attested submissions land in a verification queue — nothing enters the trusted compliance picture until reviewed. Bulk
-            document storage may move to a separate <A t="DMS" /> (open scope question); this sheet captures the compliance signal either way.
+            Self-attested submissions land in a verification queue — nothing enters the trusted
+            compliance picture until reviewed. Bulk document storage may move to a separate{" "}
+            <A t="DMS" /> (open scope question); this sheet captures the compliance signal either
+            way.
           </p>
         </div>
         <div className="flex justify-end border-t border-border/60 bg-muted/20 px-5 py-3.5">
@@ -108,9 +132,12 @@ export function VendorsTab() {
 
   const decide = (v: Vendor, d: VendorDoc, status: "verified" | "rejected") => {
     setOverrides((m) => ({ ...m, [`${v.id}:${d.name}`]: status }));
-    toast[status === "verified" ? "success" : "warning"](status === "verified" ? "Document verified" : "Document rejected", {
-      description: `${v.name} — ${d.name}. (UI stub — decision will be logged when connected.)`,
-    });
+    toast[status === "verified" ? "success" : "warning"](
+      status === "verified" ? "Document verified" : "Document rejected",
+      {
+        description: `${v.name} — ${d.name}. (UI stub — decision will be logged when connected.)`,
+      },
+    );
   };
 
   const vendors = useMemo(
@@ -126,12 +153,20 @@ export function VendorsTab() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-[15px] font-semibold tracking-tight">Vendor & contractor compliance</h3>
+          <h3 className="text-[15px] font-semibold tracking-tight">
+            Vendor & contractor compliance
+          </h3>
           <p className="text-[12px] text-muted-foreground">
-            Walled then gated: self-attested submissions stay visually quarantined until someone verifies them.
+            Walled then gated: self-attested submissions stay visually quarantined until someone
+            verifies them.
           </p>
         </div>
-        <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-lg border-border/60 text-[12px]" onClick={() => setPreview(true)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 rounded-lg border-border/60 text-[12px]"
+          onClick={() => setPreview(true)}
+        >
           <ExternalLink className="h-3.5 w-3.5" /> Preview vendor-facing form
         </Button>
       </div>
@@ -148,7 +183,9 @@ export function VendorsTab() {
         <div className="grid gap-4 xl:grid-cols-2">
           {vendors.map((v) => {
             const cat = VENDOR_CATEGORY_META[v.category];
-            const unverified = v.docs.filter((d) => d.status === "submitted" || d.status === "pending").length;
+            const unverified = v.docs.filter(
+              (d) => d.status === "submitted" || d.status === "pending",
+            ).length;
             return (
               <PanelCard key={v.id}>
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-5 py-3.5">
@@ -159,7 +196,9 @@ export function VendorsTab() {
                         {cat.label}
                       </span>
                     </div>
-                    <div className="mt-0.5 text-[11px] text-muted-foreground">Contract to {fmtDate(v.contractEnd)}</div>
+                    <div className="mt-0.5 text-[11px] text-muted-foreground">
+                      Contract to {fmtDate(v.contractEnd)}
+                    </div>
                   </div>
                   {unverified > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-md border border-dashed border-warning/50 bg-warning/8 px-2 py-1 text-[10.5px] font-semibold text-warning">
@@ -175,7 +214,10 @@ export function VendorsTab() {
                     return (
                       <div
                         key={d.name}
-                        className={cn("flex flex-wrap items-center gap-2.5 px-5 py-2.5", quarantined && "bg-warning/[0.04]")}
+                        className={cn(
+                          "flex flex-wrap items-center gap-2.5 px-5 py-2.5",
+                          quarantined && "bg-warning/[0.04]",
+                        )}
                         style={
                           quarantined
                             ? {
@@ -194,7 +236,12 @@ export function VendorsTab() {
                             {d.note && <span className="text-destructive"> · {d.note}</span>}
                           </div>
                         </div>
-                        <span className={cn("shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider", m.cls)}>
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                            m.cls,
+                          )}
+                        >
                           {m.label}
                         </span>
                         {d.status === "submitted" && audience === "internal" && (

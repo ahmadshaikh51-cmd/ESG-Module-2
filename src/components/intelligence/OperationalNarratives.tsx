@@ -10,11 +10,17 @@ export function OperationalNarratives({ narratives }: { narratives: OpsNarrative
         <BookOpen className="h-3.5 w-3.5 text-primary" />
         Operational explainability engine
       </div>
-      <h3 className="mt-1.5 text-[16px] font-semibold tracking-tight">Why operational health changed today</h3>
+      <h3 className="mt-1.5 text-[16px] font-semibold tracking-tight">
+        Why operational health changed today
+      </h3>
       <div className="mt-4 space-y-2.5">
         {narratives.map((n, i) => {
           const color =
-            n.severity === "critical" ? "var(--color-destructive)" : n.severity === "warning" ? "var(--color-warning)" : "var(--color-success)";
+            n.severity === "critical"
+              ? "var(--color-destructive)"
+              : n.severity === "warning"
+                ? "var(--color-warning)"
+                : "var(--color-success)";
           return (
             <motion.div
               key={n.id}
@@ -25,14 +31,21 @@ export function OperationalNarratives({ narratives }: { narratives: OpsNarrative
             >
               <span
                 className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ring-1"
-                style={{ background: `color-mix(in oklab, ${color} 14%, transparent)`, color, borderColor: color }}
+                style={{
+                  background: `color-mix(in oklab, ${color} 14%, transparent)`,
+                  color,
+                  borderColor: color,
+                }}
               >
                 <ArrowRight className="h-3.5 w-3.5" />
               </span>
               <div className="min-w-0">
                 <div className="text-[12.5px] font-semibold">
                   {n.entity}
-                  <span className="ml-2 rounded-full px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider" style={{ color, background: `color-mix(in oklab, ${color} 12%, transparent)` }}>
+                  <span
+                    className="ml-2 rounded-full px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider"
+                    style={{ color, background: `color-mix(in oklab, ${color} 12%, transparent)` }}
+                  >
                     {n.severity}
                   </span>
                 </div>

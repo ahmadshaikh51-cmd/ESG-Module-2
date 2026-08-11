@@ -1,9 +1,19 @@
 import { ArrowUpDown, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { MedianLegend, PivotMedianFooter, VsMedianCell } from "@/components/dashboard/MedianBaseline";
+import {
+  MedianLegend,
+  PivotMedianFooter,
+  VsMedianCell,
+} from "@/components/dashboard/MedianBaseline";
 import { ExportTableButton } from "@/components/insights/ExportTableButton";
-import { computePivotMedians, type PivotDim, type PivotRow, type Filters, DEFAULT_FILTERS } from "@/lib/analytics";
+import {
+  computePivotMedians,
+  type PivotDim,
+  type PivotRow,
+  type Filters,
+  DEFAULT_FILTERS,
+} from "@/lib/analytics";
 import { fetchPivotExploration, mapGraphQlPivotRow, fetchDynamicPivot } from "@/lib/graphql/pivot";
 
 const DIMS: { key: PivotDim; label: string }[] = [
@@ -34,7 +44,8 @@ const COLS: { key: keyof PivotRow; label: string; suffix?: string; align?: "righ
 ];
 
 export function PivotMatrixTable({
-  rowsByDim, filters,
+  rowsByDim,
+  filters,
 }: {
   rowsByDim: (dim: PivotDim) => PivotRow[];
   filters?: Filters;
@@ -46,7 +57,11 @@ export function PivotMatrixTable({
 
   const pivotType = PIVOT_TYPE_MAP[dim];
 
-  const { data: dbPivotRows, isLoading, error } = useQuery({
+  const {
+    data: dbPivotRows,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["dynamic_pivot", dim, filters],
     queryFn: () => fetchDynamicPivot(dim, filters || DEFAULT_FILTERS),
   });
@@ -70,7 +85,7 @@ export function PivotMatrixTable({
   }, [rows, sortKey, asc, q]);
 
   const maxNetKwh = Math.max(1, ...rows.map((r) => r.netKwh));
-  
+
   const medians = useMemo(() => {
     if (!rows.length) {
       return {
@@ -110,7 +125,10 @@ export function PivotMatrixTable({
               </span>
             )}
             {error && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20" title={error.message}>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive ring-1 ring-inset ring-destructive/20"
+                title={error.message}
+              >
                 Offline Fallback
               </span>
             )}
@@ -129,7 +147,9 @@ export function PivotMatrixTable({
                 key={d.key}
                 onClick={() => setDim(d.key)}
                 className={`rounded-md px-2.5 py-1 text-[11.5px] transition-colors ${
-                  dim === d.key ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+                  dim === d.key
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {d.label}
@@ -138,10 +158,12 @@ export function PivotMatrixTable({
           </div>
           <ExportTableButton
             filename={`voltline-pivot-${dim}`}
-            columns={COLS.filter((c) => c.key !== "label").map((c) => ({
-              key: c.key,
-              header: c.label,
-            })).concat([{ key: "label", header: "Entity" }])}
+            columns={COLS.filter((c) => c.key !== "label")
+              .map((c) => ({
+                key: c.key,
+                header: c.label,
+              }))
+              .concat([{ key: "label", header: "Entity" }])}
             rows={sorted as unknown as Record<string, unknown>[]}
           />
           <div className="relative">
@@ -168,7 +190,10 @@ export function PivotMatrixTable({
                   <button
                     onClick={() => {
                       if (sortKey === c.key) setAsc((v) => !v);
-                      else { setSortKey(c.key); setAsc(false); }
+                      else {
+                        setSortKey(c.key);
+                        setAsc(false);
+                      }
                     }}
                     className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
                   >
@@ -190,55 +215,60 @@ export function PivotMatrixTable({
                 </td>
               </tr>
             )}
-            {!isLoading && sorted.map((r) => (
-              <tr
-                key={r.key}
-                className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/10"
-              >
-                <td className="relative px-4 py-2.5">
-                  <span
-                    aria-hidden
-                    className="absolute inset-y-0 left-0 bg-primary/5"
-                    style={{ width: `${(r.netKwh / maxNetKwh) * 100}%` }}
-                  />
-                  <span className="relative font-medium text-foreground">{r.label}</span>
-                </td>
-                <td className="px-4 py-2.5 text-right num text-muted-foreground">{r.trips}</td>
-                <td className="px-4 py-2.5 text-right num text-muted-foreground">{r.distance.toLocaleString()} km</td>
-                <td className="px-4 py-2.5 text-right num text-foreground">{r.netKwh.toLocaleString()}</td>
-                <td className="px-4 py-2.5 text-right">
-                  <VsMedianCell value={r.kwhPerKm} median={medians.kwhPerKm} lowerIsBetter />
-                </td>
-                <td className="px-4 py-2.5 text-right">
-                  <VsMedianCell
-                    value={r.regenRatio}
-                    median={medians.regenRatio}
-                    lowerIsBetter={false}
-                    format={(v) => `${v.toFixed(1)}%`}
-                  />
-                </td>
-                <td className="px-4 py-2.5 text-right">
-                  <VsMedianCell
-                    value={r.idleShare}
-                    median={medians.idleShare}
-                    format={(v) => `${v.toFixed(1)}%`}
-                  />
-                </td>
-                <td className="px-4 py-2.5 text-right">
-                  <span
-                    className={`num inline-flex min-w-[28px] items-center justify-center rounded-md px-1.5 py-0.5 text-[11.5px] font-medium ${
-                      r.anomalies === 0
-                        ? "bg-muted/50 text-muted-foreground"
-                        : r.anomalies < 4
-                        ? "bg-warning/15 text-warning"
-                        : "bg-destructive/15 text-destructive"
-                    }`}
-                  >
-                    {r.anomalies}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {!isLoading &&
+              sorted.map((r) => (
+                <tr
+                  key={r.key}
+                  className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/10"
+                >
+                  <td className="relative px-4 py-2.5">
+                    <span
+                      aria-hidden
+                      className="absolute inset-y-0 left-0 bg-primary/5"
+                      style={{ width: `${(r.netKwh / maxNetKwh) * 100}%` }}
+                    />
+                    <span className="relative font-medium text-foreground">{r.label}</span>
+                  </td>
+                  <td className="px-4 py-2.5 text-right num text-muted-foreground">{r.trips}</td>
+                  <td className="px-4 py-2.5 text-right num text-muted-foreground">
+                    {r.distance.toLocaleString()} km
+                  </td>
+                  <td className="px-4 py-2.5 text-right num text-foreground">
+                    {r.netKwh.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    <VsMedianCell value={r.kwhPerKm} median={medians.kwhPerKm} lowerIsBetter />
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    <VsMedianCell
+                      value={r.regenRatio}
+                      median={medians.regenRatio}
+                      lowerIsBetter={false}
+                      format={(v) => `${v.toFixed(1)}%`}
+                    />
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    <VsMedianCell
+                      value={r.idleShare}
+                      median={medians.idleShare}
+                      format={(v) => `${v.toFixed(1)}%`}
+                    />
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    <span
+                      className={`num inline-flex min-w-[28px] items-center justify-center rounded-md px-1.5 py-0.5 text-[11.5px] font-medium ${
+                        r.anomalies === 0
+                          ? "bg-muted/50 text-muted-foreground"
+                          : r.anomalies < 4
+                            ? "bg-warning/15 text-warning"
+                            : "bg-destructive/15 text-destructive"
+                      }`}
+                    >
+                      {r.anomalies}
+                    </span>
+                  </td>
+                </tr>
+              ))}
             {!isLoading && sorted.length > 0 && <PivotMedianFooter medians={medians} />}
             {!isLoading && sorted.length === 0 && (
               <tr>

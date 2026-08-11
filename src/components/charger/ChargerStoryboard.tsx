@@ -72,7 +72,9 @@ function StoryBanner({ story }: { story: ChargerStory }) {
           <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             What the data is saying
           </div>
-          <h2 className="mt-1 text-[16px] font-semibold leading-snug tracking-tight">{story.headline}</h2>
+          <h2 className="mt-1 text-[16px] font-semibold leading-snug tracking-tight">
+            {story.headline}
+          </h2>
           <ul className="mt-3 space-y-1.5">
             {story.bullets.map((b) => (
               <li key={b} className="flex items-start gap-2 text-[12.5px] text-muted-foreground">
@@ -157,7 +159,9 @@ function KpiTrendExplorer({
           { label: "Latest", value: stats.latest, unit: meta.unit },
         ].map((s) => (
           <div key={s.label} className="rounded-xl bg-muted/25 px-3 py-2">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              {s.label}
+            </div>
             <div className="num text-[18px] font-semibold">
               {fmt(s.value, 1)}
               <span className="ml-1 text-[11px] font-normal text-muted-foreground">{s.unit}</span>
@@ -170,7 +174,11 @@ function KpiTrendExplorer({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.4} />
-            <XAxis dataKey={xKey} tick={{ fontSize: 10 }} interval={trendView === "hourly" ? 2 : "preserveStartEnd"} />
+            <XAxis
+              dataKey={xKey}
+              tick={{ fontSize: 10 }}
+              interval={trendView === "hourly" ? 2 : "preserveStartEnd"}
+            />
             <YAxis tick={{ fontSize: 10 }} />
             <Tooltip
               contentStyle={{ fontSize: 11, borderRadius: 8 }}
@@ -180,13 +188,21 @@ function KpiTrendExplorer({
               y={stats.average}
               stroke="var(--color-primary)"
               strokeDasharray="6 4"
-              label={{ value: `Avg ${fmt(stats.average, 1)}`, fontSize: 9, fill: "var(--color-primary)" }}
+              label={{
+                value: `Avg ${fmt(stats.average, 1)}`,
+                fontSize: 9,
+                fill: "var(--color-primary)",
+              }}
             />
             <ReferenceLine
               y={stats.median}
               stroke="var(--color-muted-foreground)"
               strokeDasharray="4 4"
-              label={{ value: `Median ${fmt(stats.median, 1)}`, fontSize: 9, fill: "var(--color-muted-foreground)" }}
+              label={{
+                value: `Median ${fmt(stats.median, 1)}`,
+                fontSize: 9,
+                fill: "var(--color-muted-foreground)",
+              }}
             />
             <Area
               type="monotone"
@@ -199,7 +215,13 @@ function KpiTrendExplorer({
               {...CHART_ENTER}
             />
             {trendView === "daily" && (
-              <Bar dataKey="abnormalSessions" name="Abnormal sessions" fill="var(--color-destructive)" fillOpacity={0.35} barSize={8} />
+              <Bar
+                dataKey="abnormalSessions"
+                name="Abnormal sessions"
+                fill="var(--color-destructive)"
+                fillOpacity={0.35}
+                barSize={8}
+              />
             )}
           </ComposedChart>
         </ResponsiveContainer>
@@ -239,8 +261,12 @@ function EnergySocTimeCharts({ sessions }: { sessions: ChargingSession[] }) {
                   return (
                     <div className="rounded-lg border bg-popover p-2 text-[11px]">
                       <div className="font-semibold">Bus {d.vehicle}</div>
-                      <div>SOC +{d.socDelta}% · {d.energy} kWh · {d.power} kW</div>
-                      <div className="text-muted-foreground">{String(d.hour).padStart(2, "0")}:00</div>
+                      <div>
+                        SOC +{d.socDelta}% · {d.energy} kWh · {d.power} kW
+                      </div>
+                      <div className="text-muted-foreground">
+                        {String(d.hour).padStart(2, "0")}:00
+                      </div>
                       {d.abnormal && <div className="text-destructive">Abnormal session</div>}
                     </div>
                   );
@@ -252,7 +278,11 @@ function EnergySocTimeCharts({ sessions }: { sessions: ChargingSession[] }) {
                 fill="var(--color-primary)"
                 fillOpacity={0.55}
               />
-              <Scatter name="Abnormal" data={scatter.filter((s) => s.abnormal)} fill="var(--color-destructive)" />
+              <Scatter
+                name="Abnormal"
+                data={scatter.filter((s) => s.abnormal)}
+                fill="var(--color-destructive)"
+              />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -266,14 +296,31 @@ function EnergySocTimeCharts({ sessions }: { sessions: ChargingSession[] }) {
         />
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={hourlyEnergy.map((e, i) => ({ ...e, soc: hourlySoc[i]?.value ?? 0 }))}>
+            <ComposedChart
+              data={hourlyEnergy.map((e, i) => ({ ...e, soc: hourlySoc[i]?.value ?? 0 }))}
+            >
               <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.35} />
               <XAxis dataKey="hour" tick={{ fontSize: 9 }} interval={2} />
               <YAxis yAxisId="l" tick={{ fontSize: 10 }} />
               <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 10 }} />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-              <Bar yAxisId="l" dataKey="value" name="Energy kWh" fill="var(--color-primary)" fillOpacity={0.7} barSize={10} />
-              <Line yAxisId="r" type="monotone" dataKey="soc" name="SOC %" stroke="#a855f7" strokeWidth={2} dot={false} />
+              <Bar
+                yAxisId="l"
+                dataKey="value"
+                name="Energy kWh"
+                fill="var(--color-primary)"
+                fillOpacity={0.7}
+                barSize={10}
+              />
+              <Line
+                yAxisId="r"
+                type="monotone"
+                dataKey="soc"
+                name="SOC %"
+                stroke="#a855f7"
+                strokeWidth={2}
+                dot={false}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -311,7 +358,9 @@ function AbnormalityKpiBreakdown({ drivers }: { drivers: AbnormalityDriver[] }) 
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] text-muted-foreground">Abnormality</span>
-                <span className="num text-[15px] font-semibold text-destructive">{fmt(d.abnormalityScore, 0)}</span>
+                <span className="num text-[15px] font-semibold text-destructive">
+                  {fmt(d.abnormalityScore, 0)}
+                </span>
               </div>
             </div>
             <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -406,10 +455,10 @@ export function ChargerStoryboard({
 
       <div className="rounded-xl border border-dashed border-border/60 bg-muted/10 px-4 py-3 text-[11.5px] text-muted-foreground">
         <Zap className="mb-1 inline h-3.5 w-3.5 text-primary" />{" "}
-        <strong className="text-foreground">How to read this page:</strong> Start with the story banner →
-        select a KPI chip to see trends vs fleet average → check energy/SOC/time charts for operational
-        patterns → use the abnormality breakdown to see which metrics caused each flag. Filters above
-        apply to all charts ({filters.trendWindow} window
+        <strong className="text-foreground">How to read this page:</strong> Start with the story
+        banner → select a KPI chip to see trends vs fleet average → check energy/SOC/time charts for
+        operational patterns → use the abnormality breakdown to see which metrics caused each flag.
+        Filters above apply to all charts ({filters.trendWindow} window
         {filters.depotIds.length ? ` · ${filters.depotIds.length} depot(s)` : ""}).
       </div>
     </div>

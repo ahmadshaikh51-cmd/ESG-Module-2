@@ -72,9 +72,24 @@ export function AlertCommandSection({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {[
-          { title: "Critical buses", rows: busRisks, label: (r: BusLeaderboardRow) => r.vehicle_number, score: (r: BusLeaderboardRow) => r.abnormality_score },
-          { title: "Critical chargers", rows: chargerRisks, label: (r: ChargerLeaderboardRow) => r.charger_id, score: (r: ChargerLeaderboardRow) => r.abnormality_score },
-          { title: "Critical depots", rows: depotRisks, label: (r: { depot: string }) => r.depot, score: (r: { anomalies: number }) => r.anomalies },
+          {
+            title: "Critical buses",
+            rows: busRisks,
+            label: (r: BusLeaderboardRow) => r.vehicle_number,
+            score: (r: BusLeaderboardRow) => r.abnormality_score,
+          },
+          {
+            title: "Critical chargers",
+            rows: chargerRisks,
+            label: (r: ChargerLeaderboardRow) => r.charger_id,
+            score: (r: ChargerLeaderboardRow) => r.abnormality_score,
+          },
+          {
+            title: "Critical depots",
+            rows: depotRisks,
+            label: (r: { depot: string }) => r.depot,
+            score: (r: { anomalies: number }) => r.anomalies,
+          },
         ].map((col) => (
           <Panel key={col.title}>
             <PanelHeader title={col.title} description="Ranked by operational impact." />
@@ -120,8 +135,21 @@ export function AlertCommandSection({
                 strokeWidth={2}
                 {...CHART_ENTER}
               />
-              <Line dataKey="operationalHealth" name="Ops health" stroke="#2dd4bf" strokeWidth={2} dot={false} {...CHART_ENTER} />
-              <Line dataKey="abnormalBuses" name="Abnormal buses" stroke="#fbbf24" strokeWidth={1.5} dot={false} />
+              <Line
+                dataKey="operationalHealth"
+                name="Ops health"
+                stroke="#2dd4bf"
+                strokeWidth={2}
+                dot={false}
+                {...CHART_ENTER}
+              />
+              <Line
+                dataKey="abnormalBuses"
+                name="Abnormal buses"
+                stroke="#fbbf24"
+                strokeWidth={1.5}
+                dot={false}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

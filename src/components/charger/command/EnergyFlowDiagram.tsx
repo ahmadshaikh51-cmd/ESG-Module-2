@@ -149,8 +149,23 @@ export function EnergyFlowDiagram({
             stroke={stageGlow(activeStage, "grid") ? "#a5b4fc" : "#818cf8"}
             strokeWidth={stageGlow(activeStage, "grid") ? 3 : 2}
           />
-          <path d="M60 20 L60 50 M40 35 L80 35 M45 25 L75 25" stroke="#818cf8" strokeWidth="2" fill="none" />
-          <rect x="25" y="70" width="70" height="90" rx="4" fill="#0f172a" stroke="#6366f1" strokeWidth="1" opacity="0.8" />
+          <path
+            d="M60 20 L60 50 M40 35 L80 35 M45 25 L75 25"
+            stroke="#818cf8"
+            strokeWidth="2"
+            fill="none"
+          />
+          <rect
+            x="25"
+            y="70"
+            width="70"
+            height="90"
+            rx="4"
+            fill="#0f172a"
+            stroke="#6366f1"
+            strokeWidth="1"
+            opacity="0.8"
+          />
           <text x="60" y="200" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="600">
             GRID
           </text>
@@ -181,8 +196,25 @@ export function EnergyFlowDiagram({
           />
           {[0, 1, 2].map((i) => (
             <g key={i} transform={`translate(${20 + i * 48}, 80)`}>
-              <rect x="0" y="0" width="36" height="100" rx="6" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" />
-              <rect x="8" y="12" width="20" height="28" rx="3" fill="#38bdf8" opacity={stageGlow(activeStage, "charger") ? 0.6 : 0.35} />
+              <rect
+                x="0"
+                y="0"
+                width="36"
+                height="100"
+                rx="6"
+                fill="#0f172a"
+                stroke="#38bdf8"
+                strokeWidth="1.5"
+              />
+              <rect
+                x="8"
+                y="12"
+                width="20"
+                height="28"
+                rx="3"
+                fill="#38bdf8"
+                opacity={stageGlow(activeStage, "charger") ? 0.6 : 0.35}
+              />
               <circle cx="18" cy="55" r="8" fill="#22d3ee" opacity="0.6" />
             </g>
           ))}
@@ -217,9 +249,35 @@ export function EnergyFlowDiagram({
           />
           {[0, 1].map((i) => (
             <g key={i} transform={`translate(${24 + i * 72}, 70)`}>
-              <rect x="0" y="30" width="56" height="36" rx="6" fill="#422006" stroke="#fbbf24" strokeWidth="1.5" />
-              <rect x="4" y="8" width="48" height="28" rx="8" fill="#0f172a" stroke="#fbbf24" strokeWidth="1" />
-              <rect x="8" y="14" width={Math.max(busPct * 0.4, 4)} height="16" rx="3" fill="#fbbf24" opacity="0.7" />
+              <rect
+                x="0"
+                y="30"
+                width="56"
+                height="36"
+                rx="6"
+                fill="#422006"
+                stroke="#fbbf24"
+                strokeWidth="1.5"
+              />
+              <rect
+                x="4"
+                y="8"
+                width="48"
+                height="28"
+                rx="8"
+                fill="#0f172a"
+                stroke="#fbbf24"
+                strokeWidth="1"
+              />
+              <rect
+                x="8"
+                y="14"
+                width={Math.max(busPct * 0.4, 4)}
+                height="16"
+                rx="3"
+                fill="#fbbf24"
+                opacity="0.7"
+              />
             </g>
           ))}
           <text x="90" y="200" textAnchor="middle" fill="#e2e8f0" fontSize="14" fontWeight="600">
@@ -246,7 +304,11 @@ export function EnergyFlowDiagram({
               width="116"
               height="28"
               rx="14"
-              fill={stageGlow(activeStage, "charger_bus") ? "rgba(248,113,113,0.45)" : "rgba(248,113,113,0.2)"}
+              fill={
+                stageGlow(activeStage, "charger_bus")
+                  ? "rgba(248,113,113,0.45)"
+                  : "rgba(248,113,113,0.2)"
+              }
               stroke="#f87171"
               strokeWidth={stageGlow(activeStage, "charger_bus") ? 2 : 1}
             />
@@ -257,9 +319,7 @@ export function EnergyFlowDiagram({
         )}
       </svg>
 
-      {caption && (
-        <p className="relative mt-2 text-center text-[11px] text-slate-400">{caption}</p>
-      )}
+      {caption && <p className="relative mt-2 text-center text-[11px] text-slate-400">{caption}</p>}
 
       {/* Timeline sync strip */}
       {trendLabels && trendLabels.length > 0 && (
@@ -281,8 +341,18 @@ export function EnergyFlowDiagram({
 
       <div className="relative mt-3 grid grid-cols-3 gap-3 px-2 md:gap-6">
         {[
-          { label: "Grid", pct: gridPct, color: "bg-indigo-500", on: stageGlow(activeStage, "grid") },
-          { label: "Chargers", pct: chPct, color: "bg-cyan-500", on: stageGlow(activeStage, "charger") },
+          {
+            label: "Grid",
+            pct: gridPct,
+            color: "bg-indigo-500",
+            on: stageGlow(activeStage, "grid"),
+          },
+          {
+            label: "Chargers",
+            pct: chPct,
+            color: "bg-cyan-500",
+            on: stageGlow(activeStage, "charger"),
+          },
           { label: "Buses", pct: busPct, color: "bg-amber-500", on: stageGlow(activeStage, "bus") },
         ].map((bar) => (
           <div

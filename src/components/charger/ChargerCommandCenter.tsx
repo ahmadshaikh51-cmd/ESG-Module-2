@@ -24,10 +24,7 @@ import {
   filterEvents,
 } from "@/lib/charger-analytics";
 import { filterEnergyFlowRows } from "@/lib/charger-explainability";
-import {
-  fleetDrillFromEvent,
-  scrollToFleetDrill,
-} from "@/lib/fleet-drill";
+import { fleetDrillFromEvent, scrollToFleetDrill } from "@/lib/fleet-drill";
 import type { AbnormalityEvent } from "@/lib/charger-data";
 import {
   ABNORMALITY_EVENTS,
@@ -57,10 +54,7 @@ export function ChargerCommandCenter({
   const busesRaw = useMemo(() => filterBusRows(BUS_HEALTH_DAILY, filters), [filters]);
   const chargersRaw = useMemo(() => filterChargerRows(CHARGER_HEALTH_DAILY, filters), [filters]);
   const depotsRaw = useMemo(() => filterDepotRows(DEPOT_ENERGY_DAILY, filters), [filters]);
-  const flowRaw = useMemo(
-    () => filterEnergyFlowRows(ENERGY_FLOW_INTELLIGENCE, filters),
-    [filters],
-  );
+  const flowRaw = useMemo(() => filterEnergyFlowRows(ENERGY_FLOW_INTELLIGENCE, filters), [filters]);
 
   const buses = useMemo(
     () => applyTrendWindow(busesRaw, filters.trendWindow),

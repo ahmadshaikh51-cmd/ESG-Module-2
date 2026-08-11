@@ -1,9 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { FleetMapProps } from "./FleetMap";
 
-const FleetMapLazy = lazy(() =>
-  import("./FleetMap").then((m) => ({ default: m.FleetMap })),
-);
+const FleetMapLazy = lazy(() => import("./FleetMap").then((m) => ({ default: m.FleetMap })));
 
 function MapSkeleton({ height }: { height: number }) {
   return (

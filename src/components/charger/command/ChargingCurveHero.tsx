@@ -14,7 +14,14 @@ export function ChargingCurveHero({
   useEffect(() => {
     if (!ref.current || !series.length) return;
     const chart = echarts.init(ref.current, undefined, { renderer: "canvas" });
-    const cvStart = series.find((s) => s.current && series.find((x) => x.soc_pct > (s.soc_pct ?? 0) && (x.current ?? 0) < (s.current ?? 999) * 0.95))?.soc_pct ?? 78;
+    const cvStart =
+      series.find(
+        (s) =>
+          s.current &&
+          series.find(
+            (x) => x.soc_pct > (s.soc_pct ?? 0) && (x.current ?? 0) < (s.current ?? 999) * 0.95,
+          ),
+      )?.soc_pct ?? 78;
 
     chart.setOption({
       backgroundColor: "transparent",
@@ -115,11 +122,5 @@ export function ChargingCurveHero({
     };
   }, [series]);
 
-  return (
-    <div
-      ref={ref}
-      className="cc-curve-chart w-full rounded-xl"
-      style={{ height }}
-    />
-  );
+  return <div ref={ref} className="cc-curve-chart w-full rounded-xl" style={{ height }} />;
 }

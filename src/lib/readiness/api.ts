@@ -1,5 +1,6 @@
 // src/lib/readiness/api.ts
-const API_BASE = import.meta.env.VITE_API_URL || "https://dev-siteops-platform.transvolt.org/api/v1";
+const API_BASE =
+  import.meta.env.VITE_API_URL || "https://dev-siteops-platform.transvolt.org/api/v1";
 
 async function getAuthToken(): Promise<string | null> {
   if (typeof window === "undefined") return null;
@@ -32,7 +33,7 @@ async function getAuthToken(): Promise<string | null> {
 
 async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = await getAuthToken();
-  
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -51,7 +52,8 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     let errorMsg = `API Error: ${response.statusText}`;
     try {
       const data = await response.json();
-      if (data.detail) errorMsg = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail);
+      if (data.detail)
+        errorMsg = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail);
     } catch (e) {
       // ignore
     }
@@ -142,11 +144,11 @@ export interface SiteDropdownItem {
 export async function fetchSitesDropdown(): Promise<SiteDropdownItem[]> {
   const [listRes, dropRes] = await Promise.all([
     fetchApi("/onboarding/sites?pagination=false&page_size=100"),
-    fetchApi("/onboarding/sites/dropdown")
+    fetchApi("/onboarding/sites/dropdown"),
   ]);
-  
+
   const dropdownSites = dropRes.data || [];
-  
+
   return (listRes.data || []).map((site: any) => {
     const dropItem = dropdownSites.find((d: any) => d.id === site.id);
     return {
@@ -157,35 +159,45 @@ export async function fetchSitesDropdown(): Promise<SiteDropdownItem[]> {
       is_active: site.is_active,
       site_type: dropItem?.site_type || site.site_type || "—",
       project_id: site.project_id,
-      project_name: site.project_name
+      project_name: site.project_name,
     };
   });
 }
 
-export async function fetchChecklistItems(): Promise<{ items: ChecklistItemResponse[], total: number }> {
-  return fetchApi("/site-readiness/checklist-items?page=1&page_size=100&is_active=true").then(res => {
-    const items = [...res.data].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    return {
-      items,
-      total: res.pagination?.total_items || res.data.length
-    };
-  });
+export async function fetchChecklistItems(): Promise<{
+  items: ChecklistItemResponse[];
+  total: number;
+}> {
+  return fetchApi("/site-readiness/checklist-items?page=1&page_size=100&is_active=true").then(
+    (res) => {
+      const items = [...res.data].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+      return {
+        items,
+        total: res.pagination?.total_items || res.data.length,
+      };
+    },
+  );
 }
 
-export async function createChecklistItem(data: Partial<ChecklistItemResponse>): Promise<ChecklistItemResponse> {
+export async function createChecklistItem(
+  data: Partial<ChecklistItemResponse>,
+): Promise<ChecklistItemResponse> {
   return fetchApi("/site-readiness/checklist-items", {
     method: "POST",
     body: JSON.stringify(data),
-  }).then(res => res.data); // Assuming ok(data) returns { data: ... }
+  }).then((res) => res.data); // Assuming ok(data) returns { data: ... }
 }
 
-export async function updateChecklistItem(id: string, data: Partial<ChecklistItemResponse>): Promise<ChecklistItemResponse> {
+export async function updateChecklistItem(
+  id: string,
+  data: Partial<ChecklistItemResponse>,
+): Promise<ChecklistItemResponse> {
   return fetchApi(`/site-readiness/checklist-items/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),
-  }).then(res => res.data);
+  }).then((res) => res.data);
 }
 
 export async function deleteChecklistItem(id: string): Promise<void> {
@@ -194,38 +206,46 @@ export async function deleteChecklistItem(id: string): Promise<void> {
   });
 }
 
-export async function fetchMatrix(siteId?: string, projectId?: string): Promise<SiteReadinessMatrixItem[]> {
+export async function fetchMatrix(
+  siteId?: string,
+  projectId?: string,
+): Promise<SiteReadinessMatrixItem[]> {
   const params = new URLSearchParams();
   if (siteId) params.append("site_id", siteId);
   if (projectId) params.append("project_id", projectId);
-  const url = `/site-readiness/readiness/matrix${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchApi(url).then(res => res.data);
+  const url = `/site-readiness/readiness/matrix${params.toString() ? "?" + params.toString() : ""}`;
+  return fetchApi(url).then((res) => res.data);
 }
 
-export async function fetchPendingQueue(siteId?: string, projectId?: string): Promise<SiteReadinessMatrixItem[]> {
+export async function fetchPendingQueue(
+  siteId?: string,
+  projectId?: string,
+): Promise<SiteReadinessMatrixItem[]> {
   const params = new URLSearchParams();
   if (siteId) params.append("site_id", siteId);
   if (projectId) params.append("project_id", projectId);
-  const url = `/site-readiness/readiness/pending${params.toString() ? '?' + params.toString() : ''}`;
-  return fetchApi(url).then(res => res.data);
+  const url = `/site-readiness/readiness/pending${params.toString() ? "?" + params.toString() : ""}`;
+  return fetchApi(url).then((res) => res.data);
 }
 
 export async function fetchDashboardStats(projectId?: string): Promise<DashboardStatsResponse> {
-  const url = projectId ? `/site-readiness/readiness/stats/dashboard?project_id=${projectId}` : "/site-readiness/readiness/stats/dashboard";
-  return fetchApi(url).then(res => res.data);
+  const url = projectId
+    ? `/site-readiness/readiness/stats/dashboard?project_id=${projectId}`
+    : "/site-readiness/readiness/stats/dashboard";
+  return fetchApi(url).then((res) => res.data);
 }
 
 export async function fetchGlobalStats(): Promise<any> {
-  return fetchApi("/site-readiness/readiness/stats/global").then(res => res.data);
+  return fetchApi("/site-readiness/readiness/stats/global").then((res) => res.data);
 }
 
 export async function fetchSnapshots(): Promise<ReadinessSnapshotResponse[]> {
-  return fetchApi("/site-readiness/snapshots").then(res => res.data);
+  return fetchApi("/site-readiness/snapshots").then((res) => res.data);
 }
 
 export async function updateSiteReadiness(id: string, data: any): Promise<any> {
   return fetchApi(`/site-readiness/readiness/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),
-  }).then(res => res.data);
+  }).then((res) => res.data);
 }

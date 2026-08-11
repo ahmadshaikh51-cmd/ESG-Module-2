@@ -82,16 +82,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Voltline · EV Fleet Intelligence" },
-      { name: "description", content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance." },
+      {
+        name: "description",
+        content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance.",
+      },
       { name: "author", content: "Transvolt" },
       { property: "og:title", content: "Voltline · EV Fleet Intelligence" },
-      { property: "og:description", content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance." },
+      {
+        property: "og:description",
+        content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Voltline · EV Fleet Intelligence" },
-      { name: "twitter:description", content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7d0c9f8d-5b2f-429a-9249-29c51e2aee18/id-preview-20cdad81--de38856a-288c-4196-b466-925186e0ce3f.lovable.app-1779195329655.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7d0c9f8d-5b2f-429a-9249-29c51e2aee18/id-preview-20cdad81--de38856a-288c-4196-b466-925186e0ce3f.lovable.app-1779195329655.png" },
+      {
+        name: "twitter:description",
+        content: "Premium analytics for EV fleet trip efficiency, energy, and driver performance.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7d0c9f8d-5b2f-429a-9249-29c51e2aee18/id-preview-20cdad81--de38856a-288c-4196-b466-925186e0ce3f.lovable.app-1779195329655.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7d0c9f8d-5b2f-429a-9249-29c51e2aee18/id-preview-20cdad81--de38856a-288c-4196-b466-925186e0ce3f.lovable.app-1779195329655.png",
+      },
     ],
     links: [
       {

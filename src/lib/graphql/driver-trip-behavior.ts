@@ -274,7 +274,12 @@ export async function resolveDriverTripBehaviorAnchor(
   return formatISODate(new Date());
 }
 
-function buildDailySql(table: string, driverId: string, limit: number, filters?: DriverTripBehaviorFilters): string {
+function buildDailySql(
+  table: string,
+  driverId: string,
+  limit: number,
+  filters?: DriverTripBehaviorFilters,
+): string {
   const clauses = [`b.driver_id = ${sqlStr(driverId)}`];
   if (filters?.fromDate) clauses.push(`b.scheduling_date >= ${sqlStr(filters.fromDate)}`);
   if (filters?.toDate) clauses.push(`b.scheduling_date <= ${sqlStr(filters.toDate)}`);
@@ -491,7 +496,11 @@ function buildTripDetailSql(table: string, driverId: string, schedulingDate: str
   `;
 }
 
-function buildTripWindowSql(table: string, driverId: string, filters?: DriverTripBehaviorFilters): string {
+function buildTripWindowSql(
+  table: string,
+  driverId: string,
+  filters?: DriverTripBehaviorFilters,
+): string {
   const clauses = [`b.driver_id = ${sqlStr(driverId)}`];
   if (filters?.fromDate) clauses.push(`b.scheduling_date >= ${sqlStr(filters.fromDate)}`);
   if (filters?.toDate) clauses.push(`b.scheduling_date <= ${sqlStr(filters.toDate)}`);
@@ -519,7 +528,8 @@ function mapTripDetailRow(row: Record<string, unknown>): DriverTripDetailRow {
     tripEndTime: str(row.trip_end_time),
     actualTripStartTime: str(row.actual_trip_start_time),
     actualTripEndTime: str(row.actual_trip_end_time),
-    actualTripDurationMin: row.actual_trip_duration_min == null ? null : num(row.actual_trip_duration_min),
+    actualTripDurationMin:
+      row.actual_trip_duration_min == null ? null : num(row.actual_trip_duration_min),
     actualDistanceKm: num(row.distance_km_odo_trip),
     kwhPerKm: num(row.kwh_per_km),
     routeDifficultyScore: num(row.route_difficulty_score),

@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { aggregateFleetKpis, type DailyTrendRecord, type FleetKpiRecord } from "@/lib/graphql-adapter";
+import {
+  aggregateFleetKpis,
+  type DailyTrendRecord,
+  type FleetKpiRecord,
+} from "@/lib/graphql-adapter";
 import { GRAPHQL_API_URL } from "@/lib/graphql/config";
 import { fetchMartFleetKpis } from "@/lib/graphql/fleet-kpis";
 import { fetchDbTrips, fetchDbTripStats } from "@/lib/graphql/trips";
@@ -137,7 +141,11 @@ function DashboardPage() {
     queryFn: fetchMartFleetKpis,
   });
 
-  const { data: trendData, isLoading, error } = useQuery({
+  const {
+    data: trendData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["mart_performance_trend"],
     queryFn: async () => {
       const res = await fetch(GRAPHQL_API_URL, {
@@ -174,7 +182,10 @@ function DashboardPage() {
   }, [dbTrips]);
 
   const filteredTrips = useMemo(() => applyFilters(allTrips, filters), [allTrips, filters]);
-  const prevTrips = useMemo(() => applyFilters(allTrips, previousPeriod(filters)), [allTrips, filters]);
+  const prevTrips = useMemo(
+    () => applyFilters(allTrips, previousPeriod(filters)),
+    [allTrips, filters],
+  );
 
   const fleetKpiAggregate = useMemo(() => {
     if (fleetKpiRows?.length) {
@@ -232,11 +243,13 @@ function DashboardPage() {
     trend.slice(-14).map((d) => ({ v: Number(d[k]) || 0 }));
 
   function openTripByEntity(_dim: PivotDim, row: { key: string }) {
-    const t = [...filteredTrips].reverse().find((t) =>
-      [t.driver_name, t.route_code, t.vehiclenumber, t.company_name, t.scheduling_date].includes(
-        row.key,
-      ),
-    );
+    const t = [...filteredTrips]
+      .reverse()
+      .find((t) =>
+        [t.driver_name, t.route_code, t.vehiclenumber, t.company_name, t.scheduling_date].includes(
+          row.key,
+        ),
+      );
     if (t) setSelectedTrip(t);
   }
 
@@ -358,7 +371,12 @@ function DashboardPage() {
         />
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <MetricTrendChart data={trend} prevData={prevTrend} isGraphQl={!!trendData?.length} error={error} />
+            <MetricTrendChart
+              data={trend}
+              prevData={prevTrend}
+              isGraphQl={!!trendData?.length}
+              error={error}
+            />
           </div>
           <RouteEfficiencyChart trips={filteredTrips} filters={filters} />
         </div>

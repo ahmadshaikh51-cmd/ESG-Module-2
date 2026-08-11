@@ -45,11 +45,15 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
     const row: Record<string, string | number> = { dim };
     depotsAgg.forEach((d) => {
       const v =
-        dim === "Energy" ? d.energy / 1000
-          : dim === "Sessions" ? d.sessions / 10
-          : dim === "Ops Score" ? d.operational_score
-          : dim === "Anomalies" ? d.anomalies
-          : d.avg_power;
+        dim === "Energy"
+          ? d.energy / 1000
+          : dim === "Sessions"
+            ? d.sessions / 10
+            : dim === "Ops Score"
+              ? d.operational_score
+              : dim === "Anomalies"
+                ? d.anomalies
+                : d.avg_power;
       row[d.depot] = +v.toFixed(1);
     });
     return row;
@@ -81,7 +85,10 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Panel className="p-5">
-          <PanelHeader title="Depot comparison" description="Energy, utilization & operational score." />
+          <PanelHeader
+            title="Depot comparison"
+            description="Energy, utilization & operational score."
+          />
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={depotsAgg}>
@@ -89,8 +96,20 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
                 <XAxis dataKey="depot" tick={{ fontSize: 10 }} />
                 <YAxis tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-                <Bar dataKey="energy" name="Energy kWh" fill="var(--color-primary)" radius={[4, 4, 0, 0]} {...CHART_ENTER} />
-                <Bar dataKey="sessions" name="Sessions" fill="var(--color-chart-2)" radius={[4, 4, 0, 0]} {...CHART_ENTER} />
+                <Bar
+                  dataKey="energy"
+                  name="Energy kWh"
+                  fill="var(--color-primary)"
+                  radius={[4, 4, 0, 0]}
+                  {...CHART_ENTER}
+                />
+                <Bar
+                  dataKey="sessions"
+                  name="Sessions"
+                  fill="var(--color-chart-2)"
+                  radius={[4, 4, 0, 0]}
+                  {...CHART_ENTER}
+                />
                 <Legend wrapperStyle={{ fontSize: 10 }} />
               </BarChart>
             </ResponsiveContainer>
@@ -98,7 +117,10 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
         </Panel>
 
         <Panel className="p-5">
-          <PanelHeader title="Depot operational fingerprint" description="Normalized multi-axis depot profile." />
+          <PanelHeader
+            title="Depot operational fingerprint"
+            description="Normalized multi-axis depot profile."
+          />
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} outerRadius="70%">
@@ -123,16 +145,31 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
       </div>
 
       <Panel className="p-5">
-        <PanelHeader title="Transformer stress monitoring" description="Peak current vs 380A threshold." />
+        <PanelHeader
+          title="Transformer stress monitoring"
+          description="Peak current vs 380A threshold."
+        />
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={txStress.slice(-60)}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.4} />
               <XAxis dataKey="date" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} domain={[100, 450]} />
-              <ReferenceLine y={380} stroke="var(--color-destructive)" strokeDasharray="6 4" label={{ value: "Limit", fontSize: 9 }} />
+              <ReferenceLine
+                y={380}
+                stroke="var(--color-destructive)"
+                strokeDasharray="6 4"
+                label={{ value: "Limit", fontSize: 9 }}
+              />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-              <Line dataKey="peak" stroke="var(--color-warning)" strokeWidth={2} dot={false} name="Peak A" {...CHART_ENTER} />
+              <Line
+                dataKey="peak"
+                stroke="var(--color-warning)"
+                strokeWidth={2}
+                dot={false}
+                name="Peak A"
+                {...CHART_ENTER}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -149,9 +186,19 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
               <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.4} />
               <XAxis dataKey="depot" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} />
-              <ReferenceLine y={expenseMedian} stroke="var(--color-muted-foreground)" strokeDasharray="4 4" />
+              <ReferenceLine
+                y={expenseMedian}
+                stroke="var(--color-muted-foreground)"
+                strokeDasharray="4 4"
+              />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-              <Bar dataKey="expected_expense" name="Expected expense ₹" fill="var(--color-chart-4)" radius={[4, 4, 0, 0]} {...CHART_ENTER} />
+              <Bar
+                dataKey="expected_expense"
+                name="Expected expense ₹"
+                fill="var(--color-chart-4)"
+                radius={[4, 4, 0, 0]}
+                {...CHART_ENTER}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -173,7 +220,9 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
               <div>
                 <MapPin className="mb-1 h-4 w-4 text-primary" />
                 <div className="font-semibold">{d.depot}</div>
-                <div className="text-[11px] text-muted-foreground">Ops {fmt(d.operational_score, 0)}/100</div>
+                <div className="text-[11px] text-muted-foreground">
+                  Ops {fmt(d.operational_score, 0)}/100
+                </div>
               </div>
               <RiskBadge level={depotRisk(d.operational_score, d.anomalies)} />
             </div>
@@ -181,7 +230,9 @@ export function DepotEnergySection({ depots }: { depots: DepotEnergyDaily[] }) {
               <Zap className="h-3.5 w-3.5 text-warning" />
               <span className="num">{fmt(d.energy, 0)} kWh</span>
               <IndianRupee className="ml-auto h-3.5 w-3.5 text-warning" />
-              <span className="num text-warning" title="Expected expense">₹{fmt(d.expected_expense, 0)}</span>
+              <span className="num text-warning" title="Expected expense">
+                ₹{fmt(d.expected_expense, 0)}
+              </span>
             </div>
           </div>
         ))}

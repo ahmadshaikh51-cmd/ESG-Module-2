@@ -25,16 +25,22 @@ export interface TrainingWorkflow {
   completeTraining: (trainingId: string) => void;
 }
 
-export function useTrainingWorkflow(personLabel: (id: string) => { name: string; role: string }): TrainingWorkflow {
+export function useTrainingWorkflow(
+  personLabel: (id: string) => { name: string; role: string },
+): TrainingWorkflow {
   const [sessionTrainings, setSessionTrainings] = useState<Training[]>([]);
-  const [attendanceOverrides, setAttendanceOverrides] = useState<Record<string, Record<string, boolean>>>({});
+  const [attendanceOverrides, setAttendanceOverrides] = useState<
+    Record<string, Record<string, boolean>>
+  >({});
   const [statusOverrides, setStatusOverrides] = useState<Record<string, Training["status"]>>({});
   const counter = useRef(0);
 
   const applyOverrides = useCallback(
     (t: Training): Training => {
       const att = attendanceOverrides[t.id];
-      const attendees = att ? t.attendees.map((a) => ({ ...a, present: att[a.id] ?? a.present })) : t.attendees;
+      const attendees = att
+        ? t.attendees.map((a) => ({ ...a, present: att[a.id] ?? a.present }))
+        : t.attendees;
       return { ...t, attendees, status: statusOverrides[t.id] ?? t.status };
     },
     [attendanceOverrides, statusOverrides],
@@ -80,7 +86,10 @@ export function useTrainingWorkflow(personLabel: (id: string) => { name: string;
   );
 
   const setAttendance = useCallback((trainingId: string, attendeeId: string, present: boolean) => {
-    setAttendanceOverrides((o) => ({ ...o, [trainingId]: { ...(o[trainingId] ?? {}), [attendeeId]: present } }));
+    setAttendanceOverrides((o) => ({
+      ...o,
+      [trainingId]: { ...(o[trainingId] ?? {}), [attendeeId]: present },
+    }));
   }, []);
 
   const completeTraining = useCallback((trainingId: string) => {
@@ -96,7 +105,9 @@ export function useTrainingWorkflow(personLabel: (id: string) => { name: string;
 /* ------------------------------- date helpers ------------------------------ */
 
 export const attendanceRate = (t: Training): number =>
-  t.attendees.length ? Math.round((t.attendees.filter((a) => a.present).length / t.attendees.length) * 100) : 0;
+  t.attendees.length
+    ? Math.round((t.attendees.filter((a) => a.present).length / t.attendees.length) * 100)
+    : 0;
 
 export const presentCount = (t: Training): number => t.attendees.filter((a) => a.present).length;
 
@@ -132,7 +143,9 @@ export function monthMatrix(year: number, month: number): Date[][] {
 }
 
 export const sameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 export const isoDayKey = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

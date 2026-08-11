@@ -5,11 +5,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import {
-  keyForMonthName,
-  siteAgg,
-  type BatteryDataset,
-} from "@/lib/battery-cycles";
+import { keyForMonthName, siteAgg, type BatteryDataset } from "@/lib/battery-cycles";
 import { fetchDailyTrend, type DailyTrendPoint } from "@/lib/graphql/cycles";
 import { fmt, Panel, Sparkline } from "./charts";
 
@@ -34,7 +30,13 @@ export function TrendsView({
   const monthly = useMemo(() => {
     return dataset.dataKeys.map((k) => {
       const a = siteAgg(dataset, k, company);
-      return { key: k, label: dataset.mshort[k], efcG: a?.efcG ?? null, rte: a?.rte ?? null, regen: a?.regen ?? null };
+      return {
+        key: k,
+        label: dataset.mshort[k],
+        efcG: a?.efcG ?? null,
+        rte: a?.rte ?? null,
+        regen: a?.regen ?? null,
+      };
     });
   }, [dataset, company]);
 
@@ -45,8 +47,13 @@ export function TrendsView({
         subtitle={`${monthName} 2026 · ${company === "ALL" ? "all companies" : company} · daily gross discharge with round-trip efficiency`}
         right={
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "var(--chart-4)" }} /> Gross kWh</span>
-            <span className="flex items-center gap-1.5"><span className="h-2 w-3 rounded-sm" style={{ background: "var(--primary)" }} /> RTE %</span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-sm" style={{ background: "var(--chart-4)" }} /> Gross
+              kWh
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-3 rounded-sm" style={{ background: "var(--primary)" }} /> RTE %
+            </span>
           </div>
         }
       >
@@ -64,9 +71,27 @@ export function TrendsView({
       </Panel>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <MonthlyTrend label="Battery cycle load" unit="EFC" color="var(--chart-4)" points={monthly.map((m) => ({ label: m.label, v: m.efcG }))} dec={1} />
-        <MonthlyTrend label="Round-trip efficiency" unit="%" color="var(--primary)" points={monthly.map((m) => ({ label: m.label, v: m.rte }))} dec={1} />
-        <MonthlyTrend label="Energy regeneration" unit="%" color="var(--chart-2)" points={monthly.map((m) => ({ label: m.label, v: m.regen }))} dec={1} />
+        <MonthlyTrend
+          label="Battery cycle load"
+          unit="EFC"
+          color="var(--chart-4)"
+          points={monthly.map((m) => ({ label: m.label, v: m.efcG }))}
+          dec={1}
+        />
+        <MonthlyTrend
+          label="Round-trip efficiency"
+          unit="%"
+          color="var(--primary)"
+          points={monthly.map((m) => ({ label: m.label, v: m.rte }))}
+          dec={1}
+        />
+        <MonthlyTrend
+          label="Energy regeneration"
+          unit="%"
+          color="var(--chart-2)"
+          points={monthly.map((m) => ({ label: m.label, v: m.regen }))}
+          dec={1}
+        />
       </div>
 
       {live && (trend.data?.length ?? 0) > 0 && <RegenStrip rows={trend.data ?? []} />}
@@ -106,8 +131,23 @@ function DailyTrendChart({ rows }: { rows: DailyTrendPoint[] }) {
           const y = pad.t + innerH * g;
           return (
             <g key={g}>
-              <line x1={pad.l} x2={W - pad.r} y1={y} y2={y} stroke="color-mix(in oklab,var(--muted-foreground) 13%,transparent)" strokeWidth={1} />
-              <text x={pad.l - 8} y={y + 3} textAnchor="end" className="fill-muted-foreground" fontSize={9}>{Math.round(maxGross * (1 - g))}</text>
+              <line
+                x1={pad.l}
+                x2={W - pad.r}
+                y1={y}
+                y2={y}
+                stroke="color-mix(in oklab,var(--muted-foreground) 13%,transparent)"
+                strokeWidth={1}
+              />
+              <text
+                x={pad.l - 8}
+                y={y + 3}
+                textAnchor="end"
+                className="fill-muted-foreground"
+                fontSize={9}
+              >
+                {Math.round(maxGross * (1 - g))}
+              </text>
             </g>
           );
         })}
@@ -140,12 +180,23 @@ function DailyTrendChart({ rows }: { rows: DailyTrendPoint[] }) {
               width={barW}
               height={Math.max(1, h)}
               rx={2}
-              fill={isHovered ? "var(--chart-4)" : "color-mix(in oklab,var(--chart-4) 75%,transparent)"}
+              fill={
+                isHovered ? "var(--chart-4)" : "color-mix(in oklab,var(--chart-4) 75%,transparent)"
+              }
               pointerEvents="none"
             />
           );
         })}
-        {rtePts && <polyline points={rtePts} fill="none" stroke="var(--primary)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />}
+        {rtePts && (
+          <polyline
+            points={rtePts}
+            fill="none"
+            stroke="var(--primary)"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        )}
 
         {/* Highlight circle on line point when hovered */}
         {hoveredIdx !== null && hoveredRow && hoveredRow.rte_pct != null && (
@@ -198,19 +249,31 @@ function DailyTrendChart({ rows }: { rows: DailyTrendPoint[] }) {
           style={{
             left: `${leftPercent}%`,
             top: "20px",
-            transform: leftPercent > 75 ? "translateX(-100%)" : leftPercent < 25 ? "translateX(0)" : "translateX(-50%)",
+            transform:
+              leftPercent > 75
+                ? "translateX(-100%)"
+                : leftPercent < 25
+                  ? "translateX(0)"
+                  : "translateX(-50%)",
             marginLeft: leftPercent > 75 ? "-8px" : leftPercent < 25 ? "8px" : "0",
           }}
         >
-          <div className="font-semibold text-foreground mb-1">{fmtDay(hoveredRow.session_date)}</div>
+          <div className="font-semibold text-foreground mb-1">
+            {fmtDay(hoveredRow.session_date)}
+          </div>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <span className="h-2 w-2 rounded-sm bg-[var(--chart-4)]" />
-            <span>Gross: <strong className="text-foreground num">{fmt(hoveredRow.gross_kwh, 0)}</strong> kWh</span>
+            <span>
+              Gross: <strong className="text-foreground num">{fmt(hoveredRow.gross_kwh, 0)}</strong>{" "}
+              kWh
+            </span>
           </div>
           {hoveredRow.rte_pct != null && (
             <div className="flex items-center gap-1.5 text-muted-foreground mt-0.5">
               <span className="h-2 w-2 rounded-sm bg-[var(--primary)]" />
-              <span>RTE: <strong className="text-foreground num">{fmt(hoveredRow.rte_pct, 1)}%</strong></span>
+              <span>
+                RTE: <strong className="text-foreground num">{fmt(hoveredRow.rte_pct, 1)}%</strong>
+              </span>
             </div>
           )}
           <div className="text-[10px] text-muted-foreground mt-1 border-t border-border/40 pt-1">
@@ -227,7 +290,10 @@ function RegenStrip({ rows }: { rows: DailyTrendPoint[] }) {
   const n = rows.length;
   const W = 900;
   const H = 70;
-  const padL = 6, padR = 6, padT = 8, padB = 8;
+  const padL = 6,
+    padR = 6,
+    padT = 8,
+    padB = 8;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
 
@@ -318,7 +384,14 @@ function RegenStrip({ rows }: { rows: DailyTrendPoint[] }) {
           {/* Hover highlighted dot */}
           {hoveredIdx !== null && hoveredPt && (
             <g pointerEvents="none">
-              <circle cx={hoveredPt.x} cy={hoveredPt.y} r={5.5} fill="var(--card)" stroke="var(--chart-2)" strokeWidth={2} />
+              <circle
+                cx={hoveredPt.x}
+                cy={hoveredPt.y}
+                r={5.5}
+                fill="var(--card)"
+                stroke="var(--chart-2)"
+                strokeWidth={2}
+              />
               <circle cx={hoveredPt.x} cy={hoveredPt.y} r={2} fill="var(--chart-2)" />
             </g>
           )}
@@ -349,14 +422,23 @@ function RegenStrip({ rows }: { rows: DailyTrendPoint[] }) {
             style={{
               left: `${leftPercent}%`,
               bottom: "4px",
-              transform: leftPercent > 80 ? "translateX(-100%)" : leftPercent < 20 ? "translateX(0)" : "translateX(-50%)",
+              transform:
+                leftPercent > 80
+                  ? "translateX(-100%)"
+                  : leftPercent < 20
+                    ? "translateX(0)"
+                    : "translateX(-50%)",
               marginLeft: leftPercent > 80 ? "-8px" : leftPercent < 20 ? "8px" : "0",
             }}
           >
-            <div className="font-semibold text-foreground mb-0.5">{fmtDay(hoveredPt.r.session_date)}</div>
+            <div className="font-semibold text-foreground mb-0.5">
+              {fmtDay(hoveredPt.r.session_date)}
+            </div>
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <span className="h-2 w-2 rounded-sm bg-[var(--chart-2)]" />
-              <span>Regen: <strong className="text-foreground num">{fmt(hoveredPt.val, 1)}%</strong></span>
+              <span>
+                Regen: <strong className="text-foreground num">{fmt(hoveredPt.val, 1)}%</strong>
+              </span>
             </div>
           </div>
         )}
@@ -365,10 +447,23 @@ function RegenStrip({ rows }: { rows: DailyTrendPoint[] }) {
   );
 }
 
-function MonthlyTrend({ label, unit, color, points, dec }: { label: string; unit: string; color: string; points: { label: string; v: number | null }[]; dec: number }) {
+function MonthlyTrend({
+  label,
+  unit,
+  color,
+  points,
+  dec,
+}: {
+  label: string;
+  unit: string;
+  color: string;
+  points: { label: string; v: number | null }[];
+  dec: number;
+}) {
   const last = points[points.length - 1]?.v ?? null;
   const first = points.find((p) => p.v != null)?.v ?? null;
-  const delta = last != null && first != null && first !== 0 ? ((last - first) / Math.abs(first)) * 100 : null;
+  const delta =
+    last != null && first != null && first !== 0 ? ((last - first) / Math.abs(first)) * 100 : null;
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-elevated">
       <div className="section-label">{label}</div>
@@ -376,7 +471,10 @@ function MonthlyTrend({ label, unit, color, points, dec }: { label: string; unit
         <span className="num text-[24px] font-semibold">{fmt(last, dec)}</span>
         <span className="text-[12px] text-muted-foreground">{unit}</span>
         {delta != null && (
-          <span className="num ml-auto text-[12px] font-semibold" style={{ color: delta >= 0 ? "var(--success)" : "var(--destructive)" }}>
+          <span
+            className="num ml-auto text-[12px] font-semibold"
+            style={{ color: delta >= 0 ? "var(--success)" : "var(--destructive)" }}
+          >
             {delta >= 0 ? "▲" : "▼"} {Math.abs(delta).toFixed(1)}%
           </span>
         )}
@@ -385,20 +483,34 @@ function MonthlyTrend({ label, unit, color, points, dec }: { label: string; unit
         <Sparkline vals={points.map((p) => p.v)} color={color} w={260} h={44} />
       </div>
       <div className="mt-1.5 flex justify-between text-[10px] text-muted-foreground">
-        {points.map((p) => <span key={p.label}>{p.label}</span>)}
+        {points.map((p) => (
+          <span key={p.label}>{p.label}</span>
+        ))}
       </div>
     </div>
   );
 }
 
 function Loading({ label }: { label: string }) {
-  return <div className="flex h-[240px] items-center justify-center gap-2 rounded-xl border border-border/60 bg-muted/20 text-[12px] text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {label}</div>;
+  return (
+    <div className="flex h-[240px] items-center justify-center gap-2 rounded-xl border border-border/60 bg-muted/20 text-[12px] text-muted-foreground">
+      <Loader2 className="h-4 w-4 animate-spin" /> {label}
+    </div>
+  );
 }
 function ErrorBox() {
-  return <div className="flex h-[240px] items-center justify-center rounded-xl border border-destructive/30 bg-destructive/5 text-[12px] text-destructive">Failed to load daily trend.</div>;
+  return (
+    <div className="flex h-[240px] items-center justify-center rounded-xl border border-destructive/30 bg-destructive/5 text-[12px] text-destructive">
+      Failed to load daily trend.
+    </div>
+  );
 }
 function Empty({ label }: { label: string }) {
-  return <div className="flex h-[240px] items-center justify-center rounded-xl border border-border/60 bg-muted/20 text-[12px] text-muted-foreground">{label}</div>;
+  return (
+    <div className="flex h-[240px] items-center justify-center rounded-xl border border-border/60 bg-muted/20 text-[12px] text-muted-foreground">
+      {label}
+    </div>
+  );
 }
 
 function fmtDay(iso: string | null | undefined): string {

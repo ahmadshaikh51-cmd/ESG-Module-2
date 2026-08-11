@@ -201,9 +201,7 @@ function createLocalProductApi(seed: Product[]): ProductApi {
     async reorder(orderedIds) {
       await wait(80);
       const map = new Map(data.map((p) => [p.id, p]));
-      data = orderedIds
-        .map((id) => map.get(id))
-        .filter((p): p is Product => Boolean(p));
+      data = orderedIds.map((id) => map.get(id)).filter((p): p is Product => Boolean(p));
     },
   };
 }
@@ -257,9 +255,7 @@ function useProducts(api: ProductApi) {
     async (orderedIds: string[]) => {
       setProducts((prev) => {
         const map = new Map(prev.map((p) => [p.id, p]));
-        return orderedIds
-          .map((id) => map.get(id))
-          .filter((p): p is Product => Boolean(p));
+        return orderedIds.map((id) => map.get(id)).filter((p): p is Product => Boolean(p));
       });
       await api.reorder(orderedIds);
     },
@@ -353,15 +349,8 @@ interface ToastMsg {
 
 function LauncherPage() {
   const apiRef = useRef<ProductApi>(createLocalProductApi(SEED_PRODUCTS));
-  const {
-    products,
-    state,
-    reload,
-    createProduct,
-    updateProduct,
-    removeProduct,
-    reorderProducts,
-  } = useProducts(apiRef.current);
+  const { products, state, reload, createProduct, updateProduct, removeProduct, reorderProducts } =
+    useProducts(apiRef.current);
 
   const [admin, setAdmin] = useState(false);
   const [query, setQuery] = useState("");
@@ -583,7 +572,9 @@ function LauncherPage() {
                     }}
                     onToggleHidden={() => handleToggleHidden(product)}
                     onDelete={() => setConfirmDelete(product)}
-                    onNotify={() => pushToast(`We'll notify you when ${product.name} ships`, "info")}
+                    onNotify={() =>
+                      pushToast(`We'll notify you when ${product.name} ships`, "info")
+                    }
                     onDragStart={() => setDragId(product.id)}
                     onDragEnter={() => setDragOverId(product.id)}
                     onDragEnd={() => {
@@ -630,11 +621,16 @@ function LauncherPage() {
             <span
               className="flex h-6 w-6 items-center justify-center rounded-full"
               style={{
-                background: t.tone === "success" ? "rgba(16,185,129,0.16)" : "rgba(91,140,255,0.16)",
+                background:
+                  t.tone === "success" ? "rgba(16,185,129,0.16)" : "rgba(91,140,255,0.16)",
                 color: t.tone === "success" ? "#10b981" : VOLT,
               }}
             >
-              {t.tone === "success" ? <Check className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
+              {t.tone === "success" ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Bell className="h-3.5 w-3.5" />
+              )}
             </span>
             {t.text}
           </div>
@@ -655,11 +651,7 @@ function AdminToggle({ admin, onToggle }: { admin: boolean; onToggle: () => void
       className={`vl-ui inline-flex h-10 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition active:scale-[0.97] ${
         admin ? "" : "border-border bg-muted/40 text-foreground hover:bg-muted"
       }`}
-      style={
-        admin
-          ? { borderColor: `${VOLT}80`, background: `${VOLT}1f`, color: VOLT }
-          : undefined
-      }
+      style={admin ? { borderColor: `${VOLT}80`, background: `${VOLT}1f`, color: VOLT } : undefined}
       aria-pressed={admin}
     >
       <Settings2 className={`h-4 w-4 ${admin ? "vl-spin-slow" : ""}`} />
@@ -748,11 +740,15 @@ function ProductWidget({
       ].join(" ")}
     >
       {/* accent sheen */}
-      {product.status === "live" && <span className="vl-sheen pointer-events-none absolute inset-0" />}
+      {product.status === "live" && (
+        <span className="vl-sheen pointer-events-none absolute inset-0" />
+      )}
       {/* top hairline glow */}
       <span
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-70"
-        style={{ background: `linear-gradient(90deg, transparent, ${product.accent}, transparent)` }}
+        style={{
+          background: `linear-gradient(90deg, transparent, ${product.accent}, transparent)`,
+        }}
       />
 
       {/* admin toolbar */}
@@ -764,7 +760,10 @@ function ProductWidget({
           <IconBtn label="Edit" onClick={(e) => stop(e, onEdit)}>
             <Pencil className="h-3.5 w-3.5" />
           </IconBtn>
-          <IconBtn label={product.hidden ? "Show" : "Hide"} onClick={(e) => stop(e, onToggleHidden)}>
+          <IconBtn
+            label={product.hidden ? "Show" : "Hide"}
+            onClick={(e) => stop(e, onToggleHidden)}
+          >
             {product.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </IconBtn>
           <IconBtn label="Delete" danger onClick={(e) => stop(e, onDelete)}>
@@ -790,7 +789,9 @@ function ProductWidget({
 
       {/* body */}
       <div className="mt-4 flex flex-1 flex-col">
-        <h3 className="vl-head text-[17px] font-semibold tracking-tight text-foreground">{product.name}</h3>
+        <h3 className="vl-head text-[17px] font-semibold tracking-tight text-foreground">
+          {product.name}
+        </h3>
         <p className="vl-ui mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
           {product.tagline}
         </p>
@@ -804,7 +805,9 @@ function ProductWidget({
               className="vl-mono text-xl font-bold leading-none"
               style={{ color: isComingSoon ? undefined : product.accent }}
             >
-              <span className={isComingSoon ? "text-muted-foreground" : undefined}>{product.metric.value}</span>
+              <span className={isComingSoon ? "text-muted-foreground" : undefined}>
+                {product.metric.value}
+              </span>
             </p>
             <p className="vl-ui mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
               {product.metric.label}
@@ -848,7 +851,10 @@ function StatusPill({ status, accent }: { status: ProductStatus; accent: string 
         className="vl-mono inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider"
         style={{ borderColor: `${accent}40`, background: `${accent}14`, color: accent }}
       >
-        <span className="vl-pulse relative h-1.5 w-1.5 rounded-full" style={{ background: accent }} />
+        <span
+          className="vl-pulse relative h-1.5 w-1.5 rounded-full"
+          style={{ background: accent }}
+        />
         Live
       </span>
     );
@@ -1011,9 +1017,12 @@ function ConfirmDialog({
         <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/12 text-destructive">
           <Trash2 className="h-6 w-6" />
         </span>
-        <h3 className="vl-head mt-4 text-lg font-semibold text-foreground">Remove {product.name}?</h3>
+        <h3 className="vl-head mt-4 text-lg font-semibold text-foreground">
+          Remove {product.name}?
+        </h3>
         <p className="vl-ui mt-1.5 text-sm text-muted-foreground">
-          This removes the product from the launcher for everyone in your organisation. This can't be undone.
+          This removes the product from the launcher for everyone in your organisation. This can't
+          be undone.
         </p>
         <div className="mt-6 flex justify-end gap-2.5">
           <button
@@ -1170,7 +1179,9 @@ function ProductModal({
               {initial ? "Edit product" : "Onboard new product"}
             </h2>
             <p className="vl-ui text-[13px] text-muted-foreground">
-              {initial ? "Update how this product appears in the launcher." : "Add a product to the Voltline launcher."}
+              {initial
+                ? "Update how this product appears in the launcher."
+                : "Add a product to the Voltline launcher."}
             </p>
           </div>
           <button
@@ -1245,7 +1256,9 @@ function ProductModal({
                         : "border-border bg-muted/40 text-muted-foreground hover:text-foreground"
                     }`}
                     style={
-                      active ? { borderColor: VOLT, background: `${VOLT}26`, color: VOLT } : undefined
+                      active
+                        ? { borderColor: VOLT, background: `${VOLT}26`, color: VOLT }
+                        : undefined
                     }
                   >
                     {s.replace("-", " ")}
@@ -1301,7 +1314,11 @@ function ProductModal({
             <div className="flex h-full items-center gap-3 rounded-xl border border-border bg-card p-3">
               <span
                 className="flex h-11 w-11 items-center justify-center rounded-xl border"
-                style={{ background: `${form.accent}1a`, borderColor: `${form.accent}33`, color: form.accent }}
+                style={{
+                  background: `${form.accent}1a`,
+                  borderColor: `${form.accent}33`,
+                  color: form.accent,
+                }}
               >
                 <PreviewIcon className="h-5 w-5" />
               </span>
@@ -1344,7 +1361,11 @@ function ProductModal({
                     }`}
                     style={
                       active
-                        ? { borderColor: `${form.accent}66`, background: `${form.accent}1f`, color: form.accent }
+                        ? {
+                            borderColor: `${form.accent}66`,
+                            background: `${form.accent}1f`,
+                            color: form.accent,
+                          }
                         : undefined
                     }
                   >
@@ -1353,13 +1374,19 @@ function ProductModal({
                 );
               })}
               {filteredIcons.length === 0 && (
-                <p className="vl-ui col-span-full py-3 text-center text-xs text-muted-foreground">No icons found</p>
+                <p className="vl-ui col-span-full py-3 text-center text-xs text-muted-foreground">
+                  No icons found
+                </p>
               )}
             </div>
           </Field>
 
           {/* Metric (optional) */}
-          <Field label="Metric label (optional)" error={errors.metricLabel} className="sm:col-span-1">
+          <Field
+            label="Metric label (optional)"
+            error={errors.metricLabel}
+            className="sm:col-span-1"
+          >
             <input
               value={form.metricLabel}
               onChange={(e) => set("metricLabel", e.target.value)}
@@ -1396,7 +1423,10 @@ function ProductModal({
             <button
               onClick={submit}
               className="vl-ui inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-white transition active:scale-[0.98]"
-              style={{ background: `linear-gradient(180deg, ${VOLT}, #3f6fe0)`, boxShadow: `0 8px 24px -10px ${VOLT}` }}
+              style={{
+                background: `linear-gradient(180deg, ${VOLT}, #3f6fe0)`,
+                boxShadow: `0 8px 24px -10px ${VOLT}`,
+              }}
             >
               <Check className="h-4 w-4" />
               {initial ? "Save changes" : "Add product"}
@@ -1421,7 +1451,9 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="vl-ui mb-1.5 block text-[12px] font-medium text-muted-foreground">{label}</label>
+      <label className="vl-ui mb-1.5 block text-[12px] font-medium text-muted-foreground">
+        {label}
+      </label>
       {children}
       {error && <p className="vl-ui mt-1 text-[12px] text-destructive">{error}</p>}
     </div>
@@ -1431,7 +1463,9 @@ function Field({
 function inputCls(error?: string) {
   return [
     "vl-ui h-10 w-full rounded-xl border bg-muted/40 px-3 text-sm text-foreground placeholder:text-muted-foreground/70 outline-none transition",
-    error ? "border-destructive/60 focus:border-destructive" : "border-border focus:border-ring focus:bg-muted/60",
+    error
+      ? "border-destructive/60 focus:border-destructive"
+      : "border-border focus:border-ring focus:bg-muted/60",
   ].join(" ");
 }
 

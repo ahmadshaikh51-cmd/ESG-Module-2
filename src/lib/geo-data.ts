@@ -285,14 +285,8 @@ export function mergeBounds(
   if (!a) return b;
   if (!b) return a;
   return [
-    [
-      Math.min(a[0][0], b[0][0]) - pad,
-      Math.min(a[0][1], b[0][1]) - pad,
-    ],
-    [
-      Math.max(a[1][0], b[1][0]) + pad,
-      Math.max(a[1][1], b[1][1]) + pad,
-    ],
+    [Math.min(a[0][0], b[0][0]) - pad, Math.min(a[0][1], b[0][1]) - pad],
+    [Math.max(a[1][0], b[1][0]) + pad, Math.max(a[1][1], b[1][1]) + pad],
   ];
 }
 

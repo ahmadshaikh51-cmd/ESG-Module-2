@@ -60,15 +60,10 @@ export function InsightDetailDrawer({
             ? `${item.entityName} (${item.entityId})`
             : item.entityId;
         const metric =
-          item.metricValue !== undefined && item.metricValue !== null
-            ? `${item.metricValue}`
-            : "—";
+          item.metricValue !== undefined && item.metricValue !== null ? `${item.metricValue}` : "—";
         const isImbalance = insight?.title.toLowerCase().includes("pack imbalance");
         const rawBaseline = isImbalance ? 150 : item.baselineValue;
-        const baseline =
-          rawBaseline !== undefined && rawBaseline !== null
-            ? `${rawBaseline}`
-            : "—";
+        const baseline = rawBaseline !== undefined && rawBaseline !== null ? `${rawBaseline}` : "—";
         const date = item.createdAt
           ? new Date(item.createdAt).toLocaleDateString(undefined, {
               month: "2-digit",
@@ -126,11 +121,15 @@ export function InsightDetailDrawer({
             <div className="flex-1 space-y-5 overflow-y-auto p-5">
               <div className="grid grid-cols-2 gap-3 text-[12px]">
                 <div className="rounded-xl border border-border/50 bg-muted/20 p-3">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Metric</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Metric
+                  </div>
                   <div className="mt-1 num text-[18px] font-semibold">{insight.metric}</div>
                 </div>
                 <div className="rounded-xl border border-border/50 bg-muted/20 p-3">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Vs baseline</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Vs baseline
+                  </div>
                   <div className="mt-1 num font-semibold">{insight.vsBaseline}</div>
                 </div>
               </div>
@@ -163,7 +162,9 @@ export function InsightDetailDrawer({
                 {insight.deepLink && (
                   <Link
                     to={insight.deepLink.split("#")[0] || insight.deepLink}
-                    hash={insight.deepLink.includes("#") ? insight.deepLink.split("#")[1] : undefined}
+                    hash={
+                      insight.deepLink.includes("#") ? insight.deepLink.split("#")[1] : undefined
+                    }
                     className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
                   >
                     Open deep dive <ArrowUpRight className="h-3 w-3" />
@@ -195,30 +196,34 @@ export function InsightDetailDrawer({
                       </tr>
                     </thead>
                     <tbody>
-                      {isLoading ? (
-                        Array.from({ length: 3 }).map((_, i) => (
-                          <tr key={`fact-loading-${i}`} className="border-b border-border/30 animate-pulse">
-                            {columns.map((c) => (
-                              <td key={c.key} className="px-3 py-2">
-                                <div className="h-3.5 bg-muted rounded w-16" />
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                      ) : (
-                        rows.map((row, i) => (
-                          <tr key={i} className="border-b border-border/30 last:border-0">
-                            {columns.map((c) => (
-                              <td key={c.key} className="px-3 py-2 num">
-                                {((row as any)[c.key])}
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                      )}
+                      {isLoading
+                        ? Array.from({ length: 3 }).map((_, i) => (
+                            <tr
+                              key={`fact-loading-${i}`}
+                              className="border-b border-border/30 animate-pulse"
+                            >
+                              {columns.map((c) => (
+                                <td key={c.key} className="px-3 py-2">
+                                  <div className="h-3.5 bg-muted rounded w-16" />
+                                </td>
+                              ))}
+                            </tr>
+                          ))
+                        : rows.map((row, i) => (
+                            <tr key={i} className="border-b border-border/30 last:border-0">
+                              {columns.map((c) => (
+                                <td key={c.key} className="px-3 py-2 num">
+                                  {(row as any)[c.key]}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
                       {!isLoading && rows.length === 0 && (
                         <tr>
-                          <td colSpan={columns.length} className="px-3 py-6 text-center text-muted-foreground">
+                          <td
+                            colSpan={columns.length}
+                            className="px-3 py-6 text-center text-muted-foreground"
+                          >
                             No supporting data available.
                           </td>
                         </tr>

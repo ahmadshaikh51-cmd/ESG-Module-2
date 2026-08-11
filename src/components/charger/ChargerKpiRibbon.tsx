@@ -39,7 +39,9 @@ function KpiTile({
       )}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {label}
+          </div>
           <div className="mt-1 flex items-baseline gap-1">
             <span className="num truncate text-[22px] font-semibold tracking-tight">{value}</span>
             {unit && <span className="text-[11px] text-muted-foreground">{unit}</span>}
@@ -50,7 +52,11 @@ function KpiTile({
                 good ? "text-success" : "text-destructive"
               }`}
             >
-              {delta >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+              {delta >= 0 ? (
+                <ArrowUpRight className="h-3 w-3" />
+              ) : (
+                <ArrowDownRight className="h-3 w-3" />
+              )}
               {Math.abs(delta).toFixed(1)}% DoD
             </div>
           )}
@@ -71,16 +77,77 @@ function KpiTile({
 export function ChargerKpiRibbon({ kpis }: { kpis: ExecutiveKpis }) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-thin">
-      <KpiTile label="Energy delivered" value={fmt(kpis.totalEnergyKwh, 0)} unit="kWh" delta={kpis.energyDeltaPct} spark={kpis.sparkEnergy} icon={Zap} positiveIsGood />
-      <KpiTile label="Active chargers" value={String(kpis.activeChargers)} icon={PlugZap} spark={kpis.sparkSessions} />
-      <KpiTile label="Charger health" value={fmt(kpis.avgChargerHealth, 0)} unit="/100" icon={BatteryCharging} spark={kpis.sparkHealth} />
-      <KpiTile label="Fleet health" value={fmt(kpis.avgFleetHealth, 0)} unit="/100" delta={kpis.healthDeltaPct} icon={Bus} positiveIsGood spark={kpis.sparkHealth} />
-      <KpiTile label="Abnormal chargers" value={String(kpis.abnormalChargers)} icon={AlertTriangle} anomaly={kpis.abnormalChargers > 3} positiveIsGood={false} />
-      <KpiTile label="Abnormal buses" value={String(kpis.abnormalBuses)} icon={Activity} anomaly={kpis.abnormalBuses > 5} positiveIsGood={false} />
-      <KpiTile label="Daily sessions" value={String(kpis.dailySessions)} icon={Gauge} spark={kpis.sparkSessions} />
-      <KpiTile label="Disconnect rate" value={fmt(kpis.disconnectRate * 100, 1)} unit="%" icon={AlertTriangle} anomaly={kpis.disconnectRate > 0.1} positiveIsGood={false} />
-      <KpiTile label="Avg charge power" value={fmt(kpis.avgChargingPower, 1)} unit="kW" icon={Zap} />
-      <KpiTile label="Depot ops score" value={fmt(kpis.depotOperationalScore, 0)} unit="/100" icon={PlugZap} />
+      <KpiTile
+        label="Energy delivered"
+        value={fmt(kpis.totalEnergyKwh, 0)}
+        unit="kWh"
+        delta={kpis.energyDeltaPct}
+        spark={kpis.sparkEnergy}
+        icon={Zap}
+        positiveIsGood
+      />
+      <KpiTile
+        label="Active chargers"
+        value={String(kpis.activeChargers)}
+        icon={PlugZap}
+        spark={kpis.sparkSessions}
+      />
+      <KpiTile
+        label="Charger health"
+        value={fmt(kpis.avgChargerHealth, 0)}
+        unit="/100"
+        icon={BatteryCharging}
+        spark={kpis.sparkHealth}
+      />
+      <KpiTile
+        label="Fleet health"
+        value={fmt(kpis.avgFleetHealth, 0)}
+        unit="/100"
+        delta={kpis.healthDeltaPct}
+        icon={Bus}
+        positiveIsGood
+        spark={kpis.sparkHealth}
+      />
+      <KpiTile
+        label="Abnormal chargers"
+        value={String(kpis.abnormalChargers)}
+        icon={AlertTriangle}
+        anomaly={kpis.abnormalChargers > 3}
+        positiveIsGood={false}
+      />
+      <KpiTile
+        label="Abnormal buses"
+        value={String(kpis.abnormalBuses)}
+        icon={Activity}
+        anomaly={kpis.abnormalBuses > 5}
+        positiveIsGood={false}
+      />
+      <KpiTile
+        label="Daily sessions"
+        value={String(kpis.dailySessions)}
+        icon={Gauge}
+        spark={kpis.sparkSessions}
+      />
+      <KpiTile
+        label="Disconnect rate"
+        value={fmt(kpis.disconnectRate * 100, 1)}
+        unit="%"
+        icon={AlertTriangle}
+        anomaly={kpis.disconnectRate > 0.1}
+        positiveIsGood={false}
+      />
+      <KpiTile
+        label="Avg charge power"
+        value={fmt(kpis.avgChargingPower, 1)}
+        unit="kW"
+        icon={Zap}
+      />
+      <KpiTile
+        label="Depot ops score"
+        value={fmt(kpis.depotOperationalScore, 0)}
+        unit="/100"
+        icon={PlugZap}
+      />
     </div>
   );
 }

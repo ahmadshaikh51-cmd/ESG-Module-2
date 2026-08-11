@@ -37,7 +37,10 @@ export function ChargingCurveHero({ vehicle_number }: { vehicle_number: string }
   const current = sessions[sessions.length - 1];
   const previous = sessions[sessions.length - 2];
   const fleet = useMemo(() => fleetAverageCurve(), []);
-  const chargerAvg = useMemo(() => current ? chargerAverageCurve(current.charger_id) : [], [current]);
+  const chargerAvg = useMemo(
+    () => (current ? chargerAverageCurve(current.charger_id) : []),
+    [current],
+  );
 
   const [overlays, setOverlays] = useState<Record<Overlay, boolean>>({
     current: true,
@@ -100,21 +103,28 @@ export function ChargingCurveHero({ vehicle_number }: { vehicle_number: string }
       />
 
       <div className="grid grid-cols-2 gap-2 border-b border-border/40 px-4 py-2.5 text-[10.5px] sm:grid-cols-4">
-        {([
-          ["current", "Current session", "var(--color-chart-1)"],
-          ["previous", "Previous session", "var(--color-chart-2)"],
-          ["fleet", "Fleet average", "var(--color-muted-foreground)"],
-          ["charger", `Charger ${current.charger_id}`, "var(--color-warning)"],
-        ] as [Overlay, string, string][]).map(([id, label, color]) => (
+        {(
+          [
+            ["current", "Current session", "var(--color-chart-1)"],
+            ["previous", "Previous session", "var(--color-chart-2)"],
+            ["fleet", "Fleet average", "var(--color-muted-foreground)"],
+            ["charger", `Charger ${current.charger_id}`, "var(--color-warning)"],
+          ] as [Overlay, string, string][]
+        ).map(([id, label, color]) => (
           <button
             key={id}
             type="button"
             onClick={() => setOverlays((o) => ({ ...o, [id]: !o[id] }))}
             className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-all ${
-              overlays[id] ? "border-border/60 bg-muted/40 text-foreground" : "border-border/30 text-muted-foreground/70"
+              overlays[id]
+                ? "border-border/60 bg-muted/40 text-foreground"
+                : "border-border/30 text-muted-foreground/70"
             }`}
           >
-            <span className="h-2 w-2 rounded-full" style={{ background: color, opacity: overlays[id] ? 1 : 0.3 }} />
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: color, opacity: overlays[id] ? 1 : 0.3 }}
+            />
             <span className="truncate text-[10.5px] font-medium">{label}</span>
           </button>
         ))}
@@ -140,16 +150,57 @@ export function ChargingCurveHero({ vehicle_number }: { vehicle_number: string }
               type="number"
               domain={[10, 100]}
               tick={{ fontSize: 10 }}
-              label={{ value: "SOC %", position: "insideBottom", offset: -4, fontSize: 10, fill: "var(--color-muted-foreground)" }}
+              label={{
+                value: "SOC %",
+                position: "insideBottom",
+                offset: -4,
+                fontSize: 10,
+                fill: "var(--color-muted-foreground)",
+              }}
             />
-            <YAxis tick={{ fontSize: 10 }} label={{ value: meta.unit, angle: -90, position: "insideLeft", fontSize: 10, fill: "var(--color-muted-foreground)" }} />
+            <YAxis
+              tick={{ fontSize: 10 }}
+              label={{
+                value: meta.unit,
+                angle: -90,
+                position: "insideLeft",
+                fontSize: 10,
+                fill: "var(--color-muted-foreground)",
+              }}
+            />
             <Tooltip
-              contentStyle={{ fontSize: 11, borderRadius: 10, border: "1px solid var(--border)", background: "var(--popover)" }}
+              contentStyle={{
+                fontSize: 11,
+                borderRadius: 10,
+                border: "1px solid var(--border)",
+                background: "var(--popover)",
+              }}
               labelFormatter={(v) => `SOC ${v}%`}
             />
-            <ReferenceArea x1={10} x2={cvEntry} y1={0} y2={9999} fill="var(--color-success)" fillOpacity={0.05} />
-            <ReferenceArea x1={cvEntry} x2={taperStart} y1={0} y2={9999} fill="var(--color-warning)" fillOpacity={0.07} />
-            <ReferenceArea x1={taperStart} x2={100} y1={0} y2={9999} fill="var(--color-destructive)" fillOpacity={0.06} />
+            <ReferenceArea
+              x1={10}
+              x2={cvEntry}
+              y1={0}
+              y2={9999}
+              fill="var(--color-success)"
+              fillOpacity={0.05}
+            />
+            <ReferenceArea
+              x1={cvEntry}
+              x2={taperStart}
+              y1={0}
+              y2={9999}
+              fill="var(--color-warning)"
+              fillOpacity={0.07}
+            />
+            <ReferenceArea
+              x1={taperStart}
+              x2={100}
+              y1={0}
+              y2={9999}
+              fill="var(--color-destructive)"
+              fillOpacity={0.06}
+            />
             {overlays.fleet && (
               <Line
                 type="monotone"
@@ -196,26 +247,54 @@ export function ChargingCurveHero({ vehicle_number }: { vehicle_number: string }
                 animationDuration={1100}
               />
             )}
-            <Legend
-              verticalAlign="top"
-              height={0}
-              content={() => null}
-            />
+            <Legend verticalAlign="top" height={0} content={() => null} />
           </ComposedChart>
         </ResponsiveContainer>
 
         <div className="pointer-events-none absolute left-4 top-3 flex flex-wrap items-center gap-1.5 text-[10px]">
-          <span className="rounded-md bg-success/10 px-1.5 py-0.5 font-medium text-success ring-1 ring-success/30">CC phase</span>
-          <span className="rounded-md bg-warning/10 px-1.5 py-0.5 font-medium text-warning ring-1 ring-warning/30">CV phase</span>
-          <span className="rounded-md bg-destructive/10 px-1.5 py-0.5 font-medium text-destructive ring-1 ring-destructive/30">Taper region</span>
+          <span className="rounded-md bg-success/10 px-1.5 py-0.5 font-medium text-success ring-1 ring-success/30">
+            CC phase
+          </span>
+          <span className="rounded-md bg-warning/10 px-1.5 py-0.5 font-medium text-warning ring-1 ring-warning/30">
+            CV phase
+          </span>
+          <span className="rounded-md bg-destructive/10 px-1.5 py-0.5 font-medium text-destructive ring-1 ring-destructive/30">
+            Taper region
+          </span>
         </div>
       </motion.div>
 
       <div className="grid grid-cols-2 gap-2 border-t border-border/40 bg-muted/15 px-4 py-3 text-[11px] sm:grid-cols-4">
-        <StatPill icon={Layers} label="CV entry" value={`${fmt(cvEntry, 0)}%`} hint={earlierBy > 0 ? `${earlierBy.toFixed(0)}% earlier than fleet` : "Aligned with fleet"} negative={earlierBy > 5} />
-        <StatPill icon={Zap} label="Peak power" value={`${fmt(current.peak_power, 0)} kW`} hint={`Acceptance ${fmt(current.charge_acceptance, 0)}%`} negative={current.charge_acceptance < 70} />
-        <StatPill icon={Thermometer} label="Thermal rise" value={`${fmt(current.thermal_rise, 1)}°C`} hint={current.thermal_rise > 18 ? "Elevated vs baseline" : "Within range"} negative={current.thermal_rise > 18} />
-        <StatPill icon={Activity} label="Curve stability" value={`${fmt(current.curve_stability, 0)}/100`} hint={`Abnormality ${fmt(current.curve_abnormality, 0)}`} negative={current.curve_stability < 70} />
+        <StatPill
+          icon={Layers}
+          label="CV entry"
+          value={`${fmt(cvEntry, 0)}%`}
+          hint={
+            earlierBy > 0 ? `${earlierBy.toFixed(0)}% earlier than fleet` : "Aligned with fleet"
+          }
+          negative={earlierBy > 5}
+        />
+        <StatPill
+          icon={Zap}
+          label="Peak power"
+          value={`${fmt(current.peak_power, 0)} kW`}
+          hint={`Acceptance ${fmt(current.charge_acceptance, 0)}%`}
+          negative={current.charge_acceptance < 70}
+        />
+        <StatPill
+          icon={Thermometer}
+          label="Thermal rise"
+          value={`${fmt(current.thermal_rise, 1)}°C`}
+          hint={current.thermal_rise > 18 ? "Elevated vs baseline" : "Within range"}
+          negative={current.thermal_rise > 18}
+        />
+        <StatPill
+          icon={Activity}
+          label="Curve stability"
+          value={`${fmt(current.curve_stability, 0)}/100`}
+          hint={`Abnormality ${fmt(current.curve_abnormality, 0)}`}
+          negative={current.curve_stability < 70}
+        />
       </div>
     </Panel>
   );
@@ -238,9 +317,15 @@ function StatPill({
     <div className="flex items-start gap-2 rounded-lg bg-card/60 px-2.5 py-2 ring-1 ring-border/40">
       <Icon className={`mt-0.5 h-3.5 w-3.5 ${negative ? "text-destructive" : "text-primary"}`} />
       <div className="min-w-0">
-        <div className="text-[9.5px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+        <div className="text-[9.5px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </div>
         <div className="num text-[14px] font-semibold leading-tight">{value}</div>
-        <div className={`mt-0.5 text-[10px] ${negative ? "text-destructive" : "text-muted-foreground"}`}>{hint}</div>
+        <div
+          className={`mt-0.5 text-[10px] ${negative ? "text-destructive" : "text-muted-foreground"}`}
+        >
+          {hint}
+        </div>
       </div>
     </div>
   );

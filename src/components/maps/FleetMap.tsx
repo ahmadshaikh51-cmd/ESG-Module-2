@@ -1,6 +1,14 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
-import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  CircleMarker,
+  MapContainer,
+  Marker,
+  Polyline,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import { useTheme } from "@/hooks/use-theme";
 import type { RouteContext, SegmentRisk } from "@/lib/fleet-data";
 import {
@@ -144,8 +152,7 @@ export function FleetMap({
   onSegmentHover,
   onSegmentClick,
 }: FleetMapProps) {
-  const dmsMode =
-    dmsModeProp ?? (focusRouteId ? "full" : "none");
+  const dmsMode = dmsModeProp ?? (focusRouteId ? "full" : "none");
   const [flightPulse, setFlightPulse] = useState(false);
   const { dark } = useTheme();
 
@@ -157,13 +164,12 @@ export function FleetMap({
     return routes;
   }, [routes, soloRoute, focusRouteId]);
 
-  const routeCollection = useMemo(
-    () => buildRouteCollection(displayRoutes),
-    [displayRoutes],
-  );
+  const routeCollection = useMemo(() => buildRouteCollection(displayRoutes), [displayRoutes]);
 
   const focusRoute = useMemo(
-    () => displayRoutes.find((r) => r.route_id === focusRouteId) ?? routes.find((r) => r.route_id === focusRouteId),
+    () =>
+      displayRoutes.find((r) => r.route_id === focusRouteId) ??
+      routes.find((r) => r.route_id === focusRouteId),
     [displayRoutes, routes, focusRouteId],
   );
 
@@ -174,8 +180,7 @@ export function FleetMap({
       .map((f) => {
         const coords = f.geometry.coordinates as [number, number][];
         const isFocus = focusRouteId === f.properties.route_id;
-        const endColor =
-          isFocus && accentColor ? accentColor : routeColor(f.properties.route_id);
+        const endColor = isFocus && accentColor ? accentColor : routeColor(f.properties.route_id);
         const size =
           soloRoute || routeCollection.features.length <= 2
             ? 22
@@ -209,10 +214,7 @@ export function FleetMap({
     return buildDmsEventCollection(segments, activeKinds, focusRouteId);
   }, [segments, activeKinds, focusRouteId, dmsMode]);
 
-  const segmentById = useMemo(
-    () => new Map(segments.map((s) => [s.segment_id, s])),
-    [segments],
-  );
+  const segmentById = useMemo(() => new Map(segments.map((s) => [s.segment_id, s])), [segments]);
 
   const fitMaxZoom = soloRoute
     ? MAP_ZOOM.compare.max
@@ -245,9 +247,7 @@ export function FleetMap({
     }
 
     if (focusRouteId && dmsMode !== "none" && eventCollection.features.length > 0) {
-      const pts = eventCollection.features.map(
-        (f) => f.geometry.coordinates as [number, number],
-      );
+      const pts = eventCollection.features.map((f) => f.geometry.coordinates as [number, number]);
       base = mergeBounds(base, pointCollectionBounds(pts, 0.002), 0.001);
     }
 
@@ -280,8 +280,7 @@ export function FleetMap({
   const usePerRouteColors = !focusRouteId && displayRoutes.length > 0;
 
   const legendRoutes = useMemo(
-    () =>
-      [...displayRoutes].sort((a, b) => a.route_code.localeCompare(b.route_code)),
+    () => [...displayRoutes].sort((a, b) => a.route_code.localeCompare(b.route_code)),
     [displayRoutes],
   );
 
@@ -413,29 +412,32 @@ export function FleetMap({
           );
         })}
 
-        {showEndpoints && focusRoute?.stops?.map((stop, i) => (
-          <CircleMarker
-            key={`stop-${focusRoute.route_id}-${stop.stage_id}-${i}`}
-            center={[stop.lat, stop.lon]}
-            radius={4.5}
-            pathOptions={{
-              color: "#fff",
-              fillColor: accentColor ?? "var(--color-primary)",
-              fillOpacity: 0.9,
-              weight: 1.5,
-            }}
-          >
-            <Popup>
-              <div className="min-w-[150px] space-y-0.5 text-[12px]">
-                <div className="font-semibold">Stage {stop.stage_id}</div>
-                <div className="num text-muted-foreground">
-                  {stop.lat.toFixed(5)}, {stop.lon.toFixed(5)}
+        {showEndpoints &&
+          focusRoute?.stops?.map((stop, i) => (
+            <CircleMarker
+              key={`stop-${focusRoute.route_id}-${stop.stage_id}-${i}`}
+              center={[stop.lat, stop.lon]}
+              radius={4.5}
+              pathOptions={{
+                color: "#fff",
+                fillColor: accentColor ?? "var(--color-primary)",
+                fillOpacity: 0.9,
+                weight: 1.5,
+              }}
+            >
+              <Popup>
+                <div className="min-w-[150px] space-y-0.5 text-[12px]">
+                  <div className="font-semibold">Stage {stop.stage_id}</div>
+                  <div className="num text-muted-foreground">
+                    {stop.lat.toFixed(5)}, {stop.lon.toFixed(5)}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Stop {i + 1} of {focusRoute.stops!.length}
+                  </div>
                 </div>
-                <div className="text-muted-foreground">Stop {i + 1} of {focusRoute.stops!.length}</div>
-              </div>
-            </Popup>
-          </CircleMarker>
-        ))}
+              </Popup>
+            </CircleMarker>
+          ))}
 
         {endpoints.map((ep) => (
           <Fragment key={ep.routeId}>
@@ -466,45 +468,45 @@ export function FleetMap({
 
         {dmsMode !== "none" &&
           eventCollection.features.map((ev, i) => {
-          const seg = segmentById.get(ev.properties.segment_id);
-          const intensity = seg ? segmentIntensity(seg, activeKinds) : ev.properties.count / 40;
-          const [lng, lat] = ev.geometry.coordinates;
-          const color = KIND_COLOR[ev.properties.kind];
-          const radius =
-            dmsMode === "full"
-              ? 4 + Math.min(12, intensity * 14 + ev.properties.count / 8)
-              : 3.5 + Math.min(8, intensity * 10);
-          const isHigh = ev.properties.risk_score >= 70;
+            const seg = segmentById.get(ev.properties.segment_id);
+            const intensity = seg ? segmentIntensity(seg, activeKinds) : ev.properties.count / 40;
+            const [lng, lat] = ev.geometry.coordinates;
+            const color = KIND_COLOR[ev.properties.kind];
+            const radius =
+              dmsMode === "full"
+                ? 4 + Math.min(12, intensity * 14 + ev.properties.count / 8)
+                : 3.5 + Math.min(8, intensity * 10);
+            const isHigh = ev.properties.risk_score >= 70;
 
-          return (
-            <CircleMarker
-              key={`${ev.properties.segment_id}-${ev.properties.kind}-${kindsKey}-${i}`}
-              center={[lat, lng]}
-              radius={radius}
-              pathOptions={{
-                color: isHigh ? "#fff" : color,
-                fillColor: color,
-                fillOpacity: isHigh ? 0.88 : 0.62,
-                weight: isHigh ? 2.5 : 1.5,
-              }}
-              eventHandlers={{
-                mouseover: () => seg && onSegmentHover?.(seg),
-                mouseout: () => onSegmentHover?.(null),
-                click: () => seg && onSegmentClick?.(seg),
-              }}
-            >
-              <Popup>
-                <div className="min-w-[150px] space-y-1 text-[12px]">
-                  <div className="num font-semibold">{ev.properties.segment_id}</div>
-                  <div className="capitalize text-muted-foreground">
-                    {KIND_LABEL[ev.properties.kind]} · {ev.properties.count} events
+            return (
+              <CircleMarker
+                key={`${ev.properties.segment_id}-${ev.properties.kind}-${kindsKey}-${i}`}
+                center={[lat, lng]}
+                radius={radius}
+                pathOptions={{
+                  color: isHigh ? "#fff" : color,
+                  fillColor: color,
+                  fillOpacity: isHigh ? 0.88 : 0.62,
+                  weight: isHigh ? 2.5 : 1.5,
+                }}
+                eventHandlers={{
+                  mouseover: () => seg && onSegmentHover?.(seg),
+                  mouseout: () => onSegmentHover?.(null),
+                  click: () => seg && onSegmentClick?.(seg),
+                }}
+              >
+                <Popup>
+                  <div className="min-w-[150px] space-y-1 text-[12px]">
+                    <div className="num font-semibold">{ev.properties.segment_id}</div>
+                    <div className="capitalize text-muted-foreground">
+                      {KIND_LABEL[ev.properties.kind]} · {ev.properties.count} events
+                    </div>
+                    <div className="num">Risk {ev.properties.risk_score.toFixed(0)}</div>
                   </div>
-                  <div className="num">Risk {ev.properties.risk_score.toFixed(0)}</div>
-                </div>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
+                </Popup>
+              </CircleMarker>
+            );
+          })}
       </MapContainer>
 
       {showFleetBadge && (

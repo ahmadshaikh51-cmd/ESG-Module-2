@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   ESG_GROUP,
@@ -31,19 +37,30 @@ import { AuditDetail } from "./AuditDetail";
 function FindingsSummaryBar({ counts }: { counts: Record<FindingResult, number> }) {
   const total = counts.compliant + counts.observation + counts.nc;
   const order: FindingResult[] = ["compliant", "observation", "nc"];
-  if (total === 0) return <span className="text-[11px] text-muted-foreground">No findings yet</span>;
+  if (total === 0)
+    return <span className="text-[11px] text-muted-foreground">No findings yet</span>;
   return (
     <div className="flex items-center gap-2">
       <div className="flex h-4 w-28 overflow-hidden rounded-md bg-muted/40" aria-hidden>
         {order.map((k) =>
           counts[k] > 0 ? (
-            <span key={k} style={{ width: `${(counts[k] / total) * 100}%`, background: FINDING_RESULT_META[k].color }} />
+            <span
+              key={k}
+              style={{
+                width: `${(counts[k] / total) * 100}%`,
+                background: FINDING_RESULT_META[k].color,
+              }}
+            />
           ) : null,
         )}
       </div>
       <div className="flex items-center gap-2 text-[11px] font-medium">
         {order.map((k) => (
-          <span key={k} className="inline-flex items-center gap-1" style={{ color: FINDING_RESULT_META[k].color }}>
+          <span
+            key={k}
+            className="inline-flex items-center gap-1"
+            style={{ color: FINDING_RESULT_META[k].color }}
+          >
             {counts[k]} {k === "nc" ? "NC" : k === "observation" ? "Obs" : "OK"}
           </span>
         ))}
@@ -52,7 +69,13 @@ function FindingsSummaryBar({ counts }: { counts: Record<FindingResult, number> 
   );
 }
 
-function ScheduleAuditDialog({ kind, onSchedule }: { kind: AuditKind; onSchedule: (d: AuditDraft) => void }) {
+function ScheduleAuditDialog({
+  kind,
+  onSchedule,
+}: {
+  kind: AuditKind;
+  onSchedule: (d: AuditDraft) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [entityId, setEntityId] = useState("");
@@ -62,8 +85,13 @@ function ScheduleAuditDialog({ kind, onSchedule }: { kind: AuditKind; onSchedule
   const [auditorOrg, setAuditorOrg] = useState("");
   const [scheduledOn, setScheduledOn] = useState("");
 
-  const depots = entityId ? entityById(entityId)?.depots ?? [] : [];
-  const valid = title.trim() && entityId && auditorName.trim() && scheduledOn && (kind === "internal" || auditorOrg.trim());
+  const depots = entityId ? (entityById(entityId)?.depots ?? []) : [];
+  const valid =
+    title.trim() &&
+    entityId &&
+    auditorName.trim() &&
+    scheduledOn &&
+    (kind === "internal" || auditorOrg.trim());
 
   const reset = () => {
     setTitle("");
@@ -108,7 +136,11 @@ function ScheduleAuditDialog({ kind, onSchedule }: { kind: AuditKind; onSchedule
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={kind === "external" ? "ISO 45001 surveillance audit" : "Depot internal EHS audit — Q3"}
+              placeholder={
+                kind === "external"
+                  ? "ISO 45001 surveillance audit"
+                  : "Depot internal EHS audit — Q3"
+              }
               className="h-9 text-[12.5px]"
             />
           </div>
@@ -213,13 +245,18 @@ export function AuditsPanel({ kind, onOpenEsap }: { kind: AuditKind; onOpenEsap:
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const audits = useMemo(
-    () => wf.auditsFor(kind).filter((a) => inScope({ entityId: a.entityId, depotId: a.depotId }, scope)),
+    () =>
+      wf
+        .auditsFor(kind)
+        .filter((a) => inScope({ entityId: a.entityId, depotId: a.depotId }, scope)),
     [wf, kind, scope],
   );
 
   const selected = selectedId ? wf.auditById(selectedId) : undefined;
   if (selected) {
-    return <AuditDetail audit={selected} onBack={() => setSelectedId(null)} onOpenEsap={onOpenEsap} />;
+    return (
+      <AuditDetail audit={selected} onBack={() => setSelectedId(null)} onOpenEsap={onOpenEsap} />
+    );
   }
 
   const isExternal = kind === "external";
@@ -235,13 +272,13 @@ export function AuditsPanel({ kind, onOpenEsap }: { kind: AuditKind; onOpenEsap:
           <p className="text-[12px] text-muted-foreground">
             {isExternal ? (
               <>
-                Third-party assessments (e.g. <A t="ISO" /> auditors). Findings and <A t="NC" />s are kept separate from
-                internal audits.
+                Third-party assessments (e.g. <A t="ISO" /> auditors). Findings and <A t="NC" />s
+                are kept separate from internal audits.
               </>
             ) : (
               <>
-                Conducted by the internal audit team. Findings flag compliant observations and <A t="NC" />s that flow
-                into the <A t="ESAP" /> register.
+                Conducted by the internal audit team. Findings flag compliant observations and{" "}
+                <A t="NC" />s that flow into the <A t="ESAP" /> register.
               </>
             )}
           </p>
@@ -250,7 +287,9 @@ export function AuditsPanel({ kind, onOpenEsap }: { kind: AuditKind; onOpenEsap:
           kind={kind}
           onSchedule={(d) => {
             wf.scheduleAudit(d);
-            toast.success("Audit scheduled", { description: `${d.title} — ${fmtDate(d.scheduledOn)}.` });
+            toast.success("Audit scheduled", {
+              description: `${d.title} — ${fmtDate(d.scheduledOn)}.`,
+            });
           }}
         />
       </div>
@@ -301,7 +340,9 @@ function AuditRow({ audit, onOpen }: { audit: Audit; onOpen: () => void }) {
         <div className="mt-0.5 text-[11.5px] text-muted-foreground">
           {entityById(audit.entityId)?.short} · {audit.auditorName}
           {audit.auditorOrg ? ` (${audit.auditorOrg})` : ""} ·{" "}
-          {audit.conductedOn ? `conducted ${fmtDate(audit.conductedOn)}` : `scheduled ${fmtDate(audit.scheduledOn)}`}
+          {audit.conductedOn
+            ? `conducted ${fmtDate(audit.conductedOn)}`
+            : `scheduled ${fmtDate(audit.scheduledOn)}`}
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-3">

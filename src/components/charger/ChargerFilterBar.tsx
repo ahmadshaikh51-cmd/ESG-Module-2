@@ -16,7 +16,10 @@ export function ChargerFilterBar({
   const set = <K extends keyof ChargerFilters>(key: K, value: ChargerFilters[K]) =>
     onChange({ ...filters, [key]: value });
 
-  const toggleArr = (key: "depotIds" | "chargerIds" | "vehicleIds" | "transformers", id: string) => {
+  const toggleArr = (
+    key: "depotIds" | "chargerIds" | "vehicleIds" | "transformers",
+    id: string,
+  ) => {
     const arr = filters[key];
     set(key, arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]);
   };
@@ -47,7 +50,9 @@ export function ChargerFilterBar({
           />
         </label>
         <div className="space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Trend window</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Trend window
+          </span>
           <div className="flex rounded-lg border border-border/60 p-0.5">
             {WINDOWS.map((w) => (
               <button
@@ -55,7 +60,9 @@ export function ChargerFilterBar({
                 type="button"
                 onClick={() => set("trendWindow", w)}
                 className={`rounded-md px-2.5 py-1.5 text-[11px] font-medium ${
-                  filters.trendWindow === w ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                  filters.trendWindow === w
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground"
                 }`}
               >
                 {w}
@@ -64,7 +71,9 @@ export function ChargerFilterBar({
           </div>
         </div>
         <div className="space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Severity</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Severity
+          </span>
           <select
             value={filters.severity}
             onChange={(e) => set("severity", e.target.value as RiskLevel | "all")}
@@ -79,7 +88,9 @@ export function ChargerFilterBar({
         </div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Depots</span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          Depots
+        </span>
         {CHARGER_FILTER_OPTIONS.depots.map((d) => (
           <button
             key={d.id}

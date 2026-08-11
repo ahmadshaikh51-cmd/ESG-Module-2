@@ -217,11 +217,30 @@ export interface DriverScore {
 }
 
 const DRIVER_NAMES = [
-  "Anaya Sharma", "Marco Bellini", "Lin Wei", "Sofia Becker", "Ravi Patel",
-  "Jonas Müller", "Aiko Tanaka", "Diego Alvarez", "Priya Iyer", "Lukas Novak",
-  "Elena Rossi", "Hiro Sato", "Noor Khan", "Mateo Silva", "Kenji Yamada",
-  "Aisha Karim", "Tomás Reyes", "Yara Haddad", "Omar Faruk", "Ines Costa",
-  "Pavel Sokolov", "Mei Zhang", "Idris Bello", "Hannah Cohen",
+  "Anaya Sharma",
+  "Marco Bellini",
+  "Lin Wei",
+  "Sofia Becker",
+  "Ravi Patel",
+  "Jonas Müller",
+  "Aiko Tanaka",
+  "Diego Alvarez",
+  "Priya Iyer",
+  "Lukas Novak",
+  "Elena Rossi",
+  "Hiro Sato",
+  "Noor Khan",
+  "Mateo Silva",
+  "Kenji Yamada",
+  "Aisha Karim",
+  "Tomás Reyes",
+  "Yara Haddad",
+  "Omar Faruk",
+  "Ines Costa",
+  "Pavel Sokolov",
+  "Mei Zhang",
+  "Idris Bello",
+  "Hannah Cohen",
 ];
 const COMPANIES = ["Apex Logistics", "Northwind Transit", "Helix Mobility", "Vector Freight"];
 

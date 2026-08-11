@@ -7,7 +7,14 @@
  * carries a note — GHG numbers that silently change are a credibility risk.
  */
 import { useCallback, useMemo, useState } from "react";
-import { ESG_TODAY, GHG_PARAMS, TYPE_MASTER, typeByKey, type GhgParam, type Provenance } from "./esg-data";
+import {
+  ESG_TODAY,
+  GHG_PARAMS,
+  TYPE_MASTER,
+  typeByKey,
+  type GhgParam,
+  type Provenance,
+} from "./esg-data";
 
 export type GhgParamRow = GhgParam & {
   active: boolean;
@@ -24,10 +31,19 @@ export interface MastersWorkflow {
   leadDaysFor: (typeKey: string) => number;
   setLeadDays: (typeKey: string, days: number) => void;
   ghgParams: () => GhgParamRow[];
-  setGhgFactor: (id: string, factor: number, factorSource: string, note: string, by?: string) => void;
+  setGhgFactor: (
+    id: string,
+    factor: number,
+    factorSource: string,
+    note: string,
+    by?: string,
+  ) => void;
   setGhgActive: (id: string, active: boolean) => void;
   addGhgParam: (p: GhgParamDraft, by?: string) => void;
-  importGhgFactors: (rows: { id: string; factor: number; factorSource?: string }[], by?: string) => void;
+  importGhgFactors: (
+    rows: { id: string; factor: number; factorSource?: string }[],
+    by?: string,
+  ) => void;
 }
 
 const todayIso = () => ESG_TODAY.toISOString().slice(0, 10);
@@ -47,7 +63,11 @@ export function useMastersWorkflow(): MastersWorkflow {
   }, []);
 
   const ghgParams = useCallback((): GhgParamRow[] => {
-    return [...GHG_PARAMS, ...extraParams].map((p) => ({ ...p, active: true, ...ghgOverrides[p.id] }));
+    return [...GHG_PARAMS, ...extraParams].map((p) => ({
+      ...p,
+      active: true,
+      ...ghgOverrides[p.id],
+    }));
   }, [ghgOverrides, extraParams]);
 
   const setGhgFactor = useCallback(
@@ -55,7 +75,15 @@ export function useMastersWorkflow(): MastersWorkflow {
       setGhgOverrides((o) => ({
         ...o,
         // A manual edit supersedes any prior import provenance for this factor.
-        [id]: { ...o[id], factor, factorSource, note, updatedBy: by, updatedOn: todayIso(), prov: undefined },
+        [id]: {
+          ...o[id],
+          factor,
+          factorSource,
+          note,
+          updatedBy: by,
+          updatedOn: todayIso(),
+          prov: undefined,
+        },
       }));
     },
     [],
@@ -68,31 +96,56 @@ export function useMastersWorkflow(): MastersWorkflow {
   const addGhgParam = useCallback((p: GhgParamDraft, by = "diganta") => {
     const id = p.id ?? `ghg-${p.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
     setExtraParams((list) => [...list, { ...p, id }]);
-    setGhgOverrides((o) => ({ ...o, [id]: { active: true, updatedBy: by, updatedOn: todayIso(), note: "New parameter" } }));
+    setGhgOverrides((o) => ({
+      ...o,
+      [id]: { active: true, updatedBy: by, updatedOn: todayIso(), note: "New parameter" },
+    }));
   }, []);
 
-  const importGhgFactors = useCallback((rows: { id: string; factor: number; factorSource?: string }[], by = "diganta") => {
-    const prov: Provenance = { source: "ghg-factors-upload.xlsx", fetchedAt: ESG_TODAY.toISOString() };
-    setGhgOverrides((o) => {
-      const next = { ...o };
-      for (const r of rows) {
-        next[r.id] = {
-          ...next[r.id],
-          factor: r.factor,
-          factorSource: r.factorSource ?? next[r.id]?.factorSource,
-          note: "Imported from Excel",
-          updatedBy: by,
-          updatedOn: todayIso(),
-          prov,
-        };
-      }
-      return next;
-    });
-  }, []);
+  const importGhgFactors = useCallback(
+    (rows: { id: string; factor: number; factorSource?: string }[], by = "diganta") => {
+      const prov: Provenance = {
+        source: "ghg-factors-upload.xlsx",
+        fetchedAt: ESG_TODAY.toISOString(),
+      };
+      setGhgOverrides((o) => {
+        const next = { ...o };
+        for (const r of rows) {
+          next[r.id] = {
+            ...next[r.id],
+            factor: r.factor,
+            factorSource: r.factorSource ?? next[r.id]?.factorSource,
+            note: "Imported from Excel",
+            updatedBy: by,
+            updatedOn: todayIso(),
+            prov,
+          };
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   return useMemo(
-    () => ({ leadDaysFor, setLeadDays, ghgParams, setGhgFactor, setGhgActive, addGhgParam, importGhgFactors }),
-    [leadDaysFor, setLeadDays, ghgParams, setGhgFactor, setGhgActive, addGhgParam, importGhgFactors],
+    () => ({
+      leadDaysFor,
+      setLeadDays,
+      ghgParams,
+      setGhgFactor,
+      setGhgActive,
+      addGhgParam,
+      importGhgFactors,
+    }),
+    [
+      leadDaysFor,
+      setLeadDays,
+      ghgParams,
+      setGhgFactor,
+      setGhgActive,
+      addGhgParam,
+      importGhgFactors,
+    ],
   );
 }
 

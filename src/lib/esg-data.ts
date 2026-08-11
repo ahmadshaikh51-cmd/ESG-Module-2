@@ -1904,6 +1904,7 @@ export type EsmsSubTab = {
 export const ESMS_SUBTABS: EsmsSubTab[] = [
   { key: "policies", tier: "governance", label: "Policies", available: true },
   { key: "sops", tier: "governance", label: "SOPs", available: true },
+  { key: "grievance", tier: "governance", label: "Grievance", available: true },
   {
     key: "esap",
     tier: "governance",
@@ -1913,7 +1914,7 @@ export const ESMS_SUBTABS: EsmsSubTab[] = [
   },
   { key: "esdd", tier: "assessment", label: "ESDD", acronym: "ESDD", available: true },
   { key: "esia", tier: "assessment", label: "ESIA", acronym: "ESIA", available: true },
-  { key: "monitoring", tier: "monitoring", label: "Site Monitoring", available: true, phase: 6 },
+  { key: "monitoring", tier: "monitoring", label: "Site Monitoring", available: false, phase: 6 },
   { key: "audit-internal", tier: "assurance", label: "Internal Audit", available: true, phase: 3 },
   { key: "audit-external", tier: "assurance", label: "External Audit", available: true, phase: 4 },
   { key: "training", tier: "assurance", label: "Training", available: true, phase: 5 },
@@ -2245,7 +2246,6 @@ export type ReportDef = {
 };
 
 export const REPORT_DEFS: ReportDef[] = [
-
   {
     id: "nc-report",
     name: "NC Report",
@@ -2295,12 +2295,28 @@ export const REPORT_DEFS: ReportDef[] = [
 
 export type EsgNotification = {
   id: string;
-  kind: "expiry" | "digest" | "escalation";
+  kind: "expiry" | "digest" | "escalation" | "reminder";
   title: string;
   detail: string;
   when: string;
   recordId?: string;
   unread?: boolean;
+  
+  // Escalation properties
+  severity?: "normal" | "reminder" | "overdue" | "escalated" | "critical";
+  level?: 0 | 1 | 2 | 3 | 4;
+  project?: string;
+  siteId?: string;
+  siteName?: string;
+  taskType?: "energy" | "water" | "workforce" | "governance" | "permit" | "nc" | "esap" | "audit" | "policy" | "approval";
+  indicatorId?: string;
+  policyId?: string;
+  period?: string;
+  reason?: string;
+  overdueDays?: number;
+  owner?: string;
+  escalatedTo?: string;
+  isResolved?: boolean;
 };
 
 export const NOTIFICATIONS: EsgNotification[] = [

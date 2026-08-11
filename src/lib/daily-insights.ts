@@ -58,7 +58,12 @@ function deltaPct(curr: number, base: number) {
   return ((curr - base) / base) * 100;
 }
 
-function severityFromDelta(delta: number, positiveIsGood: boolean, warn = 8, crit = 15): InsightSeverity {
+function severityFromDelta(
+  delta: number,
+  positiveIsGood: boolean,
+  warn = 8,
+  crit = 15,
+): InsightSeverity {
   const bad = positiveIsGood ? delta < 0 : delta > 0;
   if (!bad) return "info";
   const mag = Math.abs(delta);
@@ -214,7 +219,9 @@ export function buildTripInsights(trips: Trip[]): DailyInsight[] {
     });
   }
 
-  const companyLeak = [...companyRows].sort((a, b) => b.netKwh / Math.max(b.distance, 1) - a.netKwh / Math.max(a.distance, 1)).slice(0, 5);
+  const companyLeak = [...companyRows]
+    .sort((a, b) => b.netKwh / Math.max(b.distance, 1) - a.netKwh / Math.max(a.distance, 1))
+    .slice(0, 5);
   if (companyLeak[0]) {
     const c = companyLeak[0];
     insights.push({
@@ -254,7 +261,10 @@ export function buildTripInsights(trips: Trip[]): DailyInsight[] {
       action: "Review Segment Risk map and assign supervisor ride-alongs.",
       deepLink: "/segments",
       spark: highRiskRoutes.map((x) => x.difficulty_score),
-      trend: highRiskRoutes.map((x, i) => ({ date: x.route_code.slice(0, 6), value: x.difficulty_score })),
+      trend: highRiskRoutes.map((x, i) => ({
+        date: x.route_code.slice(0, 6),
+        value: x.difficulty_score,
+      })),
       evidence: highRiskRoutes.map((x) => ({
         Route: x.route_code,
         Difficulty: x.difficulty_score,
@@ -360,7 +370,8 @@ export function buildChargingInsights(): DailyInsight[] {
       severity: kpis.abnormalBuses > 4 ? "critical" : "warning",
       domain: "charging",
       title: `${kpis.abnormalBuses} buses charging outside norms`,
-      summary: "Thermal, disconnect, or efficiency KPIs breaching thresholds — maintenance queue risk.",
+      summary:
+        "Thermal, disconnect, or efficiency KPIs breaching thresholds — maintenance queue risk.",
       metric: String(kpis.abnormalBuses),
       vsBaseline: "target ≤ 2",
       deltaPct: kpis.abnormalBuses - 2,

@@ -20,13 +20,27 @@ export type ReadingCell = { value: number | null; source: "manual" | "excel"; pr
 const keyOf = (paramKey: string, entityId: string, depotId: string, period: string) =>
   `${paramKey}|${entityId}|${depotId}|${period}`;
 
-export type MonitoringBreach = { paramKey: string; entityId: string; depotId: string; period: string; value: number };
+export type MonitoringBreach = {
+  paramKey: string;
+  entityId: string;
+  depotId: string;
+  period: string;
+  value: number;
+};
 
-const ALL_DEPOTS = ESG_GROUP.entities.flatMap((e) => e.depots.map((d) => ({ entityId: e.id, depotId: d.id })));
+const ALL_DEPOTS = ESG_GROUP.entities.flatMap((e) =>
+  e.depots.map((d) => ({ entityId: e.id, depotId: d.id })),
+);
 
 export interface MonitoringWorkflow {
   readingFor: (paramKey: string, entityId: string, depotId: string, period: string) => ReadingCell;
-  setReading: (paramKey: string, entityId: string, depotId: string, period: string, value: number | null) => void;
+  setReading: (
+    paramKey: string,
+    entityId: string,
+    depotId: string,
+    period: string,
+    value: number | null,
+  ) => void;
   importReadings: (
     entityId: string,
     depotId: string,
@@ -46,7 +60,11 @@ export function useMonitoringWorkflow(): MonitoringWorkflow {
       const k = keyOf(paramKey, entityId, depotId, period);
       if (overrides[k]) return overrides[k];
       const seed = MONITORING_READINGS.find(
-        (r) => r.paramKey === paramKey && r.entityId === entityId && r.depotId === depotId && r.period === period,
+        (r) =>
+          r.paramKey === paramKey &&
+          r.entityId === entityId &&
+          r.depotId === depotId &&
+          r.period === period,
       );
       if (seed) return { value: seed.value, source: seed.source, prov: seed.prov };
       return { value: null, source: "manual" };
@@ -56,7 +74,10 @@ export function useMonitoringWorkflow(): MonitoringWorkflow {
 
   const setReading = useCallback(
     (paramKey: string, entityId: string, depotId: string, period: string, value: number | null) => {
-      setOverrides((o) => ({ ...o, [keyOf(paramKey, entityId, depotId, period)]: { value, source: "manual" } }));
+      setOverrides((o) => ({
+        ...o,
+        [keyOf(paramKey, entityId, depotId, period)]: { value, source: "manual" },
+      }));
     },
     [],
   );
@@ -73,7 +94,11 @@ export function useMonitoringWorkflow(): MonitoringWorkflow {
       setOverrides((o) => {
         const next = { ...o };
         for (const row of rows) {
-          next[keyOf(row.paramKey, entityId, depotId, period)] = { value: row.value, source: "excel", prov };
+          next[keyOf(row.paramKey, entityId, depotId, period)] = {
+            value: row.value,
+            source: "excel",
+            prov,
+          };
         }
         return next;
       });

@@ -132,7 +132,11 @@ export function KmsReportTab() {
                     }
                   >
                     <Td>
-                      {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                      {open ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
                     </Td>
                     {visibleColumns.map((col) => (
                       <Td
@@ -256,12 +260,22 @@ function TripQuickActions({
   return (
     <div className="flex flex-wrap gap-1">
       {status !== "lost" && status !== "extra" && (
-        <Button size="sm" variant="destructive" className="h-7 text-[11px]" onClick={() => setMode("lost")}>
+        <Button
+          size="sm"
+          variant="destructive"
+          className="h-7 text-[11px]"
+          onClick={() => setMode("lost")}
+        >
           {OPS.markNotDone}
         </Button>
       )}
       {status === "completed" && (
-        <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => setMode("short")}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-7 text-[11px]"
+          onClick={() => setMode("short")}
+        >
           {OPS.markShortTrip}
         </Button>
       )}
@@ -349,7 +363,12 @@ function MisReportControls({
           <RotateCcw className="mr-1.5 h-4 w-4" />
           {OPS.undoChanges}
         </Button>
-        <Button variant="outline" className="h-10" disabled={exportDisabled} onClick={onExportExcel}>
+        <Button
+          variant="outline"
+          className="h-10"
+          disabled={exportDisabled}
+          onClick={onExportExcel}
+        >
           <FileSpreadsheet className="mr-1.5 h-4 w-4" />
           {OPS.downloadExcel}
         </Button>

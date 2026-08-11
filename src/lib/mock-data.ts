@@ -54,10 +54,24 @@ const COMPANIES = [
 ];
 
 const DRIVERS = [
-  "Anaya Sharma", "Marco Bellini", "Lin Wei", "Sofia Becker", "Ravi Patel",
-  "Jonas Müller", "Aiko Tanaka", "Diego Alvarez", "Priya Iyer", "Lukas Novak",
-  "Elena Rossi", "Hiro Sato", "Noor Khan", "Mateo Silva", "Kenji Yamada",
-  "Aisha Karim", "Tomás Reyes", "Yara Haddad",
+  "Anaya Sharma",
+  "Marco Bellini",
+  "Lin Wei",
+  "Sofia Becker",
+  "Ravi Patel",
+  "Jonas Müller",
+  "Aiko Tanaka",
+  "Diego Alvarez",
+  "Priya Iyer",
+  "Lukas Novak",
+  "Elena Rossi",
+  "Hiro Sato",
+  "Noor Khan",
+  "Mateo Silva",
+  "Kenji Yamada",
+  "Aisha Karim",
+  "Tomás Reyes",
+  "Yara Haddad",
 ];
 
 const ROUTES = [
@@ -132,7 +146,15 @@ function generateTrips(count = 720): Trip[] {
     const efficiency_anomaly_flag = kwh_per_km > 1.55 || socDropPerKm > 1.2;
 
     const id = String(100000 + i);
-    const driverId = "drv_" + driverName.split(" ").map((p) => p[0]).join("").toLowerCase() + "_" + (i % 7);
+    const driverId =
+      "drv_" +
+      driverName
+        .split(" ")
+        .map((p) => p[0])
+        .join("")
+        .toLowerCase() +
+      "_" +
+      (i % 7);
 
     trips.push({
       trip_id: "T-" + id,
@@ -190,7 +212,9 @@ export const FILTER_OPTIONS = {
   routes: ROUTES,
   vehicles: Array.from(
     new Map(
-      TRIPS.map((t) => [t.vehiclenumber, t.registration_number || t.vehiclenumber])
-    ).entries()
-  ).map(([code, name]) => ({ code, name })).sort((a, b) => a.code.localeCompare(b.code)),
+      TRIPS.map((t) => [t.vehiclenumber, t.registration_number || t.vehiclenumber]),
+    ).entries(),
+  )
+    .map(([code, name]) => ({ code, name }))
+    .sort((a, b) => a.code.localeCompare(b.code)),
 };

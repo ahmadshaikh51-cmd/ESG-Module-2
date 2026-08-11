@@ -75,7 +75,13 @@ const DEMO_DRIVERS: DemoDriver[] = [
         marks: 16.5,
         outcome: "Braking 3.5/7 · Accel 7/7 · Seatbelt 6/6",
       },
-      { id: "attendance", label: "Attendance", max: 15, marks: 10, outcome: "92.3% of 26-day month" },
+      {
+        id: "attendance",
+        label: "Attendance",
+        max: 15,
+        marks: 10,
+        outcome: "92.3% of 26-day month",
+      },
       { id: "mobile", label: "Mobile", max: 10, marks: 10, outcome: "1 phone event (<3)" },
       { id: "alcohol", label: "Alcohol", max: 5, marks: 5, outcome: "Placeholder — full marks" },
     ],
@@ -98,7 +104,13 @@ const DEMO_DRIVERS: DemoDriver[] = [
         marks: 10,
         outcome: "Braking 3.5/7 · Accel 0/7 · Seatbelt 6/6",
       },
-      { id: "attendance", label: "Attendance", max: 15, marks: 5, outcome: "84.6% of 26-day month" },
+      {
+        id: "attendance",
+        label: "Attendance",
+        max: 15,
+        marks: 5,
+        outcome: "84.6% of 26-day month",
+      },
       { id: "mobile", label: "Mobile", max: 10, marks: 5, outcome: "4 phone events (3–5)" },
       { id: "alcohol", label: "Alcohol", max: 5, marks: 5, outcome: "Placeholder — full marks" },
     ],
@@ -120,11 +132,7 @@ function totalMarks(d: DemoDriver) {
   return d.pillars.reduce((s, p) => s + p.marks, 0);
 }
 
-function BandTable({
-  rows,
-}: {
-  rows: { condition: string; marks: string; note?: string }[];
-}) {
+function BandTable({ rows }: { rows: { condition: string; marks: string; note?: string }[] }) {
   return (
     <div className="overflow-hidden rounded-xl border border-border/50">
       <table className="w-full text-[12.5px]">
@@ -189,9 +197,7 @@ function PillarCard({
         <div
           className={cn(
             "mt-4 flex gap-2 rounded-xl px-3 py-2.5 text-[12px] leading-relaxed",
-            callout.tone === "warn"
-              ? "bg-warning/10 text-warning"
-              : "bg-primary/10 text-primary",
+            callout.tone === "warn" ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary",
           )}
         >
           {callout.tone === "warn" ? (
@@ -233,9 +239,12 @@ function AttributeScorePage() {
       <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-elevated">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h2 className="text-[15px] font-semibold tracking-tight">100 marks — headline weights</h2>
+            <h2 className="text-[15px] font-semibold tracking-tight">
+              100 marks — headline weights
+            </h2>
             <p className="text-[12.5px] text-muted-foreground">
-              Accidents 30 · soc/km 20 · ADAS 20 · Attendance 15 · Mobile 10 · Alcohol 5 (placeholder)
+              Accidents 30 · soc/km 20 · ADAS 20 · Attendance 15 · Mobile 10 · Alcohol 5
+              (placeholder)
             </p>
           </div>
           <span className="rounded-full bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
@@ -264,8 +273,8 @@ function AttributeScorePage() {
         <p className="mt-4 max-w-3xl text-[13px] leading-relaxed text-muted-foreground">
           This answers “what kind of month did this driver have overall.” The existing telemetry
           score answers “how well did they drive on this trip vs peers in the same conditions.”
-          Attendance and accidents only make sense monthly — they are deliberately not in the
-          trip score.
+          Attendance and accidents only make sense monthly — they are deliberately not in the trip
+          score.
         </p>
       </section>
 
@@ -273,7 +282,9 @@ function AttributeScorePage() {
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-[16px] font-semibold tracking-tight">Worked example — how marks add up</h2>
+            <h2 className="text-[16px] font-semibold tracking-tight">
+              Worked example — how marks add up
+            </h2>
             <p className="text-[12.5px] text-muted-foreground">
               Demo drivers for review. Live scoring logic will replace this later.
             </p>
@@ -383,8 +394,16 @@ function AttributeScorePage() {
             <div className="space-y-2">
               {[
                 { gate: "Depot", threshold: "MBMT only", why: "Scope of this rollout" },
-                { gate: "Attendance days", threshold: "≥ 10 days", why: "Enough of a month to judge" },
-                { gate: "Trips", threshold: "≥ 50 trips", why: "Behaviour & energy signals reliable" },
+                {
+                  gate: "Attendance days",
+                  threshold: "≥ 10 days",
+                  why: "Enough of a month to judge",
+                },
+                {
+                  gate: "Trips",
+                  threshold: "≥ 50 trips",
+                  why: "Behaviour & energy signals reliable",
+                },
               ].map((g) => (
                 <div
                   key={g.gate}
@@ -403,8 +422,8 @@ function AttributeScorePage() {
             </div>
             <div className="mt-4 flex gap-2 rounded-xl bg-muted/25 px-3 py-2.5 text-[12px] leading-relaxed text-muted-foreground">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Data quality: lost, dead, deleted, short, or efficiency-outlier trips are excluded from
-              every metric and from route benchmarks. Minimum trip distance: 5 km.
+              Data quality: lost, dead, deleted, short, or efficiency-outlier trips are excluded
+              from every metric and from route benchmarks. Minimum trip distance: 5 km.
             </div>
           </div>
         </div>
@@ -413,7 +432,9 @@ function AttributeScorePage() {
       {/* Pillar specs */}
       <section className="space-y-3">
         <div>
-          <h2 className="text-[16px] font-semibold tracking-tight">Evidence streams — scoring bands</h2>
+          <h2 className="text-[16px] font-semibold tracking-tight">
+            Evidence streams — scoring bands
+          </h2>
           <p className="text-[12.5px] text-muted-foreground">
             Exact mark tables for sign-off. Challenge anything that does not match intent.
           </p>
@@ -538,7 +559,13 @@ function AttributeScorePage() {
             }}
           >
             <BandTable
-              rows={[{ condition: "All eligible drivers (until data exists)", marks: "5", note: "Placeholder" }]}
+              rows={[
+                {
+                  condition: "All eligible drivers (until data exists)",
+                  marks: "5",
+                  note: "Placeholder",
+                },
+              ]}
             />
           </PillarCard>
         </div>
@@ -558,7 +585,8 @@ function AttributeScorePage() {
           </li>
           <li className="flex gap-2">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-            Confirm soc/km route-benchmark bands and ADAS sub-weights (including sparse accel/seatbelt).
+            Confirm soc/km route-benchmark bands and ADAS sub-weights (including sparse
+            accel/seatbelt).
           </li>
           <li className="flex gap-2">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />

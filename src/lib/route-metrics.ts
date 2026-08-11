@@ -25,10 +25,7 @@ export function routeEndpointLabels(route: RouteContext): RouteEndpointLabels {
   return { start: "Origin", end: "Destination" };
 }
 
-export function computeRouteStats(
-  route: RouteContext,
-  segments: SegmentRisk[],
-): RouteStats {
+export function computeRouteStats(route: RouteContext, segments: SegmentRisk[]): RouteStats {
   const routeSegs = segments.filter((s) => s.route_id === route.route_id);
   const dmsTotal = routeSegs.reduce(
     (n, s) => n + s.harsh_braking + s.overspeed + s.distraction + s.drowsiness + s.rough_road,
@@ -54,11 +51,7 @@ export function computeRouteStats(
 export type CompareWinner = "a" | "b" | "tie";
 
 /** Lower is better for difficulty, efficiency, congestion, dms. Higher is better for speed. */
-export function compareWinner(
-  a: number,
-  b: number,
-  lowerIsBetter: boolean,
-): CompareWinner {
+export function compareWinner(a: number, b: number, lowerIsBetter: boolean): CompareWinner {
   const diff = Math.abs(a - b);
   if (diff < 0.001 * Math.max(Math.abs(a), Math.abs(b), 1)) return "tie";
   if (lowerIsBetter) return a < b ? "a" : "b";

@@ -1,13 +1,36 @@
-import { useRef, useState } from "react";
-import { ArrowUpRight, CalendarClock, History, RefreshCcw, ShieldCheck, UploadCloud, User, Wrench } from "lucide-react";
+import { useRef, useState, useMemo } from "react";
+import {
+  ArrowUpRight,
+  CalendarClock,
+  History,
+  RefreshCcw,
+  ShieldCheck,
+  UploadCloud,
+  User,
+  Wrench,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { EscalationStatusIndicator } from "./EscalationStatusIndicator";
+import { getActiveEscalationForSource } from "@/lib/esg-escalations";
 import {
   AUDITS,
   countdownLabel,
@@ -21,14 +44,25 @@ import {
   typeByKey,
   type ComplianceRecord,
 } from "@/lib/esg-data";
-import { A, CriticalBeam, DocChip, Gloss, ProvenanceChip, StatePill, WithheldPill, useEsg } from "./primitives";
+import {
+  A,
+  CriticalBeam,
+  DocChip,
+  Gloss,
+  ProvenanceChip,
+  StatePill,
+  WithheldPill,
+  useEsg,
+} from "./primitives";
 
 type DocVersion = { name: string; size: string; uploadedAt: string };
 
 function Detail({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+      <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </div>
       <div className="mt-1 text-[13px] font-medium leading-snug">{children}</div>
     </div>
   );
@@ -72,7 +106,12 @@ function UpdateLicenceDialog({
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label className="text-[12px]">New expiry date</Label>
-            <Input type="date" value={expiry} onChange={(e) => setExpiry(e.target.value)} className="h-9 text-[12.5px]" />
+            <Input
+              type="date"
+              value={expiry}
+              onChange={(e) => setExpiry(e.target.value)}
+              className="h-9 text-[12.5px]"
+            />
           </div>
           <div className="space-y-1.5">
             <Label className="text-[12px]">Renewed document</Label>
@@ -128,7 +167,9 @@ export function RecordDrawer({
   );
   const lastAudit = linkedAudits[0];
   // Session-local edits (this drawer instance only) layer over the record without mutating it elsewhere.
-  const effectiveRecord: ComplianceRecord = expiryOverride ? { ...record, expiryDate: expiryOverride } : record;
+  const effectiveRecord: ComplianceRecord = expiryOverride
+    ? { ...record, expiryDate: expiryOverride }
+    : record;
   const docVersions = docs ?? [record.doc];
   const state = recordState(effectiveRecord);
   const type = typeByKey(record.typeKey);
@@ -138,6 +179,10 @@ export function RecordDrawer({
   const renewalState = renewal ?? record.renewal ?? "none";
   const remarksVal = remarks ?? record.remarks ?? "";
   const days = effectiveRecord.expiryDate ? daysUntil(effectiveRecord.expiryDate) : null;
+
+  const escalation = useMemo(() => {
+    return getActiveEscalationForSource(record.id);
+  }, [record.id]);
 
   const addVersion = (doc: DocVersion) => setDocs((d) => [doc, ...(d ?? [record.doc])]);
 
@@ -154,7 +199,9 @@ export function RecordDrawer({
         <SheetHeader className="space-y-3 pb-0">
           <div className="flex items-start justify-between gap-3 pr-8">
             <div>
-              <div className="section-label">{type?.category === "permit" ? "Permit / Licence" : "Site Compliance"}</div>
+              <div className="section-label">
+                {type?.category === "permit" ? "Permit / Licence" : "Site Compliance"}
+              </div>
               <SheetTitle className="mt-1 text-[19px] leading-tight tracking-tight">
                 <Gloss text={type?.label ?? record.typeKey} />
               </SheetTitle>
@@ -162,7 +209,10 @@ export function RecordDrawer({
                 {recordPlace(record)} · {record.authority}
               </SheetDescription>
             </div>
-            <StatePill state={state} size="md" />
+            <div className="flex flex-col items-end gap-1.5 shrink-0">
+              <StatePill state={state} size="md" />
+              {escalation && <EscalationStatusIndicator escalation={escalation} />}
+            </div>
           </div>
 
           {/* Expiry clock — the unit of risk, always visible */}
@@ -177,7 +227,9 @@ export function RecordDrawer({
               <CalendarClock className="h-4 w-4" style={{ color: meta.color }} aria-hidden />
               <div>
                 <div className="text-[11px] font-medium text-muted-foreground">
-                  {effectiveRecord.expiryDate ? `Expires ${fmtDate(effectiveRecord.expiryDate)}` : "Perpetual instrument"}
+                  {effectiveRecord.expiryDate
+                    ? `Expires ${fmtDate(effectiveRecord.expiryDate)}`
+                    : "Perpetual instrument"}
                 </div>
                 <div className="num text-[17px] font-semibold" style={{ color: meta.color }}>
                   {countdownLabel(effectiveRecord)}
@@ -188,15 +240,31 @@ export function RecordDrawer({
               <div className="text-right text-[10.5px] leading-tight text-muted-foreground">
                 Alert window
                 <br />
-                <span className="num text-[12px] font-semibold text-foreground">{type.leadDays}d</span> before expiry
+                <span className="num text-[12px] font-semibold text-foreground">
+                  {type.leadDays}d
+                </span>{" "}
+                before expiry
               </div>
             )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button size="sm" className="h-8 gap-1.5 rounded-lg text-[12px]" onClick={act} disabled={renewalState === "initiated" && !overdue}>
-              {overdue ? <Wrench className="h-3.5 w-3.5" /> : <RefreshCcw className="h-3.5 w-3.5" />}
-              {overdue ? "Log remediation step" : renewalState === "initiated" ? "Renewal initiated" : "Start renewal"}
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 rounded-lg text-[12px]"
+              onClick={act}
+              disabled={renewalState === "initiated" && !overdue}
+            >
+              {overdue ? (
+                <Wrench className="h-3.5 w-3.5" />
+              ) : (
+                <RefreshCcw className="h-3.5 w-3.5" />
+              )}
+              {overdue
+                ? "Log remediation step"
+                : renewalState === "initiated"
+                  ? "Renewal initiated"
+                  : "Start renewal"}
             </Button>
             {renewalState === "initiated" && (
               <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
@@ -216,7 +284,9 @@ export function RecordDrawer({
                   <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive">
                     Root cause & remediation — required
                   </div>
-                  <span className="text-[10px] font-medium text-muted-foreground">status is never a bare flag</span>
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    status is never a bare flag
+                  </span>
                 </div>
                 <Textarea
                   value={remarksVal}
@@ -238,8 +308,12 @@ export function RecordDrawer({
             <Detail label="Issuing authority">{record.authority}</Detail>
             <Detail label="Issue date">{fmtDate(record.issueDate)}</Detail>
             <Detail label="Expiry date">
-              <span className={cn(overdue && "text-destructive")}>{fmtDate(effectiveRecord.expiryDate)}</span>
-              {expiryOverride && <span className="ml-1.5 text-[10px] font-normal text-primary">(updated)</span>}
+              <span className={cn(overdue && "text-destructive")}>
+                {fmtDate(effectiveRecord.expiryDate)}
+              </span>
+              {expiryOverride && (
+                <span className="ml-1.5 text-[10px] font-normal text-primary">(updated)</span>
+              )}
             </Detail>
             <Detail label="Owner">
               <span className="inline-flex items-center gap-1.5">
@@ -248,7 +322,9 @@ export function RecordDrawer({
                 </span>
                 {owner?.name}
               </span>
-              <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">{owner?.role}</div>
+              <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">
+                {owner?.role}
+              </div>
             </Detail>
             <Detail label="Renewal lead window">
               <span className="num">{type?.leadDays ?? 60} days</span>
@@ -292,7 +368,9 @@ export function RecordDrawer({
                 type="button"
                 onClick={() => {
                   onClose();
-                  goto("esms", { sub: lastAudit.kind === "external" ? "audit-external" : "audit-internal" });
+                  goto("esms", {
+                    sub: lastAudit.kind === "external" ? "audit-external" : "audit-internal",
+                  });
                 }}
                 className="flex w-full items-center justify-between gap-3 rounded-lg border border-primary/25 bg-primary/8 px-3 py-2 text-left transition-colors hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
               >
@@ -318,7 +396,9 @@ export function RecordDrawer({
                     const f = e.target.files?.[0];
                     if (f) {
                       addVersion({ name: f.name, size: "—", uploadedAt: todayIso() });
-                      toast.success("New version uploaded", { description: `${f.name} — added to this licence's history. (UI stub)` });
+                      toast.success("New version uploaded", {
+                        description: `${f.name} — added to this licence's history. (UI stub)`,
+                      });
                     }
                     e.target.value = "";
                   }}

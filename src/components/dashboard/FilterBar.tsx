@@ -94,9 +94,7 @@ function MultiSelect<T extends string>({
           }`}
         >
           <span className={hasSelection ? "text-primary" : "text-muted-foreground"}>{label}</span>
-          <span className="font-medium">
-            {values.length === 0 ? "All" : `${values.length}`}
-          </span>
+          <span className="font-medium">{values.length === 0 ? "All" : `${values.length}`}</span>
           <ChevronDown className="h-3 w-3 opacity-60" />
         </Button>
       </DropdownMenuTrigger>
@@ -160,10 +158,20 @@ export function FilterBar({ filters, onChange, options, show }: Props) {
 
   const chips = useMemo(() => {
     const items: { label: string; clear: () => void }[] = [];
-    if (shown.company) filters.companies.forEach((v) => items.push({ label: v, clear: () => toggle("companies", v) }));
-    if (shown.driver) filters.drivers.forEach((v) => items.push({ label: v, clear: () => toggle("drivers", v) }));
-    if (shown.route) filters.routes.forEach((v) => items.push({ label: routeMap.get(v) || v, clear: () => toggle("routes", v) }));
-    if (shown.vehicle) filters.vehicles.forEach((v) => items.push({ label: vehicleMap.get(v) || v, clear: () => toggle("vehicles", v) }));
+    if (shown.company)
+      filters.companies.forEach((v) =>
+        items.push({ label: v, clear: () => toggle("companies", v) }),
+      );
+    if (shown.driver)
+      filters.drivers.forEach((v) => items.push({ label: v, clear: () => toggle("drivers", v) }));
+    if (shown.route)
+      filters.routes.forEach((v) =>
+        items.push({ label: routeMap.get(v) || v, clear: () => toggle("routes", v) }),
+      );
+    if (shown.vehicle)
+      filters.vehicles.forEach((v) =>
+        items.push({ label: vehicleMap.get(v) || v, clear: () => toggle("vehicles", v) }),
+      );
     return items;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, routeMap, vehicleMap, shown.company, shown.driver, shown.route, shown.vehicle]);
@@ -266,7 +274,9 @@ export function FilterBar({ filters, onChange, options, show }: Props) {
           <MultiSelect
             label="Vehicle"
             values={filters.vehicles}
-            options={options?.vehicles.map((v) => v.code) || FILTER_OPTIONS.vehicles.map((v) => v.code)}
+            options={
+              options?.vehicles.map((v) => v.code) || FILTER_OPTIONS.vehicles.map((v) => v.code)
+            }
             getLabel={(code) => vehicleMap.get(code) || code}
             onToggle={(v) => toggle("vehicles", v)}
           />

@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { 
-  useSites, 
-  useChecklistItems, 
-  useCreateChecklistItem, 
-  useUpdateChecklistItem, 
-  useDeleteChecklistItem 
+import {
+  useSites,
+  useChecklistItems,
+  useCreateChecklistItem,
+  useUpdateChecklistItem,
+  useDeleteChecklistItem,
 } from "@/lib/readiness/queries";
 
 const CATEGORIES = ["CAPEX", "OPEX", "CAPEX + OPEX", "SOFTWARE", "APP"];
@@ -19,7 +19,7 @@ const PRIORITIES = ["Critical", "High", "Medium", "Low"];
 export function ReadinessConfigPanel() {
   const { data: sitesData, isLoading: loadingSites } = useSites();
   const { data: checklistData, isLoading: loadingChecklist } = useChecklistItems();
-  
+
   const [siteFilter, setSiteFilter] = useState<"all" | "active" | "inactive">("all");
   const [sitesSearch, setSitesSearch] = useState("");
   const [checklistSearch, setChecklistSearch] = useState("");
@@ -30,12 +30,24 @@ export function ReadinessConfigPanel() {
   const filteredSites = sites.filter((site) => {
     if (siteFilter === "active" && !site.is_active) return false;
     if (siteFilter === "inactive" && site.is_active) return false;
-    if (sitesSearch && !`${site.name} ${site.code} ${site.site_type} ${site.location}`.toLowerCase().includes(sitesSearch.toLowerCase())) return false;
+    if (
+      sitesSearch &&
+      !`${site.name} ${site.code} ${site.site_type} ${site.location}`
+        .toLowerCase()
+        .includes(sitesSearch.toLowerCase())
+    )
+      return false;
     return true;
   });
 
   const filteredChecklist = masterChecklist.filter((item) => {
-    if (checklistSearch && !`${item.name} ${item.team} ${item.default_owner} ${item.category}`.toLowerCase().includes(checklistSearch.toLowerCase())) return false;
+    if (
+      checklistSearch &&
+      !`${item.name} ${item.team} ${item.default_owner} ${item.category}`
+        .toLowerCase()
+        .includes(checklistSearch.toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -48,8 +60,8 @@ export function ReadinessConfigPanel() {
           </p>
           <h1 className="mt-1 text-[26px] font-semibold tracking-tight">Site readiness setup</h1>
           <p className="mt-2 max-w-xl text-[13px] text-muted-foreground">
-            View active sites and maintain the master checklist. Default SLA (days) applies when you onboard a
-            new site via the Master module — each open item gets a deadline automatically.
+            View active sites and maintain the master checklist. Default SLA (days) applies when you
+            onboard a new site via the Master module — each open item gets a deadline automatically.
           </p>
         </div>
         <Button variant="outline" asChild>
@@ -74,7 +86,8 @@ export function ReadinessConfigPanel() {
             <div>
               <h2 className="text-[14px] font-semibold">Tracked Sites</h2>
               <p className="mt-1 text-[12px] text-muted-foreground">
-                Sites are managed in the Onboarding module. The list below shows all sites currently tracked.
+                Sites are managed in the Onboarding module. The list below shows all sites currently
+                tracked.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -184,9 +197,7 @@ export function ReadinessConfigPanel() {
                     </td>
                   </tr>
                 ) : (
-                  filteredChecklist.map((entry) => (
-                    <ChecklistRow key={entry.id} entry={entry} />
-                  ))
+                  filteredChecklist.map((entry) => <ChecklistRow key={entry.id} entry={entry} />)
                 )}
               </tbody>
             </table>
@@ -202,16 +213,19 @@ function ChecklistRow({ entry }: { entry: any }) {
   const { mutate: deleteItem, isPending: isDeleting } = useDeleteChecklistItem();
 
   const handleUpdate = (patch: any) => {
-    updateItem({ id: entry.id, data: patch }, {
-      onError: (err) => toast.error(err.message)
-    });
+    updateItem(
+      { id: entry.id, data: patch },
+      {
+        onError: (err) => toast.error(err.message),
+      },
+    );
   };
 
   const handleRemove = () => {
     if (confirm(`Remove "${entry.name}" from master checklist?`)) {
       deleteItem(entry.id, {
         onSuccess: () => toast.success("Item removed"),
-        onError: (err) => toast.error(err.message)
+        onError: (err) => toast.error(err.message),
       });
     }
   };
@@ -240,7 +254,8 @@ function ChecklistRow({ entry }: { entry: any }) {
         <Input
           defaultValue={entry.default_owner}
           onBlur={(e) => {
-            if (e.target.value !== entry.default_owner) handleUpdate({ default_owner: e.target.value });
+            if (e.target.value !== entry.default_owner)
+              handleUpdate({ default_owner: e.target.value });
           }}
           className="h-8 min-w-[100px] text-[12px]"
         />
@@ -252,7 +267,9 @@ function ChecklistRow({ entry }: { entry: any }) {
           className="h-8 w-full rounded-md border border-border/60 bg-background px-2 text-[11px]"
         >
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
       </td>
@@ -263,7 +280,9 @@ function ChecklistRow({ entry }: { entry: any }) {
           className="h-8 w-full rounded-md border border-border/60 bg-background px-2 text-[11px]"
         >
           {PRIORITIES.map((p) => (
-            <option key={p} value={p}>{p}</option>
+            <option key={p} value={p}>
+              {p}
+            </option>
           ))}
         </select>
       </td>
@@ -282,8 +301,18 @@ function ChecklistRow({ entry }: { entry: any }) {
         />
       </td>
       <td className="px-2 py-2">
-        <Button variant="ghost" size="sm" className="text-destructive" onClick={handleRemove} disabled={isDeleting}>
-          {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-destructive"
+          onClick={handleRemove}
+          disabled={isDeleting}
+        >
+          {isDeleting ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="h-3.5 w-3.5" />
+          )}
         </Button>
       </td>
     </tr>
@@ -302,28 +331,31 @@ function ChecklistAddForm() {
 
   const handleAdd = () => {
     if (!item.trim()) return;
-    createItem({
-      name: item.trim(),
-      team: team.trim() || "—",
-      default_owner: owner.trim() || "—",
-      category: category,
-      spend_type: category.includes("CAPEX") ? "CAPEX" : "OPEX", // defaulting since it's required by backend schema
-      priority: priority,
-      default_sla_days: sla === "" ? null : parseInt(sla, 10) || 30,
-      is_active: true,
-      sort_order: 0,
-    }, {
-      onSuccess: () => {
-        toast.success("Item added successfully");
-        setItem("");
-        setTeam("");
-        setOwner("");
-        setSla("30");
-        setCategory("OPEX");
-        setPriority("Medium");
+    createItem(
+      {
+        name: item.trim(),
+        team: team.trim() || "—",
+        default_owner: owner.trim() || "—",
+        category: category,
+        spend_type: category.includes("CAPEX") ? "CAPEX" : "OPEX", // defaulting since it's required by backend schema
+        priority: priority,
+        default_sla_days: sla === "" ? null : parseInt(sla, 10) || 30,
+        is_active: true,
+        sort_order: 0,
       },
-      onError: (err) => toast.error(err.message),
-    });
+      {
+        onSuccess: () => {
+          toast.success("Item added successfully");
+          setItem("");
+          setTeam("");
+          setOwner("");
+          setSla("30");
+          setCategory("OPEX");
+          setPriority("Medium");
+        },
+        onError: (err) => toast.error(err.message),
+      },
+    );
   };
 
   return (
@@ -354,7 +386,9 @@ function ChecklistAddForm() {
           className="h-9 rounded-md border border-input bg-background px-3 text-[13px] text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
         <select
@@ -363,7 +397,9 @@ function ChecklistAddForm() {
           className="h-9 rounded-md border border-input bg-background px-3 text-[13px] text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           {PRIORITIES.map((p) => (
-            <option key={p} value={p}>{p}</option>
+            <option key={p} value={p}>
+              {p}
+            </option>
           ))}
         </select>
         <Input
@@ -373,11 +409,7 @@ function ChecklistAddForm() {
           onChange={(e) => setSla(e.target.value)}
           className="h-9"
         />
-        <Button
-          className="h-9 gap-1"
-          onClick={handleAdd}
-          disabled={isPending}
-        >
+        <Button className="h-9 gap-1" onClick={handleAdd} disabled={isPending}>
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
           Add
         </Button>

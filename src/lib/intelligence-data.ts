@@ -120,10 +120,14 @@ export function curveSessionsForVehicle(vehicle_number: string): ChargingCurveSe
     const peakCurrent = Math.max(...curve.map((p) => p.current_a));
     const peakVoltage = Math.max(...curve.map((p) => p.voltage_v));
     const thermalRise = curve[curve.length - 1].temp_c - curve[0].temp_c;
-    const taperRate = tpPts.length > 1
-      ? +((tpPts[0].power_kw - tpPts[tpPts.length - 1].power_kw) / Math.max(tpPts.length, 1)).toFixed(2)
-      : 0;
-    const charger_id = `TV-${(b.depot_name).slice(0, 3).toUpperCase()}-${String((i % 8) + 1).padStart(2, "0")}`;
+    const taperRate =
+      tpPts.length > 1
+        ? +(
+            (tpPts[0].power_kw - tpPts[tpPts.length - 1].power_kw) /
+            Math.max(tpPts.length, 1)
+          ).toFixed(2)
+        : 0;
+    const charger_id = `TV-${b.depot_name.slice(0, 3).toUpperCase()}-${String((i % 8) + 1).padStart(2, "0")}`;
     sessions.push({
       session_id: `${vehicle_number}-${b.date}`,
       vehicle_number,
@@ -159,7 +163,10 @@ export function fleetAverageCurve(): CurvePoint[] {
   // Average across first 12 buses for an indicative fleet baseline.
   const vehicles = Array.from(new Set(BUS_HEALTH_DAILY.map((b) => b.vehicle_number))).slice(0, 12);
   const all = vehicles.flatMap((v) => curveSessionsForVehicle(v).map((s) => s.curve));
-  const bySoc = new Map<number, { power: number; temp: number; current: number; voltage: number; n: number }>();
+  const bySoc = new Map<
+    number,
+    { power: number; temp: number; current: number; voltage: number; n: number }
+  >();
   all.flat().forEach((p) => {
     const e = bySoc.get(p.soc) ?? { power: 0, temp: 0, current: 0, voltage: 0, n: 0 };
     e.power += p.power_kw;
@@ -187,7 +194,10 @@ export function chargerAverageCurve(charger_id: string): CurvePoint[] {
     .flatMap((v) => curveSessionsForVehicle(v))
     .filter((s) => s.charger_id === charger_id);
   if (!all.length) return fleetAverageCurve();
-  const bySoc = new Map<number, { power: number; n: number; temp: number; current: number; voltage: number }>();
+  const bySoc = new Map<
+    number,
+    { power: number; n: number; temp: number; current: number; voltage: number }
+  >();
   all.forEach((s) =>
     s.curve.forEach((p) => {
       const e = bySoc.get(p.soc) ?? { power: 0, n: 0, temp: 0, current: 0, voltage: 0 };
@@ -227,25 +237,27 @@ export function energyFlowDaily(depots: DepotEnergyDaily[]): EnergyFlowDaily[] {
   depots.forEach((d) => byDate.set(d.date, (byDate.get(d.date) ?? 0) + d.total_energy_kwh));
   const out: EnergyFlowDaily[] = [];
   let i = 0;
-  [...byDate.entries()].sort(([a], [b]) => a.localeCompare(b)).forEach(([date, charger]) => {
-    const r = seeded(parseInt(date.replace(/-/g, ""), 10) + 17);
-    const gridLoss = 0.04 + r() * 0.04;
-    const grid = charger / (1 - gridLoss);
-    const cap = 0.92 + r() * 0.08;
-    const bus = charger * (cap - (i > 22 ? 0.06 : 0));
-    const efficiency = (bus / grid) * 100;
-    const stress = clamp(45 + (1 - cap) * 220 + r() * 18, 22, 96);
-    out.push({
-      date,
-      grid_intake_kwh: +grid.toFixed(0),
-      charger_output_kwh: +charger.toFixed(0),
-      bus_demand_kwh: +bus.toFixed(0),
-      delivery_efficiency: +efficiency.toFixed(1),
-      infra_stress: +stress.toFixed(1),
-      energy_gap_kwh: +(charger - bus).toFixed(0),
+  [...byDate.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .forEach(([date, charger]) => {
+      const r = seeded(parseInt(date.replace(/-/g, ""), 10) + 17);
+      const gridLoss = 0.04 + r() * 0.04;
+      const grid = charger / (1 - gridLoss);
+      const cap = 0.92 + r() * 0.08;
+      const bus = charger * (cap - (i > 22 ? 0.06 : 0));
+      const efficiency = (bus / grid) * 100;
+      const stress = clamp(45 + (1 - cap) * 220 + r() * 18, 22, 96);
+      out.push({
+        date,
+        grid_intake_kwh: +grid.toFixed(0),
+        charger_output_kwh: +charger.toFixed(0),
+        bus_demand_kwh: +bus.toFixed(0),
+        delivery_efficiency: +efficiency.toFixed(1),
+        infra_stress: +stress.toFixed(1),
+        energy_gap_kwh: +(charger - bus).toFixed(0),
+      });
+      i += 1;
     });
-    i += 1;
-  });
   return out;
 }
 
@@ -443,14 +455,34 @@ export interface LiveEvent {
 export function liveOpsFeed(seed = 13): LiveEvent[] {
   const r = seeded(seed);
   const templates = [
-    { s: "warning" as RiskLevel, t: (e: string) => `${e} taper onset shifted earlier by ${(8 + r() * 14).toFixed(0)}%` },
-    { s: "critical" as RiskLevel, t: (e: string) => `${e} showing abnormal thermal behavior — rise ${(38 + r() * 22).toFixed(0)}°C` },
+    {
+      s: "warning" as RiskLevel,
+      t: (e: string) => `${e} taper onset shifted earlier by ${(8 + r() * 14).toFixed(0)}%`,
+    },
+    {
+      s: "critical" as RiskLevel,
+      t: (e: string) =>
+        `${e} showing abnormal thermal behavior — rise ${(38 + r() * 22).toFixed(0)}°C`,
+    },
     { s: "warning" as RiskLevel, t: (e: string) => `Depot ${e} experiencing charger congestion` },
-    { s: "critical" as RiskLevel, t: (e: string) => `Transformer ${e} stress exceeding operational threshold` },
+    {
+      s: "critical" as RiskLevel,
+      t: (e: string) => `Transformer ${e} stress exceeding operational threshold`,
+    },
     { s: "healthy" as RiskLevel, t: (e: string) => `${e} returned to normal charging profile` },
     { s: "warning" as RiskLevel, t: (e: string) => `${e} charge acceptance dropped below 70%` },
   ];
-  const entities = ["Bus 0321", "TV-KHA-08", "TV-KHA-12", "Khapri", "TX-02", "Bus 1207", "TV-WAD-04", "Bus 1102", "MIHAN"];
+  const entities = [
+    "Bus 0321",
+    "TV-KHA-08",
+    "TV-KHA-12",
+    "Khapri",
+    "TX-02",
+    "Bus 1207",
+    "TV-WAD-04",
+    "Bus 1102",
+    "MIHAN",
+  ];
   const out: LiveEvent[] = [];
   for (let i = 0; i < 14; i++) {
     const tpl = templates[Math.floor(r() * templates.length)];
@@ -499,12 +531,15 @@ export function compatibilityMatrix(): CompatibilityCell[] {
     buses.forEach((bn, bi) => {
       chgs.forEach((cid, ci) => {
         const r = seeded(di * 1001 + bi * 53 + ci * 11);
-        const taperDelta = +(((r() - 0.5) * 30) - (bi === 0 && ci === 1 ? 18 : 0)).toFixed(1);
-        const thermalDelta = +(((r() - 0.4) * 35) + (ci === 0 ? 12 : 0)).toFixed(1);
-        const accept = +(((r() - 0.4) * 20)).toFixed(1);
+        const taperDelta = +((r() - 0.5) * 30 - (bi === 0 && ci === 1 ? 18 : 0)).toFixed(1);
+        const thermalDelta = +((r() - 0.4) * 35 + (ci === 0 ? 12 : 0)).toFixed(1);
+        const accept = +((r() - 0.4) * 20).toFixed(1);
         const sev: RiskLevel =
-          taperDelta < -12 || thermalDelta > 25 ? "critical" :
-          taperDelta < -6 || thermalDelta > 12 ? "warning" : "healthy";
+          taperDelta < -12 || thermalDelta > 25
+            ? "critical"
+            : taperDelta < -6 || thermalDelta > 12
+              ? "warning"
+              : "healthy";
         out.push({
           charger_id: cid,
           vehicle_number: bn,

@@ -1,7 +1,17 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Bus, Radio } from "lucide-react";
-import { Activity, AlertTriangle, BatteryCharging, Bolt, Flame, Gauge, ShieldCheck, Waves, Zap } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  BatteryCharging,
+  Bolt,
+  Flame,
+  Gauge,
+  ShieldCheck,
+  Waves,
+  Zap,
+} from "lucide-react";
 import { OperationalRibbon, type RibbonKpi } from "./OperationalRibbon";
 import { BusHealthStory } from "./BusHealthStory";
 import { ChargingCurveHero } from "./ChargingCurveHero";
@@ -21,14 +31,13 @@ import {
   predictiveInsights,
   vehicleListByDepot,
 } from "@/lib/intelligence-data";
-import {
-  BUS_HEALTH_DAILY,
-  CHARGER_HEALTH_DAILY,
-  DEPOT_ENERGY_DAILY,
-} from "@/lib/charger-data";
+import { BUS_HEALTH_DAILY, CHARGER_HEALTH_DAILY, DEPOT_ENERGY_DAILY } from "@/lib/charger-data";
 
 function sparkFromMap(map: Map<string, number>) {
-  return [...map.entries()].sort(([a], [b]) => a.localeCompare(b)).slice(-14).map(([, v]) => ({ v }));
+  return [...map.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(-14)
+    .map(([, v]) => ({ v }));
 }
 
 function buildRibbon(): RibbonKpi[] {
@@ -61,17 +70,25 @@ function buildRibbon(): RibbonKpi[] {
   const lastFlow = flow[flow.length - 1];
 
   const sparkH = new Map<string, number>();
-  buses.forEach((b) => sparkH.set(b.date, (sparkH.get(b.date) ?? 0) + b.operational_health_score / 1));
+  buses.forEach((b) =>
+    sparkH.set(b.date, (sparkH.get(b.date) ?? 0) + b.operational_health_score / 1),
+  );
   const sparkC = new Map<string, number>();
   chargers.forEach((c) => sparkC.set(c.date, (sparkC.get(c.date) ?? 0) + c.health_score / 1));
   const sparkD = new Map<string, number>();
   depots.forEach((d) => sparkD.set(d.date, (sparkD.get(d.date) ?? 0) + d.operational_score / 1));
   const sparkAbnC = new Map<string, number>();
-  chargers.forEach((c) => sparkAbnC.set(c.date, (sparkAbnC.get(c.date) ?? 0) + (c.is_abnormal ? 1 : 0)));
+  chargers.forEach((c) =>
+    sparkAbnC.set(c.date, (sparkAbnC.get(c.date) ?? 0) + (c.is_abnormal ? 1 : 0)),
+  );
   const sparkAbnB = new Map<string, number>();
-  buses.forEach((b) => sparkAbnB.set(b.date, (sparkAbnB.get(b.date) ?? 0) + (b.is_abnormal ? 1 : 0)));
+  buses.forEach((b) =>
+    sparkAbnB.set(b.date, (sparkAbnB.get(b.date) ?? 0) + (b.is_abnormal ? 1 : 0)),
+  );
   const sparkStab = new Map<string, number>();
-  buses.forEach((b) => sparkStab.set(b.date, (sparkStab.get(b.date) ?? 0) + b.charging_consistency));
+  buses.forEach((b) =>
+    sparkStab.set(b.date, (sparkStab.get(b.date) ?? 0) + b.charging_consistency),
+  );
   const sparkEff = new Map<string, number>();
   buses.forEach((b) => sparkEff.set(b.date, (sparkEff.get(b.date) ?? 0) + b.energy_per_soc_pct));
   const sparkTh = new Map<string, number>();
@@ -83,64 +100,107 @@ function buildRibbon(): RibbonKpi[] {
 
   return [
     {
-      id: "fleet", label: "Fleet operational health", value: fleetHealth.toFixed(0), unit: "/100",
+      id: "fleet",
+      label: "Fleet operational health",
+      value: fleetHealth.toFixed(0),
+      unit: "/100",
       delta: pct(fleetHealth, fleetPrev),
       severity: fleetHealth > 75 ? "healthy" : fleetHealth > 60 ? "warning" : "critical",
-      spark: sparkFromMap(sparkH), icon: ShieldCheck,
+      spark: sparkFromMap(sparkH),
+      icon: ShieldCheck,
       insight: `${abnBus} buses flagged · driven by taper aggressiveness`,
     },
     {
-      id: "charger", label: "Charger health", value: chgHealth.toFixed(0), unit: "/100",
+      id: "charger",
+      label: "Charger health",
+      value: chgHealth.toFixed(0),
+      unit: "/100",
       delta: pct(chgHealth, chgPrev),
       severity: chgHealth > 75 ? "healthy" : chgHealth > 60 ? "warning" : "critical",
-      spark: sparkFromMap(sparkC), icon: Bolt,
+      spark: sparkFromMap(sparkC),
+      icon: Bolt,
       insight: `${activeChg} active · ${abnChg} abnormal in last 24h`,
     },
     {
-      id: "depot", label: "Depot operational score", value: depotScore.toFixed(0), unit: "/100",
+      id: "depot",
+      label: "Depot operational score",
+      value: depotScore.toFixed(0),
+      unit: "/100",
       severity: depotScore > 75 ? "healthy" : depotScore > 60 ? "warning" : "critical",
-      spark: sparkFromMap(sparkD), icon: Activity,
+      spark: sparkFromMap(sparkD),
+      icon: Activity,
       insight: "Khapri leading · BKC under congestion",
     },
     {
-      id: "active", label: "Active chargers", value: String(activeChg),
-      severity: "healthy", spark: sparkFromMap(sparkC), icon: BatteryCharging,
+      id: "active",
+      label: "Active chargers",
+      value: String(activeChg),
+      severity: "healthy",
+      spark: sparkFromMap(sparkC),
+      icon: BatteryCharging,
       insight: "All depots reporting telemetry",
     },
     {
-      id: "abChg", label: "Abnormal chargers", value: String(abnChg),
+      id: "abChg",
+      label: "Abnormal chargers",
+      value: String(abnChg),
       severity: abnChg > 5 ? "critical" : abnChg > 2 ? "warning" : "healthy",
-      spark: sparkFromMap(sparkAbnC), icon: AlertTriangle,
+      spark: sparkFromMap(sparkAbnC),
+      icon: AlertTriangle,
       insight: "Driven by declining acceptance & thermal rise",
     },
     {
-      id: "abBus", label: "Abnormal buses", value: String(abnBus),
+      id: "abBus",
+      label: "Abnormal buses",
+      value: String(abnBus),
       severity: abnBus > 8 ? "critical" : abnBus > 4 ? "warning" : "healthy",
-      spark: sparkFromMap(sparkAbnB), icon: AlertTriangle,
+      spark: sparkFromMap(sparkAbnB),
+      icon: AlertTriangle,
       insight: "Early-CV onset detected on 3 vehicles",
     },
     {
-      id: "stab", label: "Charging curve stability", value: stability.toFixed(0), unit: "/100",
+      id: "stab",
+      label: "Charging curve stability",
+      value: stability.toFixed(0),
+      unit: "/100",
       severity: stability > 78 ? "healthy" : stability > 65 ? "warning" : "critical",
-      spark: sparkFromMap(sparkStab), icon: Waves,
+      spark: sparkFromMap(sparkStab),
+      icon: Waves,
       insight: "Deteriorated 8% — increased taper aggressiveness",
     },
     {
-      id: "eff", label: "Charging efficiency", value: efficiency.toFixed(0), unit: "%",
+      id: "eff",
+      label: "Charging efficiency",
+      value: efficiency.toFixed(0),
+      unit: "%",
       severity: efficiency > 80 ? "healthy" : efficiency > 70 ? "warning" : "critical",
-      spark: sparkFromMap(sparkEff), icon: Gauge,
+      spark: sparkFromMap(sparkEff),
+      icon: Gauge,
       insight: "Energy delivered per SOC point — within band",
     },
     {
-      id: "thermal", label: "Thermal stability", value: thermal.toFixed(0), unit: "/100",
+      id: "thermal",
+      label: "Thermal stability",
+      value: thermal.toFixed(0),
+      unit: "/100",
       severity: thermal > 75 ? "healthy" : thermal > 60 ? "warning" : "critical",
-      spark: sparkFromMap(sparkTh).map((p) => ({ v: 100 - p.v })), icon: Flame,
+      spark: sparkFromMap(sparkTh).map((p) => ({ v: 100 - p.v })),
+      icon: Flame,
       insight: "CV-phase thermal rise increasing fleet-wide",
     },
     {
-      id: "deliv", label: "Energy delivery stability", value: lastFlow?.delivery_efficiency.toFixed(1) ?? "0", unit: "%",
-      severity: (lastFlow?.delivery_efficiency ?? 0) > 90 ? "healthy" : (lastFlow?.delivery_efficiency ?? 0) > 85 ? "warning" : "critical",
-      spark: sparkFromMap(sparkDel), icon: Zap,
+      id: "deliv",
+      label: "Energy delivery stability",
+      value: lastFlow?.delivery_efficiency.toFixed(1) ?? "0",
+      unit: "%",
+      severity:
+        (lastFlow?.delivery_efficiency ?? 0) > 90
+          ? "healthy"
+          : (lastFlow?.delivery_efficiency ?? 0) > 85
+            ? "warning"
+            : "critical",
+      spark: sparkFromMap(sparkDel),
+      icon: Zap,
       insight: `${lastFlow?.energy_gap_kwh.toFixed(0) ?? 0} kWh delivery gap at peak`,
     },
   ];
@@ -158,10 +218,7 @@ export function IntelligenceCommandCenter() {
     () => operationalNarratives(BUS_HEALTH_DAILY, CHARGER_HEALTH_DAILY, flow),
     [flow],
   );
-  const predictive = useMemo(
-    () => predictiveInsights(BUS_HEALTH_DAILY, CHARGER_HEALTH_DAILY),
-    [],
-  );
+  const predictive = useMemo(() => predictiveInsights(BUS_HEALTH_DAILY, CHARGER_HEALTH_DAILY), []);
 
   return (
     <div className="space-y-8">
@@ -176,7 +233,13 @@ export function IntelligenceCommandCenter() {
             "linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, var(--card)) 0%, var(--card) 60%)",
         }}
       >
-        <div className="pointer-events-none absolute inset-0 opacity-50" style={{ background: "radial-gradient(circle at 12% 20%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 55%)" }} />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle at 12% 20%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 55%)",
+          }}
+        />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-primary">
@@ -186,8 +249,8 @@ export function IntelligenceCommandCenter() {
               Charging Intelligence Command Center
             </h1>
             <p className="mt-2 max-w-xl text-[13px] text-muted-foreground">
-              Operationally alive war-room — explains <em>why</em> bus health drops, why curves degrade, why
-              energy delivery stalls, and what to do about it.
+              Operationally alive war-room — explains <em>why</em> bus health drops, why curves
+              degrade, why energy delivery stalls, and what to do about it.
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -237,7 +300,11 @@ export function IntelligenceCommandCenter() {
         <SectionTitle eyebrow="Section 03" title="Live operational intelligence" />
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <LiveOpsFeed />
-          <RiskRanking buses={BUS_HEALTH_DAILY} chargers={CHARGER_HEALTH_DAILY} depots={DEPOT_ENERGY_DAILY} />
+          <RiskRanking
+            buses={BUS_HEALTH_DAILY}
+            chargers={CHARGER_HEALTH_DAILY}
+            depots={DEPOT_ENERGY_DAILY}
+          />
         </div>
         <PredictiveCards insights={predictive} />
       </section>
@@ -249,7 +316,9 @@ function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <div className="flex items-end justify-between gap-4 border-b border-border/40 pb-2">
       <div>
-        <div className="text-[10.5px] font-medium uppercase tracking-[0.2em] text-primary">{eyebrow}</div>
+        <div className="text-[10.5px] font-medium uppercase tracking-[0.2em] text-primary">
+          {eyebrow}
+        </div>
         <h2 className="mt-0.5 text-[18px] font-semibold tracking-tight">{title}</h2>
       </div>
     </div>

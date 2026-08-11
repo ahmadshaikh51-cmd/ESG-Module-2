@@ -38,12 +38,9 @@ export const AUTH_API_BASE =
  * (`#access_token=…&refresh_token=…`).
  */
 export function buildMicrosoftLoginUrl(redirectPath = "/auth/callback"): string {
-  const origin =
-    typeof window !== "undefined" ? window.location.origin : "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
   const callbackUrl = `${origin}${redirectPath}`;
-  return `${AUTH_API_BASE}/auth/microsoft/login?redirect_uri=${encodeURIComponent(
-    callbackUrl,
-  )}`;
+  return `${AUTH_API_BASE}/auth/microsoft/login?redirect_uri=${encodeURIComponent(callbackUrl)}`;
 }
 
 export function getAuthToken(): string | null {
@@ -79,8 +76,7 @@ export async function fetchCurrentUserFromApi(): Promise<AuthUser | null> {
     const data = body?.data ?? body ?? {};
     const email: string = (data.email || data.username || "").trim();
     if (!email) return null;
-    const name: string | undefined =
-      data.full_name || data.name || data.username || undefined;
+    const name: string | undefined = data.full_name || data.name || data.username || undefined;
     return { email, provider: "microsoft", name };
   } catch {
     return null;
@@ -96,7 +92,6 @@ export const DATA_SYNC_ALLOWLIST: string[] = [
   "kunal.s@transvolt.in",
   "sumit.k@transvolt.in",
   "saud.s@transvolt.in",
-
 ];
 
 export function getCurrentUser(): AuthUser | null {

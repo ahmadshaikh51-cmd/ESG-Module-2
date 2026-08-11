@@ -1,11 +1,30 @@
 import { useMemo, useRef, useState } from "react";
-import { AlertTriangle, Download, FileSpreadsheet, PencilLine, TriangleAlert, Upload } from "lucide-react";
+import {
+  AlertTriangle,
+  Download,
+  FileSpreadsheet,
+  PencilLine,
+  TriangleAlert,
+  Upload,
+} from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   ESG_GROUP,
@@ -23,7 +42,11 @@ import { Segmented } from "../Segmented";
 
 const CATEGORIES: MonitoringCategory[] = ["air", "water", "noise", "waste"];
 const DEPOTS = ESG_GROUP.entities.flatMap((e) =>
-  e.depots.map((d) => ({ entityId: e.id, depotId: d.id, label: `${e.short} · ${d.name.replace(" Depot", "")}` })),
+  e.depots.map((d) => ({
+    entityId: e.id,
+    depotId: d.id,
+    label: `${e.short} · ${d.name.replace(" Depot", "")}`,
+  })),
 );
 
 function BreachPill() {
@@ -54,7 +77,16 @@ function Sparkline({ values, limit }: { values: (number | null)[]; limit?: numbe
   return (
     <svg width={w} height={h} className="overflow-visible" aria-hidden>
       {limit != null && (
-        <line x1={0} x2={w} y1={y(limit)} y2={y(limit)} stroke="var(--color-destructive)" strokeDasharray="2 2" strokeWidth={1} opacity={0.5} />
+        <line
+          x1={0}
+          x2={w}
+          y1={y(limit)}
+          y2={y(limit)}
+          stroke="var(--color-destructive)"
+          strokeDasharray="2 2"
+          strokeWidth={1}
+          opacity={0.5}
+        />
       )}
       <polyline points={line} fill="none" stroke="var(--color-primary)" strokeWidth={1.5} />
     </svg>
@@ -114,7 +146,9 @@ function ImportDialog({
           })
           .filter((r) => r.paramKey);
         if (!parsed.length) {
-          setError("No recognisable rows. Use the template — a `paramKey` and `value` column are required.");
+          setError(
+            "No recognisable rows. Use the template — a `paramKey` and `value` column are required.",
+          );
           return;
         }
         setRows(parsed);
@@ -170,7 +204,9 @@ function ImportDialog({
           >
             <Upload className="h-6 w-6 text-muted-foreground" aria-hidden />
             <span className="text-[12.5px] font-medium">Drop an .xlsx file or click to choose</span>
-            <span className="text-[11px] text-muted-foreground">Parsed in your browser — nothing is uploaded</span>
+            <span className="text-[11px] text-muted-foreground">
+              Parsed in your browser — nothing is uploaded
+            </span>
           </button>
         ) : (
           <div className="space-y-2">
@@ -188,9 +224,17 @@ function ImportDialog({
                 </thead>
                 <tbody>
                   {rows.map((r, i) => (
-                    <tr key={i} className={cn("border-b border-border/40 last:border-0", !r.matched && "bg-warning/5")}>
+                    <tr
+                      key={i}
+                      className={cn(
+                        "border-b border-border/40 last:border-0",
+                        !r.matched && "bg-warning/5",
+                      )}
+                    >
                       <td className="px-3 py-1.5">{r.label || r.paramKey}</td>
-                      <td className="num px-3 py-1.5 text-right">{Number.isFinite(r.value) ? r.value : "—"}</td>
+                      <td className="num px-3 py-1.5 text-right">
+                        {Number.isFinite(r.value) ? r.value : "—"}
+                      </td>
                       <td className="px-3 py-1.5">
                         {r.matched ? (
                           <span className="text-[11px] text-success">will import</span>
@@ -235,7 +279,13 @@ function downloadTemplate() {
       { key: "limit", header: "limit" },
       { key: "value", header: "value" },
     ],
-    MONITORING_PARAMS.map((p) => ({ paramKey: p.key, label: p.label, unit: p.unit, limit: p.limit ?? "", value: "" })),
+    MONITORING_PARAMS.map((p) => ({
+      paramKey: p.key,
+      label: p.label,
+      unit: p.unit,
+      limit: p.limit ?? "",
+      value: "",
+    })),
     "Template",
   );
   toast.success("Template downloaded", { description: "Fill the `value` column and import." });
@@ -252,7 +302,9 @@ export function MonitoringPanel() {
   const [manual, setManual] = useState<Record<string, string>>({});
 
   const [depot, setDepot] = useState(() => {
-    const fromScope = DEPOTS.find((d) => d.entityId === scope.entityId && (!scope.depotId || d.depotId === scope.depotId));
+    const fromScope = DEPOTS.find(
+      (d) => d.entityId === scope.entityId && (!scope.depotId || d.depotId === scope.depotId),
+    );
     return fromScope ?? DEPOTS[0];
   });
 
@@ -269,7 +321,13 @@ export function MonitoringPanel() {
 
   const commitManual = (paramKey: string, raw: string) => {
     const v = raw.trim() === "" ? null : Number(raw);
-    wf.setReading(paramKey, depot.entityId, depot.depotId, period, v == null || Number.isNaN(v) ? null : v);
+    wf.setReading(
+      paramKey,
+      depot.entityId,
+      depot.depotId,
+      period,
+      v == null || Number.isNaN(v) ? null : v,
+    );
   };
 
   return (
@@ -289,7 +347,11 @@ export function MonitoringPanel() {
             </SelectTrigger>
             <SelectContent>
               {DEPOTS.map((d) => (
-                <SelectItem key={`${d.entityId}|${d.depotId}`} value={`${d.entityId}|${d.depotId}`} className="text-[12px]">
+                <SelectItem
+                  key={`${d.entityId}|${d.depotId}`}
+                  value={`${d.entityId}|${d.depotId}`}
+                  className="text-[12px]"
+                >
                   {d.label}
                 </SelectItem>
               ))}
@@ -314,16 +376,27 @@ export function MonitoringPanel() {
       {breachCount > 0 && !external && (
         <div className="flex items-center gap-2.5 rounded-xl border border-destructive/35 bg-destructive/6 px-4 py-2.5 text-[12px] font-medium text-destructive">
           <TriangleAlert className="h-4 w-4 shrink-0" aria-hidden />
-          {breachCount} parameter{breachCount === 1 ? "" : "s"} breaching the regulatory limit this period — withheld from the external view.
+          {breachCount} parameter{breachCount === 1 ? "" : "s"} breaching the regulatory limit this
+          period — withheld from the external view.
         </div>
       )}
 
       {view === "entry" && (
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1.5 text-[12px]" onClick={downloadTemplate}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1.5 text-[12px]"
+            onClick={downloadTemplate}
+          >
             <Download className="h-3.5 w-3.5" aria-hidden /> Template
           </Button>
-          <Button size="sm" className="h-8 gap-1.5 text-[12px]" onClick={() => setImportOpen(true)} disabled={!canEdit}>
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 text-[12px]"
+            onClick={() => setImportOpen(true)}
+            disabled={!canEdit}
+          >
             <Upload className="h-3.5 w-3.5" aria-hidden /> Import Excel
           </Button>
         </div>
@@ -361,7 +434,9 @@ export function MonitoringPanel() {
                             <WithheldPill />
                           </>
                         )}
-                        {cell.source === "excel" && cell.prov && <ProvenanceChip prov={cell.prov} />}
+                        {cell.source === "excel" && cell.prov && (
+                          <ProvenanceChip prov={cell.prov} />
+                        )}
                       </div>
                       <div className="mt-0.5 text-[11px] text-muted-foreground">
                         {p.unit}
@@ -377,7 +452,9 @@ export function MonitoringPanel() {
 
                     <div className="w-[130px] shrink-0 text-right">
                       {breach && external ? (
-                        <span className="text-[11px] font-medium text-muted-foreground">Withheld</span>
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          Withheld
+                        </span>
                       ) : view === "entry" && canEdit ? (
                         <Input
                           inputMode="decimal"
@@ -395,7 +472,11 @@ export function MonitoringPanel() {
                         <span
                           className={cn(
                             "num text-[14px] font-semibold",
-                            breach ? "text-destructive" : cell.value == null ? "text-muted-foreground" : "text-foreground",
+                            breach
+                              ? "text-destructive"
+                              : cell.value == null
+                                ? "text-muted-foreground"
+                                : "text-foreground",
                           )}
                         >
                           {cell.value ?? "—"}

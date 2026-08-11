@@ -1,9 +1,4 @@
-import type {
-  MergedTrip,
-  MisTripRow,
-  ScheduleMetrics,
-  ScheduleReportRow,
-} from "./types";
+import type { MergedTrip, MisTripRow, ScheduleMetrics, ScheduleReportRow } from "./types";
 import { scheduleKey } from "./keys";
 import type { OverlayMap } from "./merge";
 import { mergeAllTrips } from "./merge";
@@ -83,9 +78,7 @@ export function buildScheduleReports(
       .map((t) => t.endTime)
       .sort();
 
-    const aToB = trips
-      .filter((t) => t.status !== "extra")
-      .reduce((s, t) => s + t.distanceInKM, 0);
+    const aToB = trips.filter((t) => t.status !== "extra").reduce((s, t) => s + t.distanceInKM, 0);
     const roundTrip = aToB * 2;
 
     sr += 1;
@@ -116,8 +109,8 @@ export function buildScheduleReports(
     });
   });
 
-  return reports.sort((a, b) =>
-    a.scheduleCode.localeCompare(b.scheduleCode) || a.shift.localeCompare(b.shift),
+  return reports.sort(
+    (a, b) => a.scheduleCode.localeCompare(b.scheduleCode) || a.shift.localeCompare(b.shift),
   );
 }
 

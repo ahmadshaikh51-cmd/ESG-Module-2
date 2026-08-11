@@ -27,7 +27,8 @@ export interface ChargerFilters {
 }
 
 export const DEFAULT_CHARGER_FILTERS: ChargerFilters = {
-  from: BUS_HEALTH_DAILY[BUS_HEALTH_DAILY.length - 30]?.date ?? new Date().toISOString().slice(0, 10),
+  from:
+    BUS_HEALTH_DAILY[BUS_HEALTH_DAILY.length - 30]?.date ?? new Date().toISOString().slice(0, 10),
   to: BUS_HEALTH_DAILY[BUS_HEALTH_DAILY.length - 1]?.date ?? new Date().toISOString().slice(0, 10),
   depotIds: [],
   chargerIds: [],
@@ -103,7 +104,9 @@ export function executiveKpis(
   const todayEnergy = todayDepots.reduce((s, d) => s + d.total_energy_kwh, 0);
 
   const dailyByDate = new Map<string, number>();
-  depots.forEach((d) => dailyByDate.set(d.date, (dailyByDate.get(d.date) ?? 0) + d.total_energy_kwh));
+  depots.forEach((d) =>
+    dailyByDate.set(d.date, (dailyByDate.get(d.date) ?? 0) + d.total_energy_kwh),
+  );
   const sparkEnergy = [...dailyByDate.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .slice(-14)
@@ -193,8 +196,7 @@ export function busLeaderboard(rows: BusOperationalHealthDaily[]): BusLeaderboar
     const latest = days[days.length - 1];
     const sessions = days.reduce((s, d) => s + d.sessions, 0);
     const trend = days.slice(-14).map((d) => d.operational_health_score);
-    const abnormality_score =
-      days.reduce((s, d) => s + d.abnormality_score, 0) / days.length;
+    const abnormality_score = days.reduce((s, d) => s + d.abnormality_score, 0) / days.length;
     const operational_health_score =
       days.reduce((s, d) => s + d.operational_health_score, 0) / days.length;
 
@@ -277,19 +279,16 @@ export function dailyFleetTrends(buses: BusOperationalHealthDaily[], depots: Dep
     return {
       date: date.slice(5),
       abnormalBuses: new Set(dayBuses.filter((b) => b.is_abnormal).map((b) => b.vehicle_id)).size,
-      operationalHealth:
-        dayBuses.length
-          ? dayBuses.reduce((s, b) => s + b.operational_health_score, 0) / dayBuses.length
-          : 0,
+      operationalHealth: dayBuses.length
+        ? dayBuses.reduce((s, b) => s + b.operational_health_score, 0) / dayBuses.length
+        : 0,
       disconnects: dayBuses.reduce((s, b) => s + b.disconnect_sessions, 0),
-      thermalStress:
-        dayBuses.length
-          ? dayBuses.reduce((s, b) => s + b.thermal_stress, 0) / dayBuses.length
-          : 0,
-      abnormalityScore:
-        dayBuses.length
-          ? dayBuses.reduce((s, b) => s + b.abnormality_score, 0) / dayBuses.length
-          : 0,
+      thermalStress: dayBuses.length
+        ? dayBuses.reduce((s, b) => s + b.thermal_stress, 0) / dayBuses.length
+        : 0,
+      abnormalityScore: dayBuses.length
+        ? dayBuses.reduce((s, b) => s + b.abnormality_score, 0) / dayBuses.length
+        : 0,
       sessions: dayDepots.reduce((s, d) => s + d.sessions, 0),
     };
   });
@@ -337,8 +336,7 @@ export function chargerDailyTrends(chargers: ChargerHealthDaily[]) {
       date: date.slice(5),
       sessions: day.reduce((s, c) => s + c.sessions, 0),
       energy: +day.reduce((s, c) => s + c.total_energy_kwh, 0).toFixed(0),
-      avgDuration:
-        day.reduce((s, c) => s + c.avg_duration_min, 0) / day.length,
+      avgDuration: day.reduce((s, c) => s + c.avg_duration_min, 0) / day.length,
       disconnects: day.reduce((s, c) => s + c.disconnect_sessions, 0),
     }));
 }
@@ -405,10 +403,7 @@ export function criticalRisks(
   };
 }
 
-export function applyTrendWindow<T extends { date: string }>(
-  rows: T[],
-  window: TrendWindow,
-): T[] {
+export function applyTrendWindow<T extends { date: string }>(rows: T[], window: TrendWindow): T[] {
   const days = window === "1D" ? 1 : window === "7D" ? 7 : 30;
   const dates = [...new Set(rows.map((r) => r.date))].sort();
   const cutoff = dates[dates.length - days] ?? dates[0];
@@ -463,11 +458,13 @@ export function kpiTrendByDay(
   sessions: ChargingSession[],
   metric: ChargerKpiMetric,
 ) {
-  const dates = [...new Set([
-    ...buses.map((b) => b.date),
-    ...chargers.map((c) => c.date),
-    ...sessions.map((s) => s.date),
-  ])].sort();
+  const dates = [
+    ...new Set([
+      ...buses.map((b) => b.date),
+      ...chargers.map((c) => c.date),
+      ...sessions.map((s) => s.date),
+    ]),
+  ].sort();
 
   return dates.map((date) => {
     const dayBuses = buses.filter((b) => b.date === date);
@@ -505,7 +502,10 @@ export function kpiTrendByDay(
           ? (daySessions.filter((s) => s.disconnect).length / daySessions.length) * 100
           : dayChargers.length
             ? (dayChargers.reduce((s, c) => s + c.disconnect_sessions, 0) /
-                Math.max(dayChargers.reduce((s, c) => s + c.sessions, 0), 1)) *
+                Math.max(
+                  dayChargers.reduce((s, c) => s + c.sessions, 0),
+                  1,
+                )) *
               100
             : 0;
         break;
@@ -620,7 +620,13 @@ export function abnormalityDrivers(
         ? (busSessions.filter((s) => s.disconnect).length / busSessions.length) * 100
         : 0;
 
-      const mk = (kpi: string, value: number, fleetAvg: number, unit: string, lowerBad: boolean) => {
+      const mk = (
+        kpi: string,
+        value: number,
+        fleetAvg: number,
+        unit: string,
+        lowerBad: boolean,
+      ) => {
         const pctVsAvg = ((value - fleetAvg) / fleetAvg) * 100;
         const triggered = lowerBad ? pctVsAvg > 15 : pctVsAvg < -15;
         return { kpi, value, fleetAvg, unit, pctVsAvg, triggered };
@@ -646,7 +652,13 @@ export function abnormalityDrivers(
     .filter((c) => c.risk !== "healthy")
     .slice(0, 5)
     .map((c) => {
-      const mk = (kpi: string, value: number, fleetAvg: number, unit: string, lowerBad: boolean) => {
+      const mk = (
+        kpi: string,
+        value: number,
+        fleetAvg: number,
+        unit: string,
+        lowerBad: boolean,
+      ) => {
         const pctVsAvg = ((value - fleetAvg) / fleetAvg) * 100;
         const triggered = lowerBad ? pctVsAvg > 15 : pctVsAvg < -15;
         return { kpi, value, fleetAvg, unit, pctVsAvg, triggered };
@@ -752,10 +764,7 @@ export const BUS_BEHAVIOR_META: Record<
   abnormality: { label: "Abnormality score", unit: "/100", lowerIsBetter: true },
 };
 
-export function busBehaviorTrend(
-  buses: BusOperationalHealthDaily[],
-  metric: BusBehaviorMetric,
-) {
+export function busBehaviorTrend(buses: BusOperationalHealthDaily[], metric: BusBehaviorMetric) {
   const dates = [...new Set(buses.map((b) => b.date))].sort();
   return dates.map((date) => {
     const day = buses.filter((b) => b.date === date);
@@ -802,13 +811,10 @@ export function commandRibbonKpis(
   base: ExecutiveKpis,
 ): CommandKpiCard[] {
   const totalExpense = depots.reduce((s, d) => s + d.estimated_expense_inr, 0);
-  const energyPerSoc = buses.length
-    ? avg(buses.map((b) => b.energy_per_soc_pct))
-    : 0;
-  const prevExpense = depots.filter((d) => d.date === depots[depots.length - 2]?.date).reduce(
-    (s, d) => s + d.estimated_expense_inr,
-    0,
-  );
+  const energyPerSoc = buses.length ? avg(buses.map((b) => b.energy_per_soc_pct)) : 0;
+  const prevExpense = depots
+    .filter((d) => d.date === depots[depots.length - 2]?.date)
+    .reduce((s, d) => s + d.estimated_expense_inr, 0);
   const expenseDelta = prevExpense ? ((totalExpense - prevExpense) / prevExpense) * 100 : 0;
 
   const sev = (v: number, warn: number, crit: number, invert = false): RiskLevel | "neutral" => {
@@ -878,7 +884,8 @@ export function commandRibbonKpis(
       value: String(base.abnormalBuses),
       delta: -3,
       positiveIsGood: false,
-      severity: base.abnormalBuses > 5 ? "critical" : base.abnormalBuses > 2 ? "warning" : "neutral",
+      severity:
+        base.abnormalBuses > 5 ? "critical" : base.abnormalBuses > 2 ? "warning" : "neutral",
       spark: base.sparkHealth,
       insight: "Buses breaching abnormality thresholds on thermal, disconnect, or efficiency KPIs.",
     },
@@ -888,7 +895,8 @@ export function commandRibbonKpis(
       value: String(base.abnormalChargers),
       delta: 1.2,
       positiveIsGood: false,
-      severity: base.abnormalChargers > 4 ? "critical" : base.abnormalChargers > 2 ? "warning" : "neutral",
+      severity:
+        base.abnormalChargers > 4 ? "critical" : base.abnormalChargers > 2 ? "warning" : "neutral",
       spark: base.sparkSessions,
       insight: "Chargers with elevated disconnect or declining throughput.",
     },
@@ -910,7 +918,12 @@ export function commandRibbonKpis(
       unit: "%",
       delta: -0.4,
       positiveIsGood: false,
-      severity: base.disconnectRate > 0.12 ? "critical" : base.disconnectRate > 0.08 ? "warning" : "neutral",
+      severity:
+        base.disconnectRate > 0.12
+          ? "critical"
+          : base.disconnectRate > 0.08
+            ? "warning"
+            : "neutral",
       spark: base.sparkSessions,
       insight: "Session-level disconnect frequency across charger infrastructure.",
     },
@@ -1003,7 +1016,12 @@ export const BUS_KPI_TREND_KEYS: BusKpiTrendKey[] = [
 
 export const BUS_KPI_TREND_META: Record<
   BusKpiTrendKey,
-  { label: string; unit: string; lowerIsBetter: boolean; pick: (b: BusOperationalHealthDaily) => number }
+  {
+    label: string;
+    unit: string;
+    lowerIsBetter: boolean;
+    pick: (b: BusOperationalHealthDaily) => number;
+  }
 > = {
   total_energy_kwh: {
     label: "Total energy",
@@ -1091,9 +1109,7 @@ export function abnormalBusRows(
   daily: BusOperationalHealthDaily[],
   leaderboard: BusLeaderboardRow[],
 ): BusLeaderboardRow[] {
-  const abnormalIds = new Set(
-    daily.filter((b) => b.is_abnormal).map((b) => b.vehicle_id),
-  );
+  const abnormalIds = new Set(daily.filter((b) => b.is_abnormal).map((b) => b.vehicle_id));
   return [...leaderboard]
     .filter((b) => b.risk !== "healthy" || abnormalIds.has(b.vehicle_id))
     .sort((a, b) => b.abnormality_score - a.abnormality_score);
@@ -1201,9 +1217,7 @@ export function abnormalChargerRows(
   daily: ChargerHealthDaily[],
   leaderboard: ChargerLeaderboardRow[],
 ): ChargerLeaderboardRow[] {
-  const abnormalIds = new Set(
-    daily.filter((c) => c.is_abnormal).map((c) => c.charger_id),
-  );
+  const abnormalIds = new Set(daily.filter((c) => c.is_abnormal).map((c) => c.charger_id));
   return [...leaderboard]
     .filter((c) => c.risk !== "healthy" || abnormalIds.has(c.charger_id))
     .sort((a, b) => b.abnormality_score - a.abnormality_score);

@@ -47,7 +47,9 @@ export function CompatibilityMatrix() {
           <table className="border-separate border-spacing-1">
             <thead>
               <tr>
-                <th className="px-2 text-left text-[10px] uppercase tracking-wider text-muted-foreground">Bus \ Charger</th>
+                <th className="px-2 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Bus \ Charger
+                </th>
                 {chargers.map((c) => (
                   <th key={c} className="px-2 text-[10px] font-medium text-muted-foreground">
                     {c.split("-").slice(-1)[0]}
@@ -58,13 +60,18 @@ export function CompatibilityMatrix() {
             <tbody>
               {buses.map((b) => (
                 <tr key={b}>
-                  <td className="pr-2 text-right text-[11px] font-medium text-muted-foreground">{b}</td>
+                  <td className="pr-2 text-right text-[11px] font-medium text-muted-foreground">
+                    {b}
+                  </td>
                   {chargers.map((c) => {
                     const cell = grid.get(`${b}|${c}`);
-                    if (!cell)
-                      return <td key={c} className="h-9 w-9 rounded-md bg-muted/30" />;
+                    if (!cell) return <td key={c} className="h-9 w-9 rounded-md bg-muted/30" />;
                     const intensity =
-                      cell.severity === "critical" ? 0.85 : cell.severity === "warning" ? 0.55 : 0.28;
+                      cell.severity === "critical"
+                        ? 0.85
+                        : cell.severity === "warning"
+                          ? 0.55
+                          : 0.28;
                     return (
                       <td key={c} className="p-0">
                         <motion.button
@@ -91,15 +98,24 @@ export function CompatibilityMatrix() {
           </table>
           <div className="mt-3 flex items-center gap-3 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded" style={{ background: SEV_BG.healthy, opacity: 0.4 }} />
+              <span
+                className="h-3 w-3 rounded"
+                style={{ background: SEV_BG.healthy, opacity: 0.4 }}
+              />
               Stable
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded" style={{ background: SEV_BG.warning, opacity: 0.55 }} />
+              <span
+                className="h-3 w-3 rounded"
+                style={{ background: SEV_BG.warning, opacity: 0.55 }}
+              />
               Elevated stress
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded" style={{ background: SEV_BG.critical, opacity: 0.85 }} />
+              <span
+                className="h-3 w-3 rounded"
+                style={{ background: SEV_BG.critical, opacity: 0.85 }}
+              />
               Incompatible
             </span>
             <span className="ml-auto">Cells show taper delta % vs fleet norm</span>
@@ -117,16 +133,30 @@ export function CompatibilityMatrix() {
                 </div>
                 <p className="text-muted-foreground">{hover.note}</p>
                 <div className="grid grid-cols-3 gap-2 pt-1">
-                  <Mini label="Taper Δ" value={`${hover.taper_delta_pct > 0 ? "+" : ""}${hover.taper_delta_pct}%`} bad={hover.taper_delta_pct < -8} />
-                  <Mini label="Thermal Δ" value={`${hover.thermal_delta_pct > 0 ? "+" : ""}${hover.thermal_delta_pct}%`} bad={hover.thermal_delta_pct > 15} />
-                  <Mini label="Accept Δ" value={`${hover.acceptance_delta_pct > 0 ? "+" : ""}${hover.acceptance_delta_pct}%`} bad={hover.acceptance_delta_pct < -5} />
+                  <Mini
+                    label="Taper Δ"
+                    value={`${hover.taper_delta_pct > 0 ? "+" : ""}${hover.taper_delta_pct}%`}
+                    bad={hover.taper_delta_pct < -8}
+                  />
+                  <Mini
+                    label="Thermal Δ"
+                    value={`${hover.thermal_delta_pct > 0 ? "+" : ""}${hover.thermal_delta_pct}%`}
+                    bad={hover.thermal_delta_pct > 15}
+                  />
+                  <Mini
+                    label="Accept Δ"
+                    value={`${hover.acceptance_delta_pct > 0 ? "+" : ""}${hover.acceptance_delta_pct}%`}
+                    bad={hover.acceptance_delta_pct < -5}
+                  />
                 </div>
-                <div className="pt-1 text-[10.5px] text-muted-foreground">{hover.sessions} pairings observed</div>
+                <div className="pt-1 text-[10.5px] text-muted-foreground">
+                  {hover.sessions} pairings observed
+                </div>
               </div>
             ) : (
               <p className="mt-2 text-[11.5px] text-muted-foreground">
-                Compatibility cells visualize where charger × bus pairings show taper, thermal, or acceptance divergence
-                from the fleet baseline.
+                Compatibility cells visualize where charger × bus pairings show taper, thermal, or
+                acceptance divergence from the fleet baseline.
               </p>
             )}
           </div>
@@ -140,7 +170,9 @@ function Mini({ label, value, bad }: { label: string; value: string; bad?: boole
   return (
     <div className="rounded-md bg-muted/30 px-2 py-1.5">
       <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`num text-[12.5px] font-semibold ${bad ? "text-destructive" : ""}`}>{value}</div>
+      <div className={`num text-[12.5px] font-semibold ${bad ? "text-destructive" : ""}`}>
+        {value}
+      </div>
     </div>
   );
 }

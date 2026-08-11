@@ -73,8 +73,7 @@ export interface SyncTableResult {
   [key: string]: unknown;
 }
 
-export const syncTable = (body: SyncTableRequest) =>
-  apiPost<SyncTableResult>("/sync/table", body);
+export const syncTable = (body: SyncTableRequest) => apiPost<SyncTableResult>("/sync/table", body);
 
 export interface SyncDatabaseRequest {
   database: string;

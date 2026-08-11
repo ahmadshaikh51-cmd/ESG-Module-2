@@ -10,6 +10,8 @@ import {
 } from "@/lib/esg-data";
 import { A, PanelCard, useEsg, useStubLoad, LoadingRows } from "./primitives";
 import { Segmented } from "./Segmented";
+import { getCurrentUser } from "@/lib/auth";
+import { getRoleFromEmail, ESG_ROLES_CONFIG } from "@/lib/esg-roles";
 import { PoliciesPanel } from "./esms/PoliciesPanel";
 import { SopsPanel } from "./esms/SopsPanel";
 import { AssessmentsPanel } from "./esms/AssessmentsPanel";
@@ -18,6 +20,7 @@ import { AuditsPanel } from "./esms/AuditsPanel";
 import { TrainingPanel } from "./esms/TrainingPanel";
 import { MonitoringPanel } from "./esms/MonitoringPanel";
 import { LifecyclePanel } from "./esms/LifecyclePanel";
+import { GrievancePanel } from "./esms/GrievancePanel";
 
 /** Renders a tier-2 tab's label — through the acronym glossary when it is one. */
 function subLabel(s: EsmsSubTab): React.ReactNode {
@@ -55,38 +58,59 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
     if (initialSub) setSub(resolveEsmsSub(initialSub));
   }, [initialSub]);
 
+  const currentUser = getCurrentUser();
+  const esgRole = currentUser ? getRoleFromEmail(currentUser.email) : "esg_team";
+  const roleConfig = ESG_ROLES_CONFIG[esgRole] || ESG_ROLES_CONFIG.esg_team;
+  const allowedSubKeys = roleConfig.subtabs.esms || [];
+
+  useEffect(() => {
+    if (allowedSubKeys.length > 0 && !allowedSubKeys.includes(sub)) {
+      setSub(allowedSubKeys[0]);
+    }
+  }, [esgRole, sub, allowedSubKeys]);
+
   const tier = esmsTierForSub(sub);
-  const tiers = availableEsmsTiers();
+  const rawTiers = availableEsmsTiers();
+  
+  // Filter tiers: only show tiers where at least one subtab is allowed
+  const allowedTiers = rawTiers.filter((t) =>
+    esmsSubsForTier(t.key).some((s) => allowedSubKeys.includes(s.key))
+  );
+
   const tierSubs = esmsSubsForTier(tier);
+  const allowedTierSubs = tierSubs.filter((s) => allowedSubKeys.includes(s.key));
 
   const setTier = (t: EsmsTier) => {
-    const first = esmsSubsForTier(t)[0];
+    const subsOfTier = esmsSubsForTier(t).filter((s) => allowedSubKeys.includes(s.key));
+    const first = subsOfTier[0];
     if (first) setSub(first.key);
   };
 
   // ESAP backlinks and assessment "open findings" links jump between sub-tabs;
   // only follow when the target sub is available in the current build.
   const goToSub = (next: string) => {
-    if (isEsmsSubAvailable(next)) setSub(next);
+    if (isEsmsSubAvailable(next) && allowedSubKeys.includes(next)) setSub(next);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Segmented<EsmsTier>
-          ariaLabel="ESMS groups"
-          size="md"
-          value={tier}
-          onChange={setTier}
-          options={tiers.map((t) => ({ key: t.key, label: t.label }))}
-        />
-        {tierSubs.length > 1 && (
+        {allowedTiers.length > 0 && (
+          <Segmented<EsmsTier>
+            ariaLabel="ESMS groups"
+            size="md"
+            value={tier}
+            onChange={setTier}
+            options={allowedTiers.map((t) => ({ key: t.key, label: t.label }))}
+          />
+        )}
+        {allowedTierSubs.length > 1 && (
           <Segmented<string>
             ariaLabel={`${tier} sections`}
             size="sm"
             value={sub}
             onChange={setSub}
-            options={tierSubs.map((s) => ({ key: s.key, label: subLabel(s) }))}
+            options={allowedTierSubs.map((s) => ({ key: s.key, label: subLabel(s) }))}
           />
         )}
       </div>
@@ -99,6 +123,7 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
         <>
           {sub === "policies" && <PoliciesPanel onOpenEsap={() => setSub("esap")} />}
           {sub === "sops" && <SopsPanel />}
+          {sub === "grievance" && <GrievancePanel />}
           {sub === "esdd" && <AssessmentsPanel kind="ESDD" onOpenEsap={() => setSub("esap")} />}
           {sub === "esia" && <AssessmentsPanel kind="ESIA" onOpenEsap={() => setSub("esap")} />}
           {sub === "audit-internal" && (

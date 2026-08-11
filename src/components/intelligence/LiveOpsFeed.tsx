@@ -33,9 +33,18 @@ export function LiveOpsFeed() {
       <div className="max-h-[420px] divide-y divide-border/40 overflow-y-auto">
         <AnimatePresence initial={false}>
           {events.map((ev) => {
-            const Icon = ev.severity === "critical" ? AlertOctagon : ev.severity === "warning" ? AlertTriangle : CheckCircle2;
+            const Icon =
+              ev.severity === "critical"
+                ? AlertOctagon
+                : ev.severity === "warning"
+                  ? AlertTriangle
+                  : CheckCircle2;
             const color =
-              ev.severity === "critical" ? "var(--color-destructive)" : ev.severity === "warning" ? "var(--color-warning)" : "var(--color-success)";
+              ev.severity === "critical"
+                ? "var(--color-destructive)"
+                : ev.severity === "warning"
+                  ? "var(--color-warning)"
+                  : "var(--color-success)";
             return (
               <motion.div
                 key={ev.id + ev.ts}
@@ -48,7 +57,11 @@ export function LiveOpsFeed() {
               >
                 <div
                   className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ring-1"
-                  style={{ background: `color-mix(in oklab, ${color} 14%, transparent)`, color, borderColor: color }}
+                  style={{
+                    background: `color-mix(in oklab, ${color} 14%, transparent)`,
+                    color,
+                    borderColor: color,
+                  }}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </div>

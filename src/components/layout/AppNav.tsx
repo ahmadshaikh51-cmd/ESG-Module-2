@@ -278,7 +278,13 @@ export function AppNav() {
           >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl" onClick={toggle} aria-label="Toggle theme">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 rounded-xl"
+            onClick={toggle}
+            aria-label="Toggle theme"
+          >
             {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
 
@@ -293,7 +299,9 @@ export function AppNav() {
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold uppercase text-primary ring-1 ring-primary/25">
                     {user.email.slice(0, 2)}
                   </span>
-                  <span className="hidden max-w-[160px] truncate text-foreground md:inline">{user.email}</span>
+                  <span className="hidden max-w-[160px] truncate text-foreground md:inline">
+                    {user.email}
+                  </span>
                   <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                 </button>
               </DropdownMenuTrigger>
@@ -401,7 +409,10 @@ export function PageShell({
   return (
     <div className="noise-bg min-h-screen bg-background">
       <div className="pointer-events-none fixed inset-0 grid-bg opacity-[0.22]" aria-hidden />
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-[480px] hero-glow opacity-80" aria-hidden />
+      <div
+        className="pointer-events-none fixed inset-x-0 top-0 h-[480px] hero-glow opacity-80"
+        aria-hidden
+      />
 
       <div className="relative z-[1]">
         <AppNav />
@@ -417,15 +428,16 @@ export function PageShell({
                 <h1 className="mt-4 text-balance text-[30px] font-semibold leading-[1.15] tracking-tight md:text-[36px]">
                   {titleAccent ? (
                     <>
-                      {title}{" "}
-                      <span className="text-gradient-brand">{titleAccent}</span>
+                      {title} <span className="text-gradient-brand">{titleAccent}</span>
                     </>
                   ) : (
                     title
                   )}
                 </h1>
                 {description && (
-                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{description}</p>
+                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
+                    {description}
+                  </p>
                 )}
               </div>
               {meta}

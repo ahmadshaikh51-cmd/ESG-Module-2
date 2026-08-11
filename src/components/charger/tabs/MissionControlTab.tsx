@@ -43,11 +43,41 @@ interface ActivityEvent {
 }
 
 const INITIAL_ACTIVITIES: ActivityEvent[] = [
-  { id: "act_1", time: "10:48:32", type: "info", message: "Bus MH-31-EQ-1008 entered queue", depot: "Khapri" },
-  { id: "act_2", time: "10:45:15", type: "success", message: "TV-BKC-01 session completed for MH-02-FL-4001", depot: "BKC Mumbai" },
-  { id: "act_3", time: "10:39:44", type: "error", message: "TV-WAD-02 raised Critical Temp Alert (68°C)", depot: "Wadi" },
-  { id: "act_4", time: "10:30:10", type: "info", message: "Technician Rajesh Kumar assigned to TV-WAD-02", depot: "Wadi" },
-  { id: "act_5", time: "10:15:00", type: "success", message: "Scheduled maintenance started on TV-BKC-02", depot: "BKC Mumbai" },
+  {
+    id: "act_1",
+    time: "10:48:32",
+    type: "info",
+    message: "Bus MH-31-EQ-1008 entered queue",
+    depot: "Khapri",
+  },
+  {
+    id: "act_2",
+    time: "10:45:15",
+    type: "success",
+    message: "TV-BKC-01 session completed for MH-02-FL-4001",
+    depot: "BKC Mumbai",
+  },
+  {
+    id: "act_3",
+    time: "10:39:44",
+    type: "error",
+    message: "TV-WAD-02 raised Critical Temp Alert (68°C)",
+    depot: "Wadi",
+  },
+  {
+    id: "act_4",
+    time: "10:30:10",
+    type: "info",
+    message: "Technician Rajesh Kumar assigned to TV-WAD-02",
+    depot: "Wadi",
+  },
+  {
+    id: "act_5",
+    time: "10:15:00",
+    type: "success",
+    message: "Scheduled maintenance started on TV-BKC-02",
+    depot: "BKC Mumbai",
+  },
 ];
 
 export const MissionControlTab: React.FC = () => {
@@ -63,7 +93,10 @@ export const MissionControlTab: React.FC = () => {
       const randomEvents: { msg: string; type: "info" | "success" | "warning" | "error" }[] = [
         { msg: `Bus MH-31-EQ-${randomBus} charging started`, type: "success" },
         { msg: `Bus MH-31-EQ-${randomBus} entered queue`, type: "info" },
-        { msg: `OCPP connection reset on TV-${randomDepot.slice(0, 3).toUpperCase()}-02`, type: "warning" },
+        {
+          msg: `OCPP connection reset on TV-${randomDepot.slice(0, 3).toUpperCase()}-02`,
+          type: "warning",
+        },
         { msg: `Power factor normal at ${randomDepot} transformer`, type: "info" },
       ];
       const selected = randomEvents[Math.floor(Math.random() * randomEvents.length)];
@@ -95,7 +128,7 @@ export const MissionControlTab: React.FC = () => {
 
   const totalPowerDeliveredKw = chargers.reduce(
     (acc, curr) => acc + (curr.currentSession?.powerKw ?? 0),
-    0
+    0,
   );
 
   // 24h Hourly Load chart data (simulated rolling power curve)
@@ -152,8 +185,7 @@ export const MissionControlTab: React.FC = () => {
               <Zap className="h-3.5 w-3.5 text-primary" />
             </div>
             <div className="mt-2 text-[26px] font-semibold tracking-tight num">
-              2,840{" "}
-              <span className="text-[14px] font-normal text-muted-foreground">kWh</span>
+              2,840 <span className="text-[14px] font-normal text-muted-foreground">kWh</span>
             </div>
           </div>
           <div className="mt-4 flex justify-between text-[11px] text-muted-foreground">
@@ -195,8 +227,7 @@ export const MissionControlTab: React.FC = () => {
               <ShieldCheck className="h-3.5 w-3.5 text-success" />
             </div>
             <div className="mt-2 text-[26px] font-semibold tracking-tight num">
-              95.8%{" "}
-              <span className="text-[14px] font-normal text-muted-foreground">SLA</span>
+              95.8% <span className="text-[14px] font-normal text-muted-foreground">SLA</span>
             </div>
           </div>
           <div className="mt-4 flex justify-between text-[11px] text-muted-foreground">
@@ -224,7 +255,11 @@ export const MissionControlTab: React.FC = () => {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.15} />
-                <XAxis dataKey="time" tick={{ fontSize: 10 }} stroke="var(--color-muted-foreground)" />
+                <XAxis
+                  dataKey="time"
+                  tick={{ fontSize: 10 }}
+                  stroke="var(--color-muted-foreground)"
+                />
                 <YAxis tick={{ fontSize: 10 }} stroke="var(--color-muted-foreground)" />
                 <ChartTooltip
                   contentStyle={{
@@ -276,7 +311,9 @@ export const MissionControlTab: React.FC = () => {
               </p>
               <div className="mt-2.5 flex items-center justify-between text-[10px] text-primary font-medium">
                 <span>Auto-reschedule opportunity</span>
-                <span className="flex items-center">Apply action <ChevronRight className="h-3 w-3" /></span>
+                <span className="flex items-center">
+                  Apply action <ChevronRight className="h-3 w-3" />
+                </span>
               </div>
             </div>
 
@@ -292,7 +329,9 @@ export const MissionControlTab: React.FC = () => {
               </p>
               <div className="mt-2.5 flex items-center justify-between text-[10px] text-warning font-medium">
                 <span>Priority mismatch detected</span>
-                <span className="flex items-center">Re-allocate queue <ChevronRight className="h-3 w-3" /></span>
+                <span className="flex items-center">
+                  Re-allocate queue <ChevronRight className="h-3 w-3" />
+                </span>
               </div>
             </div>
 
@@ -309,7 +348,9 @@ export const MissionControlTab: React.FC = () => {
                 </p>
                 <div className="mt-2.5 flex items-center justify-between text-[10px] text-destructive font-medium">
                   <span>Critical temperature threshold</span>
-                  <span className="flex items-center">Open work ticket <ChevronRight className="h-3 w-3" /></span>
+                  <span className="flex items-center">
+                    Open work ticket <ChevronRight className="h-3 w-3" />
+                  </span>
                 </div>
               </div>
             )}
@@ -353,7 +394,9 @@ export const MissionControlTab: React.FC = () => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[12px] font-semibold text-destructive num">1 Active · 1 Fault</div>
+                <div className="text-[12px] font-semibold text-destructive num">
+                  1 Active · 1 Fault
+                </div>
                 <div className="text-[10px] text-muted-foreground num">142 kW Peak load</div>
               </div>
             </div>
@@ -369,7 +412,9 @@ export const MissionControlTab: React.FC = () => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[12px] font-semibold text-warning num">1 Active · 1 Maint.</div>
+                <div className="text-[12px] font-semibold text-warning num">
+                  1 Active · 1 Maint.
+                </div>
                 <div className="text-[10px] text-muted-foreground num">227 kW Peak load</div>
               </div>
             </div>

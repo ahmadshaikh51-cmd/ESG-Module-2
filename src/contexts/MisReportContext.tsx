@@ -1,16 +1,5 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useReducer,
-  type ReactNode,
-} from "react";
-import {
-  buildScheduleReports,
-  distinctRoutes,
-  filterTrips,
-} from "@/lib/mis/analytics";
+import { createContext, useCallback, useContext, useMemo, useReducer, type ReactNode } from "react";
+import { buildScheduleReports, distinctRoutes, filterTrips } from "@/lib/mis/analytics";
 import { fetchMisTripsRange } from "@/lib/mis/api";
 import { extraTripNumber, scheduleKey, tripKey } from "@/lib/mis/keys";
 import type { OverlayMap } from "@/lib/mis/merge";
@@ -89,9 +78,7 @@ function reducer(state: MisState, action: Action): MisState {
     case "REPORT_GENERATED":
       return { ...state, reportGenerated: true };
     case "SET_OVERLAY": {
-      const history = action.historyKey
-        ? [...state.history, action.historyKey]
-        : state.history;
+      const history = action.historyKey ? [...state.history, action.historyKey] : state.history;
       return { ...state, overlay: action.overlay, history };
     }
     case "PATCH_TRIP": {
@@ -99,9 +86,7 @@ function reducer(state: MisState, action: Action): MisState {
       const prev = next.get(action.key) ?? {};
       next.set(action.key, { ...prev, ...action.patch });
       const history =
-        action.recordHistory !== false
-          ? [...state.history, action.key]
-          : state.history;
+        action.recordHistory !== false ? [...state.history, action.key] : state.history;
       return { ...state, overlay: next, history };
     }
     case "RESET_OVERLAY":
@@ -185,20 +170,15 @@ export function MisReportProvider({ children }: { children: ReactNode }) {
     }
   }, [state.dateFrom, state.dateTo]);
 
-  const patchTrip = useCallback(
-    (key: string, patch: TripOverride, recordHistory = true) => {
-      dispatch({ type: "PATCH_TRIP", key, patch, recordHistory });
-    },
-    [],
-  );
+  const patchTrip = useCallback((key: string, patch: TripOverride, recordHistory = true) => {
+    dispatch({ type: "PATCH_TRIP", key, patch, recordHistory });
+  }, []);
 
   const resetAllAdjustments = useCallback(() => dispatch({ type: "RESET_OVERLAY" }), []);
 
   const setFilters = useCallback(
     (
-      p: Partial<
-        Pick<MisState, "dateFrom" | "dateTo" | "routeFilters" | "siteId" | "shiftFilter">
-      >,
+      p: Partial<Pick<MisState, "dateFrom" | "dateTo" | "routeFilters" | "siteId" | "shiftFilter">>,
     ) => {
       dispatch({
         type: "SET_FILTERS",

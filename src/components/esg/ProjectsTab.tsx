@@ -10,6 +10,9 @@ import {
   Info,
   ShieldCheck,
   TrendingDown,
+  Plus,
+  History,
+  Database,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -49,8 +52,13 @@ import {
 } from "./primitives";
 import { WorkQueue } from "./WorkQueue";
 import { NcPanel } from "./projects/NcPanel";
+import { ReportDataEntryForm } from "./projects/ReportDataEntryForm";
+import { EsgDataPortal } from "./projects/EsgDataPortal";
+import { PEOPLE } from "@/lib/esg-data";
+import { getCurrentUser } from "@/lib/auth";
+import { getRoleFromEmail, ESG_ROLES_CONFIG } from "@/lib/esg-roles";
 
-type Sub = "permits" | "site" | "nc" | "amr" | "ghg" | "carbon";
+type Sub = "permits" | "site" | "nc" | "amr" | "ghg" | "brsr" | "impact" | "carbon";
 
 const nf = new Intl.NumberFormat("en-IN");
 
@@ -67,7 +75,7 @@ function PeriodBadge() {
 
 /* ----------------------------------- AMR ----------------------------------- */
 
-function AmrSection() {
+function AmrSection({ onAdd }: { onAdd?: () => void }) {
   const { period } = useEsg();
   const stub = AMR_VALUES[period] ?? {};
   const [manual, setManual] = useState<Record<string, string>>({});
@@ -94,9 +102,11 @@ function AmrSection() {
             provenance; anything can be challenged.
           </p>
         </div>
-        <Button size="sm" className="h-8 gap-1.5 rounded-lg text-[12px]" onClick={save}>
-          <Save className="h-3.5 w-3.5" /> Save period inputs
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-lg text-[12px]" onClick={save}>
+            <Save className="h-3.5 w-3.5" /> Save period inputs
+          </Button>
+        </div>
       </div>
       <div className="divide-y divide-border/40">
         {AMR_FIELDS.map((f) => {
@@ -174,7 +184,7 @@ function AmrSection() {
 
 /* ----------------------------------- GHG ----------------------------------- */
 
-function GhgSection() {
+function GhgSection({ onAdd }: { onAdd?: () => void }) {
   const { period, masters } = useEsg();
   const [qty, setQty] = useState<Record<string, string>>({});
   useEffect(() => setQty({}), [period]);
@@ -215,14 +225,16 @@ function GhgSection() {
 
   return (
     <PanelCard>
-      <div className="border-b border-border/60 px-5 py-3.5">
-        <h3 className="text-[15px] font-semibold tracking-tight">
-          <A t="GHG" /> inventory — parameter × factor
-        </h3>
-        <p className="text-[12px] text-muted-foreground">
-          Emission = quantity × factor. Factors are supplied externally (<A t="CEA" />,{" "}
-          <A t="DEFRA" />) and configured in Masters — never hardcoded.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
+        <div>
+          <h3 className="text-[15px] font-semibold tracking-tight">
+            <A t="GHG" /> inventory — parameter × factor
+          </h3>
+          <p className="text-[12px] text-muted-foreground">
+            Emission = quantity × factor. Factors are supplied externally (<A t="CEA" />,{" "}
+            <A t="DEFRA" />) and configured in Masters — never hardcoded.
+          </p>
+        </div>
       </div>
 
       {([1, 2, 3] as const).map((s) => {
@@ -380,7 +392,7 @@ function CustomCarbonLegend({ payload }: any) {
   );
 }
 
-function CarbonSection() {
+function CarbonSection({ onAdd }: { onAdd?: () => void }) {
   const chartData = useMemo(() => {
     return CARBON.monthly.map((m) => {
       const label = PERIODS.find((p) => p.id === m.period)?.label || m.period;
@@ -432,9 +444,11 @@ function CarbonSection() {
                   </p>
                 </div>
               </div>
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-success/8 border border-success/20 px-2.5 py-1 text-[11px] font-medium text-success">
-                <TrendingDown className="h-3 w-3" />
-                <span>{avgReductionRate}% average offset rate</span>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-success/8 border border-success/20 px-2.5 py-1 text-[11px] font-medium text-success mr-2">
+                  <TrendingDown className="h-3 w-3" />
+                  <span>{avgReductionRate}% average offset rate</span>
+                </div>
               </div>
             </div>
           </div>
@@ -649,28 +663,178 @@ function CarbonSection() {
   );
 }
 
+/* ---------------------------------- BRSR ----------------------------------- */
+
+function BrsrSection({ onAdd }: { onAdd?: () => void }) {
+  const saved = useMemo(() => {
+    return JSON.parse(localStorage.getItem("voltline-report-records") || "[]")
+      .filter((r: any) => r.reportType === "brsr");
+  }, []);
+
+  return (
+    <PanelCard>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
+        <div>
+          <h3 className="text-[15px] font-semibold tracking-tight">
+            <A t="BRSR" /> Disclosures register
+          </h3>
+          <p className="text-[12px] text-muted-foreground">
+            Principle-wise disclosure logs mapped directly to SEBI framework.
+          </p>
+        </div>
+      </div>
+      {saved.length === 0 ? (
+        <EmptyState title="No BRSR records submitted" hint="No disclosures are currently logged in this period." />
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px] text-[12.5px]">
+            <thead>
+              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
+                <th className="px-5 py-2.5 text-left font-medium">Project</th>
+                <th className="px-3 py-2.5 text-left font-medium">Period</th>
+                <th className="px-3 py-2.5 text-left font-medium">Data Entry Tab</th>
+                <th className="px-3 py-2.5 text-left font-medium">Status</th>
+                <th className="px-3 py-2.5 text-left font-medium">Reviewer</th>
+                <th className="px-5 py-2.5 text-left font-medium">Last Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saved.map((r: any) => (
+                <tr key={r.id} className="border-b border-border/40 last:border-0 hover:bg-muted/5">
+                  <td className="px-5 py-2.5 font-semibold text-foreground">{r.project}</td>
+                  <td className="px-3 py-2.5 num">{r.reportingPeriod}</td>
+                  <td className="px-3 py-2.5 font-medium">{r.dataEntryTab}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="inline-flex h-5 items-center rounded bg-primary/10 border border-primary/20 px-1.5 text-[10px] font-bold text-primary">
+                      {r.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2.5">{PEOPLE.find(p => p.id === r.reviewer)?.name || r.reviewer}</td>
+                  <td className="px-5 py-2.5 num text-muted-foreground">{new Date(r.updatedAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </PanelCard>
+  );
+}
+
+/* --------------------------------- Impact ---------------------------------- */
+
+function ImpactSection({ onAdd }: { onAdd?: () => void }) {
+  const saved = useMemo(() => {
+    return JSON.parse(localStorage.getItem("voltline-report-records") || "[]")
+      .filter((r: any) => r.reportType === "impact");
+  }, []);
+
+  return (
+    <PanelCard>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-3.5">
+        <div>
+          <h3 className="text-[15px] font-semibold tracking-tight">
+            Impact Metrics Register
+          </h3>
+          <p className="text-[12px] text-muted-foreground">
+            Monitor baseline vs current targets across clean energy, water conservation, and staff safety.
+          </p>
+        </div>
+      </div>
+      {saved.length === 0 ? (
+        <EmptyState title="No Impact reports submitted" hint="No KPI tracking records are currently logged in this period." />
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px] text-[12.5px]">
+            <thead>
+              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
+                <th className="px-5 py-2.5 text-left font-medium">Project</th>
+                <th className="px-3 py-2.5 text-left font-medium">Period</th>
+                <th className="px-3 py-2.5 text-left font-medium">Data Entry Tab</th>
+                <th className="px-3 py-2.5 text-left font-medium">Status</th>
+                <th className="px-3 py-2.5 text-left font-medium">Reviewer</th>
+                <th className="px-5 py-2.5 text-left font-medium">Last Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saved.map((r: any) => (
+                <tr key={r.id} className="border-b border-border/40 last:border-0 hover:bg-muted/5">
+                  <td className="px-5 py-2.5 font-semibold text-foreground">{r.project}</td>
+                  <td className="px-3 py-2.5 num">{r.reportingPeriod}</td>
+                  <td className="px-3 py-2.5 font-medium">{r.dataEntryTab}</td>
+                  <td className="px-3 py-2.5">
+                    <span className="inline-flex h-5 items-center rounded bg-primary/10 border border-primary/20 px-1.5 text-[10px] font-bold text-primary">
+                      {r.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2.5">{PEOPLE.find(p => p.id === r.reviewer)?.name || r.reviewer}</td>
+                  <td className="px-5 py-2.5 num text-muted-foreground">{new Date(r.updatedAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </PanelCard>
+  );
+}
+
 /* --------------------------------- projects -------------------------------- */
 
 export function ProjectsTab({ initialSub }: { initialSub?: string }) {
   const { scope } = useEsg();
   const [sub, setSub] = useState<Sub>((initialSub as Sub) || "permits");
+  const [activeForm, setActiveForm] = useState<Sub | null>(null);
+  const [editRecordId, setEditRecordId] = useState<string | null>(null);
+  const [showDataPortal, setShowDataPortal] = useState(false);
+  const [initialProject, setInitialProject] = useState<string | undefined>(undefined);
+  const [initialSite, setInitialSite] = useState<string | undefined>(undefined);
+  const [initialPeriod, setInitialPeriod] = useState<string | undefined>(undefined);
   const loading = useStubLoad(sub + JSON.stringify(scope));
+
+  useEffect(() => {
+    if (initialSub) {
+      setSub(initialSub as Sub);
+    }
+  }, [initialSub]);
+
+  // Reset form when sub tab changes
+  useEffect(() => {
+    setActiveForm(null);
+    setEditRecordId(null);
+    setShowDataPortal(false);
+  }, [sub]);
 
   const subs: { key: Sub; label: React.ReactNode }[] = [
     { key: "permits", label: "Permits & Licences" },
-    { key: "site", label: "Compliance status" },
+    { key: "site", label: "Project Compliance Status" },
     {
       key: "nc",
       label: (
         <>
-          <A t="NC" /> Reports
+          <A t="NC" /> Report
         </>
       ),
     },
     { key: "amr", label: <A t="AMR" /> },
-    { key: "ghg", label: <A t="GHG" /> },
-    { key: "carbon", label: "Carbon savings" },
+    { key: "ghg", label: "GHG Inventory" },
+    { key: "brsr", label: <A t="BRSR" /> },
+    { key: "impact", label: "Impact Report" },
+    { key: "carbon", label: "Carbon Saving" },
   ];
+
+  const currentUser = getCurrentUser();
+  const esgRole = currentUser ? getRoleFromEmail(currentUser.email) : "esg_team";
+  const roleConfig = ESG_ROLES_CONFIG[esgRole] || ESG_ROLES_CONFIG.esg_team;
+  
+  const allowedSubKeys = roleConfig.subtabs.projects || [];
+  const allowedSubs = subs.filter((s) => allowedSubKeys.includes(s.key));
+
+  useEffect(() => {
+    if (allowedSubKeys.length > 0 && !allowedSubKeys.includes(sub)) {
+      setSub(allowedSubKeys[0] as Sub);
+    }
+  }, [esgRole, sub, allowedSubKeys]);
 
   const records = useMemo(
     () =>
@@ -683,33 +847,78 @@ export function ProjectsTab({ initialSub }: { initialSub?: string }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div
-          className="flex items-center gap-0.5 overflow-x-auto rounded-xl border border-border/60 bg-card/60 p-1"
-          role="tablist"
-          aria-label="Project regulatory compliance sections"
-        >
-          {subs.map((s) => (
-            <button
-              key={s.key}
-              type="button"
-              role="tab"
-              aria-selected={sub === s.key}
-              onClick={() => setSub(s.key)}
-              className={cn(
-                "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
-                sub === s.key
-                  ? "nav-pill-active"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div
+            className="flex items-center gap-0.5 overflow-x-auto rounded-xl border border-border/60 bg-card/60 p-1"
+            role="tablist"
+            aria-label="Project regulatory compliance sections"
+          >
+            {allowedSubs.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                role="tab"
+                aria-selected={sub === s.key && !showDataPortal}
+                onClick={() => {
+                  setSub(s.key);
+                  setShowDataPortal(false);
+                }}
+                className={cn(
+                  "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",
+                  (sub === s.key && !showDataPortal)
+                    ? "nav-pill-active"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowDataPortal(!showDataPortal)}
+            className={cn(
+              "shrink-0 rounded-xl px-4 py-2 text-[12px] font-semibold border transition-all active:scale-[0.98] cursor-pointer flex items-center gap-1.5",
+              showDataPortal
+                ? "bg-primary text-primary-foreground border-primary/20 shadow-sm font-bold"
+                : "bg-card hover:bg-muted/50 text-foreground border-border/60"
+            )}
+          >
+            <Database className="h-3.5 w-3.5" />
+            {showDataPortal ? "Close Data Portal" : "ESG Data Portal"}
+          </button>
         </div>
-        {(sub === "amr" || sub === "ghg" || sub === "carbon") && <PeriodBadge />}
+        {!showDataPortal && (sub === "amr" || sub === "ghg" || sub === "carbon") && <PeriodBadge />}
       </div>
 
-      {loading ? (
+      {activeForm ? (
+        <ReportDataEntryForm
+          reportType={activeForm as any}
+          editRecordId={editRecordId}
+          initialProject={initialProject}
+          initialSite={initialSite}
+          initialPeriod={initialPeriod}
+          onCancel={() => {
+            setActiveForm(null);
+            setEditRecordId(null);
+            setInitialProject(undefined);
+            setInitialSite(undefined);
+            setInitialPeriod(undefined);
+          }}
+        />
+      ) : showDataPortal ? (
+        <EsgDataPortal
+          onBack={() => setShowDataPortal(false)}
+          onOpenForm={(reportType, recordId, project, siteId, period) => {
+            setActiveForm(reportType);
+            setEditRecordId(recordId);
+            setInitialProject(project);
+            setInitialSite(siteId);
+            setInitialPeriod(period);
+          }}
+        />
+      ) : loading ? (
         <PanelCard>
           <LoadingRows rows={5} />
         </PanelCard>
@@ -744,14 +953,18 @@ export function ProjectsTab({ initialSub }: { initialSub?: string }) {
           )}
         </PanelCard>
       ) : sub === "nc" ? (
-        <NcPanel />
+        <NcPanel onAdd={() => setActiveForm("nc")} onEdit={(id) => { setEditRecordId(id); setActiveForm("nc"); }} />
       ) : sub === "amr" ? (
-        <AmrSection />
+        <AmrSection onAdd={() => setActiveForm("amr")} />
       ) : sub === "ghg" ? (
-        <GhgSection />
-      ) : (
-        <CarbonSection />
-      )}
+        <GhgSection onAdd={() => setActiveForm("ghg")} />
+      ) : sub === "brsr" ? (
+        <BrsrSection onAdd={() => setActiveForm("brsr")} />
+      ) : sub === "impact" ? (
+        <ImpactSection onAdd={() => setActiveForm("impact")} />
+      ) : sub === "carbon" ? (
+        <CarbonSection onAdd={() => setActiveForm("carbon")} />
+      ) : null}
     </div>
   );
 }

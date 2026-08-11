@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import {
-  AlertTriangle, Layers, Loader2, Sparkles, ShieldAlert, TrendingDown, TrendingUp, X,
+  AlertTriangle,
+  Layers,
+  Loader2,
+  Sparkles,
+  ShieldAlert,
+  TrendingDown,
+  TrendingUp,
+  X,
 } from "lucide-react";
 import { PageShell } from "@/components/layout/AppNav";
 import { InsightCard } from "@/components/dashboard/InsightCard";
@@ -31,7 +38,10 @@ export const Route = createFileRoute("/segments")({
       { title: "Segment Risk · Voltline" },
       { name: "description", content: "Spatial operational risk intelligence per route segment." },
       { property: "og:title", content: "Segment Risk · Voltline" },
-      { property: "og:description", content: "Heat layers, dangerous segments, drilldowns and trend analytics." },
+      {
+        property: "og:description",
+        content: "Heat layers, dangerous segments, drilldowns and trend analytics.",
+      },
     ],
   }),
   component: SegmentRiskPage,
@@ -71,7 +81,10 @@ function CorrelationMatrix({
 }) {
   const useLiveData = !!correlationRow;
   const { labels, matrix } = useMemo(
-    () => (correlationRow ? buildCorrelationMatrix(correlationRow) : { labels: [] as string[], matrix: [] as number[][] }),
+    () =>
+      correlationRow
+        ? buildCorrelationMatrix(correlationRow)
+        : { labels: [] as string[], matrix: [] as number[][] },
     [correlationRow],
   );
 
@@ -105,14 +118,21 @@ function CorrelationMatrix({
               <tr>
                 <th />
                 {labels.map((l) => (
-                  <th key={l} className="text-[10.5px] font-normal uppercase tracking-wider text-muted-foreground">{l}</th>
+                  <th
+                    key={l}
+                    className="text-[10.5px] font-normal uppercase tracking-wider text-muted-foreground"
+                  >
+                    {l}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {matrix.map((row, i) => (
                 <tr key={i}>
-                  <td className="pr-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">{labels[i]}</td>
+                  <td className="pr-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                    {labels[i]}
+                  </td>
                   {row.map((v, j) => {
                     if (v === null) {
                       return (
@@ -251,7 +271,9 @@ function LiveSegmentRiskSection() {
           <div className="flex flex-wrap items-end gap-x-5 gap-y-3">
             {/* Risk band multi-select */}
             <div className="space-y-1.5">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Risk band</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Risk band
+              </div>
               <div className="flex flex-wrap items-center gap-1.5">
                 {RISK_LEVEL_ORDER.map((lvl) => {
                   const isActive = riskLevels.includes(lvl);
@@ -265,11 +287,22 @@ function LiveSegmentRiskSection() {
                           ? "border-transparent text-foreground"
                           : "border-border/60 text-muted-foreground hover:text-foreground"
                       }`}
-                      style={isActive ? { background: `color-mix(in oklab, ${RISK_LEVEL_COLOR[lvl]} 24%, transparent)` } : undefined}
+                      style={
+                        isActive
+                          ? {
+                              background: `color-mix(in oklab, ${RISK_LEVEL_COLOR[lvl]} 24%, transparent)`,
+                            }
+                          : undefined
+                      }
                     >
-                      <span className="h-2 w-2 rounded-full" style={{ background: RISK_LEVEL_COLOR[lvl] }} />
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ background: RISK_LEVEL_COLOR[lvl] }}
+                      />
                       {lvl}
-                      <span className="num text-muted-foreground">{isLoading ? "—" : counts[lvl]}</span>
+                      <span className="num text-muted-foreground">
+                        {isLoading ? "—" : counts[lvl]}
+                      </span>
                     </button>
                   );
                 })}
@@ -278,7 +311,9 @@ function LiveSegmentRiskSection() {
 
             {/* Route difficulty segmented */}
             <div className="space-y-1.5">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Route difficulty</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Route difficulty
+              </div>
               <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border/50 bg-card/70 p-1">
                 {ROUTE_CONTEXTS.map((ctx) => {
                   const isActive = routeContext === ctx.value;
@@ -288,7 +323,9 @@ function LiveSegmentRiskSection() {
                       type="button"
                       onClick={() => setRouteContext(ctx.value)}
                       className={`rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium transition-all ${
-                        isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {ctx.label}
@@ -300,7 +337,9 @@ function LiveSegmentRiskSection() {
 
             {/* Company select */}
             <div className="space-y-1.5">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Company</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Company
+              </div>
               <select
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
@@ -317,10 +356,14 @@ function LiveSegmentRiskSection() {
 
             {/* Route select */}
             <div className="space-y-1.5">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Route</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Route
+              </div>
               <select
                 value={String(routeId)}
-                onChange={(e) => setRouteId(e.target.value === "all" ? "all" : Number(e.target.value))}
+                onChange={(e) =>
+                  setRouteId(e.target.value === "all" ? "all" : Number(e.target.value))
+                }
                 className="min-w-[180px] rounded-xl border border-border/60 bg-card px-3 py-2 text-[12.5px] text-foreground outline-none focus:border-primary/60"
               >
                 <option value="all">All routes</option>
@@ -359,12 +402,18 @@ function LiveSegmentRiskSection() {
               Failed to load segment risk data{error instanceof Error ? `: ${error.message}` : ""}.
             </div>
           ) : isLoading && !data ? (
-            <LoadingPanel label="Loading segment risk map…" minHeight="560px" className="rounded-xl border border-border/50 bg-muted/20" />
+            <LoadingPanel
+              label="Loading segment risk map…"
+              minHeight="560px"
+              className="rounded-xl border border-border/50 bg-muted/20"
+            />
           ) : rows.length === 0 ? (
             <div className="flex h-[560px] flex-col items-center justify-center gap-1 rounded-xl border border-border/50 bg-muted/20 text-center">
               <ShieldAlert className="h-5 w-5 text-muted-foreground" />
               <div className="text-[13px] font-medium">No segments match these filters</div>
-              <div className="text-[12px] text-muted-foreground">Loosen the risk band or lower the minimum score.</div>
+              <div className="text-[12px] text-muted-foreground">
+                Loosen the risk band or lower the minimum score.
+              </div>
             </div>
           ) : (
             <div className="relative">
@@ -373,7 +422,12 @@ function LiveSegmentRiskSection() {
                   Updating…
                 </div>
               )}
-              <SegmentRiskMapLoader rows={rows} height={560} showFootprints={showFootprints} routePath={routePath} />
+              <SegmentRiskMapLoader
+                rows={rows}
+                height={560}
+                showFootprints={showFootprints}
+                routePath={routePath}
+              />
             </div>
           )}
         </div>
@@ -469,11 +523,17 @@ function TopDangerousSegments() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="num text-[13px] font-semibold">{fmt(s.segment_difficulty_score, 0)}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">risk</div>
+                  <div className="num text-[13px] font-semibold">
+                    {fmt(s.segment_difficulty_score, 0)}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    risk
+                  </div>
                 </div>
                 {change !== null ? (
-                  <div className={`num text-[11.5px] ${change > 0 ? "text-destructive" : "text-success"}`}>
+                  <div
+                    className={`num text-[11.5px] ${change > 0 ? "text-destructive" : "text-success"}`}
+                  >
                     {change > 0 ? "+" : ""}
                     {fmt(change)}%
                   </div>
@@ -491,7 +551,13 @@ function TopDangerousSegments() {
   );
 }
 
-function TrendSegmentRow({ row, mode }: { row: SegmentRiskMapRow; mode: "improving" | "worsening" }) {
+function TrendSegmentRow({
+  row,
+  mode,
+}: {
+  row: SegmentRiskMapRow;
+  mode: "improving" | "worsening";
+}) {
   const level = normalizeRiskLevel(row.risk_level);
   const change = row.difficulty_change_pct;
   const positive = mode === "worsening";
@@ -506,7 +572,9 @@ function TrendSegmentRow({ row, mode }: { row: SegmentRiskMapRow; mode: "improvi
         </div>
       </div>
       {change !== null ? (
-        <span className={`num shrink-0 font-medium ${positive ? "text-destructive" : "text-success"}`}>
+        <span
+          className={`num shrink-0 font-medium ${positive ? "text-destructive" : "text-success"}`}
+        >
           {change > 0 ? "+" : ""}
           {fmt(change)}%
         </span>
@@ -567,7 +635,13 @@ function TrendSegmentsCard({
   );
 }
 
-function LiveSegmentDrawer({ segment, onClose }: { segment: SegmentRiskMapRow; onClose: () => void }) {
+function LiveSegmentDrawer({
+  segment,
+  onClose,
+}: {
+  segment: SegmentRiskMapRow;
+  onClose: () => void;
+}) {
   const level = normalizeRiskLevel(segment.risk_level);
   const events = [
     { k: "DMS events", v: segment.dms_event_count, c: "var(--color-chart-4)" },
@@ -578,30 +652,48 @@ function LiveSegmentDrawer({ segment, onClose }: { segment: SegmentRiskMapRow; o
   const change = segment.difficulty_change_pct;
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm animate-fade-in"
+        onClick={onClose}
+      />
       <aside className="fixed right-0 top-0 z-50 h-full w-full max-w-md overflow-y-auto border-l border-border/60 bg-card shadow-elevated animate-slide-in-right">
         <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
           <div className="min-w-0">
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">Segment drilldown</div>
+            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              Segment drilldown
+            </div>
             <div className="truncate text-[16px] font-semibold">{routePrimaryLabel(segment)}</div>
-            <div className="num truncate text-[11px] text-muted-foreground">{segment.segment_id}</div>
+            <div className="num truncate text-[11px] text-muted-foreground">
+              {segment.segment_id}
+            </div>
           </div>
-          <button onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted/60 hover:text-foreground">
+          <button
+            onClick={onClose}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className="space-y-5 p-5">
           <div className="flex items-center gap-2">
             <RiskBadge level={level} />
-            <span className="text-[11px] capitalize text-muted-foreground">{segment.trend_direction} trend</span>
+            <span className="text-[11px] capitalize text-muted-foreground">
+              {segment.trend_direction} trend
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Risk score</div>
-              <div className="num text-[22px] font-semibold">{fmt(segment.segment_difficulty_score, 0)}</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Risk score
+              </div>
+              <div className="num text-[22px] font-semibold">
+                {fmt(segment.segment_difficulty_score, 0)}
+              </div>
             </div>
             <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Period change</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Period change
+              </div>
               <div
                 className={`num text-[22px] font-semibold ${
                   change === null ? "" : change > 0 ? "text-destructive" : "text-success"
@@ -613,26 +705,39 @@ function LiveSegmentDrawer({ segment, onClose }: { segment: SegmentRiskMapRow; o
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Avg speed</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Avg speed
+              </div>
               <div className="num text-[16px] font-semibold">{fmt(segment.avg_speed)} km/h</div>
             </div>
             <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">Stop ratio</div>
-              <div className="num text-[16px] font-semibold">{fmt(segment.stop_ratio * 100, 0)}%</div>
-            </div>
-          </div>
-          <div>
-            <div className="mb-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">Route association</div>
-            <div className="rounded-xl border border-border/60 bg-muted/20 p-3 text-[13px]">
-              <div className="num text-primary">{segment.route_code || `Route ${segment.route_id}`}</div>
-              <div className="text-muted-foreground">{segment.route_name}</div>
-              <div className="mt-1 num text-[11px] text-muted-foreground">
-                {segment.segment_lat_bin.toFixed(4)}, {segment.segment_lon_bin.toFixed(4)} · {segment.route_context_label} route
+              <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                Stop ratio
+              </div>
+              <div className="num text-[16px] font-semibold">
+                {fmt(segment.stop_ratio * 100, 0)}%
               </div>
             </div>
           </div>
           <div>
-            <div className="mb-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">Event composition</div>
+            <div className="mb-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">
+              Route association
+            </div>
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-3 text-[13px]">
+              <div className="num text-primary">
+                {segment.route_code || `Route ${segment.route_id}`}
+              </div>
+              <div className="text-muted-foreground">{segment.route_name}</div>
+              <div className="mt-1 num text-[11px] text-muted-foreground">
+                {segment.segment_lat_bin.toFixed(4)}, {segment.segment_lon_bin.toFixed(4)} ·{" "}
+                {segment.route_context_label} route
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-[10.5px] uppercase tracking-wider text-muted-foreground">
+              Event composition
+            </div>
             <div className="space-y-2">
               {events.map((e) => (
                 <div key={e.k}>
@@ -641,7 +746,10 @@ function LiveSegmentDrawer({ segment, onClose }: { segment: SegmentRiskMapRow; o
                     <span className="num">{e.v}</span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-muted/40">
-                    <div className="h-full rounded-full" style={{ width: `${(e.v / max) * 100}%`, background: e.c }} />
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${(e.v / max) * 100}%`, background: e.c }}
+                    />
                   </div>
                 </div>
               ))}
@@ -654,7 +762,11 @@ function LiveSegmentDrawer({ segment, onClose }: { segment: SegmentRiskMapRow; o
 }
 
 function SegmentRiskPage() {
-  const { data: correlationRow, isLoading: correlationLoading, isError: correlationError } = useQuery({
+  const {
+    data: correlationRow,
+    isLoading: correlationLoading,
+    isError: correlationError,
+  } = useQuery({
     queryKey: ["mart_segment_correlation"],
     queryFn: () => fetchMartSegmentCorrelation(),
   });
@@ -673,8 +785,18 @@ function SegmentRiskPage() {
         <TopDangerousSegments />
 
         <div className="space-y-4">
-          <TrendSegmentsCard mode="worsening" title="Worsening" icon={TrendingUp} iconClass="text-destructive" />
-          <TrendSegmentsCard mode="improving" title="Improving" icon={TrendingDown} iconClass="text-success" />
+          <TrendSegmentsCard
+            mode="worsening"
+            title="Worsening"
+            icon={TrendingUp}
+            iconClass="text-destructive"
+          />
+          <TrendSegmentsCard
+            mode="improving"
+            title="Improving"
+            icon={TrendingDown}
+            iconClass="text-success"
+          />
         </div>
       </section>
 

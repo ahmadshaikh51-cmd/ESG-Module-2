@@ -16,7 +16,11 @@ export function EnergyFlowArchitecture({ latest }: Props) {
       <PanelHeader
         title="Live energy flow architecture"
         description="Grid → Transformer → Chargers → Buses · real-time delivery intelligence"
-        action={<span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success ring-1 ring-success/30">LIVE</span>}
+        action={
+          <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success ring-1 ring-success/30">
+            LIVE
+          </span>
+        }
       />
       <div className="relative overflow-hidden p-6">
         <div
@@ -27,19 +31,52 @@ export function EnergyFlowArchitecture({ latest }: Props) {
           }}
         />
         <div className="relative grid grid-cols-1 items-center gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
-          <FlowNode icon={Zap} label="Grid intake" value={`${fmt(latest.grid_intake_kwh, 0)} kWh`} color="var(--color-chart-3)" />
+          <FlowNode
+            icon={Zap}
+            label="Grid intake"
+            value={`${fmt(latest.grid_intake_kwh, 0)} kWh`}
+            color="var(--color-chart-3)"
+          />
           <FlowStream color="var(--color-chart-3)" delay={0} />
-          <FlowNode icon={Cpu} label="Transformer" value={`${fmt(stress, 0)}/100`} color="var(--color-warning)" subtitle="Stress" />
+          <FlowNode
+            icon={Cpu}
+            label="Transformer"
+            value={`${fmt(stress, 0)}/100`}
+            color="var(--color-warning)"
+            subtitle="Stress"
+          />
           <FlowStream color="var(--color-warning)" delay={0.4} />
-          <FlowNode icon={Plug} label="Charger output" value={`${fmt(latest.charger_output_kwh, 0)} kWh`} color="var(--color-primary)" />
+          <FlowNode
+            icon={Plug}
+            label="Charger output"
+            value={`${fmt(latest.charger_output_kwh, 0)} kWh`}
+            color="var(--color-primary)"
+          />
           <FlowStream color="var(--color-primary)" delay={0.8} />
-          <FlowNode icon={BatteryCharging} label="Bus demand" value={`${fmt(latest.bus_demand_kwh, 0)} kWh`} color="var(--color-success)" />
+          <FlowNode
+            icon={BatteryCharging}
+            label="Bus demand"
+            value={`${fmt(latest.bus_demand_kwh, 0)} kWh`}
+            color="var(--color-success)"
+          />
         </div>
 
         <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <FlowStat label="Delivery efficiency" value={`${fmt(efficiency, 1)}%`} accent={efficiency >= 92 ? "good" : efficiency >= 85 ? "warn" : "bad"} />
-          <FlowStat label="Energy gap" value={`${fmt(latest.energy_gap_kwh, 0)} kWh`} accent={latest.energy_gap_kwh > 500 ? "bad" : "good"} />
-          <FlowStat label="Infrastructure stress" value={`${fmt(stress, 0)}/100`} accent={stress > 75 ? "bad" : stress > 55 ? "warn" : "good"} />
+          <FlowStat
+            label="Delivery efficiency"
+            value={`${fmt(efficiency, 1)}%`}
+            accent={efficiency >= 92 ? "good" : efficiency >= 85 ? "warn" : "bad"}
+          />
+          <FlowStat
+            label="Energy gap"
+            value={`${fmt(latest.energy_gap_kwh, 0)} kWh`}
+            accent={latest.energy_gap_kwh > 500 ? "bad" : "good"}
+          />
+          <FlowStat
+            label="Infrastructure stress"
+            value={`${fmt(stress, 0)}/100`}
+            accent={stress > 75 ? "bad" : stress > 55 ? "warn" : "good"}
+          />
           <FlowStat label="Active depot zones" value="5" accent="good" />
         </div>
       </div>
@@ -83,7 +120,9 @@ function FlowNode({
         />
       </div>
       <div className="text-center">
-        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">{label}</div>
+        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          {label}
+        </div>
         <div className="num text-[15px] font-semibold leading-tight">{value}</div>
         {subtitle && <div className="text-[9.5px] text-muted-foreground">{subtitle}</div>}
       </div>
@@ -93,7 +132,10 @@ function FlowNode({
 
 function FlowStream({ color, delay }: { color: string; delay: number }) {
   return (
-    <div className="relative hidden h-1 w-full overflow-hidden rounded-full md:block" style={{ background: `color-mix(in oklab, ${color} 20%, transparent)` }}>
+    <div
+      className="relative hidden h-1 w-full overflow-hidden rounded-full md:block"
+      style={{ background: `color-mix(in oklab, ${color} 20%, transparent)` }}
+    >
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
@@ -113,12 +155,27 @@ function FlowStream({ color, delay }: { color: string; delay: number }) {
   );
 }
 
-function FlowStat({ label, value, accent }: { label: string; value: string; accent: "good" | "warn" | "bad" }) {
-  const color = accent === "good" ? "var(--color-success)" : accent === "warn" ? "var(--color-warning)" : "var(--color-destructive)";
+function FlowStat({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: "good" | "warn" | "bad";
+}) {
+  const color =
+    accent === "good"
+      ? "var(--color-success)"
+      : accent === "warn"
+        ? "var(--color-warning)"
+        : "var(--color-destructive)";
   return (
     <div className="rounded-xl border border-border/50 bg-card/50 px-3 py-2 backdrop-blur-md">
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="num text-[15px] font-semibold" style={{ color }}>{value}</div>
+      <div className="num text-[15px] font-semibold" style={{ color }}>
+        {value}
+      </div>
     </div>
   );
 }

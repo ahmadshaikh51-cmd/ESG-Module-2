@@ -7,7 +7,7 @@ export interface Filters {
   vehicles: string[];
   trips: string[];
   from: string; // ISO date
-  to: string;   // ISO date
+  to: string; // ISO date
   /** Free-text search applied client-side (e.g. route name/code/company). Optional for backward compatibility. */
   search?: string;
 }
@@ -61,14 +61,28 @@ export interface KpiSummary {
 
 export function summarize(trips: Trip[]): KpiSummary {
   if (!trips.length) {
-    return { netKwh: 0, grossKwh: 0, grossKwhPerKm: 0, kwhPerKm: 0, regenRatio: 0, socDropPerKm: 0, idleSharePct: 0, anomalyRatePct: 0, totalTrips: 0, totalDistance: 0 };
+    return {
+      netKwh: 0,
+      grossKwh: 0,
+      grossKwhPerKm: 0,
+      kwhPerKm: 0,
+      regenRatio: 0,
+      socDropPerKm: 0,
+      idleSharePct: 0,
+      anomalyRatePct: 0,
+      totalTrips: 0,
+      totalDistance: 0,
+    };
   }
   const netKwh = trips.reduce((s, t) => s + t.net_kwh_consumed, 0);
   const totalDistance = trips.reduce((s, t) => s + t.trip_distance_km, 0);
   const grossDischarge = trips.reduce((s, t) => s + t.gross_discharge_kwh, 0);
   const regen = trips.reduce((s, t) => s + t.regen_kwh, 0);
   const idleKwh = trips.reduce((s, t) => s + t.idle_energy_kwh, 0);
-  const socDrop = trips.reduce((s, t) => s + (t.battery_pack_state_of_charge_start - t.battery_pack_state_of_charge_end), 0);
+  const socDrop = trips.reduce(
+    (s, t) => s + (t.battery_pack_state_of_charge_start - t.battery_pack_state_of_charge_end),
+    0,
+  );
   const anomalies = trips.filter((t) => t.efficiency_anomaly_flag).length;
 
   return {
@@ -110,7 +124,12 @@ export function trendByDay(trips: Trip[]) {
     });
 }
 
-export type PivotDim = "driver_name" | "route_code" | "vehiclenumber" | "company_name" | "scheduling_date";
+export type PivotDim =
+  | "driver_name"
+  | "route_code"
+  | "vehiclenumber"
+  | "company_name"
+  | "scheduling_date";
 
 export interface PivotRow {
   key: string;
@@ -129,9 +148,7 @@ export function median(values: number[]): number {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 !== 0
-    ? sorted[mid]
-    : (sorted[mid - 1] + sorted[mid]) / 2;
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
 export interface PivotMedians {

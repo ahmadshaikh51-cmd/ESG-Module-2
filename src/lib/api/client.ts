@@ -16,7 +16,8 @@ interface ValidationDetail {
 }
 
 function extractErrorMessage(status: number, body: unknown): string {
-  if (status === 401 || status === 403) return "API key missing or invalid. Update it and try again.";
+  if (status === 401 || status === 403)
+    return "API key missing or invalid. Update it and try again.";
   if (body && typeof body === "object") {
     const detail = (body as { detail?: unknown }).detail;
     if (typeof detail === "string") return detail;
@@ -24,7 +25,7 @@ function extractErrorMessage(status: number, body: unknown): string {
       const parts = (detail as ValidationDetail[])
         .map((d) => {
           const where = Array.isArray(d.loc) ? d.loc.filter((x) => x !== "body").join(".") : "";
-          return where ? `${where}: ${d.msg ?? "invalid"}` : d.msg ?? "invalid";
+          return where ? `${where}: ${d.msg ?? "invalid"}` : (d.msg ?? "invalid");
         })
         .filter(Boolean);
       if (parts.length) return parts.join("; ");

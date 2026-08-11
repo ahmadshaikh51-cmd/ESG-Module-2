@@ -1,5 +1,16 @@
 import { motion } from "framer-motion";
-import { Activity, AlertTriangle, BatteryCharging, Bolt, Flame, Gauge, ShieldCheck, Sparkles, Waves, Zap } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  BatteryCharging,
+  Bolt,
+  Flame,
+  Gauge,
+  ShieldCheck,
+  Sparkles,
+  Waves,
+  Zap,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 
@@ -51,7 +62,11 @@ function KpiTile({ k, idx }: { k: RibbonKpi; idx: number }) {
         <div className="flex items-center gap-2">
           <div
             className="flex h-7 w-7 items-center justify-center rounded-lg ring-1"
-            style={{ background: `color-mix(in oklab, ${color} 14%, transparent)`, color, borderColor: color }}
+            style={{
+              background: `color-mix(in oklab, ${color} 14%, transparent)`,
+              color,
+              borderColor: color,
+            }}
           >
             <k.icon className="h-3.5 w-3.5" />
           </div>
@@ -75,7 +90,9 @@ function KpiTile({ k, idx }: { k: RibbonKpi; idx: number }) {
       <div className="relative mt-3 flex items-end justify-between gap-2">
         <div className="num text-[22px] font-semibold leading-none tracking-tight">
           {k.value}
-          {k.unit && <span className="ml-1 text-[11px] font-normal text-muted-foreground">{k.unit}</span>}
+          {k.unit && (
+            <span className="ml-1 text-[11px] font-normal text-muted-foreground">{k.unit}</span>
+          )}
         </div>
         <div className="h-10 w-20 opacity-90">
           <ResponsiveContainer width="100%" height="100%">

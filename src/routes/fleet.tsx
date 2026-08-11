@@ -1,11 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import {
-  Activity, AlertTriangle, ArrowUpRight, Battery, ChevronRight, Gauge, MapPin,
-  Radar as RadarIcon, Route as RouteIcon, ShieldAlert, Sparkles, Users, Zap,
+  Activity,
+  AlertTriangle,
+  ArrowUpRight,
+  Battery,
+  ChevronRight,
+  Gauge,
+  MapPin,
+  Radar as RadarIcon,
+  Route as RouteIcon,
+  ShieldAlert,
+  Sparkles,
+  Users,
+  Zap,
 } from "lucide-react";
 import {
-  PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
 } from "recharts";
 import { PageShell } from "@/components/layout/AppNav";
 import { InsightCard } from "@/components/dashboard/InsightCard";
@@ -17,9 +33,15 @@ export const Route = createFileRoute("/fleet")({
   head: () => ({
     meta: [
       { title: "Fleet Command Center · Voltline" },
-      { name: "description", content: "Executive operational intelligence for EV fleet operations." },
+      {
+        name: "description",
+        content: "Executive operational intelligence for EV fleet operations.",
+      },
       { property: "og:title", content: "Fleet Command Center · Voltline" },
-      { property: "og:description", content: "Unified KPIs, risk radar, leakage analytics and executive drilldowns." },
+      {
+        property: "og:description",
+        content: "Unified KPIs, risk radar, leakage analytics and executive drilldowns.",
+      },
     ],
   }),
   component: FleetCommandPage,
@@ -28,32 +50,50 @@ export const Route = createFileRoute("/fleet")({
 const fmt = (n: number, d = 1) =>
   n.toLocaleString(undefined, { maximumFractionDigits: d, minimumFractionDigits: d });
 
-function HeroKpi({ label, value, unit, tone = "default", icon: Icon, hint }: {
-  label: string; value: string; unit?: string; hint?: string;
+function HeroKpi({
+  label,
+  value,
+  unit,
+  tone = "default",
+  icon: Icon,
+  hint,
+}: {
+  label: string;
+  value: string;
+  unit?: string;
+  hint?: string;
   tone?: "default" | "warning" | "destructive" | "success";
   icon: any;
 }) {
   const toneClass =
-    tone === "warning" ? "text-warning bg-warning/10 ring-warning/25"
-      : tone === "destructive" ? "text-destructive bg-destructive/10 ring-destructive/25"
-      : tone === "success" ? "text-success bg-success/10 ring-success/25"
-      : "text-primary bg-primary/10 ring-primary/25";
+    tone === "warning"
+      ? "text-warning bg-warning/10 ring-warning/25"
+      : tone === "destructive"
+        ? "text-destructive bg-destructive/10 ring-destructive/25"
+        : tone === "success"
+          ? "text-success bg-success/10 ring-success/25"
+          : "text-primary bg-primary/10 ring-primary/25";
   return (
     <div className="accent-bar-top card-interactive group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-5 shadow-elevated">
       <div
         className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-50 blur-2xl transition-opacity group-hover:opacity-75"
         style={{
           background:
-            tone === "destructive" ? "color-mix(in oklab, var(--color-destructive) 50%, transparent)"
-              : tone === "warning" ? "color-mix(in oklab, var(--color-warning) 50%, transparent)"
-              : tone === "success" ? "color-mix(in oklab, var(--color-success) 50%, transparent)"
-              : "color-mix(in oklab, var(--color-primary) 50%, transparent)",
+            tone === "destructive"
+              ? "color-mix(in oklab, var(--color-destructive) 50%, transparent)"
+              : tone === "warning"
+                ? "color-mix(in oklab, var(--color-warning) 50%, transparent)"
+                : tone === "success"
+                  ? "color-mix(in oklab, var(--color-success) 50%, transparent)"
+                  : "color-mix(in oklab, var(--color-primary) 50%, transparent)",
         }}
         aria-hidden
       />
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{label}</div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {label}
+          </div>
           <div className="mt-1 flex items-baseline gap-1.5">
             <span className="num text-[28px] font-semibold tracking-tight">{value}</span>
             {unit && <span className="text-[12px] font-medium text-muted-foreground">{unit}</span>}
@@ -82,12 +122,9 @@ function FleetCommandPage() {
     [],
   );
 
-  const routeRisk =
-    ROUTES.reduce((s, r) => s + r.difficulty_score, 0) / ROUTES.length;
-  const segmentRisk =
-    SEGMENTS.reduce((s, x) => s + x.risk_score, 0) / SEGMENTS.length;
-  const driverRisk =
-    DRIVERS.reduce((s, d) => s + (100 - d.contextual_score), 0) / DRIVERS.length;
+  const routeRisk = ROUTES.reduce((s, r) => s + r.difficulty_score, 0) / ROUTES.length;
+  const segmentRisk = SEGMENTS.reduce((s, x) => s + x.risk_score, 0) / SEGMENTS.length;
+  const driverRisk = DRIVERS.reduce((s, d) => s + (100 - d.contextual_score), 0) / DRIVERS.length;
   const energyRisk = Math.min(
     100,
     (FLEET_KPIS.total_energy_leakage_kwh / (ROUTES.length * 200)) * 100,
@@ -112,7 +149,9 @@ function FleetCommandPage() {
       meta={
         <div className="flex items-center gap-2">
           <div className="rounded-xl border border-border/60 bg-card/60 px-4 py-2.5 text-right">
-            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">Operational status</div>
+            <div className="text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              Operational status
+            </div>
             <div className="mt-0.5 flex items-center justify-end gap-1.5">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inset-0 animate-ping rounded-full bg-success opacity-60" />
@@ -126,12 +165,48 @@ function FleetCommandPage() {
     >
       {/* A. Hero KPIs */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
-        <HeroKpi label="Fleet efficiency" value={fmt(FLEET_KPIS.fleet_efficiency_kwh_per_km, 2)} unit="kWh/km" icon={Gauge} hint="Composite, 30d" />
-        <HeroKpi label="Risk index" value={fmt(FLEET_KPIS.operational_risk_index)} unit="/100" tone="warning" icon={ShieldAlert} hint="Inverse of avg score" />
-        <HeroKpi label="Energy leakage" value={fmt(FLEET_KPIS.total_energy_leakage_kwh, 0)} unit="kWh" tone="destructive" icon={Zap} hint="Estimated, 30d" />
-        <HeroKpi label="DMS events" value={fmt(FLEET_KPIS.total_dms_events, 0)} icon={AlertTriangle} hint="All severities" />
-        <HeroKpi label="High-risk routes" value={String(FLEET_KPIS.high_risk_routes)} unit="of 10" tone="warning" icon={RouteIcon} />
-        <HeroKpi label="High-risk drivers" value={String(FLEET_KPIS.high_risk_drivers)} tone="destructive" icon={Users} />
+        <HeroKpi
+          label="Fleet efficiency"
+          value={fmt(FLEET_KPIS.fleet_efficiency_kwh_per_km, 2)}
+          unit="kWh/km"
+          icon={Gauge}
+          hint="Composite, 30d"
+        />
+        <HeroKpi
+          label="Risk index"
+          value={fmt(FLEET_KPIS.operational_risk_index)}
+          unit="/100"
+          tone="warning"
+          icon={ShieldAlert}
+          hint="Inverse of avg score"
+        />
+        <HeroKpi
+          label="Energy leakage"
+          value={fmt(FLEET_KPIS.total_energy_leakage_kwh, 0)}
+          unit="kWh"
+          tone="destructive"
+          icon={Zap}
+          hint="Estimated, 30d"
+        />
+        <HeroKpi
+          label="DMS events"
+          value={fmt(FLEET_KPIS.total_dms_events, 0)}
+          icon={AlertTriangle}
+          hint="All severities"
+        />
+        <HeroKpi
+          label="High-risk routes"
+          value={String(FLEET_KPIS.high_risk_routes)}
+          unit="of 10"
+          tone="warning"
+          icon={RouteIcon}
+        />
+        <HeroKpi
+          label="High-risk drivers"
+          value={String(FLEET_KPIS.high_risk_drivers)}
+          tone="destructive"
+          icon={Users}
+        />
       </section>
 
       {/* B. Map + D. Radar */}
@@ -149,7 +224,9 @@ function FleetCommandPage() {
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h3 className="text-[15px] font-semibold tracking-tight">Operational risk radar</h3>
-              <p className="text-[12.5px] text-muted-foreground">Composite layers, normalized 0–100.</p>
+              <p className="text-[12.5px] text-muted-foreground">
+                Composite layers, normalized 0–100.
+              </p>
             </div>
             <RadarIcon className="h-4 w-4 text-muted-foreground" />
           </div>
@@ -157,9 +234,25 @@ function FleetCommandPage() {
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radar} outerRadius="78%">
                 <PolarGrid stroke="var(--color-border)" />
-                <PolarAngleAxis dataKey="axis" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-                <Radar dataKey="v" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.22} {...CHART_ENTER} />
-                <Tooltip contentStyle={{ background: "var(--color-popover)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12 }} />
+                <PolarAngleAxis
+                  dataKey="axis"
+                  tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+                />
+                <Radar
+                  dataKey="v"
+                  stroke="var(--color-primary)"
+                  fill="var(--color-primary)"
+                  fillOpacity={0.22}
+                  {...CHART_ENTER}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--color-popover)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                />
               </RadarChart>
             </ResponsiveContainer>
           </div>
@@ -176,21 +269,33 @@ function FleetCommandPage() {
 
       {/* C. Leakage analytics + Drilldowns */}
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <DrillCard title="Top leakage routes" icon={Zap} to="/routes" tone="destructive"
+        <DrillCard
+          title="Top leakage routes"
+          icon={Zap}
+          to="/routes"
+          tone="destructive"
           rows={worstRoutes.map((r) => ({
             label: `${r.route_code} · ${r.route_name}`,
             value: `${fmt(r.energy_leakage_kwh, 0)} kWh`,
             sub: `${fmt(r.efficiency_kwh_per_km, 2)} kWh/km`,
           }))}
         />
-        <DrillCard title="Top dangerous segments" icon={MapPin} to="/segments" tone="warning"
+        <DrillCard
+          title="Top dangerous segments"
+          icon={MapPin}
+          to="/segments"
+          tone="warning"
           rows={worstSegments.map((s) => ({
             label: s.segment_id,
             value: fmt(s.risk_score),
             sub: `${s.harsh_braking} brake · ${s.distraction} distraction`,
           }))}
         />
-        <DrillCard title="Coaching priorities" icon={Users} to="/drivers" tone="destructive"
+        <DrillCard
+          title="Coaching priorities"
+          icon={Users}
+          to="/drivers"
+          tone="destructive"
           rows={worstDrivers.map((d) => ({
             label: d.driver_name,
             value: fmt(d.contextual_score),
@@ -247,29 +352,57 @@ function FleetCommandPage() {
         <div className="flex flex-wrap items-center gap-2 text-[12px] text-muted-foreground">
           <span className="rounded-md bg-muted/40 px-2 py-1 text-foreground">Fleet</span>
           <ChevronRight className="h-3 w-3" />
-          <Link to="/routes" className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground">Route</Link>
+          <Link
+            to="/routes"
+            className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground"
+          >
+            Route
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link to="/segments" className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground">Segment</Link>
+          <Link
+            to="/segments"
+            className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground"
+          >
+            Segment
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link to="/drivers" className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground">Driver</Link>
+          <Link
+            to="/drivers"
+            className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground"
+          >
+            Driver
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link to="/" className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground">Trip</Link>
+          <Link to="/" className="rounded-md px-2 py-1 hover:bg-muted/40 hover:text-foreground">
+            Trip
+          </Link>
         </div>
       </section>
     </PageShell>
   );
 }
 
-function DrillCard({ title, icon: Icon, rows, to, tone }: {
-  title: string; icon: any; to: string;
+function DrillCard({
+  title,
+  icon: Icon,
+  rows,
+  to,
+  tone,
+}: {
+  title: string;
+  icon: any;
+  to: string;
   tone: "warning" | "destructive" | "success" | "primary";
   rows: { label: string; value: string; sub?: string }[];
 }) {
   const toneClass =
-    tone === "destructive" ? "text-destructive"
-      : tone === "warning" ? "text-warning"
-      : tone === "success" ? "text-success"
-      : "text-primary";
+    tone === "destructive"
+      ? "text-destructive"
+      : tone === "warning"
+        ? "text-warning"
+        : tone === "success"
+          ? "text-success"
+          : "text-primary";
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-elevated">
       <div className="mb-3 flex items-center justify-between">
@@ -277,7 +410,10 @@ function DrillCard({ title, icon: Icon, rows, to, tone }: {
           <Icon className={`h-4 w-4 ${toneClass}`} />
           <h3 className="text-[15px] font-semibold tracking-tight">{title}</h3>
         </div>
-        <Link to={to} className="inline-flex items-center gap-1 text-[11.5px] text-muted-foreground hover:text-foreground">
+        <Link
+          to={to}
+          className="inline-flex items-center gap-1 text-[11.5px] text-muted-foreground hover:text-foreground"
+        >
           Open <ArrowUpRight className="h-3 w-3" />
         </Link>
       </div>
