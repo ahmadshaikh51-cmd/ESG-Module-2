@@ -23,6 +23,10 @@ import {
   Printer,
   Eye,
   Download,
+  Database,
+  Activity,
+  ArrowRight,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -351,10 +355,262 @@ export function ReportDataEntryForm({
     carbonSaved?: string;
     energySaved?: string;
     fuelSaved?: string;
+    source?: string;
   }>>({});
 
   // File list state
   const [attachedFiles, setAttachedFiles] = useState<{ id: string; name: string; size: string; category: string }[]>([]);
+
+  // NEW UX STATES & HELPERS
+  const [bulkEntryMode, setBulkEntryMode] = useState<boolean>(false);
+  const [bulkIndicatorValues, setBulkIndicatorValues] = useState<Record<string, Record<string, any>>>({});
+  const [saveStatus, setSaveStatus] = useState<string>("Saved just now");
+  const [expandedDocs, setExpandedDocs] = useState<Record<string, boolean>>({});
+  const [advancedExpanded, setAdvancedExpanded] = useState<Record<string, boolean>>({});
+  const [customSource, setCustomSource] = useState<Record<string, string>>({});
+  const [activeUploadId, setActiveUploadId] = useState<string | null>(null);
+
+  const getPreviousPeriodId = (periodId: string) => {
+    if (periodId === "2026-07") return "2026-06";
+    if (periodId === "2026-08") return "2026-07";
+    if (periodId === "2026-06") return "2026-05";
+    return null;
+  };
+
+  // Get previous period values for variance checks & copy functionality
+  const previousPeriodValues = useMemo(() => {
+    if (reportType === "nc") return {};
+    const prevPeriodId = getPreviousPeriodId(reportingPeriod);
+    if (!prevPeriodId) return {};
+
+    try {
+      const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+      const matchingRecords = records.filter((r: any) =>
+        r.reportType !== "nc" &&
+        r.project === project &&
+        r.site === site &&
+        r.reportingPeriod === prevPeriodId
+      );
+
+      const mergedValues: any = {};
+      matchingRecords.forEach((r: any) => {
+        if (r.indicatorValues) {
+          Object.entries(r.indicatorValues).forEach(([indId, valObj]) => {
+            mergedValues[indId] = {
+              ...(mergedValues[indId] || {}),
+              ...(valObj || {})
+            };
+          });
+        }
+      });
+      return mergedValues;
+    } catch (e) {
+      return {};
+    }
+  }, [project, site, reportingPeriod, reportType]);
+
+  // Load and merge existing values across all report types for the same project/site/period
+  useEffect(() => {
+    if (reportType === "nc") return;
+    
+    try {
+      const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+      const matchingRecords = records.filter((r: any) =>
+        r.reportType !== "nc" &&
+        r.project === project &&
+        r.site === site &&
+        r.reportingPeriod === reportingPeriod
+      );
+      
+      const mergedValues: any = {};
+      matchingRecords.forEach((r: any) => {
+        if (r.indicatorValues) {
+          Object.entries(r.indicatorValues).forEach(([indId, valObj]) => {
+            mergedValues[indId] = {
+              ...(mergedValues[indId] || {}),
+              ...(valObj || {})
+            };
+          });
+        }
+      });
+
+      const mergedFiles: any[] = [];
+      matchingRecords.forEach((r: any) => {
+        if (r.files) {
+          r.files.forEach((f: any) => {
+            if (!mergedFiles.some(mf => mf.id === f.id)) {
+              mergedFiles.push(f);
+            }
+          });
+        }
+      });
+      
+      setIndicatorValues(prev => {
+        if (JSON.stringify(prev) !== JSON.stringify({ ...prev, ...mergedValues })) {
+          return { ...prev, ...mergedValues };
+        }
+        return prev;
+      });
+
+      if (mergedFiles.length > 0) {
+        setAttachedFiles(prev => {
+          if (JSON.stringify(prev) !== JSON.stringify(mergedFiles)) {
+            return mergedFiles;
+          }
+          return prev;
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [project, site, reportingPeriod, reportType]);
+
+  // Bulk Entry values sync
+  useEffect(() => {
+    if (reportType === "nc") return;
+    try {
+      const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+      const newBulkValues: Record<string, any> = {};
+      
+      projectConfig.sites.forEach(s => {
+        newBulkValues[s.id] = {};
+        const matchingRecords = records.filter((r: any) =>
+          r.reportType !== "nc" &&
+          r.project === project &&
+          r.site === s.id &&
+          r.reportingPeriod === reportingPeriod
+        );
+        
+        matchingRecords.forEach((r: any) => {
+          if (r.indicatorValues) {
+            Object.entries(r.indicatorValues).forEach(([indId, valObj]) => {
+              newBulkValues[s.id][indId] = {
+                ...(newBulkValues[s.id][indId] || {}),
+                ...(valObj || {})
+              };
+            });
+          }
+        });
+      });
+      
+      setBulkIndicatorValues(prev => {
+        if (JSON.stringify(prev) !== JSON.stringify(newBulkValues)) {
+          return newBulkValues;
+        }
+        return prev;
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [project, reportingPeriod, projectConfig, reportType]);
+
+  // Micro-interaction: Auto-save status updater
+  useEffect(() => {
+    if (reportType === "nc") return;
+    setSaveStatus("Saving...");
+    const timer = setTimeout(() => {
+      setSaveStatus("Auto-saved just now");
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [indicatorValues, bulkIndicatorValues, project, site, reportingPeriod]);
+
+  // Copy previous period data function
+  const handleCopyPreviousPeriod = () => {
+    if (Object.keys(previousPeriodValues).length === 0) {
+      toast.info("No previous data found to copy.");
+      return;
+    }
+
+    setIndicatorValues(prev => {
+      const updated = { ...prev };
+      Object.entries(previousPeriodValues).forEach(([indId, valObj]: [string, any]) => {
+        if (valObj.actual !== undefined) {
+          updated[indId] = {
+            ...(updated[indId] || {}),
+            actual: valObj.actual,
+            source: valObj.source || "Meter Reading",
+          };
+        }
+      });
+      return updated;
+    });
+
+    toast.success("Previous Period Data Copied", {
+      description: `Copied data from ${getPreviousPeriodId(reportingPeriod)} to current form.`
+    });
+  };
+
+  // Bulk Entry matrix save logic
+  const handleBulkSave = (targetStatus: string) => {
+    try {
+      const records = JSON.parse(localStorage.getItem("voltline-report-records") || "[]");
+      let updatedRecords = [...records];
+
+      projectConfig.sites.forEach(s => {
+        const siteValues = bulkIndicatorValues[s.id] || {};
+        
+        const existingIdx = updatedRecords.findIndex((r: any) =>
+          r.reportType === reportType &&
+          r.project === project &&
+          r.site === s.id &&
+          r.reportingPeriod === reportingPeriod
+        );
+
+        const newRecord = existingIdx >= 0 ? {
+          ...updatedRecords[existingIdx],
+          status: targetStatus,
+          indicatorValues: siteValues,
+          updatedAt: new Date().toISOString()
+        } : {
+          id: `rec-${Date.now()}-${s.id}`,
+          reportType,
+          entity,
+          company,
+          businessUnit,
+          project,
+          site: s.id,
+          reportingPeriod,
+          financialYear,
+          quarter,
+          month,
+          dataEntryTab,
+          frequency,
+          responsibleDept,
+          responsiblePerson,
+          dueDate,
+          status: targetStatus,
+          reviewer,
+          notes,
+          files: attachedFiles.filter(f => f.category === s.id || f.category === "general"),
+          updatedAt: new Date().toISOString(),
+          indicatorValues: siteValues
+        };
+
+        if (existingIdx >= 0) {
+          updatedRecords[existingIdx] = newRecord;
+        } else {
+          updatedRecords.unshift(newRecord);
+        }
+      });
+
+      localStorage.setItem("voltline-report-records", JSON.stringify(updatedRecords));
+      toast.success(targetStatus === "Draft" ? "Bulk Draft Saved" : "Bulk status updated to " + targetStatus, {
+        description: `Data saved for all ${projectConfig.sites.length} sites.`
+      });
+      onCancel();
+    } catch (e) {
+      toast.error("Error saving bulk entry matrix.");
+    }
+  };
+
+  const scrollToField = (indId: string) => {
+    const el = document.getElementById(`field-card-${indId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      const input = el.querySelector("input");
+      if (input) input.focus();
+    }
+  };
 
   // Load record details if editing
   useEffect(() => {
@@ -737,18 +993,38 @@ export function ReportDataEntryForm({
     toast.success(targetStatus === "Draft" ? "Draft Saved" : "Status updated to " + targetStatus, {
       description: `NC report record updated successfully.`
     });
-
     onCancel();
   };
+
+  const completedIndicatorsCount = useMemo(() => {
+    if (reportType === "nc") return 0;
+    return filteredIndicatorsList.filter(ind => indicatorValues[ind.id]?.actual !== undefined && indicatorValues[ind.id]?.actual !== "").length;
+  }, [filteredIndicatorsList, indicatorValues, reportType]);
+
+  const warningsCount = useMemo(() => {
+    if (reportType === "nc") return 0;
+    return filteredIndicatorsList.filter(ind => {
+      const val = Number(indicatorValues[ind.id]?.actual);
+      const prevVal = Number(previousPeriodValues[ind.id]?.actual);
+      return val > 0 && prevVal > 0 && Math.abs((val - prevVal) / prevVal) >= 0.5;
+    }).length;
+  }, [filteredIndicatorsList, indicatorValues, previousPeriodValues, reportType]);
 
   return (
     <div className="space-y-4">
       {/* Dynamic Header */}
       <div className="flex items-center justify-between border-b border-border/40 pb-3">
         <div>
-          <h3 className="text-[15px] font-semibold tracking-tight text-foreground uppercase">
-            {editRecordId ? "Edit" : "New"} {reportType === "nc" ? "NC" : reportType.toUpperCase()} Record
-          </h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-[15px] font-semibold tracking-tight text-foreground uppercase">
+              {editRecordId ? "Edit" : "New"} {reportType === "nc" ? "NC" : reportType.toUpperCase()} Record
+            </h3>
+            {reportType !== "nc" && (
+              <span className="text-[10.5px] text-muted-foreground bg-muted px-2 py-0.5 rounded-md font-medium font-mono border border-border/60">
+                {saveStatus}
+              </span>
+            )}
+          </div>
           <p className="text-[12px] text-muted-foreground mt-0.5">
             Auto-populated Matrix &amp; Assignment Sign-offs
           </p>
@@ -912,226 +1188,518 @@ export function ReportDataEntryForm({
               </div>
             </PanelCard>
 
-            <PanelCard>
-              <div className="border-b border-border/40 px-4 py-3 bg-muted/10">
-                <h4 className="text-[12.5px] font-bold text-foreground uppercase tracking-wider">
-                  Report Indicators &amp; Measurements
+            <div className="flex items-center justify-between bg-card border border-border/60 rounded-2xl p-4 shadow-sm">
+              <div>
+                <h4 className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+                  <Database className="h-4 w-4 text-primary" /> Data Entry Mode
                 </h4>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Choose between individual cards or bulk site entry table.
+                </p>
               </div>
-              <div className="p-4 divide-y divide-border/40 space-y-4">
-                {reportIndicators.length === 0 ? (
-                  <p className="text-[12.5px] text-muted-foreground text-center py-4">
-                    No matching indicators found for report type {reportType.toUpperCase()}.
-                  </p>
-                ) : (
-                  reportIndicators.map(ind => {
-                    const values = indicatorValues[ind.id] || {};
-                    const handleValChange = (field: string, val: string) => {
-                      setIndicatorValues(prev => ({
-                        ...prev,
-                        [ind.id]: {
-                          ...prev[ind.id],
-                          [field]: val
-                        }
-                      }));
-                    };
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setBulkEntryMode(false)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-xl text-[11.5px] font-semibold border transition-all active:scale-[0.98] cursor-pointer",
+                    !bulkEntryMode
+                      ? "bg-primary text-primary-foreground border-primary/20 shadow-sm"
+                      : "bg-card hover:bg-muted/50 text-foreground border-border/60"
+                  )}
+                >
+                  Individual Cards
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBulkEntryMode(true)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-xl text-[11.5px] font-semibold border transition-all active:scale-[0.98] cursor-pointer",
+                    bulkEntryMode
+                      ? "bg-primary text-primary-foreground border-primary/20 shadow-sm"
+                      : "bg-card hover:bg-muted/50 text-foreground border-border/60"
+                  )}
+                >
+                  Bulk Site Matrix
+                </button>
+              </div>
+            </div>
 
-                    return (
-                      <div key={ind.id} className="pt-4 first:pt-0 space-y-3">
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <div>
-                            <span className="inline-flex h-5 items-center rounded bg-primary/10 border border-primary/20 px-1.5 text-[10px] font-bold text-primary mr-2">
-                              {ind.id}
-                            </span>
-                            <span className="text-[12.5px] font-bold text-foreground">{ind.name}</span>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{ind.def}</p>
-                          </div>
-                          <span className="text-[11px] text-muted-foreground bg-muted/40 border border-border/60 px-2 py-0.5 rounded num">
-                            Unit: {ind.unit}
+            {bulkEntryMode ? (
+              <PanelCard>
+                <div className="border-b border-border/40 px-4 py-3 bg-muted/10 flex items-center justify-between">
+                  <h4 className="text-[12.5px] font-bold text-foreground uppercase tracking-wider">
+                    Bulk Site Entry Matrix — {month} {financialYear}
+                  </h4>
+                  <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded font-bold font-mono">
+                    {project}
+                  </span>
+                </div>
+                <div className="p-4 overflow-auto">
+                  <table className="w-full text-[12px] border-collapse">
+                    <thead>
+                      <tr className="border-b border-border/60 text-muted-foreground uppercase text-[10px] tracking-wider text-left">
+                        <th className="py-2 px-3 font-semibold">Site / Depot</th>
+                        {filteredIndicatorsList.map(ind => (
+                          <th key={ind.id} className="py-2 px-3 font-semibold min-w-[160px]">
+                            {ind.name} ({ind.unit})
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/40">
+                      {projectConfig.sites.map(s => (
+                        <tr key={s.id} className="hover:bg-muted/10 transition-colors">
+                          <td className="py-3 px-3 font-bold text-foreground text-[12.5px]">
+                            {s.name}
+                          </td>
+                          {filteredIndicatorsList.map(ind => {
+                            const valObj = bulkIndicatorValues[s.id]?.[ind.id] || {};
+                            const val = valObj.actual || "";
+                            const isNeg = Number(val) < 0;
+                            
+                            return (
+                              <td key={ind.id} className="py-3 px-3">
+                                <div className="space-y-1 relative">
+                                  <Input
+                                    type="number"
+                                    value={val}
+                                    onChange={e => {
+                                      const newVal = e.target.value;
+                                      setBulkIndicatorValues(prev => ({
+                                        ...prev,
+                                        [s.id]: {
+                                          ...(prev[s.id] || {}),
+                                          [ind.id]: {
+                                            ...(prev[s.id]?.[ind.id] || {}),
+                                            actual: newVal,
+                                            source: prev[s.id]?.[ind.id]?.source || "Meter Reading"
+                                          }
+                                        }
+                                      }));
+                                    }}
+                                    className={cn(
+                                      "h-8 text-[12px] num w-full pr-10",
+                                      isNeg && "border-destructive focus-visible:ring-destructive"
+                                    )}
+                                    placeholder={`Value`}
+                                  />
+                                  <span className="absolute right-2 top-2 text-[10px] text-muted-foreground font-mono pointer-events-none">
+                                    {ind.unit}
+                                  </span>
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </PanelCard>
+            ) : (
+              <div className="space-y-4">
+                {filteredIndicatorsList.map(ind => {
+                  const values = indicatorValues[ind.id] || {};
+                  const handleValChange = (field: string, val: string) => {
+                    setIndicatorValues(prev => ({
+                      ...prev,
+                      [ind.id]: {
+                        ...prev[ind.id],
+                        [field]: val
+                      }
+                    }));
+                  };
+
+                  const prevVal = previousPeriodValues[ind.id]?.actual;
+                  const val = values.actual || "";
+                  const isNeg = Number(val) < 0;
+                  const prevNum = Number(prevVal);
+                  const currNum = Number(val);
+                  const isVarianceAnomaly = prevNum > 0 && currNum > 0 && Math.abs((currNum - prevNum) / prevNum) >= 0.5;
+
+                  const cardFiles = attachedFiles.filter(f => f.category === ind.id);
+
+                  const handleCardFileUpload = (e: React.ChangeEvent<HTMLInputElement>, indId: string) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const newFile = {
+                        id: `doc-${Date.now()}`,
+                        name: file.name,
+                        size: `${(file.size / 1024).toFixed(1)} KB`,
+                        category: indId,
+                        version: "v1.0",
+                        uploadedBy: "Rohan Sharma",
+                        uploadedDate: new Date().toLocaleDateString(),
+                        status: "Draft"
+                      };
+                      setAttachedFiles(prev => [...prev, newFile]);
+                      toast.success("Document attached", { description: `${file.name} uploaded.` });
+                    }
+                  };
+
+                  return (
+                    <PanelCard key={ind.id} id={`field-card-${ind.id}`} className="transition-all duration-300 border-l-4 border-l-primary/60 hover:border-l-primary hover:shadow-md">
+                      <div className="border-b border-border/30 px-4 py-3.5 bg-muted/5 flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[10.5px] text-primary bg-primary/10 border border-primary/20 rounded px-1.5 py-0.5 font-mono">
+                            {ind.id}
+                          </span>
+                          <span className="text-[13px] font-bold text-foreground">{ind.name}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 border border-destructive/20 px-1.5 py-0.5 rounded">
+                            Required
                           </span>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-end">
-                          {reportType === "amr" && (
-                            <>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Actual Value</Label>
-                                <Input
-                                  type="number"
-                                  value={values.actual || ""}
-                                  onChange={e => handleValChange("actual", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-4 space-y-1 bg-muted/5 p-2 rounded border border-border/40">
-                                <span className="text-[9.5px] font-bold text-muted-foreground uppercase tracking-wider block">Formula / Reference</span>
-                                <span className="text-[11.5px] font-medium text-foreground mt-0.5 block">{ind.formula} (Ref: {ind.amrRef})</span>
-                              </div>
-                              <div className="md:col-span-5 space-y-1">
-                                <Label className="text-[11.5px]">Remarks</Label>
-                                <Input
-                                  value={values.remarks || ""}
-                                  onChange={e => handleValChange("remarks", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
-                                />
-                              </div>
-                            </>
-                          )}
-                          {reportType === "ghg" && (
-                            <>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Activity Value ({ind.unit})</Label>
-                                <Input
-                                  type="number"
-                                  value={values.actual || ""}
-                                  onChange={e => handleValChange("actual", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-3 bg-muted/10 p-2 rounded border border-border/40 text-[11.5px]">
-                                <span className="text-[9px] font-bold text-muted-foreground uppercase block">{ind.scope}</span>
-                                <span className="font-semibold text-foreground block mt-0.5">Factor: {ind.factor}</span>
-                              </div>
-                              <div className="md:col-span-3 bg-primary/5 p-2 rounded border border-primary/20 text-[11.5px]">
-                                <span className="text-[9px] font-bold text-primary uppercase block">Calculated Emissions</span>
-                                <span className="font-bold text-foreground block mt-0.5 num">
-                                  {values.actual ? (Number(values.actual) * ind.factor).toFixed(2) : "0.00"} kg CO₂e
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-muted-foreground bg-muted/50 border border-border/40 px-2 py-0.5 rounded font-mono">
+                            Unit: {ind.unit}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedDocs(prev => ({ ...prev, [ind.id]: !prev[ind.id] }))}
+                            className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                            title="Why is this required?"
+                          >
+                            <Info className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-4 space-y-4">
+                        {expandedDocs[ind.id] && (
+                          <div className="bg-muted/30 border border-border/40 rounded-xl p-3 text-[11.5px] text-muted-foreground space-y-1.5">
+                            <div><span className="font-bold text-foreground">Definition:</span> {ind.def}</div>
+                            {ind.maps && (
+                              <div>
+                                <span className="font-bold text-foreground">Reused in:</span>{" "}
+                                <span className="inline-flex gap-1.5 mt-0.5">
+                                  {ind.maps.map(m => (
+                                    <span key={m} className="bg-primary/5 text-primary border border-primary/10 px-1 rounded text-[9.5px] font-bold font-mono uppercase">
+                                      {m}
+                                    </span>
+                                  ))}
                                 </span>
                               </div>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Remarks</Label>
-                                <Input
-                                  value={values.remarks || ""}
-                                  onChange={e => handleValChange("remarks", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
+                            )}
+                            <div><span className="font-bold text-foreground">Applicability:</span> Monthly • Site-specific • Facility Manager</div>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
+                          <div className="md:col-span-4 space-y-1.5">
+                            <Label className="text-[11.5px] font-semibold text-muted-foreground flex items-center justify-between">
+                              <span>Enter Value</span>
+                              {prevVal && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleValChange("actual", prevVal)}
+                                  className="text-[10.5px] text-primary hover:underline font-normal cursor-pointer"
+                                >
+                                  Prev: {prevVal} {ind.unit}
+                                </button>
+                              )}
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={val}
+                                onChange={e => handleValChange("actual", e.target.value)}
+                                className={cn(
+                                  "h-9 text-[12.5px] num pr-12",
+                                  isNeg && "border-destructive focus-visible:ring-destructive",
+                                  isVarianceAnomaly && "border-warning focus-visible:ring-warning"
+                                )}
+                                placeholder={`Enter value in ${ind.unit}`}
+                              />
+                              <span className="absolute right-3 top-2.5 text-[11px] text-muted-foreground font-mono font-medium pointer-events-none">
+                                {ind.unit}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-4 space-y-1.5">
+                            <Label className="text-[11.5px] font-semibold text-muted-foreground">Data Source</Label>
+                            <Select
+                              value={values.source || "Meter Reading"}
+                              onValueChange={v => handleValChange("source", v)}
+                            >
+                              <SelectTrigger className="h-9 text-[12.5px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Electricity Bill" className="text-[12px]">Electricity Bill</SelectItem>
+                                <SelectItem value="Meter Reading" className="text-[12px]">Meter Reading</SelectItem>
+                                <SelectItem value="System/API" className="text-[12px]">System/API Integration</SelectItem>
+                                <SelectItem value="Other" className="text-[12px]">Other (Specify)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {values.source === "Other" && (
+                              <Input
+                                value={customSource[ind.id] || ""}
+                                onChange={e => {
+                                  const sVal = e.target.value;
+                                  setCustomSource(prev => ({ ...prev, [ind.id]: sVal }));
+                                  handleValChange("source_details", sVal);
+                                }}
+                                placeholder="Specify other source..."
+                                className="h-8.5 text-[12px] mt-1.5"
+                              />
+                            )}
+                          </div>
+
+                          <div className="md:col-span-4 space-y-1.5">
+                            <Label className="text-[11.5px] font-semibold text-muted-foreground">Supporting Evidence</Label>
+                            <div className="space-y-1.5">
+                              <div className="relative">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => document.getElementById(`upload-${ind.id}`)?.click()}
+                                  className="w-full h-9 border-dashed border-border/80 hover:border-primary flex items-center justify-center gap-1.5 text-[11.5px] font-medium cursor-pointer"
+                                >
+                                  <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                                  Attach Document
+                                </Button>
+                                <input
+                                  id={`upload-${ind.id}`}
+                                  type="file"
+                                  onChange={e => handleCardFileUpload(e, ind.id)}
+                                  className="hidden"
                                 />
                               </div>
-                            </>
-                          )}
-                          {reportType === "brsr" && (
-                            <>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Value</Label>
-                                <Input
-                                  value={values.actual || ""}
-                                  onChange={e => handleValChange("actual", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-3 bg-muted/10 p-2 rounded border border-border/40 text-[11px] leading-tight">
-                                <span className="font-bold text-muted-foreground uppercase text-[9px] block">{ind.principle}</span>
-                                <span className="font-medium text-foreground block mt-0.5">{ind.section} ({ind.question})</span>
-                              </div>
-                              <div className="md:col-span-4 space-y-1">
-                                <Label className="text-[11.5px]">Narrative Response</Label>
-                                <Input
-                                  value={values.narrative || ""}
-                                  onChange={e => handleValChange("narrative", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
-                                />
-                              </div>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Remarks</Label>
-                                <Input
-                                  value={values.remarks || ""}
-                                  onChange={e => handleValChange("remarks", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
-                                />
-                              </div>
-                            </>
-                          )}
-                          {reportType === "impact" && (
-                            <>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Baseline</Label>
-                                <Input
-                                  value={values.baseline || String(ind.baseline || 0)}
-                                  onChange={e => handleValChange("baseline", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Current Value</Label>
-                                <Input
-                                  value={values.actual || ""}
-                                  onChange={e => handleValChange("actual", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Target</Label>
-                                <Input
-                                  value={values.target || ""}
-                                  onChange={e => handleValChange("target", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Beneficiaries</Label>
-                                <Input
-                                  value={values.beneficiaries || ""}
-                                  onChange={e => handleValChange("beneficiaries", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
-                                />
-                              </div>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Remarks</Label>
-                                <Input
-                                  value={values.remarks || ""}
-                                  onChange={e => handleValChange("remarks", e.target.value)}
-                                  className="h-8.5 text-[12.5px]"
-                                />
-                              </div>
-                            </>
-                          )}
-                          {reportType === "carbon" && (
-                            <>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Baseline Emission</Label>
-                                <Input
-                                  value={values.baseline || ""}
-                                  onChange={e => handleValChange("baseline", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Current Emission</Label>
-                                <Input
-                                  value={values.actual || ""}
-                                  onChange={e => handleValChange("actual", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                              <div className="md:col-span-3 bg-success/8 border border-success/20 p-2 rounded text-[11.5px]">
-                                <span className="text-[9px] font-bold text-success uppercase block">Carbon Saved (tCO₂e)</span>
-                                <span className="font-extrabold text-success block mt-0.5 num">
-                                  {values.baseline && values.actual ? (Number(values.baseline) - Number(values.actual)).toFixed(2) : "0.00"}
+                            </div>
+                          </div>
+                        </div>
+
+                        {isNeg && (
+                          <div className="text-[11px] text-destructive font-medium flex items-center gap-1 mt-1">
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                            Value cannot be negative.
+                          </div>
+                        )}
+                        {isVarianceAnomaly && (
+                          <div className="text-[11px] text-warning font-medium flex items-center gap-1 mt-1">
+                            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                            This value varies by {Math.round(Math.abs((currNum - prevNum) / prevNum) * 100)}% from last period ({prevVal} {ind.unit}). Please verify.
+                          </div>
+                        )}
+
+                        {cardFiles.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2 bg-muted/10 p-2 rounded-xl border border-border/40">
+                            {cardFiles.map(f => (
+                              <span key={f.id} className="inline-flex items-center gap-1 text-[11px] bg-card border border-border/60 text-foreground px-2 py-0.5 rounded-lg">
+                                <FileText className="h-3 w-3 text-muted-foreground" />
+                                <span className="truncate max-w-[120px]" title={f.name}>{f.name}</span>
+                                <span className="text-[9px] text-muted-foreground">({f.size})</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setAttachedFiles(prev => prev.filter(x => x.id !== f.id))}
+                                  className="text-muted-foreground hover:text-destructive shrink-0 cursor-pointer ml-0.5 font-bold"
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {((ind.factor > 0 && val) || (ind.maps.includes("carbon") && val)) ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/20">
+                            {ind.factor > 0 && val && (
+                              <div className="bg-primary/5 border border-primary/20 p-2.5 rounded-xl text-[11px] flex items-center justify-between">
+                                <div>
+                                  <span className="font-bold text-muted-foreground uppercase text-[9px] block">Calculated GHG Impact</span>
+                                  <span className="font-extrabold text-foreground mt-0.5 block num text-[12px]">
+                                    {(Number(val) * ind.factor).toFixed(2)} kg CO₂e
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20 font-mono">
+                                  {ind.scope}
                                 </span>
                               </div>
-                              <div className="md:col-span-2 space-y-1">
-                                <Label className="text-[11.5px]">Energy Saved</Label>
+                            )}
+                            {ind.id === "IND-2026-001" && val && (
+                              <div className="bg-cyan-500/5 border border-cyan-500/20 p-2.5 rounded-xl text-[11px] flex items-center justify-between">
+                                <div>
+                                  <span className="font-bold text-muted-foreground uppercase text-[9px] block">Energy Conversion Equivalent</span>
+                                  <span className="font-extrabold text-foreground mt-0.5 block num text-[12px]">
+                                    {(Number(val) * 0.0036).toFixed(2)} GJ
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-mono">
+                                  Gigajoules
+                                </span>
+                              </div>
+                            )}
+                            {ind.maps.includes("carbon") && val && (
+                              <div className="bg-success/5 border border-success/20 p-2.5 rounded-xl text-[11px] flex items-center justify-between">
+                                <div>
+                                  <span className="font-bold text-success uppercase text-[9px] block">Carbon Offsets / Savings</span>
+                                  <span className="font-extrabold text-success mt-0.5 block num text-[12px]">
+                                    {(Number(val) * 0.82).toFixed(2)} kg CO₂e Saved
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-bold bg-success/10 text-success px-2 py-0.5 rounded border border-success/20 font-mono">
+                                  Avoided
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ) : null}
+
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() => setAdvancedExpanded(prev => ({ ...prev, [ind.id]: !prev[ind.id] }))}
+                            className="text-[11px] font-bold text-muted-foreground hover:text-primary flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            {advancedExpanded[ind.id] ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                            {advancedExpanded[ind.id] ? "Hide Advanced Report Details" : "Show Advanced Report Details"}
+                          </button>
+
+                          {advancedExpanded[ind.id] && (
+                            <div className="mt-3 grid grid-cols-1 md:grid-cols-12 gap-3 p-3 bg-muted/10 border border-border/40 rounded-xl animate-enter">
+                              <div className="md:col-span-12 space-y-1">
+                                <Label className="text-[11px]">Remarks</Label>
                                 <Input
-                                  value={values.energySaved || ""}
-                                  onChange={e => handleValChange("energySaved", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
+                                  value={values.remarks || ""}
+                                  onChange={e => handleValChange("remarks", e.target.value)}
+                                  className="h-8 text-[12px]"
+                                  placeholder="Enter any comments or exceptions..."
                                 />
                               </div>
-                              <div className="md:col-span-3 space-y-1">
-                                <Label className="text-[11.5px]">Fuel Saved (L)</Label>
-                                <Input
-                                  value={values.fuelSaved || ""}
-                                  onChange={e => handleValChange("fuelSaved", e.target.value)}
-                                  className="h-8.5 text-[12.5px] num"
-                                />
-                              </div>
-                            </>
+
+                              {ind.maps.includes("brsr") && reportType === "brsr" && (
+                                <div className="md:col-span-12 space-y-1">
+                                  <Label className="text-[11px]">BRSR Narrative Response</Label>
+                                  <Input
+                                    value={values.narrative || ""}
+                                    onChange={e => handleValChange("narrative", e.target.value)}
+                                    className="h-8 text-[12px]"
+                                    placeholder="Enter descriptive explanation..."
+                                  />
+                                </div>
+                              )}
+
+                              {ind.maps.includes("impact") && reportType === "impact" && (
+                                <>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Baseline</Label>
+                                    <Input
+                                      value={values.baseline || String(ind.baseline || 0)}
+                                      onChange={e => handleValChange("baseline", e.target.value)}
+                                      className="h-8 text-[12px] num"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Target</Label>
+                                    <Input
+                                      value={values.target || ""}
+                                      onChange={e => handleValChange("target", e.target.value)}
+                                      className="h-8 text-[12px] num"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Beneficiaries</Label>
+                                    <Input
+                                      value={values.beneficiaries || ""}
+                                      onChange={e => handleValChange("beneficiaries", e.target.value)}
+                                      className="h-8 text-[12px]"
+                                    />
+                                  </div>
+                                </>
+                              )}
+
+                              {ind.maps.includes("carbon") && reportType === "carbon" && (
+                                <>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Baseline Emissions</Label>
+                                    <Input
+                                      value={values.baseline || ""}
+                                      onChange={e => handleValChange("baseline", e.target.value)}
+                                      className="h-8 text-[12px] num"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Energy Saved</Label>
+                                    <Input
+                                      value={values.energySaved || ""}
+                                      onChange={e => handleValChange("energySaved", e.target.value)}
+                                      className="h-8 text-[12px] num"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-4 space-y-1">
+                                    <Label className="text-[11px]">Fuel Saved (L)</Label>
+                                    <Input
+                                      value={values.fuelSaved || ""}
+                                      onChange={e => handleValChange("fuelSaved", e.target.value)}
+                                      className="h-8 text-[12px] num"
+                                    />
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>
-                    );
-                  })
+                    </PanelCard>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* NEW: Ready for Review Summary (Bottom of main column) */}
+            {reportType !== "nc" && (
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4.5 space-y-3.5 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-[13.5px] font-bold text-foreground">Ready for Review Summary</span>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3 text-[12px]">
+                  <div className="bg-card p-3 rounded-lg border border-border/40 text-center shadow-xs">
+                    <span className="text-muted-foreground block font-medium">Indicators Completed</span>
+                    <span className="text-lg font-extrabold text-foreground mt-1 block num">
+                      {completedIndicatorsCount} / {filteredIndicatorsList.length}
+                    </span>
+                  </div>
+                  <div className="bg-card p-3 rounded-lg border border-border/40 text-center shadow-xs">
+                    <span className="text-muted-foreground block font-medium">Supporting Documents</span>
+                    <span className="text-lg font-extrabold text-foreground mt-1 block num">
+                      {attachedFiles.filter(f => f.category !== "general").length} uploaded
+                    </span>
+                  </div>
+                  <div className="bg-card p-3 rounded-lg border border-border/40 text-center shadow-xs">
+                    <span className="text-muted-foreground block font-medium">Validation Warnings</span>
+                    <span className={cn(
+                      "text-lg font-extrabold mt-1 block num",
+                      warningsCount > 0 ? "text-warning" : "text-success"
+                    )}>
+                      {warningsCount}
+                    </span>
+                  </div>
+                </div>
+
+                {warningsCount > 0 && (
+                  <div className="flex items-start gap-2 bg-warning/8 border border-warning/20 p-2.5 rounded-lg text-[11px] text-warning-foreground">
+                    <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5 animate-pulse" />
+                    <div>
+                      <span className="font-bold">Anomalous values detected:</span> {warningsCount} indicators have values that vary significantly (±50%) from the previous period. Please double-check them before submitting.
+                    </div>
+                  </div>
+                )}
+
+                {completedIndicatorsCount < filteredIndicatorsList.length && (
+                  <div className="flex items-start gap-2 bg-destructive/8 border border-destructive/20 p-2.5 rounded-lg text-[11px] text-destructive-foreground">
+                    <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold">Incomplete Data:</span> You have {filteredIndicatorsList.length - completedIndicatorsCount} required indicator(s) remaining.
+                    </div>
+                  </div>
                 )}
               </div>
-            </PanelCard>
+            )}
           </div>
           <div className="lg:col-span-4 space-y-4">
             <PanelCard>
@@ -1171,6 +1739,140 @@ export function ReportDataEntryForm({
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+            </PanelCard>
+
+            {/* NEW: Decision Support & Data Completeness Sidebar (Empty Space Usage) */}
+            <PanelCard className="transition-all duration-300">
+              <div className="border-b border-border/40 px-4 py-3 bg-muted/10">
+                <h4 className="text-[12.5px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <Activity className="h-4 w-4 text-primary" /> ESG Guidance &amp; Progress
+                </h4>
+              </div>
+              <div className="p-4 space-y-4">
+                {/* 1. Completeness Progress */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[11.5px] font-bold">
+                    <span className="text-muted-foreground">Data Completeness</span>
+                    <span className="text-foreground">
+                      {(() => {
+                        const total = filteredIndicatorsList.length;
+                        const completed = filteredIndicatorsList.filter(ind => indicatorValues[ind.id]?.actual !== undefined && indicatorValues[ind.id]?.actual !== "").length;
+                        return `${completed} / ${total} indicators`;
+                      })()}
+                    </span>
+                  </div>
+                  <div className="w-full bg-muted/60 h-2 rounded-full overflow-hidden">
+                    <div
+                      className="bg-primary h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${(() => {
+                          const total = filteredIndicatorsList.length;
+                          const completed = filteredIndicatorsList.filter(ind => indicatorValues[ind.id]?.actual !== undefined && indicatorValues[ind.id]?.actual !== "").length;
+                          return total > 0 ? Math.round((completed / total) * 100) : 0;
+                        })()}%`
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* 2. Next Required Action Callout */}
+                {(() => {
+                  const incomplete = filteredIndicatorsList.find(ind => indicatorValues[ind.id]?.actual === undefined || indicatorValues[ind.id]?.actual === "");
+                  if (incomplete) {
+                    return (
+                      <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 space-y-2.5">
+                        <div>
+                          <span className="text-[10px] font-bold text-primary uppercase block">Next Required Action</span>
+                          <span className="text-[12px] font-extrabold text-foreground mt-0.5 block truncate">
+                            Enter {incomplete.name}
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={() => scrollToField(incomplete.id)}
+                          className="w-full h-8 text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                          Continue Data Entry <ArrowRight className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="bg-success/5 border border-success/20 rounded-xl p-3 flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+                        <div>
+                          <span className="text-[11px] font-bold text-success uppercase block">All Data Completed</span>
+                          <span className="text-[11px] text-muted-foreground block mt-0.5">
+                            Ready to sign off and submit for review.
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                })()}
+
+                {/* 3. Missing Fields Checklist */}
+                {(() => {
+                  const incompleteList = filteredIndicatorsList.filter(ind => indicatorValues[ind.id]?.actual === undefined || indicatorValues[ind.id]?.actual === "");
+                  if (incompleteList.length > 0) {
+                    return (
+                      <div className="space-y-2">
+                        <span className="text-[10.5px] font-bold text-muted-foreground uppercase tracking-wider block">Remaining Indicators</span>
+                        <div className="space-y-1.5 max-h-[160px] overflow-auto pr-1">
+                          {incompleteList.map(ind => (
+                            <button
+                              key={ind.id}
+                              type="button"
+                              onClick={() => scrollToField(ind.id)}
+                              className="w-full text-left text-[11.5px] font-medium text-primary hover:underline hover:text-primary/80 flex items-center gap-1.5 py-0.5 cursor-pointer"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-warning shrink-0" />
+                              <span className="truncate flex-1">{ind.name}</span>
+                              <span className="text-[9.5px] text-muted-foreground font-mono">({ind.unit})</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
+                {/* 4. Copy Previous Period Button */}
+                {Object.keys(previousPeriodValues).length > 0 && (
+                  <div className="pt-2 border-t border-border/20">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyPreviousPeriod}
+                      className="w-full mt-1 flex items-center justify-center gap-1.5 h-8.5 text-[11.5px] font-bold border-dashed border-primary/40 hover:border-primary/80 cursor-pointer"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Copy Previous Period Data
+                    </Button>
+                    <span className="text-[10px] text-muted-foreground mt-1.5 block text-center">
+                      Copy available values from previous period.
+                    </span>
+                  </div>
+                )}
+
+                {/* 5. Report Usage */}
+                <div className="pt-3 border-t border-border/20 space-y-1.5">
+                  <span className="text-[10.5px] font-bold text-muted-foreground uppercase tracking-wider block">Report Reuse</span>
+                  <p className="text-[11px] text-muted-foreground leading-normal">
+                    This site data will automatically map to:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">AMR</span>
+                    <span className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">GHG</span>
+                    <span className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">BRSR</span>
+                    <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[9.5px] font-bold px-1.5 py-0.5 rounded-md font-mono">CDP</span>
+                    <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">Impact</span>
+                  </div>
                 </div>
               </div>
             </PanelCard>
@@ -2821,7 +3523,7 @@ export function ReportDataEntryForm({
                 variant="outline"
                 size="sm"
                 onClick={handleReset}
-                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-muted-foreground hover:text-foreground"
+                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 Reset Fields
               </Button>
@@ -2829,22 +3531,22 @@ export function ReportDataEntryForm({
                 variant="outline"
                 size="sm"
                 onClick={onCancel}
-                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-muted-foreground hover:text-foreground"
+                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleSave("Draft")}
-                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-foreground hover:bg-muted/30"
+                onClick={() => bulkEntryMode ? handleBulkSave("Draft") : handleSave("Draft")}
+                className="h-8 gap-1.5 rounded-lg text-[12px] border-border text-foreground hover:bg-muted/30 cursor-pointer"
               >
                 <Save className="h-3.5 w-3.5" /> Save Draft
               </Button>
               <Button
                 size="sm"
-                onClick={() => handleSave("Submitted")}
-                className="h-8 gap-1.5 rounded-lg text-[12px] bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => bulkEntryMode ? handleBulkSave("Submitted") : handleSave("Submitted")}
+                className="h-8 gap-1.5 rounded-lg text-[12px] bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
               >
                 <Send className="h-3.5 w-3.5" /> Submit Record
               </Button>

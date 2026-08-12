@@ -171,6 +171,10 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
     };
   }, [filteredTasks]);
 
+  const nextPendingTask = useMemo(() => {
+    return allTasks.find(t => t.status === "Pending Entry");
+  }, [allTasks]);
+
   return (
     <div className="space-y-4">
       {/* Header section with Back navigation */}
@@ -201,6 +205,29 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
           </span>
         </div>
       </div>
+
+      {nextPendingTask && (
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-3">
+            <span className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <Activity className="h-4.5 w-4.5 animate-pulse" />
+            </span>
+            <div>
+              <span className="text-[10px] font-bold text-primary uppercase block">Next Required Action</span>
+              <span className="text-[13px] font-extrabold text-foreground mt-0.5 block">
+                Enter {nextPendingTask.indicator.name} for {nextPendingTask.siteName} ({nextPendingTask.periodLabel})
+              </span>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => onOpenForm(nextPendingTask.reportType, nextPendingTask.recordId, nextPendingTask.project, nextPendingTask.siteId, nextPendingTask.period)}
+            className="h-8.5 text-[11.5px] font-bold gap-1 rounded-xl cursor-pointer"
+          >
+            Enter Data Now <ArrowRight className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
 
       {/* Summary KPI Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
