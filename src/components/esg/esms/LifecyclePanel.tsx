@@ -315,7 +315,7 @@ export function LifecyclePanel() {
             <Node
               title="Preliminary E&S Screening"
               subtitle="Initial impact assessment report"
-              onClick={() => onOpen("screening")}
+              onClick={() => onOpen("esdd")}
             />
             <VerticalLine />
             <Node
@@ -348,12 +348,12 @@ export function LifecyclePanel() {
                 <BranchNode
                   title="Permits"
                   subtitle="Environmental clearance & licensing"
-                  onClick={() => onOpen("permits")}
+                  onClick={() => onOpen("policies")}
                 />
                 <BranchNode
                   title="Compliance"
                   subtitle="Statutory verification"
-                  onClick={() => onOpen("compliance")}
+                  onClick={() => onOpen("policies")}
                 />
                 <BranchNode
                   title="Environmental Monitoring"
@@ -381,7 +381,7 @@ export function LifecyclePanel() {
                 <BranchAction
                   title="Biannual monitoring"
                   color="green"
-                  onClick={() => onOpen("training")}
+                  onClick={() => onOpen("assurance-calendar")}
                 />
               </div>
 
@@ -391,12 +391,12 @@ export function LifecyclePanel() {
                 <BranchNode
                   title="Permits"
                   subtitle="Labour law compliance"
-                  onClick={() => onOpen("permits")}
+                  onClick={() => onOpen("policies")}
                 />
                 <BranchNode
                   title="Compliance"
                   subtitle="Wage & Hour verification"
-                  onClick={() => onOpen("compliance")}
+                  onClick={() => onOpen("policies")}
                 />
                 <BranchNode
                   title="Social Monitoring"
@@ -423,7 +423,7 @@ export function LifecyclePanel() {
                 <BranchAction
                   title="Biannual monitoring"
                   color="orange"
-                  onClick={() => onOpen("training")}
+                  onClick={() => onOpen("assurance-calendar")}
                 />
               </div>
 
@@ -433,12 +433,12 @@ export function LifecyclePanel() {
                 <BranchNode
                   title="Permits"
                   subtitle="Safety licensing"
-                  onClick={() => onOpen("permits")}
+                  onClick={() => onOpen("policies")}
                 />
                 <BranchNode
                   title="Compliance"
                   subtitle="Audit protocols"
-                  onClick={() => onOpen("compliance")}
+                  onClick={() => onOpen("audit-internal")}
                 />
                 <BranchNode
                   title="Social Monitoring"
@@ -467,7 +467,7 @@ export function LifecyclePanel() {
                 <BranchAction
                   title="Biannual monitoring"
                   color="red"
-                  onClick={() => onOpen("training")}
+                  onClick={() => onOpen("assurance-calendar")}
                 />
               </div>
             </div>

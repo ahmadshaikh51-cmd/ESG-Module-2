@@ -1914,10 +1914,11 @@ export const ESMS_SUBTABS: EsmsSubTab[] = [
   },
   { key: "esdd", tier: "assessment", label: "ESDD", acronym: "ESDD", available: true },
   { key: "esia", tier: "assessment", label: "ESIA", acronym: "ESIA", available: true },
-  { key: "monitoring", tier: "monitoring", label: "Site Monitoring", available: false, phase: 6 },
+  { key: "monitoring", tier: "monitoring", label: "Site Monitoring", available: true, phase: 6 },
   { key: "audit-internal", tier: "assurance", label: "Internal Audit", available: true, phase: 3 },
   { key: "audit-external", tier: "assurance", label: "External Audit", available: true, phase: 4 },
   { key: "training", tier: "assurance", label: "Training", available: true, phase: 5 },
+  { key: "assurance-calendar", tier: "assurance", label: "Assurance Calendar", available: true },
   { key: "lifecycle", tier: "lifecycle", label: "Lifecycle", available: true, phase: 8 },
 ];
 

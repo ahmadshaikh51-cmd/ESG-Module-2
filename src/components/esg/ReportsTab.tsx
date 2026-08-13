@@ -6,6 +6,7 @@ import {
   Download,
   Eye,
   FileOutput,
+  FileSpreadsheet,
   Filter,
   Globe,
   MapPin,
@@ -78,6 +79,47 @@ const KIND_LABEL: Record<ReportDef["kind"], string> = {
   narrative: "Narrative",
   calculation: "Calculation",
 };
+
+/* ======================= Report approval workflow ========================== */
+
+const REPORT_APPROVAL_STAGES: Record<string, string[]> = {
+  amr: ["Data Entry", "Reviewer Verification", "Finance Sign-off", "ESG Lead Approval", "Submitted to Lender"],
+  ghg: ["Data Capture", "Emission Factor Review", "ESMS Team Validation", "ESG Lead Approval", "Third-party Verification"],
+  brsr: ["Section A Disclosure", "Section B Mapping", "Section C Principle Reporting", "Board/MD Approval", "SEBI Filing"],
+  impact: ["Assessment Upload", "ESAP Action Tracking", "Impact Narrative Draft", "ESG Lead Review", "Stakeholder Publication"],
+};
+
+const REPORT_APPROVER: Record<string, string> = {
+  amr: "Kavita Rao · ESG Lead",
+  ghg: "Arjun Mehta · ESG Analyst",
+  brsr: "Sunil Patil · Compliance Director",
+  impact: "Priya Nair · ESMS Manager",
+};
+
+function ReportWorkflowBadge({ defId, period }: { defId: string; period: string }) {
+  const stages = REPORT_APPROVAL_STAGES[defId];
+  if (!stages) return null;
+  // Simulate: first 2 stages complete, 3rd in-progress, rest pending
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+      {stages.map((s, i) => (
+        <span
+          key={s}
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+            i < 2
+              ? "bg-success/12 text-success"
+              : i === 2
+                ? "bg-warning/12 text-warning"
+                : "bg-muted text-muted-foreground/60",
+          )}
+        >
+          {i < 2 ? "✓ " : i === 2 ? "○ " : "· "}{s}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 /* ======================= Reporting-tab-local filter ======================== */
 
@@ -1036,11 +1078,86 @@ export function ReportsTab() {
               {scopeLabel(scope)} · {PERIODS.find((p) => p.id === period)?.label} · every report has
               two variants; export is the only egress.
             </p>
+            {REPORT_APPROVER[def.id] && (
+              <p className="text-[11px] text-muted-foreground/70 mt-0.5">
+                Approver: <span className="font-medium text-foreground/80">{REPORT_APPROVER[def.id]}</span>
+              </p>
+            )}
+            <ReportWorkflowBadge defId={def.id} period={period} />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="hidden items-center gap-1.5 text-[11px] font-medium text-muted-foreground md:inline-flex">
               <Eye className="h-3 w-3" aria-hidden /> internal always complete
             </span>
+            {def.id === "amr" && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1.5 rounded-lg text-[12px]"
+                onClick={() => {
+                  const vals = AMR_VALUES[period] ?? {};
+                  const rows = AMR_FIELDS.map((f) => ({
+                    Indicator: f.label,
+                    Value: vals[f.id]?.value ?? "",
+                    Unit: f.unit,
+                    Period: PERIODS.find((p) => p.id === period)?.label ?? period,
+                    Source: vals[f.id]?.prov?.source ?? "Not captured",
+                  }));
+                  exportToXlsx(
+                    `amr-${period}`,
+                    [
+                      { key: "Indicator", header: "Indicator" },
+                      { key: "Value", header: "Value" },
+                      { key: "Unit", header: "Unit" },
+                      { key: "Period", header: "Period" },
+                      { key: "Source", header: "Source" },
+                    ],
+                    rows,
+                    "AMR",
+                  );
+                  toast.success("AMR Excel downloaded", {
+                    description: `${AMR_FIELDS.length} indicators · ${PERIODS.find((p) => p.id === period)?.label}.`,
+                  });
+                }}
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5" /> Download Excel
+              </Button>
+            )}
+            {def.id === "ghg" && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1.5 rounded-lg text-[12px]"
+                onClick={() => {
+                  const rows = GHG_PARAMS.map((p) => ({
+                    Parameter: p.label,
+                    Scope: `Scope ${p.scope}`,
+                    Quantity: GHG_QTY[period]?.[p.id] ?? 0,
+                    Unit: p.unit,
+                    Factor: p.factor,
+                    "tCO2e": Math.round((GHG_QTY[period]?.[p.id] ?? 0) * p.factor * 10) / 10,
+                  }));
+                  exportToXlsx(
+                    `ghg-inventory-${period}`,
+                    [
+                      { key: "Parameter", header: "Parameter" },
+                      { key: "Scope", header: "Scope" },
+                      { key: "Quantity", header: "Quantity" },
+                      { key: "Unit", header: "Unit" },
+                      { key: "Factor", header: "Emission Factor" },
+                      { key: "tCO2e", header: "tCO2e" },
+                    ],
+                    rows,
+                    "GHG Inventory",
+                  );
+                  toast.success("GHG Inventory Excel downloaded", {
+                    description: `${GHG_PARAMS.length} parameters · ${PERIODS.find((p) => p.id === period)?.label}.`,
+                  });
+                }}
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5" /> Download Excel
+              </Button>
+            )}
             {def.id === "nc-report" && audience === "internal" && (
               <Button
                 size="sm"

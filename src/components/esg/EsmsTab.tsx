@@ -21,6 +21,8 @@ import { TrainingPanel } from "./esms/TrainingPanel";
 import { MonitoringPanel } from "./esms/MonitoringPanel";
 import { LifecyclePanel } from "./esms/LifecyclePanel";
 import { GrievancePanel } from "./esms/GrievancePanel";
+import { AssuranceCalendarPanel } from "./esms/AssuranceCalendarPanel";
+
 
 /** Renders a tier-2 tab's label — through the acronym glossary when it is one. */
 function subLabel(s: EsmsSubTab): React.ReactNode {
@@ -136,6 +138,7 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
           {sub === "monitoring" && <MonitoringPanel />}
           {sub === "lifecycle" && <LifecyclePanel />}
           {sub === "esap" && <EsapPanel onOpenSource={goToSub} />}
+          {sub === "assurance-calendar" && <AssuranceCalendarPanel />}
         </>
       )}
     </div>

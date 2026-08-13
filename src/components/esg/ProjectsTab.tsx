@@ -58,7 +58,7 @@ import { PEOPLE } from "@/lib/esg-data";
 import { getCurrentUser } from "@/lib/auth";
 import { getRoleFromEmail, ESG_ROLES_CONFIG } from "@/lib/esg-roles";
 
-type Sub = "permits" | "site" | "nc" | "amr" | "ghg" | "brsr" | "impact" | "carbon";
+type Sub = "permits" | "site" | "nc" | "amr" | "ghg" | "brsr" | "impact" | "carbon" | "ingestion";
 
 const nf = new Intl.NumberFormat("en-IN");
 

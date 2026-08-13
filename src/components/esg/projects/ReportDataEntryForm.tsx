@@ -48,7 +48,7 @@ import { EscalationStatusIndicator } from "../EscalationStatusIndicator";
 import { getActiveEscalationForSource } from "@/lib/esg-escalations";
 
 // Type definitions
-export type ReportType = "nc" | "amr" | "ghg" | "brsr" | "impact" | "carbon";
+export type ReportType = "nc" | "amr" | "ghg" | "brsr" | "impact" | "carbon" | "ingestion";
 
 export interface ReportDataEntryFormProps {
   reportType: ReportType;
@@ -1339,7 +1339,7 @@ export function ReportDataEntryForm({
                   };
 
                   return (
-                    <PanelCard key={ind.id} id={`field-card-${ind.id}`} className="transition-all duration-300 border-l-4 border-l-primary/60 hover:border-l-primary hover:shadow-md">
+                    <PanelCard key={ind.id} className="transition-all duration-300 border-l-4 border-l-primary/60 hover:border-l-primary hover:shadow-md">
                       <div className="border-b border-border/30 px-4 py-3.5 bg-muted/5 flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-[10.5px] text-primary bg-primary/10 border border-primary/20 rounded px-1.5 py-0.5 font-mono">
@@ -1650,7 +1650,6 @@ export function ReportDataEntryForm({
             )}
 
             {/* NEW: Ready for Review Summary (Bottom of main column) */}
-            {reportType !== "nc" && (
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-4.5 space-y-3.5 shadow-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
@@ -1699,7 +1698,6 @@ export function ReportDataEntryForm({
                   </div>
                 )}
               </div>
-            )}
           </div>
           <div className="lg:col-span-4 space-y-4">
             <PanelCard>

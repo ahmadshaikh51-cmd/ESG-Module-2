@@ -1,8 +1,15 @@
 import { useState, useMemo } from "react";
-import { ArrowUpRight, CircleCheck, CircleDashed, CircleDot, TriangleAlert } from "lucide-react";
+import { ArrowUpRight, CircleCheck, CircleDashed, CircleDot, Download, Eye, TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ASSESSMENTS, ESAP_ACTIONS, fmtDate, entityById } from "@/lib/esg-data";
 import { A, DocChip, EmptyState, PanelCard, useEsg } from "../primitives";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 const PARAM_ICON = {
@@ -10,6 +17,75 @@ const PARAM_ICON = {
   gap: { Icon: TriangleAlert, color: "var(--color-warning)", label: "Gap found" },
   pending: { Icon: CircleDashed, color: "var(--color-muted-foreground)", label: "Pending" },
 } as const;
+
+/* ------------------------------------------------------------------ */
+
+function DocumentViewerDialog({
+  file,
+  project,
+  onClose,
+}: {
+  file: string;
+  project: string;
+  onClose: () => void;
+}) {
+  const ext = file.split(".").pop()?.toLowerCase() ?? "";
+  const isPdf = ext === "pdf";
+  const isDocx = ext === "docx" || ext === "doc";
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-[640px] gap-0 overflow-hidden rounded-2xl border-border/60 p-0">
+        <DialogHeader className="border-b border-border/60 px-5 py-4">
+          <DialogTitle className="text-[16px] tracking-tight">
+            Document Viewer
+          </DialogTitle>
+          <DialogDescription className="text-[12px]">
+            {project} · {file}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="p-5 space-y-4">
+          {/* File metadata */}
+          <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 px-4 py-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Eye className="h-4 w-4 text-primary" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13px] font-semibold truncate">{file}</div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">
+                {isPdf ? "PDF Document" : isDocx ? "Word Document" : "Assessment Report"}
+                {" · "}
+                {project}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                toast.success(`Downloading ${file}...`, {
+                  description: "Document download initiated. (UI stub)",
+                });
+              }}
+              className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary hover:bg-primary/16 transition-colors shrink-0"
+            >
+              <Download className="h-3 w-3" aria-hidden /> Download
+            </button>
+          </div>
+          {/* Viewer placeholder */}
+          <div className="flex min-h-[280px] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-6 py-10 text-center">
+            <Eye className="h-10 w-10 text-muted-foreground/30 mb-3" aria-hidden />
+            <div className="text-[13px] font-medium text-foreground">
+              Document preview
+            </div>
+            <p className="mt-1.5 max-w-[320px] text-[12px] text-muted-foreground leading-relaxed">
+              In the production system this area renders the document inline via the backend document store.
+              The file <span className="font-medium text-foreground">{file}</span> is attached to this assessment.
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 /** ESDD / ESIA assessment cards. `kind` selects which study type this panel shows. */
 export function AssessmentsPanel({
@@ -21,6 +97,7 @@ export function AssessmentsPanel({
 }) {
   const { scope, projectId } = useEsg();
   const [uploads, setUploads] = useState<Record<string, string>>({});
+  const [viewingDoc, setViewingDoc] = useState<{ file: string; project: string } | null>(null);
 
   const assessments = useMemo(() => {
     const items = ASSESSMENTS.filter((a) => {
@@ -53,7 +130,15 @@ export function AssessmentsPanel({
   const hasAssessments = assessments.length > 0;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <>
+      {viewingDoc && (
+        <DocumentViewerDialog
+          file={viewingDoc.file}
+          project={viewingDoc.project}
+          onClose={() => setViewingDoc(null)}
+        />
+      )}
+      <div className="grid gap-4 md:grid-cols-2">
       {!hasAssessments && (
         <PanelCard className="lg:col-span-2">
           <EmptyState
@@ -147,18 +232,12 @@ export function AssessmentsPanel({
                     <DocChip name={reportFile} />
                     <div className="flex items-center gap-2 text-[11px] text-muted-foreground/80">
                       <span
-                        onClick={() => {
-                          toast.info(`Viewing ${reportFile}...`, {
-                            description: "Mock viewer: Opening document in online reader.",
-                          });
-                        }}
+                        onClick={() => setViewingDoc({ file: reportFile, project: a.project })}
                         className="font-semibold text-primary hover:underline cursor-pointer transition-colors"
                       >
                         View
                       </span>
-                      <span className="text-muted-foreground/30" aria-hidden>
-                        ·
-                      </span>
+                      <span className="text-muted-foreground/30" aria-hidden>·</span>
                       <span
                         onClick={() => {
                           toast.success(`Downloading ${reportFile}...`, {
@@ -215,6 +294,7 @@ export function AssessmentsPanel({
             </PanelCard>
           );
         })}
-    </div>
+      </div>
+    </>
   );
 }

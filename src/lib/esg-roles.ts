@@ -30,7 +30,7 @@ export const ESG_ROLES_CONFIG: Record<EsgRole, EsgRoleConfig> = {
     tabs: ["overview", "projects", "esms", "reports", "vendors", "masters"],
     subtabs: {
       projects: ["permits", "site", "nc", "amr", "ghg", "brsr", "impact", "carbon"],
-      esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring"],
+      esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring", "audit-internal", "audit-external", "assurance-calendar"],
     },
     indicators: ["IND-2026-001", "IND-2026-002", "IND-2026-003", "IND-2026-004", "IND-2026-005", "IND-2026-006"],
     isContributorOnly: false,
@@ -140,7 +140,7 @@ export const ESG_ROLES_CONFIG: Record<EsgRole, EsgRoleConfig> = {
     tabs: ["overview", "projects", "esms", "reports", "vendors", "masters"],
     subtabs: {
       projects: ["permits", "site", "nc", "amr", "ghg", "brsr", "impact", "carbon"],
-      esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring"],
+      esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring", "audit-internal", "audit-external", "assurance-calendar"],
     },
     indicators: ["IND-2026-001", "IND-2026-002", "IND-2026-003", "IND-2026-004", "IND-2026-005", "IND-2026-006"],
     isContributorOnly: false,

@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { FileSearch, Link2 } from "lucide-react";
+import { FileSearch, FileSpreadsheet, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { exportToXlsx } from "@/lib/export-xlsx";
 import {
   daysUntil,
   ESAP_ACTIONS,
@@ -65,7 +66,7 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
             s, and approved policies — not a static uploaded document.
           </p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-2">
           {(["all", "open", "overdue", "closed"] as const).map((f) => (
             <button
               key={f}
@@ -82,6 +83,43 @@ export function EsapPanel({ onOpenSource }: { onOpenSource: (sub: string) => voi
               {f}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              if (actions.length === 0) {
+                toast("Nothing to export", { description: "No ESAP actions match the current filter." });
+                return;
+              }
+              exportToXlsx(
+                "esap-register",
+                [
+                  { key: "Action", header: "Action" },
+                  { key: "Finding", header: "Finding" },
+                  { key: "Source", header: "Source" },
+                  { key: "Owner", header: "Owner" },
+                  { key: "Due", header: "Due Date" },
+                  { key: "Status", header: "Status" },
+                  { key: "NC Ref", header: "NC Ref" },
+                ],
+                actions.map((a) => ({
+                  Action: a.action,
+                  Finding: a.finding,
+                  Source: esapSourceLabel(a.source).label,
+                  Owner: personById(a.ownerId)?.name ?? a.ownerId,
+                  Due: a.due,
+                  Status: a.status,
+                  "NC Ref": a.ncRef ?? "",
+                })),
+                "ESAP Register",
+              );
+              toast.success("ESAP Register exported", {
+                description: `${actions.length} action${actions.length === 1 ? "" : "s"} exported to Excel.`,
+              });
+            }}
+            className="inline-flex items-center gap-1 rounded-lg border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          >
+            <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden /> Export
+          </button>
         </div>
       </div>
       {actions.length === 0 ? (
