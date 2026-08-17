@@ -164,7 +164,7 @@ function NotificationsBell() {
   const handleNotifClick = (n: EsgNotification) => {
     // Mark as read in session/local state if we wanted to (omitted for stub simplicity)
     if (n.indicatorId) {
-      goto("projects", { sub: "amr", record: n.indicatorId });
+      goto("projects");
     } else if (n.recordId) {
       goto("overview", { record: n.recordId });
     } else if (n.policyId) {
