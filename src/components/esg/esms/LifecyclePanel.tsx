@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PanelCard, useEsg } from "../primitives";
 import {
@@ -282,7 +283,7 @@ function LifecycleNode({
 
 function DownArrow() {
   return (
-    <div className="flex flex-col items-center my-1.5">
+    <div className="flex flex-col items-center my-1.5 shrink-0">
       <div className="w-[1.5px] h-6 bg-border" />
       <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px]" />
     </div>
@@ -291,11 +292,11 @@ function DownArrow() {
 
 function SplitArrow() {
   return (
-    <div className="w-full flex flex-col items-center my-2 relative">
+    <div className="w-full max-w-[660px] flex flex-col items-center my-2 relative shrink-0">
       <div className="w-[1.5px] h-4 bg-border" />
       <div className="w-[50%] h-[1.5px] bg-border relative">
-        <span className="absolute left-4 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1">Brownfield</span>
-        <span className="absolute right-4 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1">Greenfield / Vacant Land</span>
+        <span className="absolute left-0 -translate-x-1/2 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1 whitespace-nowrap">Brownfield</span>
+        <span className="absolute right-0 translate-x-1/2 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1 whitespace-nowrap">Greenfield / Vacant Land</span>
       </div>
       <div className="w-[50%] flex justify-between">
         <div className="flex flex-col items-center">
@@ -313,7 +314,7 @@ function SplitArrow() {
 
 function MergeArrow() {
   return (
-    <div className="w-full flex flex-col items-center my-2">
+    <div className="w-full max-w-[660px] flex flex-col items-center my-2 shrink-0">
       <div className="w-[50%] flex justify-between">
         <div className="w-[1.5px] h-4 bg-border" />
         <div className="w-[1.5px] h-4 bg-border" />
@@ -405,10 +406,28 @@ const DEFAULT_SC_DOCS: ScreeningDoc[] = [
   }
 ];
 
+const DEFAULT_ESDD_DOCS: ScreeningDoc[] = [
+  {
+    id: "esdd-doc-1",
+    name: "ESDD_Audit_Report_v1.0.pdf",
+    category: "Comprehensive ESDD Report",
+    versions: [
+      {
+        version: "v1.0",
+        fileType: "PDF",
+        uploadedBy: "Arjun Mehta (ESMS Lead)",
+        uploadedOn: "2026-07-15",
+        status: "under-review",
+        size: "3.1 MB"
+      }
+    ]
+  }
+];
+
 export function LifecyclePanel() {
   const { goto, scope } = useEsg();
   const [mode, setMode] = useState<"all" | string>("all");
-  const [showScreeningDetail, setShowScreeningDetail] = useState(false);
+  const [activePanelTab, setActivePanelTab] = useState<"screening" | "esdd" | null>(null);
 
   const [documents, setDocuments] = useState<ScreeningDoc[]>(() => {
     try {
@@ -416,6 +435,15 @@ export function LifecyclePanel() {
       return saved ? JSON.parse(saved) : DEFAULT_SC_DOCS;
     } catch {
       return DEFAULT_SC_DOCS;
+    }
+  });
+
+  const [esddDocuments, setEsddDocuments] = useState<ScreeningDoc[]>(() => {
+    try {
+      const saved = localStorage.getItem("voltline-esms-esdd-docs");
+      return saved ? JSON.parse(saved) : DEFAULT_ESDD_DOCS;
+    } catch {
+      return DEFAULT_ESDD_DOCS;
     }
   });
 
@@ -440,13 +468,27 @@ export function LifecyclePanel() {
     } else {
       setMode("all");
     }
-    setShowScreeningDetail(false);
+    setActivePanelTab(null);
   }, [scope.entityId]);
 
   const counts = useMemo(() => lifecycleStageCounts(), []);
   const activeLifecycle =
     mode !== "all" ? PROJECT_LIFECYCLES.find((p) => p.projectId === mode) : undefined;
   const bottlenecked = PROJECT_LIFECYCLES.filter(lifecycleIsBottleneck);
+
+  useEffect(() => {
+    if (activePanelTab === "screening") {
+      setUploadCategory("Preliminary E&S Screening Report");
+    } else if (activePanelTab === "esdd") {
+      setUploadCategory(
+        activeLifecycle?.branch === "greenfield" ? "Comprehensive ESIA Report" : "Comprehensive ESDD Report"
+      );
+    }
+    setIsUploading(false);
+    setSelectedFile(null);
+    setUploadName("");
+  }, [activePanelTab, activeLifecycle?.branch]);
+
   const nodeTitle = useMemo(() => {
     if (!activeLifecycle) return "Project Initiation";
     if (activeLifecycle.projectId === "pl-mbmt") return "MBMT Initiation";
@@ -459,13 +501,19 @@ export function LifecyclePanel() {
   const onOpen = (sub: string) => goto("esms", { sub });
 
   const saveDocs = (newDocs: ScreeningDoc[]) => {
-    setDocuments(newDocs);
-    localStorage.setItem("voltline-esms-screening-docs", JSON.stringify(newDocs));
+    if (activePanelTab === "screening") {
+      setDocuments(newDocs);
+      localStorage.setItem("voltline-esms-screening-docs", JSON.stringify(newDocs));
+    } else {
+      setEsddDocuments(newDocs);
+      localStorage.setItem("voltline-esms-esdd-docs", JSON.stringify(newDocs));
+    }
   };
 
   const handleDownloadAll = () => {
-    toast.success("Downloading all screening documents...", {
-      description: `Initiated download for ${documents.length} files.`,
+    const currentDocs = activePanelTab === "screening" ? documents : esddDocuments;
+    toast.success(`Downloading all ${activePanelTab === "screening" ? "screening" : "ESDD/ESIA"} documents...`, {
+      description: `Initiated download for ${currentDocs.length} files.`,
     });
   };
 
@@ -497,7 +545,8 @@ export function LifecyclePanel() {
     const file = e.target.files?.[0];
     if (!file || !versionTargetDocId) return;
 
-    const doc = documents.find(d => d.id === versionTargetDocId);
+    const targetDocs = activePanelTab === "screening" ? documents : esddDocuments;
+    const doc = targetDocs.find(d => d.id === versionTargetDocId);
     if (!doc) return;
 
     const latest = doc.versions[0];
@@ -520,7 +569,7 @@ export function LifecyclePanel() {
       size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
     };
 
-    const updatedDocs = documents.map(d => {
+    const updatedDocs = targetDocs.map(d => {
       if (d.id === versionTargetDocId) {
         return {
           ...d,
@@ -549,7 +598,7 @@ export function LifecyclePanel() {
     const ext = selectedFile.name.split(".").pop()?.toUpperCase() || "PDF";
     
     const newDoc: ScreeningDoc = {
-      id: `sc-doc-${Date.now()}`,
+      id: `${activePanelTab === "screening" ? "sc" : "esdd"}-doc-${Date.now()}`,
       name: `${nameToUse.replace(/\s+/g, "_")}_v1.0.${ext.toLowerCase()}`,
       category: uploadCategory,
       versions: [
@@ -564,13 +613,14 @@ export function LifecyclePanel() {
       ]
     };
 
-    saveDocs([newDoc, ...documents]);
+    const targetDocs = activePanelTab === "screening" ? documents : esddDocuments;
+    saveDocs([newDoc, ...targetDocs]);
     setIsUploading(false);
     setUploadName("");
     setSelectedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     toast.success("Document uploaded successfully", {
-      description: `${nameToUse} has been added to Preliminary E&S Screening.`,
+      description: `${nameToUse} has been added.`,
     });
   };
 
@@ -582,7 +632,7 @@ export function LifecyclePanel() {
           <Waypoints className="h-4 w-4 text-primary" aria-hidden />
           <Select value={mode} onValueChange={(val) => {
             setMode(val);
-            setShowScreeningDetail(false);
+            setActivePanelTab(null);
           }}>
             <SelectTrigger className="h-8 w-[240px] text-[12px]">
               <SelectValue placeholder="View" />
@@ -659,14 +709,15 @@ export function LifecyclePanel() {
         onChange={handleVersionFileChange}
       />
 
-      {mode === "all" ? (
-        <PanelCard>
-          <div className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-border/60 bg-card/45 backdrop-blur-xs min-h-[850px] transition-all duration-300">
-            {/* Left Side: Lifecycle Flowchart */}
-            <div className={cn(
-              "p-6 flex flex-col items-center select-none transition-all duration-300 overflow-x-auto",
-              showScreeningDetail ? "lg:w-[56%] w-full" : "w-full"
-            )}>
+      <PanelCard>
+        <div className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-border/60 bg-card/45 backdrop-blur-xs min-h-[850px] transition-all duration-300">
+          {/* Left Side: Lifecycle Flowchart */}
+          <div className={cn(
+            "p-6 flex flex-col items-center select-none transition-all duration-300 overflow-x-auto",
+            activePanelTab ? "lg:w-[56%] w-full" : "w-full"
+          )}>
+            {mode === "all" ? (
+              <>
               {/* Header and Legend Bar */}
               <div className="w-full max-w-[1100px] flex flex-wrap items-center justify-between gap-3 bg-card border border-border/50 rounded-xl p-4 shadow-sm">
                 <div>
@@ -713,8 +764,6 @@ export function LifecyclePanel() {
                   subtitle="Before Bidding · Screening risk assessment"
                   icon={Globe}
                   variant="process"
-                  active={showScreeningDetail}
-                  onClick={() => setShowScreeningDetail(!showScreeningDetail)}
                 />
                 <DownArrow />
                 <LifecycleNode
@@ -730,7 +779,7 @@ export function LifecyclePanel() {
                 {/* Stage 2: Parallel Columns */}
                 <div className="grid grid-cols-2 gap-8 w-full max-w-[660px] relative">
                   {/* Left Column: Brownfield */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center h-full">
                     <LifecycleNode
                       title="Comprehensive ESDD"
                       subtitle="Environmental & Social Due Diligence"
@@ -758,10 +807,12 @@ export function LifecyclePanel() {
                       icon={FileText}
                       variant="document"
                     />
+                    {/* Extension line to match height of Greenfield column and connect to MergeArrow */}
+                    <div className="w-[1.5px] flex-grow bg-border shrink-0" />
                   </div>
 
                   {/* Right Column: Greenfield / Vacant Land */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center h-full">
                     <LifecycleNode
                       title="Comprehensive ESIA"
                       subtitle="Environmental & Social Impact Assessment"
@@ -807,9 +858,16 @@ export function LifecyclePanel() {
                   icon={Settings}
                   variant="process"
                 />
-                <DownArrow />
                 
-                <div className="relative flex flex-col items-center">
+                <div className="relative flex flex-col items-center w-full max-w-[660px]">
+                  {/* Loopback connector box */}
+                  <div className="absolute left-[calc(50%+130px)] top-[37px] w-[380px] h-[115px] border-t border-r border-dashed border-border pointer-events-none z-0">
+                    {/* Bottom horizontal connector segment to card */}
+                    <div className="absolute right-0 bottom-0 w-[20px] border-b border-dashed border-border" />
+                    {/* Left arrowhead pointing to Monitor & Review */}
+                    <div className="absolute left-0 top-0 -translate-x-full -translate-y-1/2 w-0 h-0 border-r-[5px] border-r-border border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent" />
+                  </div>
+
                   <LifecycleNode
                     title="Monitor & Review Implementation"
                     subtitle="Continuous supervision by ESMS team"
@@ -818,67 +876,63 @@ export function LifecyclePanel() {
                   />
                   <DownArrow />
                   
-                  {/* Risk Category Reduced? Decision */}
-                  <div className="flex items-start gap-12">
-                    {/* YES Pathway */}
-                    <div className="flex flex-col items-center">
-                      <div className="relative flex flex-col items-center">
-                        <LifecycleNode
-                          title="Risk Category Reduced?"
-                          subtitle="Evaluate if risk tier has dropped (e.g. A to B)"
-                          icon={HelpCircle}
-                          variant="decision"
-                        />
-                        {/* YES Label */}
-                        <span className="absolute -bottom-4 text-[9px] font-extrabold text-success uppercase bg-background px-1">YES</span>
-                      </div>
-                      <DownArrow />
-                      <LifecycleNode
-                        title="Maintain Operations"
-                        subtitle="Maintain operations with lower risk profile"
-                        icon={ShieldCheck}
-                        variant="process"
-                      />
-                      <DownArrow />
-                      <LifecycleNode
-                        title="Ongoing Monitoring & Periodic Review"
-                        subtitle="Standard operational oversight & audits"
-                        icon={ClipboardList}
-                        variant="process"
-                      />
-                    </div>
+                  {/* Risk Category Reduced? Decision (Centered) */}
+                  <LifecycleNode
+                    title="Risk Category Reduced?"
+                    subtitle="Evaluate if risk tier has dropped (e.g. A to B)"
+                    icon={HelpCircle}
+                    variant="decision"
+                  />
 
-                    {/* NO Pathway */}
-                    <div className="flex flex-col items-center pt-[10px]">
-                      <div className="flex items-center">
-                        {/* Horizontal Connector Arrow */}
-                        <div className="w-12 h-[1.5px] bg-border relative flex items-center">
-                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] font-extrabold text-destructive uppercase bg-background px-1">NO</span>
-                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-l-[4px] border-l-border border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent" />
-                        </div>
-                        
-                        <LifecycleNode
-                          title="Update ESAP / ESMP & Re-implement"
-                          subtitle="Revise mitigation measures & targets"
-                          icon={RotateCcw}
-                          variant="process"
-                        />
-                      </div>
-                      
-                      {/* Loopback pathway connector */}
-                      <div className="w-full flex justify-end pr-[130px] mt-2">
-                        <div className="flex flex-col items-center">
-                          <div className="text-[8px] font-bold text-muted-foreground/60 uppercase">Re-enter Monitoring loop</div>
-                          <div className="w-[1.5px] h-6 border-l border-dashed border-border" />
-                          <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px]" />
-                        </div>
+                  {/* Vertical Line splitting to YES (straight down) */}
+                  <div className="w-[1.5px] h-[50px] bg-border relative shrink-0">
+                    <span className="absolute left-1/2 -translate-x-1/2 top-2.5 text-[9px] font-extrabold text-success uppercase bg-background px-1 leading-none">YES</span>
+                  </div>
+                  <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px] mb-1.5 shrink-0" />
+
+                  {/* Main YES Pathway (Centered) */}
+                  <LifecycleNode
+                    title="Maintain Operations"
+                    subtitle="Maintain operations with lower risk profile"
+                    icon={ShieldCheck}
+                    variant="process"
+                  />
+                  <DownArrow />
+                  <LifecycleNode
+                    title="Ongoing Monitoring & Periodic Review"
+                    subtitle="Standard operational oversight & audits"
+                    icon={ClipboardList}
+                    variant="process"
+                  />
+
+                  {/* Absolute Positioned Right Column (NO Pathway) */}
+                  <div className="absolute left-[calc(50%+130px)] top-[152px] -translate-y-1/2 flex items-center z-10">
+                    {/* Horizontal Connector Arrow */}
+                    <div className="w-[100px] h-[1.5px] bg-border relative flex items-center shrink-0">
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] font-extrabold text-destructive uppercase bg-background px-1 leading-none">NO</span>
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-l-[4px] border-l-border border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent" />
+                    </div>
+                    
+                    <div className="flex flex-col items-center shrink-0">
+                      <LifecycleNode
+                        title="Update ESAP / ESMP & Re-implement"
+                        subtitle="Revise mitigation measures & targets"
+                        icon={RotateCcw}
+                        variant="process"
+                      />
+                      {/* Loopback pathway description label */}
+                      <div className="flex flex-col items-center mt-2.5">
+                        <div className="text-[8px] font-bold text-muted-foreground/60 uppercase tracking-wide">Re-enter Monitoring loop</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                <div className="flex flex-col items-center my-1.5 shrink-0">
+                  <div className="w-[1.5px] h-12 bg-border" />
+                  <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px]" />
+                </div>
                 {/* Stage 4: Monitoring Framework & Reporting */}
-                <DownArrow />
                 <LifecycleNode
                   title="ES Monitoring & Reporting Framework"
                   subtitle="Data Collection via Metadata Format"
@@ -894,7 +948,7 @@ export function LifecyclePanel() {
                 />
                 
                 {/* Splitter into 4 columns */}
-                <div className="w-full flex flex-col items-center my-2">
+                <div className="w-full max-w-[1100px] flex flex-col items-center my-2">
                   <div className="w-[1.5px] h-4 bg-border" />
                   <div className="w-[75%] h-[1.5px] bg-border" />
                   <div className="w-[75%] flex justify-between">
@@ -927,25 +981,216 @@ export function LifecyclePanel() {
                   </div>
                 </div>
               </div>
-            </div>
+            </>
+          ) : (
+              <div className="flex flex-col items-center min-w-[850px] pb-12">
+                {/* Trunk */}
+                <Node title={nodeTitle} variant="primary" />
+                <VerticalLine />
+                <Node
+                  title="Preliminary E&S Screening"
+                  subtitle="Initial impact assessment report"
+                  onClick={() => setActivePanelTab(activePanelTab === "screening" ? null : "screening")}
+                  variant={activePanelTab === "screening" ? "active" : "default"}
+                />
+                <VerticalLine />
+                <Node
+                  title={activeLifecycle?.branch === "greenfield" ? "ESIA Report" : "ESDD Report"}
+                  subtitle={
+                    activeLifecycle?.branch === "greenfield"
+                      ? "Environmental & Social Impact Assessment"
+                      : "Environmental & Social Due Diligence"
+                  }
+                  onClick={() => setActivePanelTab(activePanelTab === "esdd" ? null : "esdd")}
+                  variant={activePanelTab === "esdd" ? "active" : "default"}
+                />
+                <VerticalLine />
+                <Node
+                  title={activeLifecycle?.branch === "greenfield" ? "ESMP" : "ESAP"}
+                  subtitle={
+                    activeLifecycle?.branch === "greenfield"
+                      ? "Environmental & Social Management Plan"
+                      : "Environmental & Social Action Plan"
+                  }
+                  variant="active"
+                  onClick={() => onOpen("esap")}
+                />
+
+                {/* Splitter */}
+                <div className="w-[1px] h-6 bg-border" />
+                <div className="w-[66.6%] h-[1px] bg-border" />
+                <div className="w-[66.6%] flex justify-between">
+                  <div className="w-[1px] h-6 bg-border" />
+                  <div className="w-[1px] h-6 bg-border" />
+                  <div className="w-[1px] h-6 bg-border" />
+                </div>
+
+                {/* Branches Grid */}
+                <div className="grid grid-cols-3 gap-6 w-full max-w-[950px]">
+                  {/* Environment Branch */}
+                  <div className="flex flex-col items-center w-full">
+                    <BranchHeader title="Environment" color="green" icon={Globe} />
+                    <BranchNode
+                      title="Permits"
+                      subtitle="Environmental clearance & licensing"
+                      onClick={() => onOpen("policies")}
+                    />
+                    <BranchNode
+                      title="Compliance"
+                      subtitle="Statutory verification"
+                      onClick={() => onOpen("policies")}
+                    />
+                    <BranchNode
+                      title="Environmental Monitoring"
+                      subtitle="Resource mapping"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <BranchAction
+                      title="Environmental Monitoring"
+                      color="green"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <MetaDataCard
+                      color="green"
+                      items={[
+                        { label: "Vehicle", icon: ArrowLeftRight },
+                        { label: "Energy", icon: Zap },
+                        { label: "Waste", icon: Trash2 },
+                        { label: "Consumption", icon: Heart },
+                      ]}
+                    />
+
+                    <BranchAction title="Training" color="green" onClick={() => onOpen("training")} />
+                    <BranchAction
+                      title="Biannual monitoring"
+                      color="green"
+                      onClick={() => onOpen("assurance-calendar")}
+                    />
+                  </div>
+
+                  {/* Labour Branch */}
+                  <div className="flex flex-col items-center w-full">
+                    <BranchHeader title="Labour" color="orange" icon={UserCog} />
+                    <BranchNode
+                      title="Permits"
+                      subtitle="Labour law compliance"
+                      onClick={() => onOpen("policies")}
+                    />
+                    <BranchNode
+                      title="Compliance"
+                      subtitle="Wage & Hour verification"
+                      onClick={() => onOpen("policies")}
+                    />
+                    <BranchNode
+                      title="Social Monitoring"
+                      subtitle="Workforce demographics"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <BranchAction
+                      title="Social Monitoring"
+                      color="orange"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <MetaDataCard
+                      color="orange"
+                      items={[
+                        { label: "Internal Grievance Tracker" },
+                        { label: "Stakeholder Engagement Register" },
+                        { label: "MOM Tracker" },
+                      ]}
+                    />
+
+                    <BranchAction title="Training" color="orange" onClick={() => onOpen("training")} />
+                    <BranchAction
+                      title="Biannual monitoring"
+                      color="orange"
+                      onClick={() => onOpen("assurance-calendar")}
+                    />
+                  </div>
+
+                  {/* OH&S Branch */}
+                  <div className="flex flex-col items-center w-full">
+                    <BranchHeader title="OH&S" color="red" icon={ShieldCheck} />
+                    <BranchNode
+                      title="Permits"
+                      subtitle="Safety licensing"
+                      onClick={() => onOpen("policies")}
+                    />
+                    <BranchNode
+                      title="Compliance"
+                      subtitle="Audit protocols"
+                      onClick={() => onOpen("audit-internal")}
+                    />
+                    <BranchNode
+                      title="Social Monitoring"
+                      subtitle="Incident tracking"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <BranchAction
+                      title="Social Monitoring"
+                      color="red"
+                      onClick={() => onOpen("monitoring")}
+                    />
+
+                    <MetaDataCard
+                      color="red"
+                      items={[
+                        { label: "Accident / Incident Register" },
+                        { label: "PPE Register" },
+                        { label: "OHS Inspection Register" },
+                        { label: "First Aid Register" },
+                        { label: "Fire Extinguisher Register" },
+                      ]}
+                    />
+
+                    <BranchAction title="Training" color="red" onClick={() => onOpen("training")} />
+                    <BranchAction
+                      title="Biannual monitoring"
+                      color="red"
+                      onClick={() => onOpen("assurance-calendar")}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
             {/* Right Side: Detail / Document Management Panel */}
-            {showScreeningDetail && (
+            {activePanelTab && (
               <div className="lg:w-[44%] w-full p-6 space-y-6 bg-card/25 backdrop-blur-xs border-t lg:border-t-0 border-border/60 overflow-y-auto max-h-[1100px]">
                 {/* Header with Close */}
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Before Bidding</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+                      {activePanelTab === "screening" 
+                        ? "Before Bidding" 
+                        : activeLifecycle?.branch === "greenfield" 
+                        ? "Impact Assessment" 
+                        : "Due Diligence"}
+                    </span>
                     <h2 className="text-[18px] font-bold text-foreground leading-snug tracking-tight mt-1 flex items-center gap-2">
-                      Preliminary E & S Screening
+                      {activePanelTab === "screening" 
+                        ? "Preliminary E & S Screening" 
+                        : activeLifecycle?.branch === "greenfield" 
+                        ? "ESIA Report" 
+                        : "ESDD Report"}
                     </h2>
                     <p className="text-[11.5px] text-muted-foreground leading-relaxed mt-2 pr-6">
-                      Initial Environmental & Social screening to identify potential E&S risks and determine the appropriate level of assessment required before bidding.
+                      {activePanelTab === "screening" 
+                        ? "Initial Environmental & Social screening to identify potential E&S risks and determine the appropriate level of assessment required before bidding." 
+                        : activeLifecycle?.branch === "greenfield" 
+                        ? "Comprehensive Environmental & Social Impact Assessment report analyzing potential environmental/social impacts and outlining management plans." 
+                        : "Comprehensive Environmental & Social Due Diligence report assessing compliance, identifying legacy issues, and defining corrective actions."}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <button
-                      onClick={() => setShowScreeningDetail(false)}
+                      onClick={() => setActivePanelTab(null)}
                       className="h-8 w-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
                       title="Close panel"
                     >
@@ -965,16 +1210,28 @@ export function LifecyclePanel() {
                   <div className="grid grid-cols-2 gap-y-3.5 gap-x-4 text-[12px]">
                     <div>
                       <span className="text-muted-foreground text-[10.5px] block font-medium">Stage</span>
-                      <span className="text-foreground font-semibold mt-0.5 block">Preliminary E & S Screening</span>
+                      <span className="text-foreground font-semibold mt-0.5 block">
+                        {activePanelTab === "screening" 
+                          ? "Preliminary E & S Screening" 
+                          : activeLifecycle?.branch === "greenfield" 
+                          ? "ESIA Report" 
+                          : "ESDD Report"}
+                      </span>
                     </div>
                     <div>
                       <span className="text-muted-foreground text-[10.5px] block font-medium">Lifecycle Position</span>
-                      <span className="text-foreground font-semibold mt-0.5 block">2 of the ESMS lifecycle</span>
+                      <span className="text-foreground font-semibold mt-0.5 block">
+                        {activePanelTab === "screening" ? "2 of the ESMS lifecycle" : "3 of the ESMS lifecycle"}
+                      </span>
                     </div>
                     <div className="col-span-2">
                       <span className="text-muted-foreground text-[10.5px] block font-medium">Purpose</span>
                       <span className="text-foreground font-medium mt-0.5 block leading-normal">
-                        Identify potential Environmental & Social risks before bidding and determine the appropriate level of assessment.
+                        {activePanelTab === "screening" 
+                          ? "Identify potential Environmental & Social risks before bidding and determine the appropriate level of assessment." 
+                          : activeLifecycle?.branch === "greenfield" 
+                          ? "Evaluate potential environmental and social impacts and define management plans (ESMP)." 
+                          : "Evaluate environmental and social compliance and identify corrective action items (ESAP)."}
                       </span>
                     </div>
                     <div>
@@ -983,7 +1240,11 @@ export function LifecyclePanel() {
                     </div>
                     <div>
                       <span className="text-muted-foreground text-[10.5px] block font-medium">Next Assessment</span>
-                      <span className="text-foreground font-semibold mt-0.5 block">ESDD / ESIA based on classification</span>
+                      <span className="text-foreground font-semibold mt-0.5 block">
+                        {activePanelTab === "screening" 
+                          ? "ESDD / ESIA based on classification" 
+                          : "ESMP / ESAP Formulation & Implementation"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -992,9 +1253,19 @@ export function LifecyclePanel() {
                 <div className="space-y-4 pt-1.5">
                   <div className="flex justify-between items-center border-b border-border/60 pb-2.5">
                     <div>
-                      <h4 className="text-[12px] font-bold text-foreground uppercase tracking-wider">SCREENING DOCUMENTS</h4>
+                      <h4 className="text-[12px] font-bold text-foreground uppercase tracking-wider">
+                        {activePanelTab === "screening" 
+                          ? "SCREENING DOCUMENTS" 
+                          : activeLifecycle?.branch === "greenfield" 
+                          ? "ESIA DOCUMENTS" 
+                          : "ESDD DOCUMENTS"}
+                      </h4>
                       <p className="text-[10.5px] text-muted-foreground mt-0.5">
-                        Upload and manage documents associated with Preliminary E & S Screening.
+                        {activePanelTab === "screening" 
+                          ? "Upload and manage documents associated with Preliminary E & S Screening." 
+                          : activeLifecycle?.branch === "greenfield" 
+                          ? "Upload and manage documents associated with ESIA Report." 
+                          : "Upload and manage documents associated with ESDD Report."}
                       </p>
                     </div>
                     <button
@@ -1031,12 +1302,34 @@ export function LifecyclePanel() {
                             onChange={(e) => setUploadCategory(e.target.value)}
                             className="w-full bg-background border border-border rounded-lg p-2 text-[12px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                           >
-                            <option value="Preliminary E&S Screening Report">Preliminary E&S Screening Report</option>
-                            <option value="E&S Screening Checklist">E&S Screening Checklist</option>
-                            <option value="Screening Data Sheet">Screening Data Sheet</option>
-                            <option value="Initial Site Assessment">Initial Site Assessment</option>
-                            <option value="Site Visit Notes">Site Visit Notes</option>
-                            <option value="Supporting E&S Evidence">Supporting E&S Evidence</option>
+                            {activePanelTab === "screening" ? (
+                              <>
+                                <option value="Preliminary E&S Screening Report">Preliminary E&S Screening Report</option>
+                                <option value="E&S Screening Checklist">E&S Screening Checklist</option>
+                                <option value="Screening Data Sheet">Screening Data Sheet</option>
+                                <option value="Initial Site Assessment">Initial Site Assessment</option>
+                                <option value="Site Visit Notes">Site Visit Notes</option>
+                                <option value="Supporting E&S Evidence">Supporting E&S Evidence</option>
+                              </>
+                            ) : activeLifecycle?.branch === "greenfield" ? (
+                              <>
+                                <option value="Comprehensive ESIA Report">Comprehensive ESIA Report</option>
+                                <option value="ESIA Impact Study Draft">ESIA Impact Study Draft</option>
+                                <option value="ESIA Non-Technical Summary">ESIA Non-Technical Summary</option>
+                                <option value="Site Public Consultation Report">Site Public Consultation Report</option>
+                                <option value="ESIA Stakeholder Engagement Plan">ESIA Stakeholder Engagement Plan</option>
+                                <option value="Supporting ESIA Evidence">Supporting ESIA Evidence</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="Comprehensive ESDD Report">Comprehensive ESDD Report</option>
+                                <option value="ESDD Due Diligence Checklist">ESDD Due Diligence Checklist</option>
+                                <option value="ESDD Compliance Audit Report">ESDD Compliance Audit Report</option>
+                                <option value="Site Legacy Contamination Study">Site Legacy Contamination Study</option>
+                                <option value="Corrective Action Plan Draft">Corrective Action Plan Draft</option>
+                                <option value="Supporting ESDD Evidence">Supporting ESDD Evidence</option>
+                              </>
+                            )}
                           </select>
                         </div>
 
@@ -1089,19 +1382,29 @@ export function LifecyclePanel() {
                       className="flex w-full flex-col items-center gap-1.5 rounded-xl border border-dashed border-border/80 hover:border-primary/50 hover:bg-muted/40 px-4 py-5 text-center transition-colors cursor-pointer"
                     >
                       <Upload className="h-5.5 w-5.5 text-muted-foreground" />
-                      <span className="text-[12px] font-bold text-foreground">Upload screening document</span>
-                      <span className="text-[10px] text-muted-foreground">Attach reports, checksheets, or site visit logs</span>
+                      <span className="text-[12px] font-bold text-foreground">
+                        {activePanelTab === "screening" 
+                          ? "Upload screening document" 
+                          : activeLifecycle?.branch === "greenfield" 
+                          ? "Upload ESIA document" 
+                          : "Upload ESDD document"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {activePanelTab === "screening" 
+                          ? "Attach reports, checksheets, or site visit logs" 
+                          : "Attach study findings, checklists, or audit reports"}
+                      </span>
                     </button>
                   )}
 
                   {/* Document List */}
-                  {documents.length === 0 ? (
+                  {(activePanelTab === "screening" ? documents : esddDocuments).length === 0 ? (
                     <div className="rounded-xl border border-border border-dashed p-8 text-center text-muted-foreground">
                       No documents uploaded yet.
                     </div>
                   ) : (
                     <div className="space-y-2.5">
-                      {documents.map((doc) => {
+                      {(activePanelTab === "screening" ? documents : esddDocuments).map((doc) => {
                         const latest = doc.versions[0];
                         if (!latest) return null;
                         const isExpanded = !!expandedDocHistories[doc.id];
@@ -1218,184 +1521,6 @@ export function LifecyclePanel() {
             )}
           </div>
         </PanelCard>
-      ) : (
-        <PanelCard>
-          <div className="overflow-x-auto p-8 flex justify-center pb-12">
-            <div className="flex flex-col items-center min-w-[850px]">
-              {/* Trunk */}
-              <Node title={nodeTitle} variant="primary" />
-              <VerticalLine />
-              <Node
-                title="Preliminary E&S Screening"
-                subtitle="Initial impact assessment report"
-                onClick={() => onOpen(activeLifecycle?.branch === "greenfield" ? "esia" : "esdd")}
-              />
-              <VerticalLine />
-              <Node
-                title={activeLifecycle?.branch === "greenfield" ? "ESIA Report" : "ESDD Report"}
-                subtitle={
-                  activeLifecycle?.branch === "greenfield"
-                    ? "Environmental & Social Impact Assessment"
-                    : "Environmental & Social Due Diligence"
-                }
-                onClick={() => onOpen(activeLifecycle?.branch === "greenfield" ? "esia" : "esdd")}
-              />
-              <VerticalLine />
-              <Node
-                title={activeLifecycle?.branch === "greenfield" ? "ESMP" : "ESAP"}
-                subtitle={
-                  activeLifecycle?.branch === "greenfield"
-                    ? "Environmental & Social Management Plan"
-                    : "Environmental & Social Action Plan"
-                }
-                variant="active"
-                onClick={() => onOpen("esap")}
-              />
-
-              {/* Splitter */}
-              <div className="w-[1px] h-6 bg-border" />
-              <div className="w-[66.6%] h-[1px] bg-border" />
-              <div className="w-[66.6%] flex justify-between">
-                <div className="w-[1px] h-6 bg-border" />
-                <div className="w-[1px] h-6 bg-border" />
-                <div className="w-[1px] h-6 bg-border" />
-              </div>
-
-              {/* Branches Grid */}
-              <div className="grid grid-cols-3 gap-6 w-full max-w-[950px]">
-                {/* Environment Branch */}
-                <div className="flex flex-col items-center w-full">
-                  <BranchHeader title="Environment" color="green" icon={Globe} />
-                  <BranchNode
-                    title="Permits"
-                    subtitle="Environmental clearance & licensing"
-                    onClick={() => onOpen("policies")}
-                  />
-                  <BranchNode
-                    title="Compliance"
-                    subtitle="Statutory verification"
-                    onClick={() => onOpen("policies")}
-                  />
-                  <BranchNode
-                    title="Environmental Monitoring"
-                    subtitle="Resource mapping"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <BranchAction
-                    title="Environmental Monitoring"
-                    color="green"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <MetaDataCard
-                    color="green"
-                    items={[
-                      { label: "Vehicle", icon: ArrowLeftRight },
-                      { label: "Energy", icon: Zap },
-                      { label: "Waste", icon: Trash2 },
-                      { label: "Consumption", icon: Heart },
-                    ]}
-                  />
-
-                  <BranchAction title="Training" color="green" onClick={() => onOpen("training")} />
-                  <BranchAction
-                    title="Biannual monitoring"
-                    color="green"
-                    onClick={() => onOpen("assurance-calendar")}
-                  />
-                </div>
-
-                {/* Labour Branch */}
-                <div className="flex flex-col items-center w-full">
-                  <BranchHeader title="Labour" color="orange" icon={UserCog} />
-                  <BranchNode
-                    title="Permits"
-                    subtitle="Labour law compliance"
-                    onClick={() => onOpen("policies")}
-                  />
-                  <BranchNode
-                    title="Compliance"
-                    subtitle="Wage & Hour verification"
-                    onClick={() => onOpen("policies")}
-                  />
-                  <BranchNode
-                    title="Social Monitoring"
-                    subtitle="Workforce demographics"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <BranchAction
-                    title="Social Monitoring"
-                    color="orange"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <MetaDataCard
-                    color="orange"
-                    items={[
-                      { label: "Internal Grievance Tracker" },
-                      { label: "Stakeholder Engagement Register" },
-                      { label: "MOM Tracker" },
-                    ]}
-                  />
-
-                  <BranchAction title="Training" color="orange" onClick={() => onOpen("training")} />
-                  <BranchAction
-                    title="Biannual monitoring"
-                    color="orange"
-                    onClick={() => onOpen("assurance-calendar")}
-                  />
-                </div>
-
-                {/* OH&S Branch */}
-                <div className="flex flex-col items-center w-full">
-                  <BranchHeader title="OH&S" color="red" icon={ShieldCheck} />
-                  <BranchNode
-                    title="Permits"
-                    subtitle="Safety licensing"
-                    onClick={() => onOpen("policies")}
-                  />
-                  <BranchNode
-                    title="Compliance"
-                    subtitle="Audit protocols"
-                    onClick={() => onOpen("audit-internal")}
-                  />
-                  <BranchNode
-                    title="Social Monitoring"
-                    subtitle="Incident tracking"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <BranchAction
-                    title="Social Monitoring"
-                    color="red"
-                    onClick={() => onOpen("monitoring")}
-                  />
-
-                  <MetaDataCard
-                    color="red"
-                    items={[
-                      { label: "Accident / Incident Register" },
-                      { label: "PPE Register" },
-                      { label: "OHS Inspection Register" },
-                      { label: "First Aid Register" },
-                      { label: "Fire Extinguisher Register" },
-                    ]}
-                  />
-
-                  <BranchAction title="Training" color="red" onClick={() => onOpen("training")} />
-                  <BranchAction
-                    title="Biannual monitoring"
-                    color="red"
-                    onClick={() => onOpen("assurance-calendar")}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </PanelCard>
-      )}
-    </div>
-  );
-}
+      </div>
+    );
+  }
