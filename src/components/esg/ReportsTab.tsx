@@ -20,6 +20,7 @@ import {
   Zap,
   Flame,
   Info,
+  Presentation,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -45,6 +46,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   AMR_FIELDS,
@@ -77,6 +84,7 @@ import {
   type NcItem,
 } from "@/lib/esg-nc";
 import { exportToXlsx } from "@/lib/export-xlsx";
+import { exportToPptx } from "@/lib/export-pptx";
 import {
   A,
   DocChip,
@@ -661,7 +669,7 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
       }
     }
 
-    const matching = savedRecords.filter((r) => {
+    const matching = savedRecords.filter((r: any) => {
       const periodMatch = r.reportingPeriod === periodId;
       const siteMatch = entityId === "all" || depots.includes(r.site);
       return periodMatch && siteMatch;
@@ -669,7 +677,7 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
 
     let sum = 0;
     let hasValue = false;
-    matching.forEach((r) => {
+    matching.forEach((r: any) => {
       const valObj = r.indicatorValues?.[indicatorId];
       if (valObj && valObj.actual !== undefined && valObj.actual !== null && valObj.actual !== "") {
         sum += Number(valObj.actual);
@@ -1622,6 +1630,243 @@ export function ReportsTab() {
     });
   };
 
+  const downloadAmrExcel = () => {
+    const vals = AMR_VALUES[period] ?? {};
+    const rows = AMR_FIELDS.map((f) => ({
+      Indicator: f.label,
+      Value: vals[f.id]?.value ?? "",
+      Unit: f.unit,
+      Period: PERIODS.find((p) => p.id === period)?.label ?? period,
+      Source: vals[f.id]?.prov?.source ?? "Not captured",
+    }));
+    exportToXlsx(
+      `amr-${period}`,
+      [
+        { key: "Indicator", header: "Indicator" },
+        { key: "Value", header: "Value" },
+        { key: "Unit", header: "Unit" },
+        { key: "Period", header: "Period" },
+        { key: "Source", header: "Source" },
+      ],
+      rows,
+      "AMR",
+    );
+    toast.success("AMR Excel downloaded", {
+      description: `${AMR_FIELDS.length} indicators · ${PERIODS.find((p) => p.id === period)?.label}.`,
+    });
+  };
+
+  const downloadGhgExcel = () => {
+    const rows = GHG_PARAMS.map((p) => ({
+      Parameter: p.label,
+      Scope: `Scope ${p.scope}`,
+      Quantity: GHG_QTY[period]?.[p.id] ?? 0,
+      Unit: p.unit,
+      Factor: p.factor,
+      "tCO2e": Math.round((GHG_QTY[period]?.[p.id] ?? 0) * p.factor * 10) / 10,
+    }));
+    exportToXlsx(
+      `ghg-inventory-${period}`,
+      [
+        { key: "Parameter", header: "Parameter" },
+        { key: "Scope", header: "Scope" },
+        { key: "Quantity", header: "Quantity" },
+        { key: "Unit", header: "Unit" },
+        { key: "Factor", header: "Emission Factor" },
+        { key: "tCO2e", header: "tCO2e" },
+      ],
+      rows,
+      "GHG Inventory",
+    );
+    toast.success("GHG Inventory Excel downloaded", {
+      description: `${GHG_PARAMS.length} parameters · ${PERIODS.find((p) => p.id === period)?.label}.`,
+    });
+  };
+
+  const downloadAmrPpt = () => {
+    const vals = AMR_VALUES[period] ?? {};
+    const rows = AMR_FIELDS.map((f) => ({
+      indicator: f.label,
+      value: vals[f.id]?.value ?? "Not captured",
+      unit: f.unit,
+      source: vals[f.id]?.prov?.source ?? "Not captured",
+    }));
+
+    const periodLabel = PERIODS.find((p) => p.id === period)?.label ?? period;
+    const scopeLabelStr = scopeLabel(scope);
+
+    const slides = [
+      {
+        title: "Annual Monitoring Report (AMR)",
+        bulletPoints: [
+          `Reporting Period: ${periodLabel}`,
+          `Scope: ${scopeLabelStr}`,
+          `Entity: Transvolt Mobility Private Limited`,
+          `Generated: ${new Date().toLocaleDateString()}`,
+        ],
+      },
+      {
+        title: "AMR Report Metadata",
+        bulletPoints: [
+          `Approver: ESG Cluster Lead`,
+          `Workflow Status: Verified & Approved`,
+          `Format: Lender-aligned External Format`,
+        ],
+      },
+    ];
+
+    const chunkSize = 5;
+    for (let i = 0; i < rows.length; i += chunkSize) {
+      const chunk = rows.slice(i, i + chunkSize);
+      slides.push({
+        title: `Key Performance Indicators (Part ${Math.floor(i / chunkSize) + 1})`,
+        bulletPoints: chunk.map(
+          (r) => `${r.indicator}: ${r.value} ${r.unit} (Source: ${r.source})`,
+        ),
+      });
+    }
+
+    exportToPptx(`amr-${period}`, `Annual Monitoring Report (${periodLabel})`, slides);
+    toast.success("AMR PPT downloaded", {
+      description: `${AMR_FIELDS.length} indicators formatted as presentation slides.`,
+    });
+  };
+
+  const downloadGhgPpt = () => {
+    const rows = GHG_PARAMS.map((p) => ({
+      parameter: p.label,
+      scopeNum: p.scope,
+      qty: GHG_QTY[period]?.[p.id] ?? 0,
+      unit: p.unit,
+      factor: p.factor,
+      tCO2e: Math.round((GHG_QTY[period]?.[p.id] ?? 0) * p.factor * 10) / 10,
+    }));
+
+    const periodLabel = PERIODS.find((p) => p.id === period)?.label ?? period;
+    const scopeLabelStr = scopeLabel(scope);
+
+    const totalScope1 = rows
+      .filter((r) => r.scopeNum === 1)
+      .reduce((acc, r) => acc + r.tCO2e, 0);
+    const totalScope2 = rows
+      .filter((r) => r.scopeNum === 2)
+      .reduce((acc, r) => acc + r.tCO2e, 0);
+    const totalScope3 = rows
+      .filter((r) => r.scopeNum === 3)
+      .reduce((acc, r) => acc + r.tCO2e, 0);
+    const grandTotal = Math.round((totalScope1 + totalScope2 + totalScope3) * 10) / 10;
+
+    const slides = [
+      {
+        title: "GHG Inventory Report",
+        bulletPoints: [
+          `Reporting Period: ${periodLabel}`,
+          `Scope: ${scopeLabelStr}`,
+          `Entity: Transvolt Mobility Private Limited`,
+          `Generated: ${new Date().toLocaleDateString()}`,
+        ],
+      },
+      {
+        title: "Emissions Summary by Scope",
+        bulletPoints: [
+          `Scope 1 (Direct Emissions): ${Math.round(totalScope1 * 10) / 10} tCO2e`,
+          `Scope 2 (Indirect Emissions): ${Math.round(totalScope2 * 10) / 10} tCO2e`,
+          `Scope 3 (Other Indirect Emissions): ${Math.round(totalScope3 * 10) / 10} tCO2e`,
+          `Total Greenhouse Gas Footprint: ${grandTotal} tCO2e`,
+        ],
+      },
+      {
+        title: "Scope 1 Direct Emissions Detail",
+        bulletPoints: rows
+          .filter((r) => r.scopeNum === 1)
+          .map((r) => `${r.parameter}: ${r.qty} ${r.unit} · EF ${r.factor} · ${r.tCO2e} tCO2e`),
+      },
+      {
+        title: "Scope 2 & 3 Indirect Emissions Detail",
+        bulletPoints: rows
+          .filter((r) => r.scopeNum > 1)
+          .map(
+            (r) =>
+              `${r.parameter} (Scope ${r.scopeNum}): ${r.qty} ${r.unit} · EF ${r.factor} · ${r.tCO2e} tCO2e`,
+          ),
+      },
+    ];
+
+    exportToPptx(`ghg-inventory-${period}`, `GHG Inventory Report (${periodLabel})`, slides);
+    toast.success("GHG Inventory PPT downloaded", {
+      description: `GHG inventory summary and breakdown exported to PPT.`,
+    });
+  };
+
+  const downloadCompleteNcReportPpt = () => {
+    const register = sortNcRegister(buildNcRegister(scope, period, audit, monitoring));
+    const periodLabel = PERIODS.find((p) => p.id === period)?.label ?? period;
+    const scopeLabelStr = scopeLabel(scope);
+
+    const major = register.filter((r) => r.severity === "major").length;
+    const minor = register.filter((r) => r.severity === "minor").length;
+    const observation = register.filter((r) => r.severity === "observation").length;
+    const unspecified = register.filter((r) => !r.severity).length;
+    const avgAge = Math.round(
+      register.reduce((acc, r) => acc + r.ageDays, 0) / Math.max(1, register.length),
+    );
+
+    const slides = [
+      {
+        title: "Consolidated Non-Compliance (NC) Register",
+        bulletPoints: [
+          `Reporting Period: ${periodLabel}`,
+          `Scope: ${scopeLabelStr}`,
+          `Entity: Transvolt Mobility Private Limited`,
+          `Generated: ${new Date().toLocaleDateString()}`,
+        ],
+      },
+      {
+        title: "NC Register Executive Summary",
+        bulletPoints: [
+          `Total Non-Compliances: ${register.length}`,
+          `Major Severity: ${major} items`,
+          `Minor Severity: ${minor} items`,
+          `Observations: ${observation} items`,
+          `Unspecified Severity: ${unspecified} items`,
+          `Average Age of Open Items: ${avgAge} days`,
+        ],
+      },
+      {
+        title: "Key Open Non-Compliances",
+        bulletPoints: register
+          .slice(0, 6)
+          .map(
+            (r) =>
+              `[${r.ref}] ${r.title} (${ncItemPlace(r)}) · Raised ${ncRaisedLabel(r)} · Age: ${r.ageDays} days`,
+          ),
+      },
+      {
+        title: "Status & Owners",
+        bulletPoints: register
+          .slice(0, 6)
+          .map((r) => `[${r.ref}] Owner: ${ncItemOwnerName(r)} · Status: ${r.actionStatus}`),
+      },
+    ];
+
+    exportToPptx(`nc-report-internal-${period}`, `NC Register Report (${periodLabel})`, slides);
+    toast.success("Internal NC report PPT downloaded", {
+      description: `${register.length} non-compliance items exported to presentation slides.`,
+    });
+  };
+
+  const handleDownloadExcel = () => {
+    if (sel === "amr") downloadAmrExcel();
+    else if (sel === "ghg") downloadGhgExcel();
+    else if (sel === "nc-report") downloadCompleteNcReport();
+  };
+
+  const handleDownloadPpt = () => {
+    if (sel === "amr") downloadAmrPpt();
+    else if (sel === "ghg") downloadGhgPpt();
+    else if (sel === "nc-report") downloadCompleteNcReportPpt();
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -1677,84 +1922,26 @@ export function ReportsTab() {
             <span className="hidden items-center gap-1.5 text-[11px] font-medium text-muted-foreground md:inline-flex">
               <Eye className="h-3 w-3" aria-hidden /> internal always complete
             </span>
-            {def.id === "amr" && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 gap-1.5 rounded-lg text-[12px]"
-                onClick={() => {
-                  const vals = AMR_VALUES[period] ?? {};
-                  const rows = AMR_FIELDS.map((f) => ({
-                    Indicator: f.label,
-                    Value: vals[f.id]?.value ?? "",
-                    Unit: f.unit,
-                    Period: PERIODS.find((p) => p.id === period)?.label ?? period,
-                    Source: vals[f.id]?.prov?.source ?? "Not captured",
-                  }));
-                  exportToXlsx(
-                    `amr-${period}`,
-                    [
-                      { key: "Indicator", header: "Indicator" },
-                      { key: "Value", header: "Value" },
-                      { key: "Unit", header: "Unit" },
-                      { key: "Period", header: "Period" },
-                      { key: "Source", header: "Source" },
-                    ],
-                    rows,
-                    "AMR",
-                  );
-                  toast.success("AMR Excel downloaded", {
-                    description: `${AMR_FIELDS.length} indicators · ${PERIODS.find((p) => p.id === period)?.label}.`,
-                  });
-                }}
-              >
-                <FileSpreadsheet className="h-3.5 w-3.5" /> Download Excel
-              </Button>
-            )}
-            {def.id === "ghg" && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 gap-1.5 rounded-lg text-[12px]"
-                onClick={() => {
-                  const rows = GHG_PARAMS.map((p) => ({
-                    Parameter: p.label,
-                    Scope: `Scope ${p.scope}`,
-                    Quantity: GHG_QTY[period]?.[p.id] ?? 0,
-                    Unit: p.unit,
-                    Factor: p.factor,
-                    "tCO2e": Math.round((GHG_QTY[period]?.[p.id] ?? 0) * p.factor * 10) / 10,
-                  }));
-                  exportToXlsx(
-                    `ghg-inventory-${period}`,
-                    [
-                      { key: "Parameter", header: "Parameter" },
-                      { key: "Scope", header: "Scope" },
-                      { key: "Quantity", header: "Quantity" },
-                      { key: "Unit", header: "Unit" },
-                      { key: "Factor", header: "Emission Factor" },
-                      { key: "tCO2e", header: "tCO2e" },
-                    ],
-                    rows,
-                    "GHG Inventory",
-                  );
-                  toast.success("GHG Inventory Excel downloaded", {
-                    description: `${GHG_PARAMS.length} parameters · ${PERIODS.find((p) => p.id === period)?.label}.`,
-                  });
-                }}
-              >
-                <FileSpreadsheet className="h-3.5 w-3.5" /> Download Excel
-              </Button>
-            )}
-            {def.id === "nc-report" && audience === "internal" && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 gap-1.5 rounded-lg text-[12px]"
-                onClick={downloadCompleteNcReport}
-              >
-                <Download className="h-3.5 w-3.5" /> Download complete
-              </Button>
+            {((def.id === "amr") || (def.id === "ghg") || (def.id === "nc-report" && audience === "internal")) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 gap-1.5 rounded-lg text-[12px]"
+                  >
+                    <Download className="h-3.5 w-3.5" /> Export <ChevronDown className="h-3 w-3 opacity-60" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem onClick={handleDownloadExcel} className="text-[12px] gap-2 cursor-pointer">
+                    <FileSpreadsheet className="h-3.5 w-3.5" /> Download Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDownloadPpt} className="text-[12px] gap-2 cursor-pointer">
+                    <Presentation className="h-3.5 w-3.5" /> Download PPT
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             <Button
               size="sm"
