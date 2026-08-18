@@ -12,6 +12,7 @@ import {
   Trash2,
   Heart,
   Circle,
+  Target,
   Waypoints,
   MapPin,
   HelpCircle,
@@ -236,27 +237,26 @@ function LifecycleNode({
   active?: boolean;
   onClick?: () => void;
 }) {
+  const isStart = variant === "start";
   return (
     <div
       onClick={onClick}
       className={cn(
-        "w-[260px] flex flex-col items-start p-3.5 rounded-2xl border text-left shadow-sm bg-card transition-all select-none",
-        variant === "start" && "bg-[oklch(0.2_0.028_255)] dark:bg-[oklch(0.15_0.01_255)] text-white border-none",
-        variant === "process" && "border-border bg-card",
-        variant === "decision" && "border-warning/40 bg-warning/5",
-        variant === "document" && "border-dashed border-border bg-card",
+        "flex flex-col p-3.5 shadow-sm transition-all select-none border border-border bg-card",
+        isStart ? "w-[240px] items-center justify-center rounded-full bg-slate-900 dark:bg-slate-950 text-white border-none py-2 px-5" : "w-[260px] items-start rounded-2xl",
+        variant === "process" && "bg-primary text-primary-foreground border-none hover:bg-primary/95 shadow-sm",
+        variant === "document" && "bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900/50 text-blue-950 dark:text-blue-200 border border-solid",
         onClick && "cursor-pointer hover:border-primary/50 hover:shadow-md",
         active && "border-primary/60 shadow-[0_0_0_2px_rgba(var(--primary),0.2)] bg-primary/5"
       )}
     >
-      <div className="flex items-center gap-2 w-full">
+      <div className={cn("flex items-center gap-2 w-full", isStart && "justify-center")}>
         {Icon && (
           <span className={cn(
             "h-5 w-5 rounded-lg flex items-center justify-center shrink-0",
-            variant === "start" && "bg-white/10 text-white",
-            variant === "process" && "bg-muted text-muted-foreground",
-            variant === "decision" && "bg-warning/10 text-warning",
-            variant === "document" && "bg-accent text-accent-foreground",
+            (isStart || variant === "process") && "bg-white/15 text-white",
+            variant === "document" && "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300",
+            (variant === "default" || variant === "decision") && "bg-muted text-muted-foreground",
             active && "bg-primary/10 text-primary"
           )}>
             <Icon className="h-3.5 w-3.5" />
@@ -264,19 +264,34 @@ function LifecycleNode({
         )}
         <span className={cn(
           "text-[12px] font-bold leading-tight",
-          variant === "start" ? "text-white" : active ? "text-primary font-extrabold" : "text-foreground"
+          (isStart || variant === "process") ? "text-white" : active ? "text-primary font-extrabold" : "text-foreground"
         )}>
           {title}
         </span>
       </div>
-      {subtitle && (
+      {subtitle && !isStart && (
         <p className={cn(
           "text-[10px] mt-1.5 leading-snug",
-          variant === "start" ? "text-white/70" : "text-muted-foreground"
+          variant === "process" ? "text-white/80" : "text-muted-foreground"
         )}>
           {subtitle}
         </p>
       )}
+    </div>
+  );
+}
+
+function DecisionDiamond({ title }: { title: string }) {
+  return (
+    <div className="relative w-[110px] h-[110px] my-6 flex items-center justify-center shrink-0">
+      {/* Rotated background */}
+      <div className="absolute inset-0 bg-amber-500 dark:bg-amber-600 rotate-45 rounded-xl shadow-sm border-none pointer-events-none" />
+      {/* Un-rotated content */}
+      <div className="relative z-10 text-center px-3 rotate-0">
+        <span className="text-[11.5px] font-bold text-white leading-tight block">
+          {title}
+        </span>
+      </div>
     </div>
   );
 }
@@ -294,11 +309,11 @@ function SplitArrow() {
   return (
     <div className="w-full max-w-[660px] flex flex-col items-center my-2 relative shrink-0">
       <div className="w-[1.5px] h-4 bg-border" />
-      <div className="w-[50%] h-[1.5px] bg-border relative">
+      <div className="w-[calc(50%+16px)] h-[1.5px] bg-border relative">
         <span className="absolute left-0 -translate-x-1/2 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1 whitespace-nowrap">Brownfield</span>
         <span className="absolute right-0 translate-x-1/2 -top-4 text-[9px] font-bold text-muted-foreground uppercase bg-background px-1 whitespace-nowrap">Greenfield / Vacant Land</span>
       </div>
-      <div className="w-[50%] flex justify-between">
+      <div className="w-[calc(50%+16px)] flex justify-between">
         <div className="flex flex-col items-center">
           <div className="w-[1.5px] h-4 bg-border" />
           <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px]" />
@@ -315,11 +330,11 @@ function SplitArrow() {
 function MergeArrow() {
   return (
     <div className="w-full max-w-[660px] flex flex-col items-center my-2 shrink-0">
-      <div className="w-[50%] flex justify-between">
+      <div className="w-[calc(50%+16px)] flex justify-between">
         <div className="w-[1.5px] h-4 bg-border" />
         <div className="w-[1.5px] h-4 bg-border" />
       </div>
-      <div className="w-[50%] h-[1.5px] bg-border" />
+      <div className="w-[calc(50%+16px)] h-[1.5px] bg-border" />
       <div className="w-[1.5px] h-4 bg-border" />
       <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px]" />
     </div>
@@ -753,22 +768,20 @@ export function LifecyclePanel() {
               <div className="flex flex-col items-center min-w-[700px] mt-4">
                 {/* Stage 1: Initial Stages */}
                 <LifecycleNode
-                  title="Start New Project Opportunity"
-                  subtitle="Identify SPV opportunity / tender announcement"
-                  icon={Waypoints}
+                  title="New Project Opportunity"
+                  icon={Target}
                   variant="start"
                 />
                 <DownArrow />
                 <LifecycleNode
-                  title="Preliminary ESMS Screening"
-                  subtitle="Before Bidding · Screening risk assessment"
+                  title="Preliminary E&S Screening"
+                  subtitle="Before Bidding"
                   icon={Globe}
                   variant="process"
                 />
                 <DownArrow />
                 <LifecycleNode
                   title="Project Type Classification"
-                  subtitle="Categorize site scope & brownfield/greenfield pathway"
                   icon={Layers}
                   variant="process"
                 />
@@ -782,28 +795,27 @@ export function LifecyclePanel() {
                   <div className="flex flex-col items-center h-full">
                     <LifecycleNode
                       title="Comprehensive ESDD"
-                      subtitle="Environmental & Social Due Diligence"
+                      subtitle="Env. & Social Due Diligence"
                       icon={ClipboardList}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Risk Identification & Analysis"
-                      subtitle="Assess legacy site contamination & hazards"
                       icon={HelpCircle}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Assign Risk Category"
-                      subtitle="Assign Risk Profile A / B / C / D"
+                      subtitle="A/B/C/D"
                       icon={ShieldCheck}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Formulate ESAP"
-                      subtitle="Environmental & Social Action Plan"
+                      subtitle="Env. & Social Action Plan"
                       icon={FileText}
                       variant="document"
                     />
@@ -815,35 +827,33 @@ export function LifecyclePanel() {
                   <div className="flex flex-col items-center h-full">
                     <LifecycleNode
                       title="Comprehensive ESIA"
-                      subtitle="Environmental & Social Impact Assessment"
+                      subtitle="Env. & Social Impact Assmt."
                       icon={Globe}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Risk Identification & Analysis"
-                      subtitle="Evaluate biological, physical & social baselines"
                       icon={HelpCircle}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Potential Impact Analysis"
-                      subtitle="Model future emission, noise & traffic impacts"
                       icon={TrendingUp}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Assign Risk Category"
-                      subtitle="Assign Risk Profile A / B / C / D"
+                      subtitle="A/B/C/D"
                       icon={ShieldCheck}
                       variant="process"
                     />
                     <DownArrow />
                     <LifecycleNode
                       title="Formulate ESMP"
-                      subtitle="Environmental & Social Management Plan"
+                      subtitle="Env. & Social Mgmt Plan"
                       icon={FileText}
                       variant="document"
                     />
@@ -854,61 +864,46 @@ export function LifecyclePanel() {
                 <MergeArrow />
                 <LifecycleNode
                   title="Implement ESAP / ESMP"
-                  subtitle="Execute mitigation actions & timelines"
                   icon={Settings}
                   variant="process"
                 />
+                <DownArrow />
                 
                 <div className="relative flex flex-col items-center w-full max-w-[660px]">
-                  {/* Loopback connector box */}
-                  <div className="absolute left-[calc(50%+130px)] top-[37px] w-[380px] h-[115px] border-t border-r border-dashed border-border pointer-events-none z-0">
-                    {/* Bottom horizontal connector segment to card */}
-                    <div className="absolute right-0 bottom-0 w-[20px] border-b border-dashed border-border" />
-                    {/* Left arrowhead pointing to Monitor & Review */}
-                    <div className="absolute left-0 top-0 -translate-x-full -translate-y-1/2 w-0 h-0 border-r-[5px] border-r-border border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent" />
-                  </div>
-
                   <LifecycleNode
                     title="Monitor & Review Implementation"
-                    subtitle="Continuous supervision by ESMS team"
                     icon={Activity}
                     variant="process"
                   />
                   <DownArrow />
                   
-                  {/* Risk Category Reduced? Decision (Centered) */}
-                  <LifecycleNode
-                    title="Risk Category Reduced?"
-                    subtitle="Evaluate if risk tier has dropped (e.g. A to B)"
-                    icon={HelpCircle}
-                    variant="decision"
-                  />
+                  {/* Risk Category Reduced? Decision (Centered Diamond) */}
+                  <DecisionDiamond title="Risk Category Reduced?" />
 
                   {/* Vertical Line splitting to YES (straight down) */}
-                  <div className="w-[1.5px] h-[50px] bg-border relative shrink-0">
-                    <span className="absolute left-1/2 -translate-x-1/2 top-2.5 text-[9px] font-extrabold text-success uppercase bg-background px-1 leading-none">YES</span>
+                  <div className="w-[1.5px] h-[40px] bg-border relative shrink-0">
+                    <span className="absolute left-1/2 -translate-x-1/2 top-1 text-[9px] font-extrabold text-success uppercase bg-background px-1 leading-none">YES</span>
                   </div>
                   <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-border -mt-[1px] mb-1.5 shrink-0" />
 
                   {/* Main YES Pathway (Centered) */}
                   <LifecycleNode
                     title="Maintain Operations"
-                    subtitle="Maintain operations with lower risk profile"
+                    subtitle="Lower Risk Profile"
                     icon={ShieldCheck}
                     variant="process"
                   />
                   <DownArrow />
                   <LifecycleNode
                     title="Ongoing Monitoring & Periodic Review"
-                    subtitle="Standard operational oversight & audits"
                     icon={ClipboardList}
                     variant="process"
                   />
 
                   {/* Absolute Positioned Right Column (NO Pathway) */}
-                  <div className="absolute left-[calc(50%+130px)] top-[152px] -translate-y-1/2 flex items-center z-10">
+                  <div className="absolute left-[calc(50%+55px)] top-[165px] -translate-y-1/2 flex items-center z-10">
                     {/* Horizontal Connector Arrow */}
-                    <div className="w-[100px] h-[1.5px] bg-border relative flex items-center shrink-0">
+                    <div className="w-[175px] h-[1.5px] bg-border relative flex items-center shrink-0">
                       <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] font-extrabold text-destructive uppercase bg-background px-1 leading-none">NO</span>
                       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-l-[4px] border-l-border border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent" />
                     </div>
@@ -916,14 +911,9 @@ export function LifecyclePanel() {
                     <div className="flex flex-col items-center shrink-0">
                       <LifecycleNode
                         title="Update ESAP / ESMP & Re-implement"
-                        subtitle="Revise mitigation measures & targets"
                         icon={RotateCcw}
-                        variant="process"
+                        variant="default"
                       />
-                      {/* Loopback pathway description label */}
-                      <div className="flex flex-col items-center mt-2.5">
-                        <div className="text-[8px] font-bold text-muted-foreground/60 uppercase tracking-wide">Re-enter Monitoring loop</div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -936,13 +926,12 @@ export function LifecyclePanel() {
                 <LifecycleNode
                   title="ES Monitoring & Reporting Framework"
                   subtitle="Data Collection via Metadata Format"
-                  icon={Database}
+                  icon={FileText}
                   variant="document"
                 />
                 <DownArrow />
                 <LifecycleNode
                   title="Reporting Obligations"
-                  subtitle="Synthesize collected data into disclosures"
                   icon={FileText}
                   variant="process"
                 />
@@ -965,19 +954,19 @@ export function LifecyclePanel() {
                 <div className="grid grid-cols-4 gap-4 w-full max-w-[1100px] mt-2">
                   <div className="rounded-xl border border-border/50 bg-card p-3 shadow-sm text-center">
                     <span className="text-[11.5px] font-bold text-foreground block">BRSR / AMR / Impact Report</span>
-                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">National Standards</span>
+                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">National</span>
                   </div>
                   <div className="rounded-xl border border-border/50 bg-card p-3 shadow-sm text-center">
                     <span className="text-[11.5px] font-bold text-foreground block">IFC Lender Reports / CDP</span>
-                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">DFI Standards</span>
+                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">DFI</span>
                   </div>
                   <div className="rounded-xl border border-border/50 bg-card p-3 shadow-sm text-center">
                     <span className="text-[11.5px] font-bold text-foreground block">GHG Inventory</span>
-                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">Scope 1/2/3 emissions</span>
+                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">Scope 1 / 2 / 3 Emissions</span>
                   </div>
                   <div className="rounded-xl border border-border/50 bg-card p-3 shadow-sm text-center">
                     <span className="text-[11.5px] font-bold text-foreground block">Carbon Savings</span>
-                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">EV avoidance indicators</span>
+                    <span className="block text-[9px] text-muted-foreground uppercase mt-1">Avoidance Indicators</span>
                   </div>
                 </div>
               </div>
