@@ -1519,6 +1519,7 @@ export const MONITORING_PARAMS: MonitoringParam[] = [
   { key: "bod", label: "BOD (treated effluent)", unit: "mg/L", limit: 30, category: "water" },
   { key: "cod", label: "COD (treated effluent)", unit: "mg/L", limit: 250, category: "water" },
   { key: "noise-day", label: "Noise — daytime", unit: "dB(A)", limit: 75, category: "noise" },
+  { key: "noise-night", label: "Noise — nighttime", unit: "dB(A)", limit: 70, category: "noise" },
   {
     key: "haz-waste",
     label: "Hazardous waste to authorised recycler",

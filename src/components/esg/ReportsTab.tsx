@@ -97,6 +97,7 @@ import {
   useStubLoad,
   LoadingRows,
 } from "./primitives";
+import { SiteComparisonReport } from "./SiteComparisonReport";
 
 const nf = new Intl.NumberFormat("en-IN");
 
@@ -151,7 +152,7 @@ function ReportWorkflowBadge({ defId, period }: { defId: string; period: string 
 /* ======================= Reporting-tab-local filter ======================== */
 
 export type ReportFilter = {
-  siteId: "all" | string;
+  siteIds: string[];
   dateRange: DateRange;
 };
 
@@ -195,7 +196,7 @@ function makePreset(key: string): DateRange {
 }
 
 const DEFAULT_FILTER: ReportFilter = {
-  siteId: "all",
+  siteIds: ["all"],
   dateRange: makePreset("thisMonth"),
 };
 
@@ -223,14 +224,44 @@ function ReportFilterBar({
 }) {
   const [open, setOpen] = useState(false);
 
-  const activeSite = SITE_OPTIONS.find((s) => s.id === filter.siteId) ?? SITE_OPTIONS[0];
-  const siteActive = filter.siteId !== "all";
+  const activeSites = filter.siteIds.includes("all")
+    ? [SITE_OPTIONS[0]]
+    : SITE_OPTIONS.filter((s) => filter.siteIds.includes(s.id));
+  const siteActive = !filter.siteIds.includes("all");
   const dateActive = filter.dateRange.presetKey !== "thisMonth";
   const anyActive = siteActive || dateActive;
 
   const clearAll = () => {
     onChange(DEFAULT_FILTER);
     setOpen(false);
+  };
+
+  const handleSiteToggle = (siteId: string) => {
+    if (siteId === "all") {
+      onChange({ ...filter, siteIds: ["all"] });
+      return;
+    }
+
+    let newSiteIds = filter.siteIds.filter((id) => id !== "all");
+    
+    if (newSiteIds.includes(siteId)) {
+      newSiteIds = newSiteIds.filter((id) => id !== siteId);
+      if (newSiteIds.length === 0) {
+        newSiteIds = ["all"];
+      }
+    } else {
+      newSiteIds.push(siteId);
+    }
+    
+    onChange({ ...filter, siteIds: newSiteIds });
+  };
+
+  const removeSite = (siteId: string) => {
+    let newSiteIds = filter.siteIds.filter((id) => id !== siteId);
+    if (newSiteIds.length === 0) {
+      newSiteIds = ["all"];
+    }
+    onChange({ ...filter, siteIds: newSiteIds });
   };
 
   return (
@@ -252,7 +283,7 @@ function ReportFilterBar({
             <span>Filters</span>
             {anyActive && (
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
-                {(siteActive ? 1 : 0) + (dateActive ? 1 : 0)}
+                {(siteActive ? activeSites.length : 0) + (dateActive ? 1 : 0)}
               </span>
             )}
             <ChevronDown className="h-3 w-3 shrink-0 opacity-60" aria-hidden />
@@ -282,26 +313,33 @@ function ReportFilterBar({
           <div className="flex divide-x divide-border/40">
             {/* ── Site column ── */}
             <div className="w-[160px] flex-none p-1.5">
-              <div className="mb-1 px-2 py-1 text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                <MapPin className="mr-1 inline h-2.5 w-2.5" aria-hidden />
-                Site
+              <div className="mb-1 px-2 py-1 flex items-center justify-between">
+                <div className="text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <MapPin className="mr-1 inline h-2.5 w-2.5" aria-hidden />
+                  Site
+                </div>
+                <span className="text-[9px] text-muted-foreground">Multi-select</span>
               </div>
               <div className="space-y-0.5">
-                {SITE_OPTIONS.map((site) => (
-                  <button
-                    key={site.id}
-                    type="button"
-                    onClick={() => onChange({ ...filter, siteId: site.id })}
-                    className={cn(
-                      "flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[12px] transition-colors hover:bg-muted/60",
-                      filter.siteId === site.id
-                        ? "bg-primary/10 font-bold text-primary"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {site.label}
-                  </button>
-                ))}
+                {SITE_OPTIONS.map((site) => {
+                  const isActive = filter.siteIds.includes(site.id);
+                  return (
+                    <button
+                      key={site.id}
+                      type="button"
+                      onClick={() => handleSiteToggle(site.id)}
+                      className={cn(
+                        "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-[12px] transition-colors hover:bg-muted/60",
+                        isActive
+                          ? "bg-primary/10 font-bold text-primary"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      <span>{site.label}</span>
+                      {isActive && <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -323,13 +361,14 @@ function ReportFilterBar({
                         setOpen(false);
                       }}
                       className={cn(
-                        "flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-[12px] transition-colors hover:bg-muted/60",
+                        "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-[12px] transition-colors hover:bg-muted/60",
                         isActive
                           ? "bg-primary/10 font-bold text-primary"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                     >
-                      {preset.label}
+                      <span>{preset.label}</span>
+                      {isActive && <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden />}
                     </button>
                   );
                 })}
@@ -351,20 +390,20 @@ function ReportFilterBar({
       </Popover>
 
       {/* ── active filter chips ── */}
-      {siteActive && (
-        <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
+      {siteActive && activeSites.map((site) => (
+        <span key={site.id} className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
           <MapPin className="h-3 w-3" aria-hidden />
-          {activeSite.label}
+          {site.label}
           <button
             type="button"
-            aria-label={`Remove site filter: ${activeSite.label}`}
-            onClick={() => onChange({ ...filter, siteId: "all" })}
+            aria-label={`Remove site filter: ${site.label}`}
+            onClick={() => removeSite(site.id)}
             className="ml-0.5 rounded-sm opacity-70 transition-opacity hover:opacity-100"
           >
             <X className="h-3 w-3" />
           </button>
         </span>
-      )}
+      ))}
       {dateActive && (
         <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
           <CalendarDays className="h-3 w-3" aria-hidden />
@@ -634,9 +673,10 @@ function ExportFlow({ def, onDone }: { def: ReportDef; onDone: () => void }) {
 function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: ReportFilter }) {
   const { scope, period, audience, audit, monitoring } = useEsg();
   const external = audience === "external";
+  const primarySiteId = reportFilter.siteIds[0] || "all";
 
   // Derive an overriding scope from the site filter
-  const filteredScope = reportFilter.siteId === "all" ? scope : { entityId: reportFilter.siteId };
+  const filteredScope = primarySiteId === "all" ? scope : { entityId: primarySiteId };
   const { start: drStart, end: drEnd } = reportFilter.dateRange;
 
   /** True if a date falls within the filter range (inclusive) */
@@ -653,7 +693,7 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
     } catch {
       return [];
     }
-  }, [period, reportFilter.siteId]); // refresh on period/site change
+  }, [period, primarySiteId]); // refresh on period/site change
 
   // Helper to fetch data from the ESG Data Portal (voltline-report-records)
   const getEsgPortalValue = (
@@ -784,7 +824,7 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
   // Trend data for GHG
   const monthsTrendData = useMemo(() => {
     return ["2026-05", "2026-06", "2026-07"].map((m) => {
-      const compiled = compileGhgData(m, reportFilter.siteId);
+      const compiled = compileGhgData(m, primarySiteId);
       const label = m === "2026-05" ? "May" : m === "2026-06" ? "Jun" : "Jul (MTD)";
       return {
         month: label,
@@ -794,12 +834,12 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
         Total: Math.round(compiled.total * 10) / 10,
       };
     });
-  }, [savedRecords, reportFilter.siteId]);
+  }, [savedRecords, primarySiteId]);
 
   // Trend data for Carbon Avoidance
   const carbonMonthsData = useMemo(() => {
     return ["2026-05", "2026-06", "2026-07"].map((m) => {
-      const carbon = compileCarbonData(m, reportFilter.siteId);
+      const carbon = compileCarbonData(m, primarySiteId);
       const label = m === "2026-05" ? "May 2026" : m === "2026-06" ? "Jun 2026" : "Jul 2026 (MTD)";
       return {
         month: label,
@@ -811,24 +851,24 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
         offsetRate: carbon.reductionPct,
       };
     });
-  }, [savedRecords, reportFilter.siteId]);
+  }, [savedRecords, primarySiteId]);
 
   const cumulativeSavedT = useMemo(() => {
     const activeSaved = carbonMonthsData.reduce((acc, d) => acc + d.avoided, 0);
-    if (reportFilter.siteId === "all" || reportFilter.siteId === "mbmt") {
+    if (primarySiteId === "all" || primarySiteId === "mbmt") {
       return 11440 + activeSaved; // reconciles to exactly 12480 for "all"
     }
     return activeSaved;
-  }, [carbonMonthsData, reportFilter.siteId]);
+  }, [carbonMonthsData, primarySiteId]);
 
   /** Inline scope note shown when period-keyed reports can't be row-filtered */
   const ScopeNote = ({ extra }: { extra?: string }) =>
-    reportFilter.siteId !== "all" ? (
+    primarySiteId !== "all" ? (
       <p className="border-b border-border/40 bg-muted/20 px-5 py-2 text-[11.5px] text-muted-foreground">
         <MapPin className="mr-1 inline h-3 w-3 opacity-60" aria-hidden />
         Filtered to{" "}
         <span className="font-semibold">
-          {SITE_OPTIONS.find((s) => s.id === reportFilter.siteId)?.label}
+          {SITE_OPTIONS.find((s) => s.id === primarySiteId)?.label}
         </span>
         {extra && ` · ${extra}`}. This report aggregates group-level data; site-level breakdown
         requires backend integration.
@@ -939,7 +979,7 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
   }
 
   if (def.id === "ghg") {
-    const data = compileGhgData(period, reportFilter.siteId);
+    const data = compileGhgData(period, primarySiteId);
     const total = data.total;
     const intensity = data.total > 0 && carbonMonthsData.find((x) => x.period === period)?.fleetKm
       ? (data.total * 1000) / (carbonMonthsData.find((x) => x.period === period)!.fleetKm)
@@ -1256,8 +1296,8 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
     const filteredAssessments = ASSESSMENTS.filter((a) => {
       if (a.status !== "complete") return false;
       // Site filter: match entity short name heuristically against project string
-      if (reportFilter.siteId !== "all") {
-        const entity = ESG_GROUP.entities.find((e) => e.id === reportFilter.siteId);
+      if (primarySiteId !== "all") {
+        const entity = ESG_GROUP.entities.find((e) => e.id === primarySiteId);
         if (entity && !a.project.toLowerCase().includes(entity.short.toLowerCase())) return false;
       }
       // Date filter: completedOn within range
@@ -1954,6 +1994,8 @@ export function ReportsTab() {
         </div>
         {loading ? (
           <LoadingRows rows={4} />
+        ) : reportFilter.siteIds.length > 1 && !reportFilter.siteIds.includes("all") ? (
+          <SiteComparisonReport def={def} reportFilter={reportFilter} />
         ) : (
           <InternalPreview def={def} reportFilter={reportFilter} />
         )}

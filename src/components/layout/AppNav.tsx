@@ -41,7 +41,7 @@ const NAV_CHARGING: NavLink[] = [
 ];
 
 const NAV_OTHER: NavLink[] = [
-  { to: "/launcher", label: "App Launcher", comingSoon: true },
+  { to: "/launcher", label: "App Launcher" },
   { to: "/mis", label: "Daily reports", comingSoon: true },
   { to: "/data-sync", label: "Data Sync" },
 ];
