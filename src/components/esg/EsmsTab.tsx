@@ -49,13 +49,11 @@ function subLabel(s: EsmsSubTab): React.ReactNode {
  * is derived from it, so existing deep-links keep resolving.
  */
 export function EsmsTab({ initialSub }: { initialSub?: string }) {
-  const { scope } = useEsg();
+  const { scope, goto } = useEsg();
   const [sub, setSub] = useState<string>(() => resolveEsmsSub(initialSub));
   const loading = useStubLoad(sub + JSON.stringify(scope));
 
-  // Cross-area deep-links (e.g. a record drawer → external audit) navigate with a
-  // new ?sub=; sync when it changes. Manual tab clicks don't touch the URL, so
-  // this only fires on an actual incoming sub change.
+  // Sync when initialSub prop changes
   useEffect(() => {
     if (initialSub) setSub(resolveEsmsSub(initialSub));
   }, [initialSub]);
@@ -82,16 +80,21 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
   const tierSubs = esmsSubsForTier(tier);
   const allowedTierSubs = tierSubs.filter((s) => allowedSubKeys.includes(s.key));
 
+  const selectSub = (next: string) => {
+    setSub(next);
+    goto("esms", { sub: next });
+  };
+
   const setTier = (t: EsmsTier) => {
     const subsOfTier = esmsSubsForTier(t).filter((s) => allowedSubKeys.includes(s.key));
     const first = subsOfTier[0];
-    if (first) setSub(first.key);
+    if (first) selectSub(first.key);
   };
 
   // ESAP backlinks and assessment "open findings" links jump between sub-tabs;
   // only follow when the target sub is available in the current build.
   const goToSub = (next: string) => {
-    if (isEsmsSubAvailable(next) && allowedSubKeys.includes(next)) setSub(next);
+    if (isEsmsSubAvailable(next) && allowedSubKeys.includes(next)) selectSub(next);
   };
 
   return (
@@ -111,7 +114,7 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
             ariaLabel={`${tier} sections`}
             size="sm"
             value={sub}
-            onChange={setSub}
+            onChange={selectSub}
             options={allowedTierSubs.map((s) => ({ key: s.key, label: subLabel(s) }))}
           />
         )}

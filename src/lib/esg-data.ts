@@ -1530,6 +1530,642 @@ export const MONITORING_PARAMS: MonitoringParam[] = [
 
 export const monitoringParamByKey = (key: string) => MONITORING_PARAMS.find((p) => p.key === key);
 
+/* ----------------------------- Lab Test Types & Parameters ---------------------------- */
+
+export type LabTestTypeKey =
+  | "vehicle_data"
+  | "drinking_water"
+  | "waste_water"
+  | "dry_waste"
+  | "wet_waste"
+  | "hazardous_waste"
+  | "noise"
+  | "soil_runoff";
+
+export interface LabParamDef {
+  key: string;
+  testType: LabTestTypeKey;
+  name: string;
+  code: string;
+  description: string;
+  unit: string;
+  limitMin?: number;
+  limitMax?: number;
+  limitDisplay: string; // e.g. "6.5 – 8.5", "≤ 30 mg/L", "≤ 100 µg/m³"
+  standardRef: string; // e.g. "CPCB ETP Norms", "NAAQS 2009", "IS 10500:2012"
+}
+
+export interface LabTestTypeMeta {
+  key: LabTestTypeKey;
+  label: string;
+  shortLabel: string;
+  description: string;
+  standard: string;
+  defaultFrequency: string;
+  parameters: LabParamDef[];
+}
+
+export const LAB_TEST_TYPES: LabTestTypeMeta[] = [
+  {
+    key: "vehicle_data",
+    label: "Vehicle Data",
+    shortLabel: "Vehicle Data",
+    description: "Monthly fleet operational tracking: vehicle count, distance run, and charging power draw.",
+    standard: "Fleet Operational Metrics",
+    defaultFrequency: "Monthly Reporting",
+    parameters: [
+      {
+        key: "month",
+        testType: "vehicle_data",
+        name: "Month",
+        code: "MONTH",
+        description: "Operational reporting month and year",
+        unit: "Cycle",
+        limitDisplay: "Reporting Period",
+        standardRef: "Billing Cycle",
+      },
+      {
+        key: "vehicle_count",
+        testType: "vehicle_data",
+        name: "Vehicle Count",
+        code: "COUNT",
+        description: "Total active operational electric buses",
+        unit: "Count",
+        limitDisplay: "Active Fleet",
+        standardRef: "Depot Allocation",
+      },
+      {
+        key: "run_km",
+        testType: "vehicle_data",
+        name: "Run (Km)",
+        code: "KM",
+        description: "Total fleet distance run during the month",
+        unit: "Km",
+        limitDisplay: "Fleet Distance",
+        standardRef: "Operational Schedule",
+      },
+      {
+        key: "energy_kwh",
+        testType: "vehicle_data",
+        name: "Energy (KWh) Consumption",
+        code: "KWH",
+        description: "Total charging power consumption drawn from depot chargers",
+        unit: "kWh",
+        limitDisplay: "Energy Consumed",
+        standardRef: "Energy Meter Log",
+      },
+    ],
+  },
+  {
+    key: "dry_waste",
+    label: "Dry Waste",
+    shortLabel: "Dry Waste",
+    description: "Depot non-hazardous recyclable solid waste: plastic waste, paper cartons, scrap metal, and tyres.",
+    standard: "Solid Waste Management Rules 2016",
+    defaultFrequency: "Monthly Manifest Log",
+    parameters: [
+      {
+        key: "date",
+        testType: "dry_waste",
+        name: "Date",
+        code: "DATE",
+        description: "Collection and dispatch date",
+        unit: "Date",
+        limitDisplay: "Logged Date",
+        standardRef: "Gate Pass Log",
+      },
+      {
+        key: "waste_type",
+        testType: "dry_waste",
+        name: "Waste Type",
+        code: "TYPE",
+        description: "Category of recyclable dry waste (e.g. Plastic, Cardboard, Metal)",
+        unit: "Category",
+        limitDisplay: "Segregated Stream",
+        standardRef: "SWM Guidelines",
+      },
+      {
+        key: "qty_kg",
+        testType: "dry_waste",
+        name: "QTY (kg)",
+        code: "KG",
+        description: "Total measured weight collected or dispatched for recycling",
+        unit: "kg",
+        limitDisplay: "Weight Collected",
+        standardRef: "Weighbridge Slip",
+      },
+    ],
+  },
+  {
+    key: "wet_waste",
+    label: "Wet Waste",
+    shortLabel: "Wet Waste",
+    description: "Depot organic biodegradable waste: food/canteen scraps, horticultural leaves, and compost processing.",
+    standard: "Solid Waste Management Rules 2016",
+    defaultFrequency: "Daily / Weekly Manifest Log",
+    parameters: [
+      {
+        key: "date",
+        testType: "wet_waste",
+        name: "Date",
+        code: "DATE",
+        description: "Collection, weighing, or composting batch date",
+        unit: "Date",
+        limitDisplay: "Logged Date",
+        standardRef: "Depot Daily Log",
+      },
+      {
+        key: "waste_type",
+        testType: "wet_waste",
+        name: "Waste Type",
+        code: "TYPE",
+        description: "Category of organic wet waste (e.g. Canteen Food Waste, Horticultural Leaves)",
+        unit: "Category",
+        limitDisplay: "Organic Stream",
+        standardRef: "SWM Guidelines",
+      },
+      {
+        key: "qty_kg",
+        testType: "wet_waste",
+        name: "QTY (kg)",
+        code: "KG",
+        description: "Total measured weight of organic waste collected or composted",
+        unit: "kg",
+        limitDisplay: "Weight Generated",
+        standardRef: "Weighing Scale Log",
+      },
+    ],
+  },
+  {
+    key: "hazardous_waste",
+    label: "Hazardous Waste",
+    shortLabel: "Hazardous Waste",
+    description: "Depot maintenance hazardous materials: used oils, contaminated cotton/filters, coolant, and battery chemical residues.",
+    standard: "Hazardous Waste Management Rules 2016",
+    defaultFrequency: "Daily Manifest & Gate Pass Log",
+    parameters: [
+      {
+        key: "date",
+        testType: "hazardous_waste",
+        name: "Date",
+        code: "DATE",
+        description: "Maintenance log and waste generation date",
+        unit: "Date",
+        limitDisplay: "Logged Date",
+        standardRef: "Maintenance Log",
+      },
+      {
+        key: "vehicle_no",
+        testType: "hazardous_waste",
+        name: "Vehicle No",
+        code: "VEHICLE",
+        description: "Electric bus registration number or depot asset tag",
+        unit: "Asset",
+        limitDisplay: "Vehicle Reg",
+        standardRef: "Fleet Allocation",
+      },
+      {
+        key: "purpose",
+        testType: "hazardous_waste",
+        name: "Purpose",
+        code: "PURPOSE",
+        description: "Maintenance activity or service purpose",
+        unit: "Activity",
+        limitDisplay: "Maintenance Task",
+        standardRef: "Job Card Ref",
+      },
+      {
+        key: "material_used",
+        testType: "hazardous_waste",
+        name: "Material Used",
+        code: "MATERIAL",
+        description: "Hazardous material type (e.g. Used Oil, Coolant, Oil Rags, Battery Acid)",
+        unit: "Material",
+        limitDisplay: "Hazard Stream",
+        standardRef: "Schedule I Rules",
+      },
+      {
+        key: "qty_litres",
+        testType: "hazardous_waste",
+        name: "QTY Litres",
+        code: "LITRES",
+        description: "Liquid hazardous waste/material volume (e.g. oils, fluids)",
+        unit: "Litres",
+        limitDisplay: "Volume (L)",
+        standardRef: "Liquid Manifest",
+      },
+      {
+        key: "qty_kg",
+        testType: "hazardous_waste",
+        name: "QTY Kg",
+        code: "KG",
+        description: "Solid hazardous waste/material weight (e.g. rags, filters, batteries)",
+        unit: "Kg",
+        limitDisplay: "Weight (Kg)",
+        standardRef: "Solid Manifest",
+      },
+    ],
+  },
+  {
+    key: "drinking_water",
+    label: "Drinking Water",
+    shortLabel: "Drinking Water",
+    description: "Depot drinking water supply, workforce headcount, and volume consumption tracking.",
+    standard: "IS 10500:2012 Drinking Water Specification",
+    defaultFrequency: "Monthly / Daily Log",
+    parameters: [
+      {
+        key: "month_date",
+        testType: "drinking_water",
+        name: "Month/Date",
+        code: "PERIOD",
+        description: "Drinking water consumption period or logging date",
+        unit: "Period",
+        limitDisplay: "Logged Period",
+        standardRef: "Depot Register",
+      },
+      {
+        key: "people_count",
+        testType: "drinking_water",
+        name: "Number of People",
+        code: "PEOPLE",
+        description: "Total depot workforce, crew, and visitor headcount served",
+        unit: "Persons",
+        limitDisplay: "Depot Headcount",
+        standardRef: "Attendance Log",
+      },
+      {
+        key: "qty_litres",
+        testType: "drinking_water",
+        name: "QTY Litres",
+        code: "LITRES",
+        description: "Total drinking water supplied / drawn from dispensers in litres",
+        unit: "Litres",
+        limitDisplay: "Volume (L)",
+        standardRef: "Dispenser Log",
+      },
+    ],
+  },
+  {
+    key: "waste_water",
+    label: "Waste Water",
+    shortLabel: "Waste Water",
+    description: "Depot effluent / wash-bay waste water treatment, recycling, and sludge management.",
+    standard: "CPCB Effluent Standards & SWM Rules",
+    defaultFrequency: "Monthly / Daily Log",
+    parameters: [
+      {
+        key: "month_date",
+        testType: "waste_water",
+        name: "Month/Date",
+        code: "PERIOD",
+        description: "Effluent treatment or waste water logging cycle / date",
+        unit: "Period",
+        limitDisplay: "Logged Period",
+        standardRef: "ETP Log Sheet",
+      },
+      {
+        key: "qty_litres",
+        testType: "waste_water",
+        name: "QTY Litres",
+        code: "LITRES",
+        description: "Total wash-bay and yard effluent generated or treated in litres",
+        unit: "Litres",
+        limitDisplay: "Volume (L)",
+        standardRef: "Flow Meter / Pit Log",
+      },
+      {
+        key: "sludge_qty",
+        testType: "waste_water",
+        name: "Sludge (Weight/Volume)",
+        code: "SLUDGE",
+        description: "Total dried sludge cake or sediment cleared from interceptor sump / filter press",
+        unit: "Kg / L",
+        limitDisplay: "Sludge Output",
+        standardRef: "Sludge Drying Bed Log",
+      },
+    ],
+  },
+];
+
+export const getLabTestType = (key: string): LabTestTypeMeta | undefined =>
+  LAB_TEST_TYPES.find((t) => t.key === key);
+
+export const getLabParamDef = (paramKey: string): LabParamDef | undefined => {
+  for (const t of LAB_TEST_TYPES) {
+    const found = t.parameters.find((p) => p.key === paramKey);
+    if (found) return found;
+  }
+  return undefined;
+};
+
+/** Evaluate if a single parameter value breaches allowed limits */
+export function evaluateParamCompliance(
+  param: LabParamDef,
+  value: number | string | null | undefined,
+): "within" | "exceeds" | "no_data" {
+  if (value == null) return "no_data";
+  if (typeof value === "string") {
+    return value.trim() !== "" ? "within" : "no_data";
+  }
+  if (Number.isNaN(value)) return "no_data";
+  if (param.limitMin != null && value < param.limitMin) return "exceeds";
+  if (param.limitMax != null && value > param.limitMax) return "exceeds";
+  return "within";
+}
+
+/* ----------------------------- Vehicle Data Records ---------------------------- */
+
+export interface VehicleDataRecord {
+  id: string;
+  entityId: string;
+  depotId: string;
+  entityName: string;
+  depotName: string;
+  month: string; // e.g. "Aug 2026", "Jul 2026", "Jun 2026"
+  vehicleCount: number;
+  runKm: number;
+  energyKwh: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const INITIAL_VEHICLE_DATA_RECORDS: VehicleDataRecord[] = [
+  {
+    id: "veh-1",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    month: "Aug 2026",
+    vehicleCount: 45,
+    runKm: 386060,
+    energyKwh: 455150,
+    createdAt: "2026-08-15T09:00:00Z",
+    updatedAt: "2026-08-15T09:00:00Z",
+  },
+  {
+    id: "veh-2",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    month: "Jul 2026",
+    vehicleCount: 50,
+    runKm: 412380,
+    energyKwh: 486120,
+    createdAt: "2026-07-15T09:00:00Z",
+    updatedAt: "2026-07-15T09:00:00Z",
+  },
+  {
+    id: "veh-3",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    month: "Jun 2026",
+    vehicleCount: 48,
+    runKm: 398720,
+    energyKwh: 470490,
+    createdAt: "2026-06-15T09:00:00Z",
+    updatedAt: "2026-06-15T09:00:00Z",
+  },
+  {
+    id: "veh-4",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    month: "May 2026",
+    vehicleCount: 46,
+    runKm: 382150,
+    energyKwh: 450930,
+    createdAt: "2026-05-15T09:00:00Z",
+    updatedAt: "2026-05-15T09:00:00Z",
+  },
+  {
+    id: "veh-5",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    month: "Apr 2026",
+    vehicleCount: 44,
+    runKm: 365400,
+    energyKwh: 431170,
+    createdAt: "2026-04-15T09:00:00Z",
+    updatedAt: "2026-04-15T09:00:00Z",
+  },
+  {
+    id: "veh-6",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    month: "Aug 2026",
+    vehicleCount: 35,
+    runKm: 290400,
+    energyKwh: 342670,
+    createdAt: "2026-08-15T09:00:00Z",
+    updatedAt: "2026-08-15T09:00:00Z",
+  },
+  {
+    id: "veh-7",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    month: "Jul 2026",
+    vehicleCount: 35,
+    runKm: 288100,
+    energyKwh: 339950,
+    createdAt: "2026-07-15T09:00:00Z",
+    updatedAt: "2026-07-15T09:00:00Z",
+  },
+  {
+    id: "veh-8",
+    entityId: "dnhdd",
+    depotId: "silvassa-depot",
+    entityName: "DNHDD (Silvassa)",
+    depotName: "Silvassa Depot",
+    month: "Aug 2026",
+    vehicleCount: 25,
+    runKm: 210500,
+    energyKwh: 248390,
+    createdAt: "2026-08-15T09:00:00Z",
+    updatedAt: "2026-08-15T09:00:00Z",
+  },
+  {
+    id: "veh-9",
+    entityId: "dnhdd",
+    depotId: "silvassa-depot",
+    entityName: "DNHDD (Silvassa)",
+    depotName: "Silvassa Depot",
+    month: "Jul 2026",
+    vehicleCount: 25,
+    runKm: 208200,
+    energyKwh: 245670,
+    createdAt: "2026-07-15T09:00:00Z",
+    updatedAt: "2026-07-15T09:00:00Z",
+  },
+];
+
+/* ----------------------------- Drinking Water Records ---------------------------- */
+
+export interface DrinkingWaterRecord {
+  id: string;
+  entityId: string;
+  depotId: string;
+  entityName: string;
+  depotName: string;
+  monthDate: string;
+  peopleCount: number;
+  qtyLitres: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const INITIAL_DRINKING_WATER_RECORDS: DrinkingWaterRecord[] = [
+  {
+    id: "dw-1",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    monthDate: "Aug 2026",
+    peopleCount: 120,
+    qtyLitres: 3600,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+  {
+    id: "dw-2",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    monthDate: "Jul 2026",
+    peopleCount: 125,
+    qtyLitres: 3850,
+    createdAt: "2026-07-01T09:00:00Z",
+    updatedAt: "2026-07-01T09:00:00Z",
+  },
+  {
+    id: "dw-3",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    monthDate: "Aug 2026",
+    peopleCount: 85,
+    qtyLitres: 2550,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+  {
+    id: "dw-4",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    monthDate: "Jul 2026",
+    peopleCount: 80,
+    qtyLitres: 2400,
+    createdAt: "2026-07-01T09:00:00Z",
+    updatedAt: "2026-07-01T09:00:00Z",
+  },
+  {
+    id: "dw-5",
+    entityId: "dnhdd",
+    depotId: "silvassa-depot",
+    entityName: "DNHDD (Silvassa)",
+    depotName: "Silvassa Depot",
+    monthDate: "Aug 2026",
+    peopleCount: 65,
+    qtyLitres: 1950,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+];
+
+/* ----------------------------- Waste Water Records ---------------------------- */
+
+export interface WasteWaterRecord {
+  id: string;
+  entityId: string;
+  depotId: string;
+  entityName: string;
+  depotName: string;
+  monthDate: string;
+  qtyLitres: number;
+  sludgeQty: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const INITIAL_WASTE_WATER_RECORDS: WasteWaterRecord[] = [
+  {
+    id: "ww-1",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    monthDate: "Aug 2026",
+    qtyLitres: 12500,
+    sludgeQty: 350,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+  {
+    id: "ww-2",
+    entityId: "mbmt",
+    depotId: "kashimira",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Kashimira Depot",
+    monthDate: "Jul 2026",
+    qtyLitres: 13200,
+    sludgeQty: 380,
+    createdAt: "2026-07-01T09:00:00Z",
+    updatedAt: "2026-07-01T09:00:00Z",
+  },
+  {
+    id: "ww-3",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    monthDate: "Aug 2026",
+    qtyLitres: 9800,
+    sludgeQty: 270,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+  {
+    id: "ww-4",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    entityName: "MBMT (Mira-Bhayandar)",
+    depotName: "Bhayandar Depot",
+    monthDate: "Jul 2026",
+    qtyLitres: 10400,
+    sludgeQty: 295,
+    createdAt: "2026-07-01T09:00:00Z",
+    updatedAt: "2026-07-01T09:00:00Z",
+  },
+  {
+    id: "ww-5",
+    entityId: "dnhdd",
+    depotId: "silvassa-depot",
+    entityName: "DNHDD (Silvassa)",
+    depotName: "Silvassa Depot",
+    monthDate: "Aug 2026",
+    qtyLitres: 7500,
+    sludgeQty: 210,
+    createdAt: "2026-08-01T09:00:00Z",
+    updatedAt: "2026-08-01T09:00:00Z",
+  },
+];
+
 export type MonitoringReading = {
   id: string;
   paramKey: string;
@@ -1686,6 +2322,637 @@ export const MONITORING_READINGS: MonitoringReading[] = [
     source: "manual",
   },
 ];
+
+/* ------------------------ environment metadata master ----------------------- */
+
+export type MonitoringAreaKey =
+  | "energy_vehicle"
+  | "hazardous_waste"
+  | "non_hazardous_waste"
+  | "haz_consumption"
+  | "drinking_water"
+  | "wastewater"
+  | "waste_disposal"
+  | "housekeeping"
+  | "other";
+
+export interface MonitoringAreaMeta {
+  key: MonitoringAreaKey;
+  label: string;
+  shortLabel: string;
+  description: string;
+  category: "operations" | "waste" | "consumption" | "water" | "facility";
+  badgeText: string;
+}
+
+export const MONITORING_AREAS: MonitoringAreaMeta[] = [
+  {
+    key: "energy_vehicle",
+    label: "Energy Consumption & Vehicle Data",
+    shortLabel: "Energy / Fleet",
+    description: "Monthly fleet distance (km), bus charging kWh draw, energy efficiency, and telemetry sync.",
+    category: "operations",
+    badgeText: "Vehicle & Power Data",
+  },
+  {
+    key: "hazardous_waste",
+    label: "Hazardous Waste Management",
+    shortLabel: "Hazardous Waste",
+    description: "Used oil, grease, coolant, chemical thinners, oily rags, PPE, barrels, and bunding integrity.",
+    category: "waste",
+    badgeText: "Hazardous Waste Inventory",
+  },
+  {
+    key: "non_hazardous_waste",
+    label: "Non-Hazardous Solid Waste",
+    shortLabel: "Solid Waste (SWM)",
+    description: "Dry recyclables (paper/plastic/metal), wet canteen organic waste, and domestic hazardous waste.",
+    category: "waste",
+    badgeText: "Dry / Wet / Domestic Haz",
+  },
+  {
+    key: "haz_consumption",
+    label: "Hazardous Material Consumption",
+    shortLabel: "Material Consumption",
+    description: "Maintenance lubricants, hydraulic oils, degreasers, and battery servicing chemicals consumed.",
+    category: "consumption",
+    badgeText: "Chemicals & Lubricants",
+  },
+  {
+    key: "drinking_water",
+    label: "Drinking Water & Potability",
+    shortLabel: "Drinking Water",
+    description: "RO water consumption, potability lab testing (IS 10500), dispenser sanitation, and filter changes.",
+    category: "water",
+    badgeText: "RO & Potability",
+  },
+  {
+    key: "wastewater",
+    label: "Wastewater & Effluent (ETP/STP)",
+    shortLabel: "Wastewater / ETP",
+    description: "Bus washing runoff, oil-water separator efficiency, treated effluent reuse, and ZLD compliance.",
+    category: "water",
+    badgeText: "Effluent & Recycled Water",
+  },
+  {
+    key: "waste_disposal",
+    label: "Waste Disposal & Recycler Dispatches",
+    shortLabel: "Disposal & Manifests",
+    description: "Form 10 manifests, authorized recycler pickups, CHWTSDF transfers, and passbook logs.",
+    category: "waste",
+    badgeText: "Disposal Manifests",
+  },
+  {
+    key: "housekeeping",
+    label: "Environmental Housekeeping & Ambient Quality",
+    shortLabel: "Housekeeping / Ambient",
+    description: "Bay cleanliness, spill kit availability, stormwater drain integrity, and ambient dust/noise.",
+    category: "facility",
+    badgeText: "Depot Housekeeping",
+  },
+  {
+    key: "other",
+    label: "Other Environmental Observations",
+    shortLabel: "Other Observations",
+    description: "Spill incidents, external environmental audits, neighbour observations, and ad-hoc compliance.",
+    category: "facility",
+    badgeText: "General Environmental",
+  },
+];
+
+export const monitoringAreaByKey = (key: MonitoringAreaKey | string) =>
+  MONITORING_AREAS.find((a) => a.key === key);
+
+export interface EnergyVehicleMetadata {
+  period: string;
+  vehicleCount: number;
+  runKm: number;
+  energyKwh: number;
+  energyIntensityKwhPerKm: number;
+  solarGeneratedKwh: number;
+  dgDieselLitres: number;
+  reportingStatus: string;
+}
+
+export interface HazardousWasteItem {
+  type:
+    | "Oil"
+    | "Grease"
+    | "Coolant"
+    | "Diesel"
+    | "Thinner/Chemical"
+    | "Discarded containers/barrels/liners"
+    | "Greasing clothes"
+    | "PPE"
+    | "Oily cloths"
+    | "Waste water";
+  quantity: number;
+  unit: "Kg" | "Litres" | "Barrels" | "Nos";
+  frequency: "Monthly" | "Quarterly" | "As-generated";
+  storageLocation: string;
+  disposalStatus: "Stored on Site" | "Dispatched to Recycler" | "Awaiting Manifest";
+  vendorRecycler?: string;
+  manifestNumber?: string;
+  disposalDate?: string;
+}
+
+export interface NonHazardousWasteItem {
+  category: "Dry" | "Wet" | "Domestic Hazardous";
+  type: string;
+  quantity: number;
+  unit: "Kg";
+  storage: string;
+  disposalMethod: string;
+}
+
+export interface ConsumptionMetadata {
+  drinkingWaterLitres: number;
+  waterSource: string;
+  potabilityStatus: "Tested Potable (IS 10500)" | "Pending Lab Test";
+  tdsPpm: number;
+  lastFilterChangeDate: string;
+  hazardousMaterials: {
+    name: string;
+    quantity: number;
+    unit: "Litres" | "Kg";
+    storage: string;
+  }[];
+}
+
+export interface WastewaterDisposalMetadata {
+  effluentTreatedKL: number;
+  treatmentFacility: "Depot ETP" | "Depot STP" | "Oil-Water Separator & Soak Pit";
+  dischargeMode: "100% Recycled for Bus Washing (ZLD)" | "Permitted Soak Pit" | "Municipal Drain";
+  labPh: number;
+  labBodMgL: number;
+  labCodMgL: number;
+  lastRecyclerDispatchDate: string;
+  manifestNumber: string;
+  transporterName: string;
+  authorizedReceiverName: string;
+}
+
+export interface SiteEnvironmentMetadata {
+  entityId: string;
+  depotId: string;
+  period: string;
+  energyVehicle: EnergyVehicleMetadata;
+  hazardousWaste: HazardousWasteItem[];
+  nonHazardousWaste: NonHazardousWasteItem[];
+  consumption: ConsumptionMetadata;
+  wastewaterDisposal: WastewaterDisposalMetadata;
+}
+
+export const SITE_ENVIRONMENT_METADATA: SiteEnvironmentMetadata[] = [
+  // MBMT · Kashimira Depot — July 2026
+  {
+    entityId: "mbmt",
+    depotId: "kashimira",
+    period: "2026-07",
+    energyVehicle: {
+      period: "2026-07",
+      vehicleCount: 50,
+      runKm: 412380,
+      energyKwh: 486120,
+      energyIntensityKwhPerKm: 1.18,
+      solarGeneratedKwh: 15400,
+      dgDieselLitres: 310,
+      reportingStatus: "End-of-Month Telematics & Meter Sync Completed",
+    },
+    hazardousWaste: [
+      {
+        type: "Oil",
+        quantity: 450,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Dedicated Bunded Haz Shed (Bay 2)",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "EcoLube Recycling Pvt Ltd (MPCB/HW/09)",
+        manifestNumber: "MPCB/HW/2026/07-882",
+      },
+      {
+        type: "Grease",
+        quantity: 65,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Sealed Heavy Drums in Shed",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "EcoLube Recycling Pvt Ltd",
+      },
+      {
+        type: "Coolant",
+        quantity: 120,
+        unit: "Litres",
+        frequency: "Quarterly",
+        storageLocation: "Secondary Spill Pallet 3",
+        disposalStatus: "Dispatched to Recycler",
+        vendorRecycler: "CleanChem Solutions",
+        manifestNumber: "MPCB/HW/2026/06-419",
+        disposalDate: "2026-06-28",
+      },
+      {
+        type: "Diesel",
+        quantity: 40,
+        unit: "Litres",
+        frequency: "As-generated",
+        storageLocation: "DG Room Spill Catchment Tray",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Thinner/Chemical",
+        quantity: 25,
+        unit: "Litres",
+        frequency: "As-generated",
+        storageLocation: "Flammable Storage Cabinet",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Discarded containers/barrels/liners",
+        quantity: 18,
+        unit: "Nos",
+        frequency: "Monthly",
+        storageLocation: "Yard Haz Bay 4 (Covered)",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "Maharashtra Enviro Power Ltd",
+      },
+      {
+        type: "Greasing clothes",
+        quantity: 45,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Yellow Fire-Resistant Haz Bin",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "PPE",
+        quantity: 20,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Contaminated PPE Drum",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Oily cloths",
+        quantity: 40,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Yellow Fire-Resistant Haz Bin",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Waste water",
+        quantity: 1200,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Wash Pit Settling & Interceptor Tank",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "Authorized CETP Transporter",
+      },
+    ],
+    nonHazardousWaste: [
+      {
+        category: "Dry",
+        type: "Paper / Cardboard & Packaging",
+        quantity: 180,
+        unit: "Kg",
+        storage: "Segregated Blue Bin (Depot Office & Stores)",
+        disposalMethod: "Local Authorized Recycler (Green Earth Recyclers)",
+      },
+      {
+        category: "Dry",
+        type: "Plastic Bottles & Wrapping",
+        quantity: 95,
+        unit: "Kg",
+        storage: "Segregated Blue Bin",
+        disposalMethod: "Local Authorized Recycler",
+      },
+      {
+        category: "Dry",
+        type: "Scrap Metal & Wire Cut-offs",
+        quantity: 65,
+        unit: "Kg",
+        storage: "Scrap Yard Bay 1",
+        disposalMethod: "Authorized Metal Scrap Merchant",
+      },
+      {
+        category: "Wet",
+        type: "Food Waste / Vegetable Peels / Tea Leaves",
+        quantity: 190,
+        unit: "Kg",
+        storage: "Green Organic Canteen Bins",
+        disposalMethod: "MBMC Municipal Wet Waste Collection & Composter",
+      },
+      {
+        category: "Domestic Hazardous",
+        type: "Bandage / First Aid Medicine Waste",
+        quantity: 4,
+        unit: "Kg",
+        storage: "Red Bio-Medical Waste Container (First Aid Room)",
+        disposalMethod: "Common Bio-Medical Waste Facility (CBMWTF)",
+      },
+      {
+        category: "Domestic Hazardous",
+        type: "Fluorescent Tubes & Dry Batteries",
+        quantity: 8,
+        unit: "Kg",
+        storage: "E-Waste Secure Locker",
+        disposalMethod: "E-Waste Recycler (Authorized)",
+      },
+    ],
+    consumption: {
+      drinkingWaterLitres: 4800,
+      waterSource: "Municipal Tap Supply + 50 LPH Commercial RO Unit",
+      potabilityStatus: "Tested Potable (IS 10500)",
+      tdsPpm: 142,
+      lastFilterChangeDate: "2026-05-12",
+      hazardousMaterials: [
+        { name: "Synthetic Gear Lubricant 75W-90", quantity: 35, unit: "Litres", storage: "Lubricant Room Bay A" },
+        { name: "High-Dielectric EV Coolant 50/50", quantity: 50, unit: "Litres", storage: "Secondary Spill Pallet" },
+        { name: "Heavy Duty Degreaser & Solvent", quantity: 20, unit: "Litres", storage: "Flammables Cabinet" },
+        { name: "Battery Terminal Protection Gel", quantity: 10, unit: "Kg", storage: "Battery Workshop Shelf" },
+      ],
+    },
+    wastewaterDisposal: {
+      effluentTreatedKL: 18.5,
+      treatmentFacility: "Depot ETP",
+      dischargeMode: "100% Recycled for Bus Washing (ZLD)",
+      labPh: 7.4,
+      labBodMgL: 22,
+      labCodMgL: 118,
+      lastRecyclerDispatchDate: "2026-07-04",
+      manifestNumber: "MPCB/HW/2026/07-882",
+      transporterName: "CleanEarth Environmental Logistics (MH-04-GP-8891)",
+      authorizedReceiverName: "Maharashtra Enviro Power Ltd (CHWTSDF Taloja)",
+    },
+  },
+
+  // MBMT · Bhayandar Depot — July 2026
+  {
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    period: "2026-07",
+    energyVehicle: {
+      period: "2026-07",
+      vehicleCount: 45,
+      runKm: 386060,
+      energyKwh: 455150,
+      energyIntensityKwhPerKm: 1.18,
+      solarGeneratedKwh: 12800,
+      dgDieselLitres: 240,
+      reportingStatus: "End-of-Month Telematics & Meter Sync Completed",
+    },
+    hazardousWaste: [
+      {
+        type: "Oil",
+        quantity: 380,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Covered Drum Storage Platform",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "EcoLube Recycling Pvt Ltd",
+      },
+      {
+        type: "Grease",
+        quantity: 50,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Sealed Drums",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Coolant",
+        quantity: 90,
+        unit: "Litres",
+        frequency: "Quarterly",
+        storageLocation: "Spill Containment Tray",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Greasing clothes",
+        quantity: 35,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Yellow Haz Drum",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "PPE",
+        quantity: 15,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "PPE Waste Box",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Discarded containers/barrels/liners",
+        quantity: 12,
+        unit: "Nos",
+        frequency: "Monthly",
+        storageLocation: "Depot Yard Corner",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Waste water",
+        quantity: 950,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Oil-Water Separator Pit",
+        disposalStatus: "Stored on Site",
+      },
+    ],
+    nonHazardousWaste: [
+      {
+        category: "Dry",
+        type: "Paper / Cardboard & Packaging",
+        quantity: 140,
+        unit: "Kg",
+        storage: "Blue Recyclables Bin",
+        disposalMethod: "Local Recycler",
+      },
+      {
+        category: "Dry",
+        type: "Plastic Bottles & Wrapping",
+        quantity: 75,
+        unit: "Kg",
+        storage: "Blue Recyclables Bin",
+        disposalMethod: "Local Recycler",
+      },
+      {
+        category: "Wet",
+        type: "Food Waste / Vegetable Peels / Tea Leaves",
+        quantity: 160,
+        unit: "Kg",
+        storage: "Green Organic Bins",
+        disposalMethod: "MBMC Municipal Composting",
+      },
+      {
+        category: "Domestic Hazardous",
+        type: "Bandage / Medicine Waste",
+        quantity: 3,
+        unit: "Kg",
+        storage: "First Aid Red Box",
+        disposalMethod: "Bio-Medical Waste Handler",
+      },
+    ],
+    consumption: {
+      drinkingWaterLitres: 4200,
+      waterSource: "Municipal Connection + 50 LPH RO Unit",
+      potabilityStatus: "Tested Potable (IS 10500)",
+      tdsPpm: 155,
+      lastFilterChangeDate: "2026-06-01",
+      hazardousMaterials: [
+        { name: "Gearbox Lubricant 75W-90", quantity: 25, unit: "Litres", storage: "Stores" },
+        { name: "Dielectric Coolant", quantity: 40, unit: "Litres", storage: "Stores" },
+      ],
+    },
+    wastewaterDisposal: {
+      effluentTreatedKL: 15.2,
+      treatmentFacility: "Depot ETP",
+      dischargeMode: "100% Recycled for Bus Washing (ZLD)",
+      labPh: 7.6,
+      labBodMgL: 26,
+      labCodMgL: 135,
+      lastRecyclerDispatchDate: "2026-06-25",
+      manifestNumber: "MPCB/HW/2026/06-398",
+      transporterName: "CleanEarth Environmental Logistics",
+      authorizedReceiverName: "Maharashtra Enviro Power Ltd",
+    },
+  },
+
+  // Silvassa Depot — July 2026
+  {
+    entityId: "silvassa",
+    depotId: "silvassa-depot",
+    period: "2026-07",
+    energyVehicle: {
+      period: "2026-07",
+      vehicleCount: 25,
+      runKm: 185000,
+      energyKwh: 212750,
+      energyIntensityKwhPerKm: 1.15,
+      solarGeneratedKwh: 8500,
+      dgDieselLitres: 120,
+      reportingStatus: "End-of-Month Telematics & Meter Sync Completed",
+    },
+    hazardousWaste: [
+      {
+        type: "Oil",
+        quantity: 210,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Dedicated Haz Shed",
+        disposalStatus: "Stored on Site",
+        vendorRecycler: "PCC DNH Authorized Recycler",
+      },
+      {
+        type: "Grease",
+        quantity: 30,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Sealed Containers",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "PPE",
+        quantity: 10,
+        unit: "Kg",
+        frequency: "Monthly",
+        storageLocation: "Yellow Bin",
+        disposalStatus: "Stored on Site",
+      },
+      {
+        type: "Waste water",
+        quantity: 600,
+        unit: "Litres",
+        frequency: "Monthly",
+        storageLocation: "Settling Sump",
+        disposalStatus: "Stored on Site",
+      },
+    ],
+    nonHazardousWaste: [
+      {
+        category: "Dry",
+        type: "Paper & Cardboard",
+        quantity: 90,
+        unit: "Kg",
+        storage: "Dry Waste Shed",
+        disposalMethod: "Local Authorized Recycler",
+      },
+      {
+        category: "Wet",
+        type: "Food Waste & Peels",
+        quantity: 95,
+        unit: "Kg",
+        storage: "Green Organic Bin",
+        disposalMethod: "Silvassa Municipal Wet Waste Disposal",
+      },
+      {
+        category: "Domestic Hazardous",
+        type: "Bandage & First Aid Waste",
+        quantity: 2,
+        unit: "Kg",
+        storage: "First Aid Room Bin",
+        disposalMethod: "UT Bio-Medical Handler",
+      },
+    ],
+    consumption: {
+      drinkingWaterLitres: 2400,
+      waterSource: "Depot Borewell + Commercial RO Filtration",
+      potabilityStatus: "Tested Potable (IS 10500)",
+      tdsPpm: 128,
+      lastFilterChangeDate: "2026-05-20",
+      hazardousMaterials: [
+        { name: "Lubricating Oil 15W-40", quantity: 20, unit: "Litres", storage: "Store Room" },
+        { name: "Cleaning Degreaser", quantity: 15, unit: "Litres", storage: "Chemical Shelf" },
+      ],
+    },
+    wastewaterDisposal: {
+      effluentTreatedKL: 8.5,
+      treatmentFacility: "Depot ETP",
+      dischargeMode: "100% Recycled for Bus Washing (ZLD)",
+      labPh: 7.2,
+      labBodMgL: 18,
+      labCodMgL: 95,
+      lastRecyclerDispatchDate: "2026-06-18",
+      manifestNumber: "DNH/PCC/HW/2026/06-112",
+      transporterName: "Silvassa Green Logistics",
+      authorizedReceiverName: "DNH TSDF Facility",
+    },
+  },
+];
+
+/** Fetch environment metadata for a depot and period, with sensible fallback if historical */
+export function getEnvironmentMetadata(
+  entityId: string,
+  depotId: string,
+  period: string,
+): SiteEnvironmentMetadata {
+  const found = SITE_ENVIRONMENT_METADATA.find(
+    (m) => m.entityId === entityId && m.depotId === depotId && m.period === period,
+  );
+  if (found) return found;
+
+  const sameDepot = SITE_ENVIRONMENT_METADATA.find(
+    (m) => m.entityId === entityId && m.depotId === depotId,
+  );
+  if (sameDepot) {
+    return {
+      ...sameDepot,
+      period,
+      energyVehicle: { ...sameDepot.energyVehicle, period },
+    };
+  }
+
+  // General fallback
+  const first = SITE_ENVIRONMENT_METADATA[0];
+  return {
+    ...first,
+    entityId,
+    depotId,
+    period,
+    energyVehicle: { ...first.energyVehicle, period },
+  };
+}
 
 /* ----------------------------- project lifecycle ---------------------------- */
 

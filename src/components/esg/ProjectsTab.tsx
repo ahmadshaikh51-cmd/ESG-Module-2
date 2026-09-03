@@ -19,7 +19,7 @@ import { ReportDataEntryForm, type ReportType } from "./projects/ReportDataEntry
 type Sub = "permits" | "site";
 
 export function ProjectsTab({ initialSub }: { initialSub?: string }) {
-  const { scope } = useEsg();
+  const { scope, goto } = useEsg();
   const [sub, setSub] = useState<Sub>((initialSub as Sub) || "permits");
   const [activeForm, setActiveForm] = useState<ReportType | null>(null);
   const [editRecordId, setEditRecordId] = useState<string | null>(null);
@@ -86,6 +86,7 @@ export function ProjectsTab({ initialSub }: { initialSub?: string }) {
                 onClick={() => {
                   setSub(s.key);
                   setShowDataPortal(false);
+                  goto("projects", { sub: s.key });
                 }}
                 className={cn(
                   "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60",

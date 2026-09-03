@@ -212,6 +212,10 @@ const DATE_PRESETS = [
 const SITE_OPTIONS = [
   { id: "all", label: "All Sites" },
   ...ESG_GROUP.entities.map((e) => ({ id: e.id, label: e.name })),
+  { id: "B2B", label: "B2B" },
+  { id: "B2G", label: "B2G" },
+  { id: "EBUS", label: "EBUS" },
+  { id: "ETRuck", label: "ETRuck" },
 ];
 
 /** Single unified filter bar — exclusive to the Reporting tab. */

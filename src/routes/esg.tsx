@@ -134,43 +134,94 @@ function EsgPage() {
     }
   }, [scope.entityId, projectId]);
 
-  const [history, setHistory] = useState<{ area: string; sub?: string; scope: ScopeSel }[]>([]);
+  type HistoryFrame = {
+    area: string;
+    sub?: string;
+    scope: ScopeSel;
+    period: string;
+    projectId: string | null;
+  };
+
+  const [history, setHistory] = useState<HistoryFrame[]>([]);
 
   const goto = useCallback(
     (nextArea: string, opts?: { record?: string; state?: string; sub?: string }) => {
+      const nextSub = opts?.sub;
+
+      // Ignore duplicate navigation to exact same area & sub
+      if (area === nextArea && sub === nextSub) {
+        if (opts?.record) setDrawerId(opts.record);
+        return;
+      }
+
       setHistory((prev) => {
         const last = prev[prev.length - 1];
+        // Avoid pushing identical consecutive frame
         if (
           last &&
           last.area === area &&
           last.sub === sub &&
-          JSON.stringify(last.scope) === JSON.stringify(scope)
+          JSON.stringify(last.scope) === JSON.stringify(scope) &&
+          last.period === period
         ) {
           return prev;
         }
-        return [...prev, { area, sub, scope: { ...scope } }];
+
+        // Prevent 2-step navigation loops (e.g. A -> B -> A)
+        if (
+          prev.length >= 2 &&
+          prev[prev.length - 2].area === nextArea &&
+          prev[prev.length - 2].sub === nextSub
+        ) {
+          return prev.slice(0, prev.length - 1);
+        }
+
+        return [
+          ...prev,
+          {
+            area,
+            sub,
+            scope: { ...scope },
+            period,
+            projectId,
+          },
+        ];
       });
 
-      void navigate({ search: { area: nextArea, record: opts?.record, sub: opts?.sub } });
+      void navigate({ search: { area: nextArea, record: opts?.record, sub: nextSub } });
       if (opts?.record) setDrawerId(opts.record);
     },
-    [navigate, area, sub, scope],
+    [navigate, area, sub, scope, period, projectId],
   );
 
   const goBack = useCallback(() => {
-    setHistory((prev) => {
-      if (prev.length === 0) return prev;
-      const nextHistory = [...prev];
-      const prevPage = nextHistory.pop();
-      if (prevPage) {
-        setScope(prevPage.scope);
-        void navigate({ search: { area: prevPage.area, sub: prevPage.sub } });
-      }
-      return nextHistory;
-    });
-  }, [navigate]);
+    // 1. Retrace explicitly recorded navigation history
+    if (history.length > 0) {
+      setHistory((prev) => {
+        const nextHistory = [...prev];
+        const prevFrame = nextHistory.pop();
+        if (prevFrame) {
+          setScope(prevFrame.scope);
+          if (prevFrame.period) setPeriod(prevFrame.period);
+          if (prevFrame.projectId !== undefined) setProjectIdState(prevFrame.projectId);
+          void navigate({ search: { area: prevFrame.area, sub: prevFrame.sub } });
+        }
+        return nextHistory;
+      });
+      return;
+    }
 
-  const hasHistory = history.length > 0;
+    // 2. Intelligent fallback for direct URLs / refreshed pages with empty history stack:
+    if (sub !== undefined) {
+      // Step back from sub-tab to main area root
+      void navigate({ search: { area, sub: undefined } });
+    } else if (area !== "overview") {
+      // Step back from non-overview area to Overview dashboard
+      void navigate({ search: { area: "overview", sub: undefined } });
+    }
+  }, [history, area, sub, navigate, setScope, setPeriod, setProjectIdState]);
+
+  const hasHistory = history.length > 0 || area !== "overview" || sub !== undefined;
 
   const openRecord = useCallback((id: string) => setDrawerId(id), []);
 
