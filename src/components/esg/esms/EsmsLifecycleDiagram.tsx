@@ -18,18 +18,11 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Info,
+  Eye,
   X,
-  ChevronRight,
-  ChevronLeft,
-  FileCheck,
   Award,
   AlertTriangle,
   RefreshCw,
-  Eye,
-  Filter,
-  Layers3,
-  SlidersHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +42,7 @@ interface NodeDetailInfo {
 }
 
 const NODE_DETAILS: Record<string, NodeDetailInfo> = {
-  "obligations": {
+  obligations: {
     stepNumber: "Step 1",
     title: "Obligations & Compliance",
     subtitle: "National Permits, IFCPS, Contractual Scope",
@@ -60,7 +53,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Head of ESG & Regulatory Compliance",
     governingStandard: "Companies Act 2013, IFC Performance Standards",
   },
-  "opportunity": {
+  opportunity: {
     stepNumber: "Step 2",
     title: "New Project Opportunity",
     subtitle: "Initiation & Deal Pipeline Entry",
@@ -71,10 +64,10 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Business Development & ESG Lead",
     governingStandard: "Transvolt Project Governance Framework",
   },
-  "screening": {
+  screening: {
     stepNumber: "Step 3",
     title: "Preliminary E & S Screening",
-    subtitle: "Before bidding",
+    subtitle: "(Before Bidding)",
     category: "Pre-Bid Screening",
     plainEnglishExplanation: "Desktop and field check prior to bidding to flag major land or environmental risks.",
     description: "Rapid desktop and field appraisal conducted prior to commercial bidding to flag high-level environmental, social, and land issues.",
@@ -82,7 +75,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "E&S Screening Specialist",
     governingStandard: "IFC Guidance Note 1: E&S Assessment",
   },
-  "classification": {
+  classification: {
     stepNumber: "Step 4",
     title: "Project Type Classification",
     subtitle: "Site Nature & Scope Split",
@@ -93,7 +86,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Technical Director",
     governingStandard: "World Bank Group EHS Guidelines",
   },
-  "brownfield": {
+  brownfield: {
     stepNumber: "Path 4A",
     title: "Brownfield",
     subtitle: "Existing Asset Retrofit",
@@ -104,7 +97,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Depot Infrastructure Lead",
     governingStandard: "State Pollution Control Board Guidelines",
   },
-  "esdd": {
+  esdd: {
     stepNumber: "Path 4A-1",
     title: "Comprehensive ESDD",
     subtitle: "Environmental & Social Due Diligence",
@@ -115,7 +108,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "External ESDD Lead Auditor",
     governingStandard: "IFC ESDD Protocols",
   },
-  "risk_analysis_b": {
+  risk_analysis_b: {
     stepNumber: "Path 4A-2",
     title: "Risk Identification & Analysis",
     subtitle: "Brownfield Risk Quantification",
@@ -126,7 +119,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Risk & Safety Officer",
     governingStandard: "ISO 31000 Risk Management",
   },
-  "assign_risk_b": {
+  assign_risk_b: {
     stepNumber: "Path 4A-3",
     title: "Assign Risk Category",
     subtitle: "(A / B / C / D)",
@@ -137,7 +130,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Governance Committee",
     governingStandard: "IFC Environmental & Social Categorization",
   },
-  "formulate_esap": {
+  formulate_esap: {
     stepNumber: "Path 4A-4",
     title: "Formulate ESAP",
     subtitle: "Environmental & Social Action Plan",
@@ -148,7 +141,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESMS Implementation Manager",
     governingStandard: "IFC PS1 Action Plan Standards",
   },
-  "greenfield": {
+  greenfield: {
     stepNumber: "Path 4B",
     title: "GreenField",
     subtitle: "New Ground-Up Site",
@@ -159,7 +152,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Project Development Director",
     governingStandard: "National Land Acquisition Regulations",
   },
-  "esia": {
+  esia: {
     stepNumber: "Path 4B-1",
     title: "Comprehensive ESIA",
     subtitle: "Environmental & Social Impact Assessment",
@@ -170,7 +163,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Certified ESIA Agency / E&S Lead",
     governingStandard: "EIA Notification 2006 & IFC PS1-PS8",
   },
-  "risk_analysis_g": {
+  risk_analysis_g: {
     stepNumber: "Path 4B-2",
     title: "Risk Identification & Analysis",
     subtitle: "Greenfield Risk Matrix",
@@ -181,7 +174,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Site EHS Manager",
     governingStandard: "ISO 14001 / ISO 45001",
   },
-  "impact_analysis": {
+  impact_analysis: {
     stepNumber: "Path 4B-3",
     title: "Potential Impact Analysis",
     subtitle: "Severity & Scale Quantification",
@@ -192,7 +185,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "E&S Technical Specialist",
     governingStandard: "MoEFCC Impact Assessment Guidelines",
   },
-  "assign_risk_g": {
+  assign_risk_g: {
     stepNumber: "Path 4B-4",
     title: "Assign Risk Category",
     subtitle: "(A / B / C / D)",
@@ -203,7 +196,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Governance Board",
     governingStandard: "IFC E&S Categorization",
   },
-  "formulate_esmp": {
+  formulate_esmp: {
     stepNumber: "Path 4B-5",
     title: "Formulate ESMP",
     subtitle: "Environmental & Social Management Plan",
@@ -214,7 +207,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESMS Program Director",
     governingStandard: "IFC PS1 Management System",
   },
-  "implement_esap_esmp": {
+  implement_esap_esmp: {
     stepNumber: "Step 5",
     title: "Implement ESAP & ESMP",
     subtitle: "Unified Execution Baseline",
@@ -225,7 +218,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Chief Operating Officer & ESG Manager",
     governingStandard: "Transvolt ESMS Operational Manual",
   },
-  "monitor_review": {
+  monitor_review: {
     stepNumber: "Step 6A",
     title: "Monitor & Review Implementation",
     subtitle: "Audit & Field Oversight",
@@ -236,10 +229,10 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Lead ESMS Auditor",
     governingStandard: "ISO 19011 Audit Standard",
   },
-  "es_framework": {
+  es_framework: {
     stepNumber: "Step 6B",
     title: "ES Monitoring & Reporting Framework",
-    subtitle: "Data collection via metadata format",
+    subtitle: "Data Collection Via Metadata Format",
     category: "Data Collection",
     plainEnglishExplanation: "Collect monthly energy, water, GHG Scope 1-3, and safety data via structured forms.",
     description: "Standardized data ingestion pipeline gathering energy, water, GHG Scope 1-3, safety incidents, and social indicators via structured metadata.",
@@ -247,7 +240,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Data & Analytics Lead",
     governingStandard: "GRI Standards & BRSR Reporting Framework",
   },
-  "reporting_obligations": {
+  reporting_obligations: {
     stepNumber: "Step 6B-1",
     title: "Reporting Obligations",
     subtitle: "Statutory & Financial Disclosures",
@@ -258,7 +251,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Head of Corporate Governance",
     governingStandard: "SEBI LODR & Lender Covenants",
   },
-  "brsr_report": {
+  brsr_report: {
     stepNumber: "Step 6B-2 National",
     title: "BRSR / AMR / Impact Report",
     subtitle: "National",
@@ -269,7 +262,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Regulatory Officer",
     governingStandard: "SEBI BRSR Core Mandate 2023",
   },
-  "ifc_report": {
+  ifc_report: {
     stepNumber: "Step 6B-2 DFI",
     title: "IFC Lender Reports / CDP",
     subtitle: "DFI",
@@ -280,9 +273,9 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "DFI & Investor Relations Lead",
     governingStandard: "IFC Disclosure Policy & CDP Guidelines",
   },
-  "decision_diamond": {
+  decision_diamond: {
     stepNumber: "Step 7 Gate",
-    title: "Risk Category Reduced?",
+    title: "Risk Category Reduced ?",
     subtitle: "Evaluation Gateway",
     category: "Decision Gate",
     plainEnglishExplanation: "Evaluate if mitigations successfully reduced site risk category to baseline.",
@@ -291,10 +284,43 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "ESG Steering Committee",
     governingStandard: "Transvolt Enterprise Risk Framework",
   },
-  "maintain_ops": {
+  yes_branch: {
+    stepNumber: "Decision YES",
+    title: "YES",
+    subtitle: "Low Risk Profile Achieved",
+    category: "Gate Passed",
+    plainEnglishExplanation: "Mitigation measures successfully reduced operational E&S risks.",
+    description: "Confirmed that E&S risks have been mitigated down to acceptable baseline thresholds.",
+    keyOutputs: ["Risk Reduction Certificate", "Operational Transition Sign-off"],
+    ownerRole: "E&S Lead Auditor",
+    governingStandard: "Transvolt E&S Risk Policy",
+  },
+  no_branch: {
+    stepNumber: "Decision NO",
+    title: "NO",
+    subtitle: "High Risk Remains",
+    category: "Gate Action Required",
+    plainEnglishExplanation: "Residual risks remain high. Immediate corrective action and re-implementation mandated.",
+    description: "E&S risks remain above target thresholds, requiring revised ESAP/ESMP formulation and mandatory re-implementation.",
+    keyOutputs: ["Corrective Action Mandate", "Risk Escalation Notice"],
+    ownerRole: "Head of ESG & Steering Committee",
+    governingStandard: "CAPA Corrective Action Protocol",
+  },
+  update_esap: {
+    stepNumber: "Step 7-NO Action",
+    title: "Update ESAP / ESMP & Re - Implement",
+    subtitle: "Corrective Action & Return Path",
+    category: "Corrective Loop",
+    plainEnglishExplanation: "NO: Risks are still high. Revise ESAP/ESMP actions & loop back to re-implement!",
+    description: "Triggered when risks remain un-mitigated. Mandates revision of ESAP/ESMP corrective measures and re-implementation under elevated oversight.",
+    keyOutputs: ["Revised ESAP Version", "Corrective Action Directive", "Re-Implementation Plan"],
+    ownerRole: "Head of ESG & Site General Manager",
+    governingStandard: "Corrective & Preventive Action (CAPA) Protocol",
+  },
+  maintain_ops: {
     stepNumber: "Step 7-YES",
     title: "Maintain Operations",
-    subtitle: "Lower risk profile",
+    subtitle: "Lower Risk Profile",
     category: "Stable Operations",
     plainEnglishExplanation: "YES: Risks are low & safe. Maintain normal, low-risk depot operations.",
     description: "Sustained operational phase operating under low-risk steady state with standard ESMP procedures in force.",
@@ -302,7 +328,7 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Depot Operations Manager",
     governingStandard: "ISO 14001 / 45001 Maintenance",
   },
-  "periodic_review": {
+  periodic_review: {
     stepNumber: "Step 7-YES Final",
     title: "Ongoing Monitoring & Periodic Review",
     subtitle: "Continuous Assurance",
@@ -313,24 +339,108 @@ const NODE_DETAILS: Record<string, NodeDetailInfo> = {
     ownerRole: "Chief Sustainability Officer",
     governingStandard: "PDCA (Plan-Do-Check-Act) Cycle",
   },
-  "update_esap": {
-    stepNumber: "Step 7-NO Action",
-    title: "Update ESAP / ESMP & re-implement",
-    subtitle: "Corrective Action & Return Path",
-    category: "Corrective Loop",
-    plainEnglishExplanation: "NO: Risks are still high. Revise ESAP/ESMP actions & loop back to re-implement!",
-    description: "Triggered when risks remain un-mitigated. Mandates revision of ESAP/ESMP corrective measures and re-implementation under elevated oversight.",
-    keyOutputs: ["Revised ESAP Version", "Corrective Action Directive", "Re-Implementation Plan"],
-    ownerRole: "Head of ESG & Site General Manager",
-    governingStandard: "Corrective & Preventive Action (CAPA) Protocol",
-  },
 };
+
+function DownArrowLine() {
+  return (
+    <div className="flex flex-col items-center my-1">
+      <div className="w-[1.5px] h-5 bg-muted-foreground/60" />
+      <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 -mt-1" />
+    </div>
+  );
+}
+
+function FlowNode({
+  id,
+  title,
+  subtitle,
+  variant = "default",
+  onClick,
+}: {
+  id: string;
+  title: string;
+  subtitle?: string;
+  variant?: "default" | "amber-rhombus" | "green-diamond" | "purple-diamond" | "amber-box";
+  onClick: () => void;
+}) {
+  if (variant === "amber-rhombus") {
+    return (
+      <div
+        onClick={onClick}
+        className="group relative cursor-pointer transform transition-all hover:scale-105 active:scale-95 my-1"
+        title="Click to view details"
+      >
+        <div className="w-[200px] h-[72px] bg-amber-500 border-2 border-amber-600 text-white font-bold rounded-xl shadow-sm flex items-center justify-center text-center p-2 text-[12px] leading-tight">
+          <span>{title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "green-diamond") {
+    return (
+      <div
+        onClick={onClick}
+        className="group relative cursor-pointer transform transition-all hover:scale-105 active:scale-95"
+        title="Click to view details"
+      >
+        <div className="w-[54px] h-[54px] bg-emerald-500 text-white font-extrabold rounded-lg border-2 border-emerald-600 shadow-sm flex items-center justify-center text-center text-[12px]">
+          <span>{title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "purple-diamond") {
+    return (
+      <div
+        onClick={onClick}
+        className="group relative cursor-pointer transform transition-all hover:scale-105 active:scale-95"
+        title="Click to view details"
+      >
+        <div className="w-[54px] h-[54px] bg-purple-500 text-white font-extrabold rounded-lg border-2 border-purple-600 shadow-sm flex items-center justify-center text-center text-[12px]">
+          <span>{title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "amber-box") {
+    return (
+      <div
+        onClick={onClick}
+        className="group relative cursor-pointer transform transition-all hover:scale-105 active:scale-95"
+        title="Click to view details"
+      >
+        <div className="w-[230px] bg-amber-500 text-slate-900 font-bold rounded-xl border-2 border-amber-600 shadow-sm flex items-center justify-center text-center p-3 text-[12px] leading-snug">
+          <span>{title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        "group relative w-[240px] rounded-xl border border-muted-foreground/40 bg-card p-3 shadow-2xs transition-all duration-200 cursor-pointer select-none hover:-translate-y-0.5 hover:border-primary/70 hover:shadow-md text-center flex flex-col items-center justify-center min-h-[54px]",
+      )}
+    >
+      <span className="block text-[12.5px] font-bold text-foreground leading-snug">
+        {title}
+      </span>
+      {subtitle && (
+        <span className="block text-[10.5px] text-muted-foreground font-medium leading-tight mt-0.5">
+          {subtitle}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export function EsmsLifecycleDiagram() {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
-  const [pathFilter, setPathFilter] = useState<"all" | "brownfield" | "greenfield">("all");
-  const [densityMode, setDensityMode] = useState<"compact" | "detailed">("compact");
 
   const detail = selectedNode ? NODE_DETAILS[selectedNode] : null;
 
@@ -338,14 +448,9 @@ export function EsmsLifecycleDiagram() {
     setZoomLevel((prev) => Math.min(Math.max(0.75, prev + delta), 1.25));
   };
 
-  const isDimmed = (path: "brownfield" | "greenfield") => {
-    if (pathFilter === "all") return false;
-    return pathFilter !== path;
-  };
-
   return (
     <div className="w-full space-y-4 font-sans text-foreground">
-      {/* Top Header & Interactive Controls */}
+      {/* Controls Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card/90 p-4 backdrop-blur-md shadow-xs">
         <div>
           <div className="flex items-center gap-2">
@@ -353,573 +458,357 @@ export function EsmsLifecycleDiagram() {
               <GitBranch className="h-4 w-4" />
             </span>
             <h2 className="text-[15px] font-bold tracking-tight text-foreground">
-              Project E&amp;S Lifecycle &amp; Compliance Workflow
+              Project E&amp;S Lifecycle &amp; Compliance Flowchart
             </h2>
             <span className="rounded-md bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary uppercase">
               Interactive Workflow
             </span>
           </div>
           <p className="mt-1 text-[11.5px] text-muted-foreground">
-            Click any step to view full context, outputs, and governing standards. Use filters to focus on specific development paths.
+            Click any node in the flowchart to view full step details, responsible roles, key outputs, and governing standards.
           </p>
         </div>
 
-        {/* Path Filters & View Density Switcher */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Path Focus Filter */}
-          <div className="flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1">
-            <button
-              type="button"
-              onClick={() => setPathFilter("all")}
-              className={cn(
-                "rounded-lg px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer",
-                pathFilter === "all"
-                  ? "bg-primary text-primary-foreground shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              All Paths
-            </button>
-            <button
-              type="button"
-              onClick={() => setPathFilter("brownfield")}
-              className={cn(
-                "rounded-lg px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer",
-                pathFilter === "brownfield"
-                  ? "bg-amber-500 text-white shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Brownfield
-            </button>
-            <button
-              type="button"
-              onClick={() => setPathFilter("greenfield")}
-              className={cn(
-                "rounded-lg px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer",
-                pathFilter === "greenfield"
-                  ? "bg-emerald-500 text-white shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Greenfield
-            </button>
-          </div>
-
-          {/* Compact / Detailed Density Mode */}
+        {/* Zoom Controls */}
+        <div className="flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1">
           <button
             type="button"
-            onClick={() => setDensityMode(densityMode === "compact" ? "detailed" : "compact")}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11.5px] font-bold transition-all cursor-pointer shadow-2xs active:scale-[0.98]",
-              densityMode === "compact"
-                ? "bg-card border-border/60 text-foreground"
-                : "bg-primary/10 border-primary/30 text-primary"
-            )}
+            onClick={() => handleZoom(-0.1)}
+            className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            title="Zoom Out"
           >
-            <Eye className="h-3.5 w-3.5" />
-            {densityMode === "compact" ? "Compact View" : "Detailed View"}
+            <ZoomOut className="h-3.5 w-3.5" />
           </button>
-
-          {/* Zoom Controls */}
-          <div className="flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1">
-            <button
-              type="button"
-              onClick={() => handleZoom(-0.1)}
-              className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              title="Zoom Out"
-            >
-              <ZoomOut className="h-3.5 w-3.5" />
-            </button>
-            <span className="px-2 text-[11px] font-mono font-bold text-foreground">
-              {Math.round(zoomLevel * 100)}%
-            </span>
-            <button
-              type="button"
-              onClick={() => handleZoom(0.1)}
-              className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              title="Zoom In"
-            >
-              <ZoomIn className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoomLevel(1)}
-              className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              title="Reset Zoom"
-            >
-              <Maximize2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
+          <span className="px-2 text-[11px] font-mono font-bold text-foreground">
+            {Math.round(zoomLevel * 100)}%
+          </span>
+          <button
+            type="button"
+            onClick={() => handleZoom(0.1)}
+            className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            title="Zoom In"
+          >
+            <ZoomIn className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setZoomLevel(1)}
+            className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            title="Reset Zoom"
+          >
+            <Maximize2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
-      {/* Modern Color Role Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/50 bg-card/40 px-4 py-2 text-[11px]">
-        <span className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px]">
-          Stage Legend:
-        </span>
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rounded-full bg-primary" />
-            Governance Baseline
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rounded-md bg-amber-500" />
-            Brownfield Retrofit Path
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rounded-md bg-emerald-500" />
-            Greenfield Development Path
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rounded-md bg-indigo-500" />
-            Monitoring &amp; Disclosures
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rotate-45 bg-amber-500" />
-            Decision Gate
-          </span>
-          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-            <span className="h-2.5 w-2.5 rounded-md bg-rose-500" />
-            Corrective Feedback Loop
-          </span>
-        </div>
-      </div>
-
-      {/* Main Flowchart Canvas */}
-      <div className="relative rounded-2xl border border-border/60 bg-card p-6 shadow-sm overflow-x-auto min-h-[920px]">
+      {/* Main Flowchart Canvas (Exact reproduction of screenshot) */}
+      <div className="relative rounded-2xl border border-border/60 bg-card p-8 shadow-sm overflow-x-auto min-h-[1150px]">
         <div
-          className="mx-auto max-w-[1100px] transition-transform duration-200 origin-top space-y-5"
+          className="mx-auto max-w-[1000px] transition-transform duration-200 origin-top flex flex-col items-center"
           style={{ transform: `scale(${zoomLevel})` }}
         >
-          {/* STAGE 1-4: TRUNK SEQUENCE */}
-          <div className="flex flex-col items-center">
-            <DiagramNode
-              id="obligations"
-              stepBadge="1"
-              title="Obligations & Compliance"
-              subtitle="National Permits, IFCPS, Contractual Scope"
-              icon={ShieldCheck}
-              variant="governance"
-              density={densityMode}
-              onClick={() => setSelectedNode("obligations")}
-            />
-            <ConnectorLine />
+          {/* STEP 1: Obligations & Compliance */}
+          <FlowNode
+            id="obligations"
+            title="Obligations & Compliance"
+            subtitle="National Permits,IFCPS,Contractual Scope"
+            onClick={() => setSelectedNode("obligations")}
+          />
+          <DownArrowLine />
 
-            <DiagramNode
-              id="opportunity"
-              stepBadge="2"
-              title="New Project Opportunity"
-              subtitle="Initiation & Deal Pipeline Entry"
-              icon={Building2}
-              variant="neutral"
-              density={densityMode}
-              onClick={() => setSelectedNode("opportunity")}
-            />
-            <ConnectorLine />
+          {/* STEP 2: New Project Opportunity */}
+          <FlowNode
+            id="opportunity"
+            title="New Project Opportunity"
+            onClick={() => setSelectedNode("opportunity")}
+          />
+          <DownArrowLine />
 
-            <DiagramNode
-              id="screening"
-              stepBadge="3"
-              title="Preliminary E & S Screening"
-              subtitle="Before bidding"
-              icon={Search}
-              variant="neutral"
-              density={densityMode}
-              onClick={() => setSelectedNode("screening")}
-            />
-            <ConnectorLine />
+          {/* STEP 3: Preliminary E & S Screening */}
+          <FlowNode
+            id="screening"
+            title="Preliminary E & S Screening"
+            subtitle="(Before Bidding)"
+            onClick={() => setSelectedNode("screening")}
+          />
+          <DownArrowLine />
 
-            <DiagramNode
-              id="classification"
-              stepBadge="4 Gate"
-              title="Project Type Classification"
-              subtitle="Site Nature & Scope Split"
-              icon={GitBranch}
-              variant="decision-header"
-              density={densityMode}
-              onClick={() => setSelectedNode("classification")}
-            />
-          </div>
+          {/* STEP 4: Project Type Classification */}
+          <FlowNode
+            id="classification"
+            title="Project Type Classification"
+            onClick={() => setSelectedNode("classification")}
+          />
 
-          {/* PARALLEL BRANCHES: Brownfield (Left) vs Greenfield (Right) */}
-          <div className="relative mt-2 pt-4 border-t border-dashed border-border/70">
-            {/* Branch Column Headers */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">
-              <div
-                className={cn(
-                  "flex items-center justify-between rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-[12px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider transition-opacity duration-300",
-                  isDimmed("brownfield") && "opacity-30"
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-amber-600" />
-                  <span>Brownfield Path (Retrofit &amp; ESDD)</span>
-                </div>
-                <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded font-mono">
-                  Path 4A
-                </span>
-              </div>
-
-              <div
-                className={cn(
-                  "flex items-center justify-between rounded-xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 text-[12px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider transition-opacity duration-300",
-                  isDimmed("greenfield") && "opacity-30"
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Trees className="h-4 w-4 text-emerald-600" />
-                  <span>Greenfield Path (New Site &amp; ESIA)</span>
-                </div>
-                <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded font-mono">
-                  Path 4B
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              {/* BROWNFIELD COLUMN */}
-              <div
-                className={cn(
-                  "flex flex-col items-center space-y-3.5 rounded-2xl border border-amber-500/20 bg-amber-500/3 p-4 transition-all duration-300",
-                  isDimmed("brownfield") && "opacity-30 blur-[0.3px]"
-                )}
-              >
-                <DiagramNode
-                  id="brownfield"
-                  stepBadge="4A"
-                  title="Brownfield"
-                  subtitle="Existing Asset Retrofit"
-                  icon={Building2}
-                  variant="brownfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("brownfield")}
-                />
-                <ConnectorLine color="amber" />
-
-                <DiagramNode
-                  id="esdd"
-                  stepBadge="4A-1"
-                  title="Comprehensive ESDD"
-                  subtitle="Environmental & Social Due Diligence"
-                  icon={FileText}
-                  variant="brownfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("esdd")}
-                />
-                <ConnectorLine color="amber" />
-
-                <DiagramNode
-                  id="risk_analysis_b"
-                  stepBadge="4A-2"
-                  title="Risk Identification & Analysis"
-                  subtitle="Brownfield Risk Quantification"
-                  icon={Activity}
-                  variant="brownfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("risk_analysis_b")}
-                />
-                <ConnectorLine color="amber" />
-
-                <DiagramNode
-                  id="assign_risk_b"
-                  stepBadge="4A-3"
-                  title="Assign Risk Category"
-                  subtitle="(A / B / C / D)"
-                  icon={Award}
-                  variant="brownfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("assign_risk_b")}
-                />
-                <ConnectorLine color="amber" />
-
-                <DiagramNode
-                  id="formulate_esap"
-                  stepBadge="4A-4 Plan"
-                  title="Formulate ESAP"
-                  subtitle="Environmental & Social Action Plan"
-                  icon={FileCheck}
-                  variant="brownfield-highlight"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("formulate_esap")}
-                />
-              </div>
-
-              {/* GREENFIELD COLUMN */}
-              <div
-                className={cn(
-                  "flex flex-col items-center space-y-3.5 rounded-2xl border border-emerald-500/20 bg-emerald-500/3 p-4 transition-all duration-300",
-                  isDimmed("greenfield") && "opacity-30 blur-[0.3px]"
-                )}
-              >
-                <DiagramNode
-                  id="greenfield"
-                  stepBadge="4B"
-                  title="GreenField"
-                  subtitle="New Ground-Up Site"
-                  icon={Trees}
-                  variant="greenfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("greenfield")}
-                />
-                <ConnectorLine color="emerald" />
-
-                <DiagramNode
-                  id="esia"
-                  stepBadge="4B-1"
-                  title="Comprehensive ESIA"
-                  subtitle="Environmental & Social Impact Assessment"
-                  icon={FileText}
-                  variant="greenfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("esia")}
-                />
-                <ConnectorLine color="emerald" />
-
-                <DiagramNode
-                  id="risk_analysis_g"
-                  stepBadge="4B-2"
-                  title="Risk Identification & Analysis"
-                  subtitle="Greenfield Risk Matrix"
-                  icon={Activity}
-                  variant="greenfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("risk_analysis_g")}
-                />
-                <ConnectorLine color="emerald" />
-
-                <DiagramNode
-                  id="impact_analysis"
-                  stepBadge="4B-3"
-                  title="Potential Impact Analysis"
-                  subtitle="Severity & Scale Quantification"
-                  icon={Layers}
-                  variant="greenfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("impact_analysis")}
-                />
-                <ConnectorLine color="emerald" />
-
-                <DiagramNode
-                  id="assign_risk_g"
-                  stepBadge="4B-4"
-                  title="Assign Risk Category"
-                  subtitle="(A / B / C / D)"
-                  icon={Award}
-                  variant="greenfield"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("assign_risk_g")}
-                />
-                <ConnectorLine color="emerald" />
-
-                <DiagramNode
-                  id="formulate_esmp"
-                  stepBadge="4B-5 Plan"
-                  title="Formulate ESMP"
-                  subtitle="Environmental & Social Management Plan"
-                  icon={FileCheck}
-                  variant="greenfield-highlight"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("formulate_esmp")}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* CONVERGENCE POINT: Implement ESAP & ESMP */}
-          <div className="flex flex-col items-center pt-5">
-            <div className="flex items-center justify-center gap-2 mb-2 bg-primary/10 border border-primary/20 rounded-full px-3.5 py-0.5">
-              <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
-              <span className="text-[10.5px] font-bold text-primary uppercase tracking-wider">
-                Paths Merge into Core Implementation
+          {/* SPLIT TO BROWNFIELD (LEFT) & GREENFIELD (RIGHT) */}
+          <div className="w-full max-w-[620px] flex flex-col items-center my-1.5">
+            <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            <div className="w-full h-[1.5px] bg-muted-foreground/60 relative">
+              <span className="absolute left-0 -translate-x-1/2 -top-2.5 text-[11px] font-bold text-muted-foreground bg-card px-1">
+                ←
+              </span>
+              <span className="absolute right-0 translate-x-1/2 -top-2.5 text-[11px] font-bold text-muted-foreground bg-card px-1">
+                →
               </span>
             </div>
-
-            <DiagramNode
-              id="implement_esap_esmp"
-              stepBadge="5 Core"
-              title="Implement ESAP & ESMP"
-              subtitle="Unified Execution Baseline"
-              icon={CheckCircle2}
-              variant="core-primary"
-              density={densityMode}
-              onClick={() => setSelectedNode("implement_esap_esmp")}
-            />
+            <div className="w-full flex justify-between">
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            </div>
           </div>
 
-          {/* FAN-OUT TO MONITORING & REPORTING */}
-          <div className="relative pt-5 border-t border-border/60">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              
-              {/* LEFT FAN-OUT: Monitor & Review Implementation + Decision Diamond */}
-              <div className="flex flex-col items-center space-y-4 rounded-2xl border border-primary/20 bg-primary/3 p-4 relative">
-                <div className="text-[11px] font-bold text-primary uppercase tracking-wider">
-                  Operational Monitoring &amp; Decision Gateway
-                </div>
+          {/* TWO PARALLEL COLUMNS: Brownfield vs Greenfield */}
+          <div className="w-full max-w-[700px] grid grid-cols-2 gap-12 items-start">
+            
+            {/* BROWNFIELD COLUMN */}
+            <div className="flex flex-col items-center">
+              <FlowNode
+                id="brownfield"
+                title="Brownfield"
+                onClick={() => setSelectedNode("brownfield")}
+              />
+              <DownArrowLine />
 
-                <DiagramNode
-                  id="monitor_review"
-                  stepBadge="6A"
-                  title="Monitor & Review Implementation"
-                  subtitle="Audit & Field Oversight"
-                  icon={Activity}
-                  variant="monitoring"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("monitor_review")}
-                />
+              <FlowNode
+                id="esdd"
+                title="Comprehensive ESDD"
+                onClick={() => setSelectedNode("esdd")}
+              />
+              <DownArrowLine />
 
-                <ConnectorLine color="primary" />
+              <FlowNode
+                id="risk_analysis_b"
+                title="Risk Identification & Analysis"
+                onClick={() => setSelectedNode("risk_analysis_b")}
+              />
+              <DownArrowLine />
 
-                {/* DECISION DIAMOND: Risk Category Reduced? */}
-                <div className="relative my-1 flex flex-col items-center">
-                  <div
-                    onClick={() => setSelectedNode("decision_diamond")}
-                    className="group relative cursor-pointer transform transition-all hover:scale-105 active:scale-95"
-                  >
-                    <div className="h-28 w-28 rotate-45 rounded-2xl border-2 border-amber-500 bg-amber-500/15 shadow-md flex items-center justify-center transition-all group-hover:border-amber-600 group-hover:shadow-amber-500/20">
-                      <div className="-rotate-45 text-center px-2">
-                        <span className="block text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-0.5">
-                          Gate 7
-                        </span>
-                        <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-0.5" />
-                        <span className="block text-[11px] font-extrabold text-amber-800 dark:text-amber-300 leading-tight">
-                          Risk Category Reduced?
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <FlowNode
+                id="assign_risk_b"
+                title="Assign Risk Category"
+                subtitle="(A / B / C / D)"
+                onClick={() => setSelectedNode("assign_risk_b")}
+              />
+              <DownArrowLine />
 
-                {/* DECISION BRANCHES: YES vs NO */}
-                <div className="w-full grid grid-cols-2 gap-3 items-start pt-1">
-                  
-                  {/* YES BRANCH (Left) */}
-                  <div className="flex flex-col items-center space-y-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3">
-                    <span className="rounded-md bg-emerald-500 text-white font-extrabold text-[10px] px-2.5 py-0.5 shadow-2xs uppercase tracking-wider">
-                      YES `→` Low Risk
-                    </span>
-
-                    <DiagramNode
-                      id="maintain_ops"
-                      stepBadge="7-YES"
-                      title="Maintain Operations"
-                      subtitle="Lower risk profile"
-                      icon={CheckCircle2}
-                      variant="success"
-                      density={densityMode}
-                      onClick={() => setSelectedNode("maintain_ops")}
-                    />
-
-                    <ConnectorLine color="emerald" />
-
-                    <DiagramNode
-                      id="periodic_review"
-                      stepBadge="7-YES Final"
-                      title="Ongoing Monitoring & Periodic Review"
-                      subtitle="Continuous Assurance"
-                      icon={RefreshCw}
-                      variant="success"
-                      density={densityMode}
-                      onClick={() => setSelectedNode("periodic_review")}
-                    />
-                  </div>
-
-                  {/* NO BRANCH (Right) with Corrective Action & Return Feedback Loop */}
-                  <div className="flex flex-col items-center space-y-3 rounded-xl border border-rose-500/30 bg-rose-500/5 p-3 relative">
-                    <span className="rounded-md bg-rose-500 text-white font-extrabold text-[10px] px-2.5 py-0.5 shadow-2xs uppercase tracking-wider">
-                      NO `→` High Risk
-                    </span>
-
-                    <DiagramNode
-                      id="update_esap"
-                      stepBadge="7-NO Action"
-                      title="Update ESAP / ESMP & re-implement"
-                      subtitle="Corrective Action & Return Path"
-                      icon={AlertTriangle}
-                      variant="alert-action"
-                      density={densityMode}
-                      onClick={() => setSelectedNode("update_esap")}
-                    />
-
-                    {/* Return Feedback Loop Indicator */}
-                    <div className="mt-1 w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-rose-500/50 bg-rose-500/10 px-2.5 py-1 text-[10px] font-bold text-rose-700 dark:text-rose-300 text-center">
-                      <RotateCcw className="h-3 w-3 animate-spin-slow text-rose-600 shrink-0" />
-                      <span>Loops Back to Step 6A</span>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* RIGHT FAN-OUT: ES Monitoring & Reporting Framework */}
-              <div className="flex flex-col items-center space-y-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/3 p-4">
-                <div className="text-[11px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">
-                  Reporting Architecture &amp; Disclosures
-                </div>
-
-                <DiagramNode
-                  id="es_framework"
-                  stepBadge="6B Data"
-                  title="ES Monitoring & Reporting Framework"
-                  subtitle="Data collection via metadata format"
-                  icon={FileSpreadsheet}
-                  variant="reporting"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("es_framework")}
-                />
-
-                <ConnectorLine color="indigo" />
-
-                <DiagramNode
-                  id="reporting_obligations"
-                  stepBadge="6B-1"
-                  title="Reporting Obligations"
-                  subtitle="Statutory & Financial Disclosures"
-                  icon={FileText}
-                  variant="reporting"
-                  density={densityMode}
-                  onClick={() => setSelectedNode("reporting_obligations")}
-                />
-
-                <ConnectorLine color="indigo" />
-
-                {/* Reporting Branch Split: National vs DFI */}
-                <div className="w-full grid grid-cols-2 gap-3 pt-1">
-                  
-                  {/* BRSR / AMR / Impact Report — National */}
-                  <div className="flex flex-col items-center">
-                    <DiagramNode
-                      id="brsr_report"
-                      stepBadge="6B National"
-                      title="BRSR / AMR / Impact Report"
-                      subtitle="National"
-                      icon={Award}
-                      variant="reporting-child"
-                      density={densityMode}
-                      onClick={() => setSelectedNode("brsr_report")}
-                    />
-                  </div>
-
-                  {/* IFC Lender Reports / CDP — DFI */}
-                  <div className="flex flex-col items-center">
-                    <DiagramNode
-                      id="ifc_report"
-                      stepBadge="6B DFI"
-                      title="IFC Lender Reports / CDP"
-                      subtitle="DFI"
-                      icon={Sparkles}
-                      variant="reporting-child"
-                      density={densityMode}
-                      onClick={() => setSelectedNode("ifc_report")}
-                    />
-                  </div>
-
-                </div>
-
-              </div>
-
+              <FlowNode
+                id="formulate_esap"
+                title="Formulate ESAP"
+                onClick={() => setSelectedNode("formulate_esap")}
+              />
             </div>
+
+            {/* GREENFIELD COLUMN */}
+            <div className="flex flex-col items-center">
+              <FlowNode
+                id="greenfield"
+                title="GreenField"
+                onClick={() => setSelectedNode("greenfield")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="esia"
+                title="Comprehensive ESIA"
+                onClick={() => setSelectedNode("esia")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="risk_analysis_g"
+                title="Risk Identification & Analysis"
+                onClick={() => setSelectedNode("risk_analysis_g")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="impact_analysis"
+                title="Potential Impact Analysis"
+                onClick={() => setSelectedNode("impact_analysis")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="assign_risk_g"
+                title="Assign Risk Category"
+                subtitle="(A / B / C / D)"
+                onClick={() => setSelectedNode("assign_risk_g")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="formulate_esmp"
+                title="Formulate ESMP"
+                onClick={() => setSelectedNode("formulate_esmp")}
+              />
+            </div>
+
+          </div>
+
+          {/* MERGE FROM BOTH BRANCHES INTO IMPLEMENT ESAP & ESMP */}
+          <div className="w-full max-w-[620px] flex flex-col items-center my-1.5">
+            <div className="w-full flex justify-between">
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            </div>
+            <div className="w-full h-[1.5px] bg-muted-foreground/60" />
+            <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 -mt-1" />
+          </div>
+
+          {/* CONVERGENCE NODE: Implement ESAP & ESMP */}
+          <FlowNode
+            id="implement_esap_esmp"
+            title="Implement ESAP & ESMP"
+            onClick={() => setSelectedNode("implement_esap_esmp")}
+          />
+
+          {/* SPLIT TO MONITOR & REVIEW vs ES MONITORING & REPORTING FRAMEWORK */}
+          <div className="w-full max-w-[620px] flex flex-col items-center my-1.5">
+            <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            <div className="w-full h-[1.5px] bg-muted-foreground/60 relative">
+              <span className="absolute left-0 -translate-x-1/2 -top-2.5 text-[11px] font-bold text-muted-foreground bg-card px-1">
+                ←
+              </span>
+              <span className="absolute right-0 translate-x-1/2 -top-2.5 text-[11px] font-bold text-muted-foreground bg-card px-1">
+                →
+              </span>
+            </div>
+            <div className="w-full flex justify-between">
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+              <div className="w-[1.5px] h-4 bg-muted-foreground/60" />
+            </div>
+          </div>
+
+          {/* LOWER SECTION: LEFT MONITORING/DECISION vs RIGHT REPORTING OBLIGATIONS */}
+          <div className="w-full max-w-[720px] grid grid-cols-2 gap-12 items-start">
+            
+            {/* LEFT SUB-BRANCH: Monitor & Review -> Decision Gateway */}
+            <div className="flex flex-col items-center space-y-2">
+              <FlowNode
+                id="monitor_review"
+                title="Monitor & Review Implementation"
+                onClick={() => setSelectedNode("monitor_review")}
+              />
+              <DownArrowLine />
+
+              {/* AMBER RHOMBUS: Risk Category Reduced ? */}
+              <FlowNode
+                id="decision_diamond"
+                title="Risk Category Reduced ?"
+                variant="amber-rhombus"
+                onClick={() => setSelectedNode("decision_diamond")}
+              />
+
+              {/* DECISION BRANCHES: YES (Left) vs NO (Right) */}
+              <div className="w-full flex items-start justify-between pt-2 relative">
+                
+                {/* YES BRANCH (Left) */}
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="flex flex-col items-center">
+                    <div className="text-[10px] font-bold text-muted-foreground mb-0.5">← YES</div>
+                    <FlowNode
+                      id="yes_branch"
+                      title="YES"
+                      variant="green-diamond"
+                      onClick={() => setSelectedNode("yes_branch")}
+                    />
+                  </div>
+                  <DownArrowLine />
+
+                  <FlowNode
+                    id="maintain_ops"
+                    title="Maintain Operations"
+                    subtitle="Lower Risk Profile"
+                    onClick={() => setSelectedNode("maintain_ops")}
+                  />
+                  <DownArrowLine />
+
+                  <FlowNode
+                    id="periodic_review"
+                    title="Ongoing Monitoring & Periodic Review"
+                    onClick={() => setSelectedNode("periodic_review")}
+                  />
+                </div>
+
+                {/* NO BRANCH (Right) with Update ESAP & Re-implement */}
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="flex flex-col items-center">
+                    <div className="text-[10px] font-bold text-muted-foreground mb-0.5">NO ↘</div>
+                    <FlowNode
+                      id="no_branch"
+                      title="NO"
+                      variant="purple-diamond"
+                      onClick={() => setSelectedNode("no_branch")}
+                    />
+                  </div>
+                  <DownArrowLine />
+
+                  <FlowNode
+                    id="update_esap"
+                    title="Update ESAP / ESMP & Re - Implement"
+                    variant="amber-box"
+                    onClick={() => setSelectedNode("update_esap")}
+                  />
+
+                  <div className="mt-1 flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                    <RotateCcw className="h-3 w-3 text-amber-600 shrink-0" />
+                    <span>Loops Back to Monitor &amp; Review</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* RIGHT SUB-BRANCH: ES Monitoring & Reporting Framework */}
+            <div className="flex flex-col items-center space-y-2">
+              <FlowNode
+                id="es_framework"
+                title="ES Monitoring & Reporting Framework"
+                subtitle="Data Collection Via Metadata Format"
+                onClick={() => setSelectedNode("es_framework")}
+              />
+              <DownArrowLine />
+
+              <FlowNode
+                id="reporting_obligations"
+                title="Reporting Obligations"
+                onClick={() => setSelectedNode("reporting_obligations")}
+              />
+
+              {/* Split to National vs DFI */}
+              <div className="w-full flex flex-col items-center my-1">
+                <div className="w-[1.5px] h-3.5 bg-muted-foreground/60" />
+                <div className="w-full h-[1.5px] bg-muted-foreground/60 relative">
+                  <span className="absolute left-0 -translate-x-1/2 -top-2 text-[10px] font-bold text-muted-foreground bg-card px-0.5">
+                    ←
+                  </span>
+                  <span className="absolute right-0 translate-x-1/2 -top-2 text-[10px] font-bold text-muted-foreground bg-card px-0.5">
+                    →
+                  </span>
+                </div>
+                <div className="w-full flex justify-between">
+                  <div className="w-[1.5px] h-3.5 bg-muted-foreground/60" />
+                  <div className="w-[1.5px] h-3.5 bg-muted-foreground/60" />
+                </div>
+              </div>
+
+              <div className="w-full grid grid-cols-2 gap-3">
+                <FlowNode
+                  id="brsr_report"
+                  title="BRSR / AMR / Impact Report"
+                  subtitle="National"
+                  onClick={() => setSelectedNode("brsr_report")}
+                />
+                <FlowNode
+                  id="ifc_report"
+                  title="IFC Lender Reports / CDP"
+                  subtitle="DFI"
+                  onClick={() => setSelectedNode("ifc_report")}
+                />
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -1029,156 +918,6 @@ export function EsmsLifecycleDiagram() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-/**
- * Modern Ultra-Clean Node Card Component
- */
-function DiagramNode({
-  id,
-  stepBadge,
-  title,
-  subtitle,
-  icon: Icon,
-  variant = "neutral",
-  density = "compact",
-  onClick,
-}: {
-  id: string;
-  stepBadge?: string;
-  title: string;
-  subtitle?: string;
-  icon?: any;
-  variant?:
-    | "governance"
-    | "neutral"
-    | "decision-header"
-    | "brownfield"
-    | "brownfield-highlight"
-    | "greenfield"
-    | "greenfield-highlight"
-    | "core-primary"
-    | "monitoring"
-    | "success"
-    | "alert-action"
-    | "reporting"
-    | "reporting-child";
-  density?: "compact" | "detailed";
-  onClick?: () => void;
-}) {
-  const variantStyles = {
-    governance:
-      "bg-primary/8 border-primary/30 hover:border-primary text-foreground shadow-2xs hover:shadow-sm",
-    neutral:
-      "bg-card border-border/60 hover:border-primary/50 text-foreground shadow-2xs hover:shadow-sm",
-    "decision-header":
-      "bg-card border-2 border-primary/60 text-foreground font-bold shadow-xs hover:shadow-sm",
-    brownfield:
-      "bg-amber-500/6 border-amber-500/25 hover:border-amber-500/60 text-foreground shadow-2xs",
-    "brownfield-highlight":
-      "bg-amber-500/12 border-2 border-amber-500 text-amber-950 dark:text-amber-100 font-bold shadow-xs",
-    greenfield:
-      "bg-emerald-500/6 border-emerald-500/25 hover:border-emerald-500/60 text-foreground shadow-2xs",
-    "greenfield-highlight":
-      "bg-emerald-500/12 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-100 font-bold shadow-xs",
-    "core-primary":
-      "bg-primary text-primary-foreground border-primary shadow-md hover:bg-primary/90 text-center py-3 max-w-[300px]",
-    monitoring:
-      "bg-primary/6 border border-primary/25 hover:border-primary/60 text-foreground shadow-2xs",
-    success:
-      "bg-emerald-500/8 border border-emerald-500/35 hover:border-emerald-500 text-foreground shadow-2xs",
-    "alert-action":
-      "bg-rose-500/12 border-2 border-rose-500 text-rose-950 dark:text-rose-100 font-bold shadow-xs animate-pulse-subtle",
-    reporting:
-      "bg-indigo-500/8 border border-indigo-500/35 hover:border-indigo-500 text-foreground shadow-2xs",
-    "reporting-child":
-      "bg-card border border-indigo-500/25 hover:border-indigo-500/60 text-foreground shadow-2xs text-center",
-  };
-
-  const isCorePrimary = variant === "core-primary";
-
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "group relative w-full max-w-[270px] rounded-xl border p-3 transition-all duration-200 cursor-pointer select-none hover:-translate-y-0.5",
-        variantStyles[variant]
-      )}
-    >
-      {/* Top Header: Step Badge + Icon */}
-      <div className="flex items-center justify-between gap-2 mb-1.5">
-        {stepBadge ? (
-          <span
-            className={cn(
-              "rounded-md px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider border",
-              isCorePrimary
-                ? "bg-white text-primary border-white"
-                : "bg-muted/80 text-muted-foreground border-border/50 group-hover:border-primary/40 group-hover:text-primary"
-            )}
-          >
-            {stepBadge}
-          </span>
-        ) : (
-          <div />
-        )}
-
-        {Icon && (
-          <span
-            className={cn(
-              "grid h-5 w-5 place-items-center rounded-md text-xs transition-colors",
-              isCorePrimary
-                ? "bg-white/20 text-white"
-                : "text-muted-foreground group-hover:text-primary"
-            )}
-          >
-            <Icon className="h-3.5 w-3.5" />
-          </span>
-        )}
-      </div>
-
-      {/* Main Title */}
-      <span
-        className={cn(
-          "block text-[12.5px] font-bold leading-tight truncate",
-          isCorePrimary ? "text-primary-foreground" : "text-foreground"
-        )}
-      >
-        {title}
-      </span>
-
-      {/* Detailed Mode Subtitle */}
-      {density === "detailed" && subtitle && (
-        <span
-          className={cn(
-            "block text-[10.5px] leading-tight mt-1 truncate",
-            isCorePrimary ? "text-primary-foreground/80" : "text-muted-foreground"
-          )}
-        >
-          {subtitle}
-        </span>
-      )}
-    </div>
-  );
-}
-
-/**
- * Connector Line Component
- */
-function ConnectorLine({ color = "neutral" }: { color?: "neutral" | "amber" | "emerald" | "primary" | "indigo" }) {
-  const colorMap = {
-    neutral: "text-border",
-    amber: "text-amber-500/50",
-    emerald: "text-emerald-500/50",
-    primary: "text-primary/50",
-    indigo: "text-indigo-500/50",
-  };
-
-  return (
-    <div className="flex flex-col items-center my-0.5">
-      <div className={cn("w-[2px] h-3.5 bg-current opacity-40", colorMap[color])} />
-      <ArrowDown className={cn("h-3.5 w-3.5 -mt-1", colorMap[color])} />
     </div>
   );
 }
