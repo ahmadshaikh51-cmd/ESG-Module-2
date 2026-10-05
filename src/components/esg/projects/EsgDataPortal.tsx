@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { A, EmptyState, PanelCard, useEsg } from "../primitives";
 import { PERIODS, PEOPLE } from "@/lib/esg-data";
@@ -408,19 +409,19 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
           />
         ) : (
           <div className="overflow-auto max-h-[520px]">
-            <table className="w-full text-[12.5px]">
-              <thead className="sticky top-0 z-10 bg-card">
-                <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-                  <th className="px-5 py-2.5 text-left font-medium">Indicator Details</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Project & Site</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Period</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Value</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Feeds Reports</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Status</th>
-                  <th className="px-5 py-2.5 text-right font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
+            <Table className="w-full text-[12.5px]">
+              <TableHeader className="sticky top-0 z-10 bg-card">
+                <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                  <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Indicator Details</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Project & Site</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Period</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Value</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Feeds Reports</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Status</TableHead>
+                  <TableHead className="px-5 py-2.5 text-right font-medium h-auto text-muted-foreground">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/40">
                 {filteredTasks.map((t, idx) => {
                   const isPending = t.status === "Pending Entry";
                   const isDraft = t.status === "Draft";
@@ -429,12 +430,12 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                   const owner = PEOPLE.find(p => p.id === t.responsible);
 
                   return (
-                    <tr
+                    <TableRow
                       key={`${t.project}-${t.siteId}-${t.indicator.id}-${t.period}-${idx}`}
-                      className="hover:bg-muted/30 transition-colors"
+                      className="hover:bg-muted/30 transition-colors border-0"
                     >
                       {/* Indicator ID & Name */}
-                      <td className="px-5 py-3 max-w-[280px]">
+                      <TableCell className="px-5 py-3 max-w-[280px]">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <span className="font-semibold text-primary text-[10.5px] font-mono bg-primary/8 border border-primary/15 rounded px-1 py-0.5">
@@ -451,24 +452,24 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                             {t.indicator.def}
                           </div>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Project & Site */}
-                      <td className="px-3 py-3">
+                      <TableCell className="px-3 py-3">
                         <div className="font-semibold text-foreground text-[12.5px]">{t.project}</div>
                         <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
                           <MapPin className="h-3 w-3 shrink-0" />
                           <span>{t.siteName}</span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Period */}
-                      <td className="px-3 py-3 font-medium text-foreground num">
+                      <TableCell className="px-3 py-3 font-medium text-foreground num">
                         {t.periodLabel}
-                      </td>
+                      </TableCell>
 
                       {/* Raw Entered Value */}
-                      <td className="px-3 py-3 font-semibold num text-[13px]">
+                      <TableCell className="px-3 py-3 font-semibold num text-[13px]">
                         {t.value !== null && t.value !== undefined ? (
                           <div className="flex items-baseline gap-1">
                             <span className="text-foreground">{t.value}</span>
@@ -477,10 +478,10 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                         ) : (
                           <span className="text-muted-foreground/60 italic">—</span>
                         )}
-                      </td>
+                      </TableCell>
 
                       {/* Connected Reports */}
-                      <td className="px-3 py-3">
+                      <TableCell className="px-3 py-3">
                         <div className="flex flex-wrap gap-1">
                           {t.indicator.maps.map((rId: string) => {
                             const badge = REPORT_COLORS[rId] || { bg: "bg-muted text-muted-foreground", label: rId.toUpperCase() };
@@ -491,10 +492,10 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                             );
                           })}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Status */}
-                      <td className="px-3 py-3">
+                      <TableCell className="px-3 py-3">
                         <span className={cn(
                           "inline-flex h-5 items-center rounded-md border px-1.5 text-[10px] font-bold",
                           isPending && "bg-muted/80 text-muted-foreground border-border/60",
@@ -504,10 +505,10 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                         )}>
                           {t.status}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Actions */}
-                      <td className="px-5 py-3 text-right">
+                      <TableCell className="px-5 py-3 text-right">
                         <Button
                           size="sm"
                           variant={isPending ? "default" : "outline"}
@@ -522,12 +523,12 @@ export function EsgDataPortal({ onBack, onOpenForm }: EsgDataPortalProps) {
                           {isPending ? "Enter Data" : "Edit / View"}
                           <ArrowRight className="h-3 w-3" />
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </PanelCard>

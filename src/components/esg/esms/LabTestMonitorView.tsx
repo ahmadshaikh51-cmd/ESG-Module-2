@@ -60,6 +60,7 @@ import {
 } from "@/lib/esg-monitoring";
 import { exportToXlsx } from "@/lib/export-xlsx";
 import { EmptyState, PanelCard } from "../primitives";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { LabTestDetailDrawer } from "./LabTestDetailDrawer";
 
@@ -361,14 +362,6 @@ export function LabTestMonitorView({
             >
               <Download className="h-4 w-4 text-muted-foreground" /> Export Register
             </Button>
-
-            <Button
-              size="sm"
-              className="h-10 text-[12.5px] font-bold gap-2 px-4 shadow-sm"
-              onClick={onNewTestClick}
-            >
-              <Plus className="h-4 w-4" /> + Enter New Lab Test
-            </Button>
           </div>
         </div>
 
@@ -480,33 +473,33 @@ export function LabTestMonitorView({
       {/* Lab Tests Register Table */}
       <div className="rounded-2xl border border-border/60 bg-card shadow-elevated overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[12.5px] min-w-[1100px]">
-            <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-5 py-3.5 font-semibold w-[130px]">Test Date</th>
-                <th className="px-4 py-3.5 font-semibold w-[200px]">Site / Depot</th>
-                <th className="px-4 py-3.5 font-semibold w-[220px]">Test Category</th>
-                <th className="px-5 py-3.5 font-semibold min-w-[260px]">Key Results vs Limits</th>
-                <th className="px-4 py-3.5 font-semibold w-[160px]">Overall Status</th>
-                <th className="px-4 py-3.5 font-semibold w-[140px]">Lead Monitor</th>
-                <th className="px-4 py-3.5 font-semibold w-[160px]">Corrective Action</th>
-                <th className="px-5 py-3.5 font-semibold text-right w-[80px]">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+          <Table className="w-full text-left text-[12.5px] min-w-[1100px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-5 py-3.5 font-semibold w-[130px]">Test Date</TableHead>
+                <TableHead className="px-4 py-3.5 font-semibold w-[200px]">Site / Depot</TableHead>
+                <TableHead className="px-4 py-3.5 font-semibold w-[220px]">Test Category</TableHead>
+                <TableHead className="px-5 py-3.5 font-semibold min-w-[260px]">Key Results vs Limits</TableHead>
+                <TableHead className="px-4 py-3.5 font-semibold w-[160px]">Overall Status</TableHead>
+                <TableHead className="px-4 py-3.5 font-semibold w-[140px]">Lead Monitor</TableHead>
+                <TableHead className="px-4 py-3.5 font-semibold w-[160px]">Corrective Action</TableHead>
+                <TableHead className="px-5 py-3.5 font-semibold text-right w-[80px]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-border/40">
               {paginatedTests.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center">
+                <TableRow>
+                  <TableCell colSpan={8} className="px-6 py-16 text-center">
                     <EmptyState
                       title="No laboratory testing records found"
                       hint={
                         hasActiveFilters
                           ? "Try clearing your filters or search query."
-                          : "Click '+ Enter New Lab Test' to record your first laboratory analysis."
+                          : "No lab test records currently available for the selected depot & period."
                       }
                     />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 paginatedTests.map((t) => {
                   const testMeta = getLabTestType(t.testType);
@@ -519,7 +512,7 @@ export function LabTestMonitorView({
                     : undefined;
 
                   return (
-                    <tr
+                    <TableRow
                       key={t.id}
                       className={cn(
                         "hover:bg-muted/15 transition-colors cursor-pointer group",
@@ -531,30 +524,30 @@ export function LabTestMonitorView({
                       }}
                     >
                       {/* Date */}
-                      <td className="px-5 py-4 whitespace-nowrap">
+                      <TableCell className="px-5 py-4 whitespace-nowrap">
                         <div className="font-semibold text-foreground">{t.testDate}</div>
                         <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10.5px] font-mono text-muted-foreground">
                           {t.period}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Site / Depot */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <div className="font-semibold text-foreground truncate">{t.depotName}</div>
                         <span className="text-[11px] text-muted-foreground truncate block">
                           {t.entityName}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Test Category */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <span className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-[11.5px] font-semibold text-primary">
                           {testMeta?.shortLabel || t.testLabel}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Key Results Summary */}
-                      <td className="px-5 py-4">
+                      <TableCell className="px-5 py-4">
                         <div className="flex flex-wrap items-center gap-1.5">
                           {testMeta?.parameters.slice(0, 3).map((p) => {
                             const val = t.results[p.key];
@@ -592,10 +585,10 @@ export function LabTestMonitorView({
                             </span>
                           )}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Overall Status */}
-                      <td className="px-4 py-4 whitespace-nowrap">
+                      <TableCell className="px-4 py-4 whitespace-nowrap">
                         <span
                           className={cn(
                             "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold border",
@@ -614,17 +607,17 @@ export function LabTestMonitorView({
                             </>
                           )}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Lead Monitor */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         <span className="text-[12px] font-medium text-foreground truncate block">
                           {t.monitorName}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Action */}
-                      <td className="px-4 py-4">
+                      <TableCell className="px-4 py-4">
                         {derivedAction ? (
                           <span
                             className={cn(
@@ -642,10 +635,10 @@ export function LabTestMonitorView({
                         ) : (
                           <span className="text-[11.5px] text-muted-foreground">—</span>
                         )}
-                      </td>
+                      </TableCell>
 
                       {/* Actions */}
-                      <td
+                      <TableCell
                         className="px-5 py-4 text-right whitespace-nowrap"
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -681,13 +674,13 @@ export function LabTestMonitorView({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Pagination */}

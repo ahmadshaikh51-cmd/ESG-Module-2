@@ -57,8 +57,36 @@ function EsgPage() {
   const navigate = useNavigate({ from: "/esg" });
   const { area = "overview", sub, record } = Route.useSearch();
 
-  const [scope, setScope] = useState<ScopeSel>({});
-  const [period, setPeriod] = useState(PERIODS[0].id);
+  const [scope, setScope] = useState<ScopeSel>(() => {
+    try {
+      const saved = sessionStorage.getItem("esg_saved_scope");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [period, setPeriodState] = useState<string>(() => {
+    try {
+      return sessionStorage.getItem("esg_saved_period") || PERIODS[0].id;
+    } catch {
+      return PERIODS[0].id;
+    }
+  });
+
+  const setPeriod = useCallback((p: string) => {
+    setPeriodState(p);
+    try {
+      sessionStorage.setItem("esg_saved_period", p);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("esg_saved_scope", JSON.stringify(scope));
+    } catch {}
+  }, [scope]);
+
   const [audience, setAudience] = useState<Audience>("internal");
   const [role, setRole] = useState<Role>("maintainer");
   const [drawerId, setDrawerId] = useState<string | null>(null);
@@ -104,13 +132,27 @@ function EsgPage() {
     const y = range.start.getFullYear();
     const m = String(range.start.getMonth() + 1).padStart(2, "0");
     setPeriod(`${y}-${m}`);
-  }, []);
+  }, [setPeriod]);
 
-  const [projectId, setProjectIdState] = useState<string | null>(null);
+  const [projectId, setProjectIdState] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem("esg_saved_project_id") || null;
+    } catch {
+      return null;
+    }
+  });
 
-  // Sync project selection to scope
+  // Sync project selection to scope and session storage
   const setProjectId = useCallback((id: string | null) => {
     setProjectIdState(id);
+    try {
+      if (id) {
+        sessionStorage.setItem("esg_saved_project_id", id);
+      } else {
+        sessionStorage.removeItem("esg_saved_project_id");
+      }
+    } catch {}
+
     if (id) {
       const proj = PROJECT_LIFECYCLES.find((p) => p.projectId === id);
       if (proj) {
@@ -146,7 +188,22 @@ function EsgPage() {
 
   const goto = useCallback(
     (nextArea: string, opts?: { record?: string; state?: string; sub?: string }) => {
-      const nextSub = opts?.sub;
+      let nextSub = opts?.sub;
+
+      // Restore last visited sub-tab for target area if not explicitly specified
+      if (!nextSub && nextArea !== area) {
+        try {
+          const savedSub = sessionStorage.getItem(`esg_sub_${nextArea}`);
+          if (savedSub) nextSub = savedSub;
+        } catch {}
+      }
+
+      // Save sub-tab choice if navigating within or to an area
+      if (nextSub) {
+        try {
+          sessionStorage.setItem(`esg_sub_${nextArea}`, nextSub);
+        } catch {}
+      }
 
       // Ignore duplicate navigation to exact same area & sub
       if (area === nextArea && sub === nextSub) {

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { BookMarked, CircleHelp, Settings2, Timer, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GLOSSARY, TYPE_MASTER } from "@/lib/esg-data";
 import { ROLES, type Role } from "@/lib/esg-policy";
 import { A, PanelCard, EmptyState, useEsg } from "./primitives";
@@ -71,31 +72,31 @@ export function MastersTab() {
             </p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[460px] text-[12.5px]">
-              <thead>
-                <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-                  <th className="px-5 py-2.5 text-left font-medium">Type</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Category</th>
-                  <th className="px-3 py-2.5 text-right font-medium">Lead window</th>
-                  <th className="px-5 py-2.5 text-left font-medium">Default owner</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="min-w-[460px]">
+              <TableHeader>
+                <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                  <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Type</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Category</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right font-medium h-auto text-muted-foreground">Lead window</TableHead>
+                  <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Default owner</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {TYPE_MASTER.map((t) => {
                   const days = masters.leadDaysFor(t.key);
                   const perpetual = t.leadDays === 0;
                   return (
-                    <tr key={t.key} className="border-b border-border/40 last:border-0">
-                      <td className="px-5 py-2.5 font-medium">
+                    <TableRow key={t.key} className="border-b border-border/40 last:border-0 hover:bg-muted/15">
+                      <TableCell className="px-5 py-2.5 font-medium text-foreground">
                         <A t={t.label.split(" ")[0]} />
                         {t.label.includes(" ") ? ` ${t.label.slice(t.label.indexOf(" ") + 1)}` : ""}
-                      </td>
-                      <td className="px-3 py-2.5">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5">
                         <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                           {t.category === "permit" ? "Permit" : "Site"}
                         </span>
-                      </td>
-                      <td className="px-3 py-2.5 text-right">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-right">
                         {perpetual ? (
                           <span className="num text-muted-foreground">—</span>
                         ) : (
@@ -114,15 +115,15 @@ export function MastersTab() {
                             <span className="text-[11px] text-muted-foreground">d</span>
                           </span>
                         )}
-                      </td>
-                      <td className="px-5 py-2.5 text-[12px] text-muted-foreground">
+                      </TableCell>
+                      <TableCell className="px-5 py-2.5 text-[12px] text-muted-foreground">
                         {t.ownerRole}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </PanelCard>
 

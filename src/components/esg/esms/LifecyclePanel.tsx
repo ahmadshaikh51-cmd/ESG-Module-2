@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PanelCard, useEsg } from "../primitives";
+import { EsmsLifecycleDiagram } from "./EsmsLifecycleDiagram";
 import {
   ArrowDown,
   Globe,
@@ -40,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   entityById,
   fmtDate,
@@ -732,58 +734,10 @@ export function LifecyclePanel() {
             activePanelTab ? "lg:w-[56%] w-full" : "w-full"
           )}>
             {mode === "all" ? (
-              <>
-              {/* Header and Legend Bar */}
-              <div className="w-full max-w-[1100px] flex flex-wrap items-center justify-between gap-3 bg-card border border-border/50 rounded-xl p-4 shadow-sm">
-                <div>
-                  <h3 className="text-[13.5px] font-bold text-foreground leading-none flex items-center gap-2">
-                    In-Depth ESMS — Project Lifecycle, Risk & Reporting
-                  </h3>
-                  <p className="text-[10.5px] text-muted-foreground mt-1 leading-none">
-                    End-to-end Environmental & Social Management System flow
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 text-[9px] text-muted-foreground font-bold uppercase tracking-wider">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded-full bg-[oklch(0.2_0.028_255)] border-none" /> Start / End
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded-md border border-border bg-card" /> Process
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded-md border border-warning/40 bg-warning/5" /> Decision
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded-md border border-dashed border-border bg-card" /> Data / Doc
-                  </span>
-                </div>
+              <div className="w-full">
+                <EsmsLifecycleDiagram />
               </div>
-
-              {/* Obligations Banner */}
-              <div className="w-full max-w-[1100px] mt-4 bg-primary/5 border border-primary/10 rounded-xl px-4 py-2 text-[10px] font-bold text-center text-primary tracking-wider uppercase">
-                OBLIGATIONS & COMPLIANCE: National Permits & Licenses · IFC Performance Standards · Contractual Scope of Work
-              </div>
-
-              {/* Image Flowchart */}
-              <div className="flex flex-col items-center justify-center w-full mt-6 mb-8 rounded-xl relative p-4 bg-background">
-                <img 
-                  src="/flow.png" 
-                  alt="ESMS Lifecycle Pipeline View" 
-                  className="max-w-full w-auto max-h-[1200px] h-auto object-contain rounded-xl shadow-sm border border-border/50"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const parent = e.currentTarget.parentElement;
-                    if (parent) {
-                      const text = document.createElement('div');
-                      text.className = 'text-muted-foreground text-center p-8';
-                      text.innerHTML = '<strong>Image not found</strong><br/>Please save your image as <code>public/esms-lifecycle.png</code>';
-                      parent.appendChild(text);
-                    }
-                  }}
-                />
-              </div>
-            </>
-          ) : (
+            ) : (
               <div className="flex flex-col items-center min-w-[850px] pb-12">
                 {/* Trunk */}
                 <Node title={nodeTitle} variant="primary" />
@@ -1098,50 +1052,54 @@ export function LifecyclePanel() {
                       <div className="space-y-3">
                         <div>
                           <label className="block text-[10.5px] font-semibold text-muted-foreground uppercase mb-1">Document Category</label>
-                          <select
+                          <Select
                             value={uploadCategory}
-                            onChange={(e) => setUploadCategory(e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg p-2 text-[12px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            onValueChange={(val) => setUploadCategory(val)}
                           >
+                            <SelectTrigger className="w-full h-9 bg-background text-[12px]">
+                              <SelectValue placeholder="Select Category" />
+                            </SelectTrigger>
+                            <SelectContent>
                             {activePanelTab === "screening" ? (
                               <>
-                                <option value="Preliminary E&S Screening Report">Preliminary E&S Screening Report</option>
-                                <option value="E&S Screening Checklist">E&S Screening Checklist</option>
-                                <option value="Screening Data Sheet">Screening Data Sheet</option>
-                                <option value="Initial Site Assessment">Initial Site Assessment</option>
-                                <option value="Site Visit Notes">Site Visit Notes</option>
-                                <option value="Supporting E&S Evidence">Supporting E&S Evidence</option>
+                                <SelectItem value="Preliminary E&S Screening Report" className="text-[12px]">Preliminary E&S Screening Report</SelectItem>
+                                <SelectItem value="E&S Screening Checklist" className="text-[12px]">E&S Screening Checklist</SelectItem>
+                                <SelectItem value="Screening Data Sheet" className="text-[12px]">Screening Data Sheet</SelectItem>
+                                <SelectItem value="Initial Site Assessment" className="text-[12px]">Initial Site Assessment</SelectItem>
+                                <SelectItem value="Site Visit Notes" className="text-[12px]">Site Visit Notes</SelectItem>
+                                <SelectItem value="Supporting E&S Evidence" className="text-[12px]">Supporting E&S Evidence</SelectItem>
                               </>
                             ) : activeLifecycle?.branch === "greenfield" ? (
                               <>
-                                <option value="Comprehensive ESIA Report">Comprehensive ESIA Report</option>
-                                <option value="ESIA Impact Study Draft">ESIA Impact Study Draft</option>
-                                <option value="ESIA Non-Technical Summary">ESIA Non-Technical Summary</option>
-                                <option value="Site Public Consultation Report">Site Public Consultation Report</option>
-                                <option value="ESIA Stakeholder Engagement Plan">ESIA Stakeholder Engagement Plan</option>
-                                <option value="Supporting ESIA Evidence">Supporting ESIA Evidence</option>
+                                <SelectItem value="Comprehensive ESIA Report" className="text-[12px]">Comprehensive ESIA Report</SelectItem>
+                                <SelectItem value="ESIA Impact Study Draft" className="text-[12px]">ESIA Impact Study Draft</SelectItem>
+                                <SelectItem value="ESIA Non-Technical Summary" className="text-[12px]">ESIA Non-Technical Summary</SelectItem>
+                                <SelectItem value="Site Public Consultation Report" className="text-[12px]">Site Public Consultation Report</SelectItem>
+                                <SelectItem value="ESIA Stakeholder Engagement Plan" className="text-[12px]">ESIA Stakeholder Engagement Plan</SelectItem>
+                                <SelectItem value="Supporting ESIA Evidence" className="text-[12px]">Supporting ESIA Evidence</SelectItem>
                               </>
                             ) : (
                               <>
-                                <option value="Comprehensive ESDD Report">Comprehensive ESDD Report</option>
-                                <option value="ESDD Due Diligence Checklist">ESDD Due Diligence Checklist</option>
-                                <option value="ESDD Compliance Audit Report">ESDD Compliance Audit Report</option>
-                                <option value="Site Legacy Contamination Study">Site Legacy Contamination Study</option>
-                                <option value="Corrective Action Plan Draft">Corrective Action Plan Draft</option>
-                                <option value="Supporting ESDD Evidence">Supporting ESDD Evidence</option>
+                                <SelectItem value="Comprehensive ESDD Report" className="text-[12px]">Comprehensive ESDD Report</SelectItem>
+                                <SelectItem value="ESDD Due Diligence Checklist" className="text-[12px]">ESDD Due Diligence Checklist</SelectItem>
+                                <SelectItem value="ESDD Compliance Audit Report" className="text-[12px]">ESDD Compliance Audit Report</SelectItem>
+                                <SelectItem value="Site Legacy Contamination Study" className="text-[12px]">Site Legacy Contamination Study</SelectItem>
+                                <SelectItem value="Corrective Action Plan Draft" className="text-[12px]">Corrective Action Plan Draft</SelectItem>
+                                <SelectItem value="Supporting ESDD Evidence" className="text-[12px]">Supporting ESDD Evidence</SelectItem>
                               </>
                             )}
-                          </select>
+                            </SelectContent>
+                          </Select>
                         </div>
 
                         <div>
                           <label className="block text-[10.5px] font-semibold text-muted-foreground uppercase mb-1">Document Name (Optional)</label>
-                          <input
+                          <Input
                             type="text"
                             placeholder="e.g. Site Visit Notes July"
                             value={uploadName}
                             onChange={(e) => setUploadName(e.target.value)}
-                            className="w-full bg-background border border-border rounded-lg p-2 text-[12px] text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            className="h-9 w-full bg-background text-[12px]"
                           />
                         </div>
 

@@ -32,6 +32,9 @@ import { INDICATORS, PROJECTS_MAPPING, type ReportType, ReportDataEntryForm } fr
 import { PERIODS } from "@/lib/esg-data";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { EscalationStatusIndicator } from "./EscalationStatusIndicator";
 import { getActiveEscalationForSource } from "@/lib/esg-escalations";
@@ -650,74 +653,77 @@ function ContributorWorkspace({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
           <div className="space-y-1">
             <Label className="text-[11.5px] font-semibold text-muted-foreground">Project</Label>
-            <select
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
-            >
-              <option value="all">All Projects</option>
-              {Object.keys(PROJECTS_MAPPING).map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
+            <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <SelectTrigger className="h-8 text-[12px] bg-background">
+                <SelectValue placeholder="All Projects" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Projects</SelectItem>
+                {Object.keys(PROJECTS_MAPPING).map(p => (
+                  <SelectItem key={p} value={p}>{p}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
             <Label className="text-[11.5px] font-semibold text-muted-foreground">Site / Facility</Label>
-            <select
-              value={selectedSite}
-              onChange={(e) => setSelectedSite(e.target.value)}
-              disabled={selectedProject === "all"}
-              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none disabled:opacity-50"
-            >
-              <option value="all">All Sites</option>
-              {siteOptions.map(s => (
-                <option key={s.id} value={s.id}>{s.name}</option>
-              ))}
-            </select>
+            <Select value={selectedSite} onValueChange={setSelectedSite} disabled={selectedProject === "all"}>
+              <SelectTrigger className="h-8 text-[12px] bg-background">
+                <SelectValue placeholder="All Sites" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sites</SelectItem>
+                {siteOptions.map(s => (
+                  <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
             <Label className="text-[11.5px] font-semibold text-muted-foreground">Reporting Period</Label>
-            <select
-              value={selectedPeriod}
-              onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
-            >
-              <option value="all">All Periods</option>
-              {PERIODS.map(p => (
-                <option key={p.id} value={p.id}>{p.label}</option>
-              ))}
-            </select>
+            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+              <SelectTrigger className="h-8 text-[12px] bg-background">
+                <SelectValue placeholder="All Periods" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Periods</SelectItem>
+                {PERIODS.map(p => (
+                  <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
             <Label className="text-[11.5px] font-semibold text-muted-foreground">Status</Label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full h-8 rounded-lg border border-border/80 bg-background px-2 text-[12px] focus:outline-none"
-            >
-              <option value="all">All Statuses</option>
-              <option value="Pending Entry">Pending Entry</option>
-              <option value="Draft">Draft</option>
-              <option value="Submitted">Submitted</option>
-              <option value="Reviewed">Reviewed</option>
-              <option value="Returned">Returned</option>
-              <option value="Approved">Approved</option>
-            </select>
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="h-8 text-[12px] bg-background">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="Pending Entry">Pending Entry</SelectItem>
+                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="Submitted">Submitted</SelectItem>
+                <SelectItem value="Reviewed">Reviewed</SelectItem>
+                <SelectItem value="Returned">Returned</SelectItem>
+                <SelectItem value="Approved">Approved</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
             <Label className="text-[11.5px] font-semibold text-muted-foreground">Search</Label>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground/60" />
-              <input
+              <Input
                 type="text"
                 placeholder="Search indicator..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-8 pl-8 rounded-lg border border-border/80 bg-background text-[12px] focus:outline-none"
+                className="h-8 pl-8 text-[12px] bg-background"
               />
             </div>
           </div>
@@ -732,18 +738,18 @@ function ContributorWorkspace({
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border/60 bg-muted/20 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  <th className="px-5 py-3.5">Indicator Code & Description</th>
-                  <th className="px-3 py-3.5">Project / Site</th>
-                  <th className="px-3 py-3.5">Period</th>
-                  <th className="px-3 py-3.5">Entered Value</th>
-                  <th className="px-3 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
+            <Table>
+              <TableHeader className="bg-muted/20">
+                <TableRow className="border-b border-border/60 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:bg-transparent">
+                  <TableHead className="px-5 py-3.5 h-auto text-muted-foreground">Indicator Code & Description</TableHead>
+                  <TableHead className="px-3 py-3.5 h-auto text-muted-foreground">Project / Site</TableHead>
+                  <TableHead className="px-3 py-3.5 h-auto text-muted-foreground">Period</TableHead>
+                  <TableHead className="px-3 py-3.5 h-auto text-muted-foreground">Entered Value</TableHead>
+                  <TableHead className="px-3 py-3.5 h-auto text-muted-foreground">Status</TableHead>
+                  <TableHead className="px-5 py-3.5 h-auto text-right text-muted-foreground">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/40">
                 {filteredTasks.map((t, idx) => {
                   const isPending = t.status === "Pending Entry";
                   const isDraft = t.status === "Draft";
@@ -753,11 +759,11 @@ function ContributorWorkspace({
                   const isApproved = t.status === "Approved";
 
                   return (
-                    <tr
+                    <TableRow
                       key={`${t.project}-${t.siteId}-${t.indicator.id}-${t.period}-${idx}`}
                       className="hover:bg-muted/30 transition-colors"
                     >
-                      <td className="px-5 py-3 max-w-[280px]">
+                      <TableCell className="px-5 py-3 max-w-[280px]">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <span className="font-semibold text-primary text-[10.5px] font-mono bg-primary/8 border border-primary/15 rounded px-1 py-0.5">
@@ -776,21 +782,21 @@ function ContributorWorkspace({
                             </div>
                           )}
                         </div>
-                      </td>
+                      </TableCell>
 
-                      <td className="px-3 py-3">
+                      <TableCell className="px-3 py-3">
                         <div className="font-semibold text-foreground text-[12.5px]">{t.project}</div>
                         <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
                           <MapPin className="h-3 w-3 shrink-0" />
                           <span>{t.siteName}</span>
                         </div>
-                      </td>
+                      </TableCell>
 
-                      <td className="px-3 py-3 font-medium text-foreground num">
+                      <TableCell className="px-3 py-3 font-medium text-foreground num">
                         {t.periodLabel}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-3 py-3 font-semibold num text-[13px]">
+                      <TableCell className="px-3 py-3 font-semibold num text-[13px]">
                         {t.value !== null && t.value !== undefined ? (
                           <div className="flex items-baseline gap-1">
                             <span className="text-foreground">{t.value}</span>
@@ -799,9 +805,9 @@ function ContributorWorkspace({
                         ) : (
                           <span className="text-muted-foreground/60 italic">—</span>
                         )}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-3 py-3">
+                      <TableCell className="px-3 py-3">
                         <span className={cn(
                           "inline-flex h-5 items-center rounded-md border px-1.5 text-[10px] font-bold",
                           isPending && "bg-muted/80 text-muted-foreground border-border/60",
@@ -813,9 +819,9 @@ function ContributorWorkspace({
                         )}>
                           {t.status}
                         </span>
-                      </td>
+                      </TableCell>
 
-                      <td className="px-5 py-3 text-right">
+                      <TableCell className="px-5 py-3 text-right">
                         <div className="flex justify-end gap-1.5">
                           {esgRole === "reviewer" && isSubmitted && (
                             <>
@@ -887,12 +893,12 @@ function ContributorWorkspace({
                             </Button>
                           )}
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </PanelCard>
@@ -2376,56 +2382,56 @@ function ApprovalCenterUI({
       {/* Main Table */}
       <PanelCard>
         <div className="overflow-x-auto">
-          <table className="w-full text-[12.5px] min-w-[800px]">
-            <thead>
-              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/30">
-                <th className="px-5 py-3 text-left font-medium">Record</th>
-                <th className="px-3 py-3 text-left font-medium">Module</th>
-                <th className="px-3 py-3 text-left font-medium">Project / Site</th>
-                <th className="px-3 py-3 text-left font-medium">Reporting Period</th>
-                <th className="px-3 py-3 text-left font-medium">Submitted By</th>
-                <th className="px-3 py-3 text-left font-medium">Due Date</th>
-                <th className="px-3 py-3 text-left font-medium">Escalation</th>
-                <th className="px-5 py-3 text-right font-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="min-w-[800px]">
+            <TableHeader className="bg-muted/30">
+              <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                <TableHead className="px-5 py-3 text-left font-medium h-auto text-muted-foreground">Record</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Module</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Project / Site</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Reporting Period</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Submitted By</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Due Date</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Escalation</TableHead>
+                <TableHead className="px-5 py-3 text-right font-medium h-auto text-muted-foreground">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredApprovalTasks.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">
+                <TableRow>
+                  <TableCell colSpan={8} className="px-5 py-8 text-center text-muted-foreground">
                     No pending records found matching this filter. All clean!
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredApprovalTasks.map((task) => (
-                  <tr key={task.id} className="border-b border-border/40 hover:bg-muted/15 last:border-0">
-                    <td className="px-5 py-3.5 font-bold text-foreground">
+                  <TableRow key={task.id} className="border-b border-border/40 hover:bg-muted/15 last:border-0">
+                    <TableCell className="px-5 py-3.5 font-bold text-foreground">
                       {task.recordName}
-                    </td>
-                    <td className="px-3 py-3.5 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5 text-muted-foreground">
                       {task.module}
-                    </td>
-                    <td className="px-3 py-3.5 text-foreground font-semibold">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5 text-foreground font-semibold">
                       {task.projectSite}
-                    </td>
-                    <td className="px-3 py-3.5 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5 text-muted-foreground">
                       {task.period}
-                    </td>
-                    <td className="px-3 py-3.5 text-foreground font-medium">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5 text-foreground font-medium">
                       {task.submittedBy}
-                    </td>
-                    <td className="px-3 py-3.5 text-muted-foreground font-mono">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5 text-muted-foreground font-mono">
                       {task.dueDate}
-                    </td>
-                    <td className="px-3 py-3.5">
+                    </TableCell>
+                    <TableCell className="px-3 py-3.5">
                       <span className={cn(
                         "rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase",
                         task.escalation !== "Level 0" ? "bg-destructive/10 text-destructive animate-pulse" : "bg-muted text-muted-foreground"
                       )}>
                         {task.escalation}
                       </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
+                    </TableCell>
+                    <TableCell className="px-5 py-3.5 text-right">
                       <Button
                         size="sm"
                         className="h-8 text-[11.5px] rounded-lg"
@@ -2433,12 +2439,12 @@ function ApprovalCenterUI({
                       >
                         Review
                       </Button>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </PanelCard>
 
@@ -2643,48 +2649,48 @@ function EscalationMatrixUI({ auditTrails }: EscalationMatrixUIProps) {
           <h4 className="text-[13px] font-bold text-foreground">Escalation Workflows & SLA Thresholds</h4>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-[12.5px] min-w-[700px]">
-            <thead>
-              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/40">
-                <th className="px-5 py-3 text-left font-medium">Workflow</th>
-                <th className="px-3 py-3 text-left font-medium">Trigger</th>
-                <th className="px-3 py-3 text-left font-medium">Priority</th>
-                <th className="px-3 py-3 text-left font-medium">Initial Owner</th>
-                <th className="px-3 py-3 text-left font-medium">SLA Limit</th>
-                <th className="px-3 py-3 text-left font-medium">Reminder</th>
-                <th className="px-3 py-3 text-left font-medium">L1 Esc</th>
-                <th className="px-3 py-3 text-left font-medium">L2 Esc</th>
-                <th className="px-3 py-3 text-left font-medium">L3 Esc</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="min-w-[700px]">
+            <TableHeader className="bg-muted/40">
+              <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                <TableHead className="px-5 py-3 text-left font-medium h-auto text-muted-foreground">Workflow</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Trigger</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Priority</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Initial Owner</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">SLA Limit</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">Reminder</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">L1 Esc</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">L2 Esc</TableHead>
+                <TableHead className="px-3 py-3 text-left font-medium h-auto text-muted-foreground">L3 Esc</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {[
                 { workflow: "Data Approval", trigger: "Approval Pending", priority: "Medium", owner: "Approver", sla: "2 Days", reminder: "1 Day", l1: "ESG Lead", l2: "Management", l3: "—" },
                 { workflow: "NC Remediation", trigger: "Overdue Closure", priority: "High", owner: "NC Owner", sla: "3 Days", reminder: "1 Day", l1: "Project Manager", l2: "ESG Lead", l3: "Management" },
                 { workflow: "ESAP Actions", trigger: "Overdue Closure", priority: "High", owner: "Action Owner", sla: "3 Days", reminder: "1 Day", l1: "Project Manager", l2: "ESG Lead", l3: "Management" },
                 { workflow: "Regulatory Compliance", trigger: "Expiry / Breach", priority: "Critical", owner: "Compliance Owner", sla: "2 Days", reminder: "Immediate", l1: "ESG Lead", l2: "Management", l3: "Executive Mgmt" },
               ].map((row, idx) => (
-                <tr key={idx} className="border-b border-border/40 hover:bg-muted/10 last:border-0">
-                  <td className="px-5 py-3 font-bold text-foreground">{row.workflow}</td>
-                  <td className="px-3 py-3 text-muted-foreground">{row.trigger}</td>
-                  <td className="px-3 py-3">
+                <TableRow key={idx} className="border-b border-border/40 hover:bg-muted/10 last:border-0">
+                  <TableCell className="px-5 py-3 font-bold text-foreground">{row.workflow}</TableCell>
+                  <TableCell className="px-3 py-3 text-muted-foreground">{row.trigger}</TableCell>
+                  <TableCell className="px-3 py-3">
                     <span className={cn(
                       "px-2 py-0.5 rounded-md text-[10px] font-bold uppercase",
                       row.priority === "Critical" ? "bg-destructive/10 text-destructive" : row.priority === "High" ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"
                     )}>
                       {row.priority}
                     </span>
-                  </td>
-                  <td className="px-3 py-3 text-foreground font-semibold">{row.owner}</td>
-                  <td className="px-3 py-3 text-muted-foreground font-mono">{row.sla}</td>
-                  <td className="px-3 py-3 text-muted-foreground font-mono">{row.reminder}</td>
-                  <td className="px-3 py-3 text-foreground font-semibold">{row.l1}</td>
-                  <td className="px-3 py-3 text-foreground font-semibold">{row.l2}</td>
-                  <td className="px-3 py-3 text-foreground font-semibold">{row.l3}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="px-3 py-3 text-foreground font-semibold">{row.owner}</TableCell>
+                  <TableCell className="px-3 py-3 text-muted-foreground font-mono">{row.sla}</TableCell>
+                  <TableCell className="px-3 py-3 text-muted-foreground font-mono">{row.reminder}</TableCell>
+                  <TableCell className="px-3 py-3 text-foreground font-semibold">{row.l1}</TableCell>
+                  <TableCell className="px-3 py-3 text-foreground font-semibold">{row.l2}</TableCell>
+                  <TableCell className="px-3 py-3 text-foreground font-semibold">{row.l3}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </PanelCard>
 
@@ -2695,45 +2701,45 @@ function EscalationMatrixUI({ auditTrails }: EscalationMatrixUIProps) {
           <span className="text-[11px] text-muted-foreground font-medium">Dynamically resolved via Master definitions</span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-[12px] min-w-[800px]">
-            <thead>
-              <tr className="border-b border-border/60 text-[10px] uppercase tracking-[0.1em] text-muted-foreground bg-muted/40">
-                <th className="px-5 py-2.5 text-left font-medium">User</th>
-                <th className="px-3 py-2.5 text-left font-medium">Role</th>
-                <th className="px-3 py-2.5 text-left font-medium">Project / Site</th>
-                <th className="px-3 py-2.5 text-left font-medium">Record Action</th>
-                <th className="px-3 py-2.5 text-left font-medium">SLA Status Delta</th>
-                <th className="px-3 py-2.5 text-left font-medium">Master Config Source</th>
-                <th className="px-5 py-2.5 text-right font-medium">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="min-w-[800px]">
+            <TableHeader className="bg-muted/40">
+              <TableRow className="border-b border-border/60 text-[10px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">User</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Role</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Project / Site</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Record Action</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">SLA Status Delta</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Master Config Source</TableHead>
+                <TableHead className="px-5 py-2.5 text-right font-medium h-auto text-muted-foreground">Timestamp</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {auditTrails.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-5 py-6 text-center text-muted-foreground font-semibold">
+                <TableRow>
+                  <TableCell colSpan={7} className="px-5 py-6 text-center text-muted-foreground font-semibold">
                     No validation events logged yet. Audit trails are recorded dynamically.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 auditTrails.map((log: any) => (
-                  <tr key={log.id} className="border-b border-border/40 hover:bg-muted/10 last:border-0 font-mono text-[11.5px]">
-                    <td className="px-5 py-2.5 font-bold text-foreground">{log.user}</td>
-                    <td className="px-3 py-2.5 text-muted-foreground">{log.role}</td>
-                    <td className="px-3 py-2.5 text-foreground">{log.project} / {log.site}</td>
-                    <td className="px-3 py-2.5 text-foreground font-semibold">
+                  <TableRow key={log.id} className="border-b border-border/40 hover:bg-muted/10 last:border-0 font-mono text-[11.5px]">
+                    <TableCell className="px-5 py-2.5 font-bold text-foreground">{log.user}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">{log.role}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-foreground">{log.project} / {log.site}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-foreground font-semibold">
                       {log.record}
-                    </td>
-                    <td className="px-3 py-2.5">
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5">
                       <span className="font-bold text-primary">{log.action}</span>
                       <span className="text-[10px] text-muted-foreground ml-1">({log.previousStatus} → {log.newStatus})</span>
-                    </td>
-                    <td className="px-3 py-2.5 text-muted-foreground">{log.resolvedByMaster}</td>
-                    <td className="px-5 py-2.5 text-right text-muted-foreground">{new Date(log.timestamp).toLocaleTimeString()}</td>
-                  </tr>
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">{log.resolvedByMaster}</TableCell>
+                    <TableCell className="px-5 py-2.5 text-right text-muted-foreground">{new Date(log.timestamp).toLocaleTimeString()}</TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </PanelCard>
     </div>

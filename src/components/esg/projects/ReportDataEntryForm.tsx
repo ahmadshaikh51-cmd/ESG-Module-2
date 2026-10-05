@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { PEOPLE, ESG_GROUP, type Person } from "@/lib/esg-data";
 import { PanelCard, useEsg } from "../primitives";
@@ -1236,30 +1237,30 @@ export function ReportDataEntryForm({
                   </span>
                 </div>
                 <div className="p-4 overflow-auto">
-                  <table className="w-full text-[12px] border-collapse">
-                    <thead>
-                      <tr className="border-b border-border/60 text-muted-foreground uppercase text-[10px] tracking-wider text-left">
-                        <th className="py-2 px-3 font-semibold">Site / Depot</th>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-b border-border/60 text-muted-foreground uppercase text-[10px] tracking-wider text-left hover:bg-transparent">
+                        <TableHead className="py-2 px-3 font-semibold h-auto text-muted-foreground">Site / Depot</TableHead>
                         {filteredIndicatorsList.map(ind => (
-                          <th key={ind.id} className="py-2 px-3 font-semibold min-w-[160px]">
+                          <TableHead key={ind.id} className="py-2 px-3 font-semibold min-w-[160px] h-auto text-muted-foreground">
                             {ind.name} ({ind.unit})
-                          </th>
+                          </TableHead>
                         ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/40">
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody className="divide-y divide-border/40">
                       {projectConfig.sites.map(s => (
-                        <tr key={s.id} className="hover:bg-muted/10 transition-colors">
-                          <td className="py-3 px-3 font-bold text-foreground text-[12.5px]">
+                        <TableRow key={s.id} className="hover:bg-muted/10 transition-colors border-0">
+                          <TableCell className="py-3 px-3 font-bold text-foreground text-[12.5px]">
                             {s.name}
-                          </td>
+                          </TableCell>
                           {filteredIndicatorsList.map(ind => {
                             const valObj = bulkIndicatorValues[s.id]?.[ind.id] || {};
                             const val = valObj.actual || "";
                             const isNeg = Number(val) < 0;
                             
                             return (
-                              <td key={ind.id} className="py-3 px-3">
+                              <TableCell key={ind.id} className="py-3 px-3">
                                 <div className="space-y-1 relative">
                                   <Input
                                     type="number"
@@ -1288,13 +1289,13 @@ export function ReportDataEntryForm({
                                     {ind.unit}
                                   </span>
                                 </div>
-                              </td>
+                              </TableCell>
                             );
                           })}
-                        </tr>
+                        </TableRow>
                       ))}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
               </PanelCard>
             ) : (

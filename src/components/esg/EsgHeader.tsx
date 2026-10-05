@@ -394,6 +394,10 @@ export function EsgHeader({ area }: { area: string }) {
           </button>
           <span className="h-4 w-[1px] bg-border/60" />
           <div className="flex flex-col">
+            <span className="text-[10.5px] font-semibold text-muted-foreground/80 tracking-wide uppercase">
+              ESG Module / {AREAS.find((a) => a.key === area)?.label || area}
+              {sub ? ` / ${getPageTitle(area, sub)}` : ""}
+            </span>
             <span className="text-[14px] font-bold text-foreground tracking-tight select-none">
               {getPageTitle(area, sub)}
             </span>

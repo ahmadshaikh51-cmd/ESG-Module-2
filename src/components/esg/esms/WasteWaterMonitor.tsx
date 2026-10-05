@@ -24,6 +24,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -371,21 +379,21 @@ export function WasteWaterMonitor({
       {/* Table */}
       <div className="rounded-2xl border border-border/60 bg-card shadow-elevated overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px] min-w-[800px]">
-            <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-6 py-4 font-semibold w-[180px]">Month / Date</th>
-                <th className="px-6 py-4 font-semibold w-[200px]">Site / Project</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">QTY Litres</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">Sludge (Weight/Volume)</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">Sludge Ratio</th>
-                <th className="px-6 py-4 font-semibold text-right w-[100px]">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+          <Table className="w-full text-left text-[13px] min-w-[800px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-6 py-4 font-semibold w-[180px]">Month / Date</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px]">Site / Project</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">QTY Litres</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">Sludge (Weight/Volume)</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">Sludge Ratio</TableHead>
+                <TableHead className="px-6 py-4 font-semibold text-right w-[100px]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-border/40">
               {filteredList.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-16 text-center">
+                <TableRow>
+                  <TableCell colSpan={6} className="px-6 py-16 text-center">
                     <EmptyState
                       title="No waste water records found"
                       hint={
@@ -394,8 +402,8 @@ export function WasteWaterMonitor({
                           : "Click '+ Enter Waste Water' to record your first effluent cycle."
                       }
                     />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredList.map((rec) => {
                   const ratio =
@@ -403,19 +411,19 @@ export function WasteWaterMonitor({
                       ? (rec.sludgeQty / (rec.qtyLitres / 1000)).toFixed(2)
                       : "0.00";
                   return (
-                    <tr
+                    <TableRow
                       key={rec.id}
                       className="hover:bg-muted/15 transition-colors group"
                     >
                       {/* Month/Date */}
-                      <td className="px-6 py-4.5 whitespace-nowrap">
+                      <TableCell className="px-6 py-4.5 whitespace-nowrap">
                         <div className="font-bold text-foreground text-[13.5px]">
                           {rec.monthDate}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Site / Project */}
-                      <td className="px-6 py-4.5">
+                      <TableCell className="px-6 py-4.5">
                         <div className="font-semibold text-foreground flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                           <span>{rec.depotName}</span>
@@ -423,29 +431,29 @@ export function WasteWaterMonitor({
                         <span className="text-[11.5px] text-muted-foreground block ml-5">
                           {rec.entityName}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* QTY Litres */}
-                      <td className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
+                      <TableCell className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
                         {rec.qtyLitres.toLocaleString()}{" "}
                         <span className="text-[12px] font-normal text-muted-foreground">L</span>
-                      </td>
+                      </TableCell>
 
                       {/* Sludge */}
-                      <td className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
+                      <TableCell className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
                         {rec.sludgeQty.toLocaleString()}{" "}
                         <span className="text-[12px] font-normal text-muted-foreground">Kg / L</span>
-                      </td>
+                      </TableCell>
 
                       {/* Ratio */}
-                      <td className="num px-6 py-4.5 text-right">
+                      <TableCell className="num px-6 py-4.5 text-right">
                         <span className="inline-flex items-center gap-1 font-bold text-primary text-[13px] bg-primary/10 px-2.5 py-1 rounded-lg">
                           <Layers className="h-3 w-3" /> {ratio} Kg / kL
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Actions */}
-                      <td className="px-6 py-4.5 text-right">
+                      <TableCell className="px-6 py-4.5 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -472,13 +480,13 @@ export function WasteWaterMonitor({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
 

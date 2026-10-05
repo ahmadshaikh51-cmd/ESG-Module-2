@@ -54,6 +54,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,6 +93,7 @@ import { LabTestDataEntry } from "./LabTestDataEntry";
 import { LabTestMonitorView } from "./LabTestMonitorView";
 import { SocialDataEntry, type SocialRecordItem } from "./SocialDataEntry";
 import { SocialMonitorView } from "./SocialMonitorView";
+import { SiteMonitoringDashboard } from "../monitoring/SiteMonitoringDashboard";
 
 const CATEGORIES: MonitoringCategory[] = ["air", "water", "noise"];
 
@@ -270,28 +272,28 @@ function ImportDialog({
               {fileName} — {matched.length} of {rows.length} rows matched a known parameter.
             </div>
             <div className="max-h-[240px] overflow-y-auto rounded-lg border border-border/60">
-              <table className="w-full text-[12px]">
-                <thead>
-                  <tr className="border-b border-border/60 text-[10.5px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-3 py-2 text-left font-medium">Parameter</th>
-                    <th className="px-3 py-2 text-right font-medium">Value</th>
-                    <th className="px-3 py-2 text-left font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="w-full text-[12px]">
+                <TableHeader>
+                  <TableRow className="border-b border-border/60 text-[10.5px] uppercase tracking-wider text-muted-foreground hover:bg-transparent">
+                    <TableHead className="px-3 py-2 text-left font-medium h-auto text-muted-foreground">Parameter</TableHead>
+                    <TableHead className="px-3 py-2 text-right font-medium h-auto text-muted-foreground">Value</TableHead>
+                    <TableHead className="px-3 py-2 text-left font-medium h-auto text-muted-foreground">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {rows.map((r, i) => (
-                    <tr
+                    <TableRow
                       key={i}
                       className={cn(
-                        "border-b border-border/40 last:border-0",
+                        "border-b border-border/40 last:border-0 hover:bg-muted/15",
                         !r.matched && "bg-warning/5",
                       )}
                     >
-                      <td className="px-3 py-1.5">{r.label || r.paramKey}</td>
-                      <td className="num px-3 py-1.5 text-right">
+                      <TableCell className="px-3 py-1.5 text-foreground">{r.label || r.paramKey}</TableCell>
+                      <TableCell className="num px-3 py-1.5 text-right text-foreground">
                         {Number.isFinite(r.value) ? r.value : "—"}
-                      </td>
-                      <td className="px-3 py-1.5">
+                      </TableCell>
+                      <TableCell className="px-3 py-1.5 text-foreground">
                         {r.matched ? (
                           <span className="text-[11px] text-success">will import</span>
                         ) : (
@@ -299,11 +301,11 @@ function ImportDialog({
                             <AlertTriangle className="h-3 w-3" aria-hidden /> unmatched — skipped
                           </span>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
@@ -358,12 +360,8 @@ export function MonitoringPanel() {
 
   // Domain tab state: Meta Data vs Meta Data Social
   const [topDomain, setTopDomain] = useState<"meta_data" | "meta_data_social">("meta_data");
-  const [labEntryMode, setLabEntryMode] = useState<"entry" | "monitor">(
-    canEdit ? "entry" : "monitor",
-  );
-  const [socialEntryMode, setSocialEntryMode] = useState<"entry" | "monitor">(
-    canEdit ? "entry" : "monitor",
-  );
+  const [labEntryMode, setLabEntryMode] = useState<"entry" | "monitor">("monitor");
+  const [socialEntryMode, setSocialEntryMode] = useState<"entry" | "monitor">("monitor");
   const [socialRecords, setSocialRecords] = useState<SocialRecordItem[]>([]);
   const [importOpen, setImportOpen] = useState(false);
   const [manual, setManual] = useState<Record<string, string>>({});
@@ -683,7 +681,7 @@ export function MonitoringPanel() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {/* Mode Switcher inside the Active Domain (Data Entry vs Monitor & Review) */}
+          {/* Mode Switcher inside the Active Domain (Monitor & Review vs Data Entry) */}
           {topDomain === "meta_data" ? (
             <Segmented
               ariaLabel="Environmental mode toggle"
@@ -691,8 +689,8 @@ export function MonitoringPanel() {
               value={labEntryMode}
               onChange={setLabEntryMode}
               options={[
-                { key: "entry", label: "Data Entry", Icon: PencilLine },
                 { key: "monitor", label: "Monitor & Review", Icon: FileSpreadsheet },
+                { key: "entry", label: "Data Entry", Icon: PencilLine },
               ]}
             />
           ) : (
@@ -702,8 +700,8 @@ export function MonitoringPanel() {
               value={socialEntryMode}
               onChange={setSocialEntryMode}
               options={[
-                { key: "entry", label: "Data Entry", Icon: PencilLine },
                 { key: "monitor", label: "Monitor & Review", Icon: FileSpreadsheet },
+                { key: "entry", label: "Data Entry", Icon: PencilLine },
               ]}
             />
           )}
@@ -720,15 +718,6 @@ export function MonitoringPanel() {
               >
                 <Upload className="h-4 w-4" aria-hidden /> Import Excel
               </Button>
-              {labEntryMode === "monitor" && (
-                <Button
-                  size="sm"
-                  className="h-9 gap-2 font-bold text-[12.5px] shadow-sm px-4"
-                  onClick={() => setLabEntryMode("entry")}
-                >
-                  <Plus className="h-4 w-4" /> + Enter New Lab Test
-                </Button>
-              )}
             </div>
           )}
 
@@ -739,7 +728,7 @@ export function MonitoringPanel() {
               className="h-9 gap-2 font-bold text-[12.5px] shadow-sm px-4"
               onClick={() => setSocialEntryMode("entry")}
             >
-              <Plus className="h-4 w-4" /> + Enter Social Record
+              <Plus className="h-4 w-4" /> Enter Social Record
             </Button>
           )}
         </div>
@@ -757,12 +746,7 @@ export function MonitoringPanel() {
             initialPeriod={period}
           />
         ) : (
-          <LabTestMonitorView
-            labTests={wf.labTests}
-            onNewTestClick={() => setLabEntryMode("entry")}
-            onDeleteTest={(id) => wf.deleteLabTest(id)}
-            onCloseAction={(id, remarks) => wf.closeLabTestAction(id, remarks)}
-          />
+          <SiteMonitoringDashboard />
         )
       ) : socialEntryMode === "entry" ? (
         <SocialDataEntry

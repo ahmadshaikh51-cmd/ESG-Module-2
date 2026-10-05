@@ -50,12 +50,24 @@ function subLabel(s: EsmsSubTab): React.ReactNode {
  */
 export function EsmsTab({ initialSub }: { initialSub?: string }) {
   const { scope, goto } = useEsg();
-  const [sub, setSub] = useState<string>(() => resolveEsmsSub(initialSub));
+  const [sub, setSub] = useState<string>(() => {
+    if (initialSub) return resolveEsmsSub(initialSub);
+    try {
+      const saved = sessionStorage.getItem("esg_sub_esms");
+      if (saved) return resolveEsmsSub(saved);
+    } catch {}
+    return resolveEsmsSub(initialSub);
+  });
   const loading = useStubLoad(sub + JSON.stringify(scope));
 
   // Sync when initialSub prop changes
   useEffect(() => {
-    if (initialSub) setSub(resolveEsmsSub(initialSub));
+    if (initialSub) {
+      setSub(resolveEsmsSub(initialSub));
+      try {
+        sessionStorage.setItem("esg_sub_esms", resolveEsmsSub(initialSub));
+      } catch {}
+    }
   }, [initialSub]);
 
   const currentUser = getCurrentUser();
@@ -82,6 +94,9 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
 
   const selectSub = (next: string) => {
     setSub(next);
+    try {
+      sessionStorage.setItem("esg_sub_esms", next);
+    } catch {}
     goto("esms", { sub: next });
   };
 

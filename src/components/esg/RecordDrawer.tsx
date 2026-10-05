@@ -193,14 +193,26 @@ export function RecordDrawer({
     });
   };
 
+  const criticalityLabel = overdue ? "Critical · L4" : state === "expiring" ? "High · L3" : "Normal · L1";
+  const criticalityCls = overdue
+    ? "bg-destructive/12 text-destructive border-destructive/20"
+    : state === "expiring"
+      ? "bg-warning/14 text-warning border-warning/20"
+      : "bg-muted text-muted-foreground border-border/40";
+
   return (
     <Sheet open onOpenChange={(o) => !o && onClose()}>
-      <SheetContent className="w-full overflow-y-auto border-border/60 sm:max-w-[520px]">
+      <SheetContent className="w-full overflow-y-auto border-border/60 sm:max-w-[540px]">
         <SheetHeader className="space-y-3 pb-0">
           <div className="flex items-start justify-between gap-3 pr-8">
             <div>
-              <div className="section-label">
-                {type?.category === "permit" ? "Permit / Licence" : "Site Compliance"}
+              <div className="flex items-center gap-2">
+                <span className="section-label">
+                  {type?.category === "permit" ? "Permit / Licence" : "Site Compliance"}
+                </span>
+                <span className={cn("inline-flex items-center rounded-md border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider", criticalityCls)}>
+                  {criticalityLabel}
+                </span>
               </div>
               <SheetTitle className="mt-1 text-[19px] leading-tight tracking-tight">
                 <Gloss text={type?.label ?? record.typeKey} />
@@ -215,7 +227,7 @@ export function RecordDrawer({
             </div>
           </div>
 
-          {/* Expiry clock — the unit of risk, always visible */}
+          {/* Expiry clock — unit of risk & calm urgency, matching Policy Report */}
           <div
             className="flex items-center justify-between rounded-xl border px-4 py-3"
             style={{
@@ -248,10 +260,11 @@ export function RecordDrawer({
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Action Toolbar — Primary action in Teal/Primary styling */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <Button
               size="sm"
-              className="h-8 gap-1.5 rounded-lg text-[12px]"
+              className="h-8 gap-1.5 rounded-lg text-[12px] bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-sm"
               onClick={act}
               disabled={renewalState === "initiated" && !overdue}
             >
@@ -267,19 +280,19 @@ export function RecordDrawer({
                   : "Start renewal"}
             </Button>
             {renewalState === "initiated" && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-                <RefreshCcw className="h-2.5 w-2.5" aria-hidden /> Renewal in progress
+              <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-primary border border-primary/20">
+                <RefreshCcw className="h-3 w-3" aria-hidden /> Renewal in progress
               </span>
             )}
             {record.withheldExternal && audience === "internal" && <WithheldPill />}
           </div>
         </SheetHeader>
 
-        <div className="mt-5 space-y-5 pb-4">
-          {/* Root cause — visually unavoidable whenever non-compliant */}
+        <div className="mt-5 space-y-5 pb-6">
+          {/* Root cause — visually clear and restrained when overdue */}
           {overdue && (
             <CriticalBeam size="pulse-inner">
-              <section className="rounded-xl border border-destructive/35 bg-destructive/5 p-4">
+              <section className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
                 <div className="flex items-center justify-between">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive">
                     Root cause & remediation — required
@@ -291,8 +304,8 @@ export function RecordDrawer({
                 <Textarea
                   value={remarksVal}
                   onChange={(e) => setRemarks(e.target.value)}
-                  placeholder="Why is this item non-compliant, and what is being done? This field is mandatory while the item is overdue."
-                  className="mt-2.5 min-h-[88px] resize-none border-destructive/25 bg-card/70 text-[12.5px] leading-relaxed"
+                  placeholder="Why is this item non-compliant, and what action is being taken? This field is mandatory while the item is overdue."
+                  className="mt-2.5 min-h-[88px] resize-none border-destructive/25 bg-card/70 text-[12.5px] leading-relaxed focus-visible:ring-destructive/30"
                 />
                 {!remarksVal.trim() && (
                   <p className="mt-1.5 text-[11px] font-medium text-destructive">
@@ -303,35 +316,41 @@ export function RecordDrawer({
             </CriticalBeam>
           )}
 
-          <section className="grid grid-cols-2 gap-x-4 gap-y-4">
-            <Detail label="Reference no.">{record.refNo}</Detail>
-            <Detail label="Issuing authority">{record.authority}</Detail>
-            <Detail label="Issue date">{fmtDate(record.issueDate)}</Detail>
-            <Detail label="Expiry date">
-              <span className={cn(overdue && "text-destructive")}>
-                {fmtDate(effectiveRecord.expiryDate)}
-              </span>
-              {expiryOverride && (
-                <span className="ml-1.5 text-[10px] font-normal text-primary">(updated)</span>
-              )}
-            </Detail>
-            <Detail label="Owner">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary">
-                  <User className="h-3 w-3" aria-hidden />
+          {/* Regulatory Details Grid */}
+          <section className="rounded-xl border border-border/60 bg-card p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-3">
+              Regulatory Details & Metadata
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-[12.5px]">
+              <Detail label="Reference no.">
+                <span className="font-mono text-[12px]">{record.refNo}</span>
+              </Detail>
+              <Detail label="Issuing authority">{record.authority}</Detail>
+              <Detail label="Issue date">{fmtDate(record.issueDate)}</Detail>
+              <Detail label="Expiry date">
+                <span className={cn(overdue && "text-destructive font-semibold")}>
+                  {fmtDate(effectiveRecord.expiryDate)}
                 </span>
-                {owner?.name}
-              </span>
-              <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">
-                {owner?.role}
-              </div>
-            </Detail>
-            <Detail label="Renewal lead window">
-              <span className="num">{type?.leadDays ?? 60} days</span>
-              <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">
-                configurable per type in <A t="ESG" /> Masters
-              </div>
-            </Detail>
+                {expiryOverride && (
+                  <span className="ml-1.5 text-[10px] font-normal text-primary">(updated)</span>
+                )}
+              </Detail>
+              <Detail label="Owner">
+                <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+                  <User className="h-3.5 w-3.5 text-primary" aria-hidden />
+                  {owner?.name}
+                </span>
+                <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">
+                  {owner?.role}
+                </div>
+              </Detail>
+              <Detail label="Renewal lead window">
+                <span className="num font-semibold">{type?.leadDays ?? 60} days</span>
+                <div className="mt-0.5 text-[11px] font-normal text-muted-foreground">
+                  configurable per type in <A t="ESG" /> Masters
+                </div>
+              </Detail>
+            </div>
           </section>
 
           {record.autoFields && record.autoFields.length > 0 && (
@@ -372,10 +391,10 @@ export function RecordDrawer({
                     sub: lastAudit.kind === "external" ? "audit-external" : "audit-internal",
                   });
                 }}
-                className="flex w-full items-center justify-between gap-3 rounded-lg border border-primary/25 bg-primary/8 px-3 py-2 text-left transition-colors hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                className="flex w-full items-center justify-between gap-3 rounded-lg border border-primary/25 bg-primary/8 px-3.5 py-2.5 text-left transition-colors hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
               >
                 <span className="inline-flex items-center gap-2 text-[12px] font-medium text-primary">
-                  <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+                  <ShieldCheck className="h-4 w-4" aria-hidden />
                   Last audited {fmtDate(lastAudit.conductedOn ?? lastAudit.scheduledOn)}
                   {lastAudit.auditorOrg ? ` · ${lastAudit.auditorOrg}` : ""}
                 </span>
@@ -384,10 +403,11 @@ export function RecordDrawer({
             </section>
           )}
 
-          <section>
+          {/* Evidence & Version History — matching Policy Drawer timeline */}
+          <section className="space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <div className="section-label mb-2">Evidence &amp; version history</div>
-              <div className="mb-2 flex items-center gap-1.5">
+              <div className="section-label">Evidence &amp; version history</div>
+              <div className="flex items-center gap-1.5">
                 <input
                   ref={fileRef}
                   type="file"
@@ -419,20 +439,46 @@ export function RecordDrawer({
                 </button>
               </div>
             </div>
-            <ol className="space-y-2.5">
+            <ol className="space-y-3">
               {docVersions.map((d, i) => (
-                <li key={`${d.name}-${i}`} className="flex items-start gap-2.5">
-                  {i === 0 ? (
-                    <DocChip name={d.name} size={d.size !== "—" ? d.size : undefined} />
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-muted/30 px-2.5 py-1.5 text-[11.5px] text-muted-foreground">
-                      <History className="h-3 w-3" aria-hidden /> {d.name}
+                <li key={`${d.name}-${i}`} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <span
+                      className={cn(
+                        "grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold",
+                        i === 0
+                          ? "bg-success/15 text-success"
+                          : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {i === 0 ? "★" : ""}
                     </span>
-                  )}
-                  <span className="mt-1.5 shrink-0 text-[10.5px] text-muted-foreground">
-                    {i === 0 ? "current · " : "superseded · "}
-                    {fmtDate(d.uploadedAt)}
-                  </span>
+                    {i < docVersions.length - 1 && (
+                      <span className="mt-1 w-px flex-1 bg-border" aria-hidden />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1 pb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] font-semibold text-foreground">{d.name}</span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-md px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider",
+                          i === 0 ? "bg-success/12 text-success" : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {i === 0 ? "Current" : "Superseded"}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-muted-foreground">
+                      Uploaded {fmtDate(d.uploadedAt)}
+                    </div>
+                    <div className="mt-1.5">
+                      <DocChip
+                        name={d.name}
+                        size={d.size !== "—" ? d.size : undefined}
+                      />
+                    </div>
+                  </div>
                 </li>
               ))}
             </ol>

@@ -39,6 +39,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -903,39 +904,39 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
       <div>
         <ScopeNote extra={reportFilter.dateRange.label} />
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-[12.5px]">
-            <thead>
-              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-                <th className="px-5 py-2.5 text-left font-medium">Finding</th>
-                <th className="px-3 py-2.5 text-left font-medium">Source</th>
-                <th className="px-3 py-2.5 text-left font-medium">Entity</th>
-                <th className="px-3 py-2.5 text-right font-medium">Age</th>
-                <th className="px-3 py-2.5 text-left font-medium">Owner</th>
-                <th className="px-5 py-2.5 text-left font-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="min-w-[720px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Finding</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Source</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Entity</TableHead>
+                <TableHead className="px-3 py-2.5 text-right font-medium h-auto text-muted-foreground">Age</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Owner</TableHead>
+                <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-border/40 align-top last:border-0">
-                  <td className="px-5 py-3">
-                    <div className="font-medium">{r.title}</div>
+                <TableRow key={r.id} className="border-b border-border/40 align-top last:border-0 hover:bg-muted/15">
+                  <TableCell className="px-5 py-3">
+                    <div className="font-medium text-foreground">{r.title}</div>
                     <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                       {r.ref}
                       {r.withheldExternal && !external && <WithheldPill />}
                     </div>
-                  </td>
-                  <td className="px-3 py-3 text-muted-foreground">{NC_SOURCE_LABEL[r.source]}</td>
-                  <td className="px-3 py-3">{ncItemPlace(r)}</td>
-                  <td className="num px-3 py-3 text-right font-semibold">{r.ageDays}d</td>
-                  <td className="px-3 py-3 text-[12px]">{ncItemOwnerName(r)}</td>
-                  <td className="max-w-[220px] px-5 py-3 text-[11.5px] leading-relaxed text-muted-foreground">
+                  </TableCell>
+                  <TableCell className="px-3 py-3 text-muted-foreground">{NC_SOURCE_LABEL[r.source]}</TableCell>
+                  <TableCell className="px-3 py-3 text-foreground">{ncItemPlace(r)}</TableCell>
+                  <TableCell className="num px-3 py-3 text-right font-semibold text-foreground">{r.ageDays}d</TableCell>
+                  <TableCell className="px-3 py-3 text-[12px] text-foreground">{ncItemOwnerName(r)}</TableCell>
+                  <TableCell className="max-w-[220px] px-5 py-3 text-[11.5px] leading-relaxed text-muted-foreground">
                     {r.actionStatus === "none" ? "No corrective action" : r.actionStatus}
                     {r.remarks ? ` — ${r.remarks.slice(0, 60)}…` : ""}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
         {!external && withheldVisual > 0 && (
           <p className="border-t border-border/40 px-5 py-2.5 text-[11.5px] text-muted-foreground">
@@ -1183,23 +1184,23 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full text-[12px] text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border/60 text-[10px] uppercase tracking-[0.08em] text-muted-foreground bg-muted/10 font-bold">
-                  <th className="px-4 py-2.5">Emission Source</th>
-                  <th className="px-3 py-2.5">Scope</th>
-                  <th className="px-3 py-2.5 text-right">Activity Data</th>
-                  <th className="px-2 py-2.5">Unit</th>
-                  <th className="px-3 py-2.5 text-right">Emission Factor</th>
-                  <th className="px-3 py-2.5">Factor Source</th>
-                  <th className="px-4 py-2.5 text-right">Emissions (tCO₂e)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
+            <Table>
+              <TableHeader className="bg-muted/10">
+                <TableRow className="border-b border-border/60 text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-bold hover:bg-transparent">
+                  <TableHead className="px-4 py-2.5 h-auto text-muted-foreground">Emission Source</TableHead>
+                  <TableHead className="px-3 py-2.5 h-auto text-muted-foreground">Scope</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right h-auto text-muted-foreground">Activity Data</TableHead>
+                  <TableHead className="px-2 py-2.5 h-auto text-muted-foreground">Unit</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right h-auto text-muted-foreground">Emission Factor</TableHead>
+                  <TableHead className="px-3 py-2.5 h-auto text-muted-foreground">Factor Source</TableHead>
+                  <TableHead className="px-4 py-2.5 text-right h-auto text-muted-foreground">Emissions (tCO₂e)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/30">
                 {sourceRows.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                    <td className="px-4 py-2.5 font-medium text-foreground">{row.source}</td>
-                    <td className="px-3 py-2.5">
+                  <TableRow key={idx} className="hover:bg-muted/10 transition-colors border-0">
+                    <TableCell className="px-4 py-2.5 font-medium text-foreground">{row.source}</TableCell>
+                    <TableCell className="px-3 py-2.5">
                       <span className={cn(
                         "text-[9px] font-bold px-1 py-0.5 rounded",
                         row.scope === "Scope 1" && "bg-warning/10 text-warning border-warning/20 border",
@@ -1208,18 +1209,18 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
                       )}>
                         {row.scope}
                       </span>
-                    </td>
-                    <td className="px-3 py-2.5 text-right num font-semibold">{row.qty !== null ? nf.format(row.qty) : "—"}</td>
-                    <td className="px-2 py-2.5 text-muted-foreground font-mono">{row.unit}</td>
-                    <td className="px-3 py-2.5 text-right num">{row.factor >= 1 ? row.factor : row.factor.toFixed(3)}</td>
-                    <td className="px-3 py-2.5 text-muted-foreground text-[10.5px]">{row.factorSource}</td>
-                    <td className="px-4 py-2.5 text-right num font-bold text-foreground">
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 text-right num font-semibold text-foreground">{row.qty !== null ? nf.format(row.qty) : "—"}</TableCell>
+                    <TableCell className="px-2 py-2.5 text-muted-foreground font-mono">{row.unit}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-right num text-foreground">{row.factor >= 1 ? row.factor : row.factor.toFixed(3)}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground text-[10.5px]">{row.factorSource}</TableCell>
+                    <TableCell className="px-4 py-2.5 text-right num font-bold text-foreground">
                       {row.qty !== null ? (Math.round(row.emissions * 100) / 100).toFixed(2) : "—"}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
 
@@ -1231,30 +1232,30 @@ function InternalPreview({ def, reportFilter }: { def: ReportDef; reportFilter: 
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full text-[12px] text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border/60 text-[10px] uppercase tracking-[0.08em] text-muted-foreground bg-muted/10 font-bold">
-                  <th className="px-4 py-2.5">Depot / Site</th>
-                  <th className="px-3 py-2.5">Project</th>
-                  <th className="px-3 py-2.5 text-right">Scope 1 (t)</th>
-                  <th className="px-3 py-2.5 text-right">Scope 2 (t)</th>
-                  <th className="px-3 py-2.5 text-right">Scope 3 (t)</th>
-                  <th className="px-4 py-2.5 text-right">Total Emissions (tCO₂e)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
+            <Table>
+              <TableHeader className="bg-muted/10">
+                <TableRow className="border-b border-border/60 text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-bold hover:bg-transparent">
+                  <TableHead className="px-4 py-2.5 h-auto text-muted-foreground">Depot / Site</TableHead>
+                  <TableHead className="px-3 py-2.5 h-auto text-muted-foreground">Project</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right h-auto text-muted-foreground">Scope 1 (t)</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right h-auto text-muted-foreground">Scope 2 (t)</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right h-auto text-muted-foreground">Scope 3 (t)</TableHead>
+                  <TableHead className="px-4 py-2.5 text-right h-auto text-muted-foreground">Total Emissions (tCO₂e)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/30">
                 {depotBreakdown.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                    <td className="px-4 py-2.5 font-medium text-foreground">{row.name}</td>
-                    <td className="px-3 py-2.5 text-muted-foreground">{row.entity}</td>
-                    <td className="px-3 py-2.5 text-right num">{row.scope1.toFixed(1)}</td>
-                    <td className="px-3 py-2.5 text-right num">{row.scope2.toFixed(1)}</td>
-                    <td className="px-3 py-2.5 text-right num">{row.scope3.toFixed(1)}</td>
-                    <td className="px-4 py-2.5 text-right num font-bold text-foreground">{row.total.toFixed(1)}</td>
-                  </tr>
+                  <TableRow key={idx} className="hover:bg-muted/10 transition-colors border-0">
+                    <TableCell className="px-4 py-2.5 font-medium text-foreground">{row.name}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">{row.entity}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-right num text-foreground">{row.scope1.toFixed(1)}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-right num text-foreground">{row.scope2.toFixed(1)}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-right num text-foreground">{row.scope3.toFixed(1)}</TableCell>
+                    <TableCell className="px-4 py-2.5 text-right num font-bold text-foreground">{row.total.toFixed(1)}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>

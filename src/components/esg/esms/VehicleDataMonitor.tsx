@@ -46,6 +46,7 @@ import { Label } from "@/components/ui/label";
 import { ESG_GROUP, type VehicleDataRecord } from "@/lib/esg-data";
 import { exportToXlsx } from "@/lib/export-xlsx";
 import { EmptyState } from "../primitives";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface VehicleDataMonitorProps {
@@ -411,22 +412,22 @@ export function VehicleDataMonitor({
       {/* Vehicle Data Table */}
       <div className="rounded-2xl border border-border/60 bg-card shadow-elevated overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px] min-w-[800px]">
-            <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-6 py-4 font-semibold w-[180px]">Month</th>
-                <th className="px-6 py-4 font-semibold w-[180px] text-right">Vehicle Count</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">Run (Km)</th>
-                <th className="px-6 py-4 font-semibold w-[240px] text-right">
+          <Table className="w-full text-left text-[13px] min-w-[800px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-6 py-4 font-semibold w-[180px]">Month</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[180px] text-right">Vehicle Count</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">Run (Km)</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[240px] text-right">
                   Energy Consumption (kWh)
-                </th>
-                <th className="px-6 py-4 font-semibold text-right w-[100px]">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+                </TableHead>
+                <TableHead className="px-6 py-4 font-semibold text-right w-[100px]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-border/40">
               {filteredList.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-16 text-center">
+                <TableRow>
+                  <TableCell colSpan={5} className="px-6 py-16 text-center">
                     <EmptyState
                       title="No vehicle data records found"
                       hint={
@@ -435,41 +436,41 @@ export function VehicleDataMonitor({
                           : "Click '+ Enter Vehicle Data' to record your first operational month."
                       }
                     />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredList.map((rec) => (
-                  <tr
+                  <TableRow
                     key={rec.id}
                     className="hover:bg-muted/15 transition-colors group"
                   >
                     {/* Month */}
-                    <td className="px-6 py-4.5 whitespace-nowrap">
+                    <TableCell className="px-6 py-4.5 whitespace-nowrap">
                       <div className="font-bold text-foreground text-[13.5px]">
                         {rec.month}
                       </div>
                       <span className="text-[11px] text-muted-foreground">
                         {rec.depotName} · {rec.entityName}
                       </span>
-                    </td>
+                    </TableCell>
 
                     {/* Vehicle Count */}
-                    <td className="num px-6 py-4.5 text-right font-bold text-foreground text-[14px] whitespace-nowrap">
+                    <TableCell className="num px-6 py-4.5 text-right font-bold text-foreground text-[14px] whitespace-nowrap">
                       {rec.vehicleCount.toLocaleString()}
-                    </td>
+                    </TableCell>
 
                     {/* Run (Km) */}
-                    <td className="num px-6 py-4.5 text-right font-bold text-foreground text-[14px] whitespace-nowrap">
+                    <TableCell className="num px-6 py-4.5 text-right font-bold text-foreground text-[14px] whitespace-nowrap">
                       {rec.runKm.toLocaleString()}
-                    </td>
+                    </TableCell>
 
                     {/* Energy Consumption (kWh) */}
-                    <td className="num px-6 py-4.5 text-right font-bold text-primary text-[14px] whitespace-nowrap">
+                    <TableCell className="num px-6 py-4.5 text-right font-bold text-primary text-[14px] whitespace-nowrap">
                       {rec.energyKwh.toLocaleString()}
-                    </td>
+                    </TableCell>
 
                     {/* Row Actions */}
-                    <td className="px-6 py-4.5 text-right whitespace-nowrap">
+                    <TableCell className="px-6 py-4.5 text-right whitespace-nowrap">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -499,12 +500,12 @@ export function VehicleDataMonitor({
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
 

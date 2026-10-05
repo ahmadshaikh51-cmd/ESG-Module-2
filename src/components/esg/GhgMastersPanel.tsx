@@ -3,6 +3,7 @@ import { FlaskConical, History, Plus, Upload } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -406,24 +407,24 @@ export function GhgMastersPanel() {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[680px] text-[12.5px]">
-          <thead>
-            <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-              <th className="px-5 py-2.5 text-left font-medium">Parameter</th>
-              <th className="px-3 py-2.5 text-left font-medium">Scope</th>
-              <th className="px-3 py-2.5 text-right font-medium">Factor</th>
-              <th className="px-3 py-2.5 text-left font-medium">Source</th>
-              <th className="px-3 py-2.5 text-left font-medium">Last updated</th>
-              <th className="px-5 py-2.5 text-right font-medium">Active</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="min-w-[680px]">
+          <TableHeader>
+            <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+              <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Parameter</TableHead>
+              <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Scope</TableHead>
+              <TableHead className="px-3 py-2.5 text-right font-medium h-auto text-muted-foreground">Factor</TableHead>
+              <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Source</TableHead>
+              <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Last updated</TableHead>
+              <TableHead className="px-5 py-2.5 text-right font-medium h-auto text-muted-foreground">Active</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.map((r) => (
-              <tr
+              <TableRow
                 key={r.id}
-                className={cn("border-b border-border/40 last:border-0", !r.active && "opacity-50")}
+                className={cn("border-b border-border/40 last:border-0 hover:bg-muted/15", !r.active && "opacity-50")}
               >
-                <td className="px-5 py-2.5 font-medium">
+                <TableCell className="px-5 py-2.5 font-medium text-foreground">
                   {r.label}
                   {r.prov ? (
                     <div className="mt-0.5">
@@ -436,35 +437,35 @@ export function GhgMastersPanel() {
                       </div>
                     )
                   )}
-                </td>
-                <td className="px-3 py-2.5 text-muted-foreground">{SCOPE_LABEL[r.scope]}</td>
-                <td className="px-3 py-2.5 text-right">
+                </TableCell>
+                <TableCell className="px-3 py-2.5 text-muted-foreground">{SCOPE_LABEL[r.scope]}</TableCell>
+                <TableCell className="px-3 py-2.5 text-right text-foreground">
                   <FactorCell
                     row={r}
                     onCommit={(factor, source, note) =>
                       masters.setGhgFactor(r.id, factor, source, note)
                     }
                   />
-                </td>
-                <td className="px-3 py-2.5 text-[11.5px] text-muted-foreground">
+                </TableCell>
+                <TableCell className="px-3 py-2.5 text-[11.5px] text-muted-foreground">
                   {r.factorSource}
-                </td>
-                <td className="px-3 py-2.5 text-[11px] text-muted-foreground">
+                </TableCell>
+                <TableCell className="px-3 py-2.5 text-[11px] text-muted-foreground">
                   {r.updatedOn
                     ? `${fmtDate(r.updatedOn)}${r.updatedBy ? ` · ${personById(r.updatedBy)?.name ?? r.updatedBy}` : ""}`
                     : "—"}
-                </td>
-                <td className="px-5 py-2.5 text-right">
+                </TableCell>
+                <TableCell className="px-5 py-2.5 text-right text-foreground">
                   <Switch
                     checked={r.active}
                     onCheckedChange={(v) => masters.setGhgActive(r.id, v)}
                     aria-label={`${r.label} active`}
                   />
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <ImportFactorsDialog
         open={importOpen}

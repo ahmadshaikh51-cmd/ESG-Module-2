@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import {
   ESG_GROUP,
@@ -521,35 +522,35 @@ function HistoryView({
         <EmptyState title="No training sessions in this scope" />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] text-[12.5px]">
-            <thead>
-              <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-                <th className="px-5 py-2.5 text-left font-medium">Topic</th>
-                <th className="px-3 py-2.5 text-left font-medium">When</th>
-                <th className="px-3 py-2.5 text-right font-medium">Attendance</th>
-                <th className="px-3 py-2.5 text-left font-medium">Status</th>
-                <th className="px-5 py-2.5 text-right font-medium">Report</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="w-full min-w-[560px] text-[12.5px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Topic</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">When</TableHead>
+                <TableHead className="px-3 py-2.5 text-right font-medium h-auto text-muted-foreground">Attendance</TableHead>
+                <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Status</TableHead>
+                <TableHead className="px-5 py-2.5 text-right font-medium h-auto text-muted-foreground">Report</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {past.map((t) => (
-                <tr key={t.id} className="border-b border-border/40 last:border-0">
-                  <td className="px-5 py-2.5 font-medium">
+                <TableRow key={t.id} className="border-b border-border/40 last:border-0 hover:bg-muted/15">
+                  <TableCell className="px-5 py-2.5 font-medium">
                     <button
                       type="button"
                       onClick={() => onOpen(t)}
-                      className="text-left underline-offset-2 hover:text-primary hover:underline"
+                      className="text-left underline-offset-2 hover:text-primary hover:underline text-foreground"
                     >
                       {t.topic}
                     </button>
-                  </td>
-                  <td className="px-3 py-2.5 text-muted-foreground">
+                  </TableCell>
+                  <TableCell className="px-3 py-2.5 text-muted-foreground">
                     {fmtDateTime(t.scheduledAt)}
-                  </td>
-                  <td className="num px-3 py-2.5 text-right">
+                  </TableCell>
+                  <TableCell className="num px-3 py-2.5 text-right text-foreground">
                     {presentCount(t)}/{t.attendees.length} · {attendanceRate(t)}%
-                  </td>
-                  <td className="px-3 py-2.5">
+                  </TableCell>
+                  <TableCell className="px-3 py-2.5">
                     <span
                       className={cn(
                         "rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
@@ -558,8 +559,8 @@ function HistoryView({
                     >
                       {t.status}
                     </span>
-                  </td>
-                  <td className="px-5 py-2.5 text-right">
+                  </TableCell>
+                  <TableCell className="px-5 py-2.5 text-right">
                     <button
                       type="button"
                       onClick={() => downloadSessionReport(t)}
@@ -567,11 +568,11 @@ function HistoryView({
                     >
                       <Download className="h-3 w-3" aria-hidden /> .xlsx
                     </button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </PanelCard>

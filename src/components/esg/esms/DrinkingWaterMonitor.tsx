@@ -42,6 +42,7 @@ import { Label } from "@/components/ui/label";
 import { ESG_GROUP, type DrinkingWaterRecord } from "@/lib/esg-data";
 import { exportToXlsx } from "@/lib/export-xlsx";
 import { EmptyState } from "../primitives";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface DrinkingWaterMonitorProps {
@@ -402,21 +403,21 @@ export function DrinkingWaterMonitor({
       {/* Table */}
       <div className="rounded-2xl border border-border/60 bg-card shadow-elevated overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px] min-w-[800px]">
-            <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-6 py-4 font-semibold w-[180px]">Month / Date</th>
-                <th className="px-6 py-4 font-semibold w-[200px]">Site / Project</th>
-                <th className="px-6 py-4 font-semibold w-[180px] text-right">Number of People</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">QTY Litres</th>
-                <th className="px-6 py-4 font-semibold w-[200px] text-right">Consumption Rate</th>
-                <th className="px-6 py-4 font-semibold text-right w-[100px]">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
+          <Table className="w-full text-left text-[13px] min-w-[800px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/60 bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-6 py-4 font-semibold w-[180px]">Month / Date</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px]">Site / Project</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[180px] text-right">Number of People</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">QTY Litres</TableHead>
+                <TableHead className="px-6 py-4 font-semibold w-[200px] text-right">Consumption Rate</TableHead>
+                <TableHead className="px-6 py-4 font-semibold text-right w-[100px]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-border/40">
               {filteredList.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-16 text-center">
+                <TableRow>
+                  <TableCell colSpan={6} className="px-6 py-16 text-center">
                     <EmptyState
                       title="No drinking water records found"
                       hint={
@@ -425,26 +426,26 @@ export function DrinkingWaterMonitor({
                           : "Click '+ Enter Drinking Water' to record your first consumption cycle."
                       }
                     />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredList.map((rec) => {
                   const rate = rec.peopleCount > 0 ? (rec.qtyLitres / rec.peopleCount).toFixed(1) : "0.0";
                   const daily = rec.peopleCount > 0 ? (rec.qtyLitres / rec.peopleCount / 30).toFixed(2) : "0.00";
                   return (
-                    <tr
+                    <TableRow
                       key={rec.id}
                       className="hover:bg-muted/15 transition-colors group"
                     >
                       {/* Month/Date */}
-                      <td className="px-6 py-4.5 whitespace-nowrap">
+                      <TableCell className="px-6 py-4.5 whitespace-nowrap">
                         <div className="font-bold text-foreground text-[13.5px]">
                           {rec.monthDate}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* Site / Project */}
-                      <td className="px-6 py-4.5">
+                      <TableCell className="px-6 py-4.5">
                         <div className="font-semibold text-foreground flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                           <span>{rec.depotName}</span>
@@ -452,32 +453,32 @@ export function DrinkingWaterMonitor({
                         <span className="text-[11.5px] text-muted-foreground block ml-5">
                           {rec.entityName}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Number of People */}
-                      <td className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
+                      <TableCell className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
                         {rec.peopleCount.toLocaleString()}{" "}
                         <span className="text-[12px] font-normal text-muted-foreground">Persons</span>
-                      </td>
+                      </TableCell>
 
                       {/* QTY Litres */}
-                      <td className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
+                      <TableCell className="num px-6 py-4.5 text-right font-bold text-[14px] text-foreground">
                         {rec.qtyLitres.toLocaleString()}{" "}
                         <span className="text-[12px] font-normal text-muted-foreground">L</span>
-                      </td>
+                      </TableCell>
 
                       {/* Rate */}
-                      <td className="num px-6 py-4.5 text-right">
+                      <TableCell className="num px-6 py-4.5 text-right">
                         <span className="inline-flex items-center gap-1 font-bold text-primary text-[13px] bg-primary/10 px-2.5 py-1 rounded-lg">
                           <Droplets className="h-3 w-3" /> {rate} L/Person
                         </span>
                         <span className="text-[10.5px] text-muted-foreground block mt-0.5">
                           ~{daily} L/day
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Actions */}
-                      <td className="px-6 py-4.5 text-right">
+                      <TableCell className="px-6 py-4.5 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -504,13 +505,13 @@ export function DrinkingWaterMonitor({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
 

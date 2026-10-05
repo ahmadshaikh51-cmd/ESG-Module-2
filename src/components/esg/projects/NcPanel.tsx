@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { ESG_GROUP, entityById, esapSourceLabel, ESAP_ACTIONS, personById } from "@/lib/esg-data";
 import {
@@ -352,26 +353,26 @@ export function NcPanel({ onAdd, onEdit }: { onAdd?: () => void; onEdit?: (id: s
           <EmptyState title="No non-compliances match" hint="Widen the scope or filters." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] text-[12.5px]">
-              <thead>
-                <tr className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
-                  <th className="px-5 py-2.5 text-left font-medium">Finding</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Source</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Entity</th>
-                  <th className="px-3 py-2.5 text-right font-medium">Age</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Severity</th>
-                  <th className="px-3 py-2.5 text-left font-medium">Owner</th>
-                  <th className="px-5 py-2.5 text-left font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="min-w-[820px]">
+              <TableHeader>
+                <TableRow className="border-b border-border/60 text-[11px] uppercase tracking-[0.1em] text-muted-foreground hover:bg-transparent">
+                  <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Finding</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Source</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Entity</TableHead>
+                  <TableHead className="px-3 py-2.5 text-right font-medium h-auto text-muted-foreground">Age</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Severity</TableHead>
+                  <TableHead className="px-3 py-2.5 text-left font-medium h-auto text-muted-foreground">Owner</TableHead>
+                  <TableHead className="px-5 py-2.5 text-left font-medium h-auto text-muted-foreground">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filtered.map((item) => (
-                  <tr key={item.id} className="border-b border-border/40 last:border-0">
-                    <td className="px-5 py-2.5">
+                  <TableRow key={item.id} className="border-b border-border/40 last:border-0 hover:bg-muted/15">
+                    <TableCell className="px-5 py-2.5">
                       <button
                         type="button"
                         onClick={() => setSelected(item)}
-                        className="text-left font-medium underline-offset-2 hover:text-primary hover:underline"
+                        className="text-left font-medium underline-offset-2 hover:text-primary hover:underline text-foreground"
                       >
                         {item.title}
                       </button>
@@ -379,12 +380,12 @@ export function NcPanel({ onAdd, onEdit }: { onAdd?: () => void; onEdit?: (id: s
                         <span className="num text-[11px] text-muted-foreground">{item.ref}</span>
                         {item.withheldExternal && !external && <WithheldPill />}
                       </div>
-                    </td>
-                    <td className="px-3 py-2.5 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">
                       {NC_SOURCE_LABEL[item.source]}
-                    </td>
-                    <td className="px-3 py-2.5">{ncItemPlace(item)}</td>
-                    <td
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 text-foreground">{ncItemPlace(item)}</TableCell>
+                    <TableCell
                       className={cn(
                         "num px-3 py-2.5 text-right font-semibold",
                         item.ageDays > 90
@@ -395,18 +396,18 @@ export function NcPanel({ onAdd, onEdit }: { onAdd?: () => void; onEdit?: (id: s
                       )}
                     >
                       {item.ageDays}d
-                    </td>
-                    <td className="px-3 py-2.5">
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5">
                       <SeverityPill severity={item.severity} />
-                    </td>
-                    <td className="px-3 py-2.5">{ncItemOwnerName(item)}</td>
-                    <td className="px-5 py-2.5">
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 text-foreground">{ncItemOwnerName(item)}</TableCell>
+                    <TableCell className="px-5 py-2.5">
                       <ActionStatusPill status={item.actionStatus} />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </PanelCard>

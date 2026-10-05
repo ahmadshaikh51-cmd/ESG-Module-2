@@ -29,7 +29,7 @@ export const ESG_ROLES_CONFIG: Record<EsgRole, EsgRoleConfig> = {
     label: "ESG Team / ESG Lead",
     tabs: ["overview", "projects", "esms", "reports", "vendors", "masters"],
     subtabs: {
-      projects: ["permits", "site"],
+      projects: ["permits", "status", "site"],
       esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring", "audit-internal", "audit-external", "assurance-calendar"],
     },
     indicators: ["IND-2026-001", "IND-2026-002", "IND-2026-003", "IND-2026-004", "IND-2026-005", "IND-2026-006"],
@@ -51,7 +51,7 @@ export const ESG_ROLES_CONFIG: Record<EsgRole, EsgRoleConfig> = {
     label: "Project Manager / Owner",
     tabs: ["overview", "projects", "esms"],
     subtabs: {
-      projects: ["permits", "site"],
+      projects: ["permits", "status", "site"],
       esms: ["esap", "lifecycle", "monitoring"],
     },
     indicators: ["IND-2026-001", "IND-2026-002", "IND-2026-003", "IND-2026-004"],
@@ -139,7 +139,7 @@ export const ESG_ROLES_CONFIG: Record<EsgRole, EsgRoleConfig> = {
     label: "ESG Administrator",
     tabs: ["overview", "projects", "esms", "reports", "vendors", "masters"],
     subtabs: {
-      projects: ["permits", "site"],
+      projects: ["permits", "status", "site"],
       esms: ["policies", "sops", "grievance", "esap", "lifecycle", "training", "monitoring", "audit-internal", "audit-external", "assurance-calendar"],
     },
     indicators: ["IND-2026-001", "IND-2026-002", "IND-2026-003", "IND-2026-004", "IND-2026-005", "IND-2026-006"],

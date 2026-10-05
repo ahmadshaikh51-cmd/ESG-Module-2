@@ -40,6 +40,7 @@ import {
   PERIODS,
 } from "@/lib/esg-data";
 import { getDerivedActionStatus, type LabTestRecord } from "@/lib/esg-monitoring";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface LabTestDetailDrawerProps {
@@ -186,34 +187,34 @@ export function LabTestDetailDrawer({
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-[12.5px]">
-                <thead>
-                  <tr className="border-b border-border/60 bg-muted/30 text-[10.5px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 py-2.5 font-semibold">Parameter</th>
-                    <th className="px-4 py-2.5 font-semibold text-right">Result Entered</th>
-                    <th className="px-4 py-2.5 font-semibold">Unit</th>
-                    <th className="px-4 py-2.5 font-semibold">Allowed Limit</th>
-                    <th className="px-4 py-2.5 font-semibold">Compliance Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
+              <Table className="w-full text-left text-[12.5px]">
+                <TableHeader>
+                  <TableRow className="border-b border-border/60 bg-muted/30 text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                    <TableHead className="px-4 py-2.5 font-semibold">Parameter</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold text-right">Result Entered</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Unit</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Allowed Limit</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Compliance Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-border/40">
                   {testMeta?.parameters.map((param) => {
                     const val = testRecord.results[param.key];
                     const status = evaluateParamCompliance(param, val);
 
                     return (
-                      <tr
+                      <TableRow
                         key={param.key}
                         className={cn(
                           "hover:bg-muted/10 transition-colors",
                           status === "exceeds" && "bg-destructive/[0.04] font-semibold",
                         )}
                       >
-                        <td className="px-4 py-3">
+                        <TableCell className="px-4 py-3">
                           <div className="font-bold text-foreground">{param.name}</div>
                           <span className="text-[11px] text-muted-foreground">{param.description}</span>
-                        </td>
-                        <td className="num px-4 py-3 text-right text-[13.5px] font-bold">
+                        </TableCell>
+                        <TableCell className="num px-4 py-3 text-right text-[13.5px] font-bold">
                           {val != null ? (
                             <span
                               className={cn(
@@ -225,10 +226,10 @@ export function LabTestDetailDrawer({
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground font-medium">{param.unit}</td>
-                        <td className="px-4 py-3 font-semibold text-foreground">{param.limitDisplay}</td>
-                        <td className="px-4 py-3">
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-muted-foreground font-medium">{param.unit}</TableCell>
+                        <TableCell className="px-4 py-3 font-semibold text-foreground">{param.limitDisplay}</TableCell>
+                        <TableCell className="px-4 py-3">
                           {testRecord.testType === "vehicle_data" ||
                           testRecord.testType === "drinking_water" ||
                           testRecord.testType === "waste_water" ||
@@ -253,12 +254,12 @@ export function LabTestDetailDrawer({
                           ) : (
                             <span className="text-muted-foreground text-[11px]">— Not recorded</span>
                           )}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
 
             {testRecord.testType === "drinking_water" && (

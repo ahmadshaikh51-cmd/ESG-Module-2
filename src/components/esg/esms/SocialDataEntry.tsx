@@ -597,6 +597,16 @@ export function SocialDataEntry({
   const [depotId, setDepotId] = useState<string>(initialDepotId || availableDepots[0]?.id || "depot");
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onCancel) {
+        onCancel();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onCancel]);
+
+  useEffect(() => {
     if (!availableDepots.some((d) => d.id === depotId) && availableDepots[0]) {
       setDepotId(availableDepots[0].id);
     }

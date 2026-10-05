@@ -37,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { PEOPLE, ESG_GROUP, type Person } from "@/lib/esg-data";
 import { A, PanelCard, ProvenanceChip, useEsg } from "../primitives";
@@ -1679,47 +1680,47 @@ export function EsgDataEntryForm() {
                 {/* Attachments Table */}
                 <div className="overflow-hidden rounded-xl border border-border/60 bg-card">
                   <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-left">
-                      <thead>
-                        <tr className="border-b border-border/60 bg-muted/40 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
-                          <th className="px-4 py-2">Document Name</th>
-                          <th className="px-3 py-2">Type</th>
-                          <th className="px-3 py-2">Version</th>
-                          <th className="px-3 py-2">Uploaded By</th>
-                          <th className="px-3 py-2">Date</th>
-                          <th className="px-3 py-2">Status</th>
-                          <th className="px-3 py-2 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border/40 text-[11.5px]">
+                    <Table className="w-full border-collapse text-left">
+                      <TableHeader>
+                        <TableRow className="border-b border-border/60 bg-muted/40 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground hover:bg-transparent">
+                          <TableHead className="px-4 py-2 h-auto text-muted-foreground">Document Name</TableHead>
+                          <TableHead className="px-3 py-2 h-auto text-muted-foreground">Type</TableHead>
+                          <TableHead className="px-3 py-2 h-auto text-muted-foreground">Version</TableHead>
+                          <TableHead className="px-3 py-2 h-auto text-muted-foreground">Uploaded By</TableHead>
+                          <TableHead className="px-3 py-2 h-auto text-muted-foreground">Date</TableHead>
+                          <TableHead className="px-3 py-2 h-auto text-muted-foreground">Status</TableHead>
+                          <TableHead className="px-3 py-2 text-right h-auto text-muted-foreground">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="divide-y divide-border/40 text-[11.5px]">
                         {attachments.length === 0 ? (
-                          <tr>
-                            <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                          <TableRow className="hover:bg-transparent border-0">
+                            <TableCell colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                               No documents uploaded yet. Upload a bill or compliance document above.
-                            </td>
-                          </tr>
+                            </TableCell>
+                          </TableRow>
                         ) : (
                           attachments.map((doc) => (
-                            <tr key={doc.id} className="hover:bg-muted/10">
-                              <td className="px-4 py-2 font-medium flex items-center gap-2 max-w-[200px]">
+                            <TableRow key={doc.id} className="hover:bg-muted/10 border-0">
+                              <TableCell className="px-4 py-2 font-medium flex items-center gap-2 max-w-[200px]">
                                 <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
-                                <span className="truncate" title={doc.name}>
+                                <span className="truncate text-foreground" title={doc.name}>
                                   {doc.name}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground/80 num">
                                   ({doc.size})
                                 </span>
-                              </td>
-                              <td className="px-3 py-2 text-muted-foreground">{doc.type}</td>
-                              <td className="px-3 py-2 num font-semibold">{doc.version}</td>
-                              <td className="px-3 py-2">{doc.uploadedBy}</td>
-                              <td className="px-3 py-2 num">{doc.uploadedDate}</td>
-                              <td className="px-3 py-2">
+                              </TableCell>
+                              <TableCell className="px-3 py-2 text-muted-foreground">{doc.type}</TableCell>
+                              <TableCell className="px-3 py-2 num font-semibold text-foreground">{doc.version}</TableCell>
+                              <TableCell className="px-3 py-2 text-foreground">{doc.uploadedBy}</TableCell>
+                              <TableCell className="px-3 py-2 num text-foreground">{doc.uploadedDate}</TableCell>
+                              <TableCell className="px-3 py-2">
                                 <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[9.5px] font-bold text-emerald-500 uppercase tracking-wide">
                                   {doc.status}
                                 </span>
-                              </td>
-                              <td className="px-3 py-2 text-right">
+                              </TableCell>
+                              <TableCell className="px-3 py-2 text-right">
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteAttachment(doc.id, doc.name)}
@@ -1728,12 +1729,12 @@ export function EsgDataEntryForm() {
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
-                              </td>
-                            </tr>
+                              </TableCell>
+                            </TableRow>
                           ))
                         )}
-                      </tbody>
-                    </table>
+                      </TableBody>
+                    </Table>
                   </div>
                 </div>
               </div>

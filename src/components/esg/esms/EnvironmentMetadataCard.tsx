@@ -27,6 +27,7 @@ import {
   type MonitoringAreaKey,
   type SiteEnvironmentMetadata,
 } from "@/lib/esg-data";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { ProvenanceChip } from "../primitives";
 
@@ -158,31 +159,31 @@ export function EnvironmentMetadataCard({
         {area === "hazardous_waste" && (
           <div className="space-y-3">
             <div className="overflow-x-auto rounded-xl border border-border/60 bg-card shadow-xs">
-              <table className="w-full text-left text-[12px]">
-                <thead>
-                  <tr className="border-b border-border/60 bg-muted/40 text-[10.5px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-4 py-2.5 font-semibold">Hazardous Waste Stream</th>
-                    <th className="px-4 py-2.5 font-semibold text-right">Recorded Qty</th>
-                    <th className="px-4 py-2.5 font-semibold">Frequency</th>
-                    <th className="px-4 py-2.5 font-semibold">Storage Location</th>
-                    <th className="px-4 py-2.5 font-semibold">Recycler / Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
+              <Table className="w-full text-left text-[12px]">
+                <TableHeader>
+                  <TableRow className="border-b border-border/60 bg-muted/40 text-[10.5px] uppercase tracking-wider text-muted-foreground">
+                    <TableHead className="px-4 py-2.5 font-semibold">Hazardous Waste Stream</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold text-right">Recorded Qty</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Frequency</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Storage Location</TableHead>
+                    <TableHead className="px-4 py-2.5 font-semibold">Recycler / Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-border/40">
                   {meta.hazardousWaste.map((hw, idx) => (
-                    <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                      <td className="px-4 py-2 font-medium text-foreground">
+                    <TableRow key={idx} className="hover:bg-muted/10 transition-colors">
+                      <TableCell className="px-4 py-2 font-medium text-foreground">
                         <span className="inline-flex items-center gap-2">
                           <span className="h-2 w-2 rounded-full bg-amber-500" />
                           {hw.type}
                         </span>
-                      </td>
-                      <td className="num px-4 py-2 text-right font-bold text-foreground">
+                      </TableCell>
+                      <TableCell className="num px-4 py-2 text-right font-bold text-foreground">
                         {hw.quantity} {hw.unit}
-                      </td>
-                      <td className="px-4 py-2 text-muted-foreground">{hw.frequency}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{hw.storageLocation}</td>
-                      <td className="px-4 py-2">
+                      </TableCell>
+                      <TableCell className="px-4 py-2 text-muted-foreground">{hw.frequency}</TableCell>
+                      <TableCell className="px-4 py-2 text-muted-foreground">{hw.storageLocation}</TableCell>
+                      <TableCell className="px-4 py-2">
                         <span
                           className={cn(
                             "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10.5px] font-medium",
@@ -194,11 +195,11 @@ export function EnvironmentMetadataCard({
                           {hw.disposalStatus}
                           {hw.vendorRecycler && ` · ${hw.vendorRecycler}`}
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <p className="text-[11.5px] text-muted-foreground leading-relaxed">
               💡 <strong>Field Check:</strong> Inspect bunding wall integrity, secondary spill

@@ -1,0 +1,3192 @@
+{
+  "projects": [
+    {
+      "id": "TMBPL",
+      "name": "TMBPL",
+      "client": "MBMT",
+      "vehicleType": "E-Bus",
+      "businessType": "B2G",
+      "trackerFleetSize": 57,
+      "misStatus": "Available (Oct-23 to Jul-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "TUPL",
+      "name": "TUPL",
+      "client": "UMC",
+      "vehicleType": "E-Bus",
+      "businessType": "B2G",
+      "trackerFleetSize": 20,
+      "misStatus": "Available (Mar-24 to Jun-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "TEOPL",
+      "name": "TEOPL",
+      "client": "Volvo Eicher Commercial Vehicle Ltd",
+      "vehicleType": "E-Bus",
+      "businessType": "B2B",
+      "trackerFleetSize": 63,
+      "misStatus": "Available (Jan-25 to Mar-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "NTSPL",
+      "name": "NTSPL",
+      "client": "Nagpur Municipal Corporation (Wathoda & Khapri)",
+      "vehicleType": "E-Bus",
+      "businessType": "B2G",
+      "trackerFleetSize": 235,
+      "misStatus": "Available (Jul-25 to Mar-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "UCL",
+      "name": "UCL",
+      "client": "Ultratech Cement Limited",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 70,
+      "misStatus": "Available (Mar-25 to Jul-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "SCL",
+      "name": "SCL",
+      "client": "Star Cement Limited",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 5,
+      "misStatus": "Available (Nov-25 to Jul-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "JM_BAXI",
+      "name": "JM BAXI",
+      "client": "JM Baxi (Kandla Port)",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 36,
+      "misStatus": "Available (May-26 to Jul-26)",
+      "hasMonthlyData": true
+    },
+    {
+      "id": "WONDERVOLT",
+      "name": "Wondervolt",
+      "client": "Wonder Cement Limited",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 6,
+      "misStatus": "No monthly MIS data in source files",
+      "hasMonthlyData": false
+    },
+    {
+      "id": "JNPT",
+      "name": "JNPT",
+      "client": "Port of Singapore Authority",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 25,
+      "misStatus": "No monthly MIS data in source files",
+      "hasMonthlyData": false
+    },
+    {
+      "id": "BMCT",
+      "name": "BMCT",
+      "client": "Gateway Terminal of India",
+      "vehicleType": "E-Truck",
+      "businessType": "B2B",
+      "trackerFleetSize": 49,
+      "misStatus": "No monthly MIS data in source files",
+      "hasMonthlyData": false
+    }
+  ],
+  "nonOperationalProjects": [
+    {
+      "name": "Tata Steel (Kalamboli/Khapoli/Taloja)",
+      "client": "Tata Steel Limited",
+      "type": "E-Truck"
+    },
+    {
+      "name": "Jindal Steel (Angul)",
+      "client": "Jindal Steel Limited",
+      "type": "E-Truck"
+    },
+    {
+      "name": "Pune",
+      "client": "Pune Mahanagar Parivahan Mandal Limited",
+      "type": "E-Bus"
+    },
+    {
+      "name": "Delhi",
+      "client": "Delhi Transport Corporation",
+      "type": "E-Bus"
+    },
+    {
+      "name": "Maharashtra 7 depots",
+      "client": "Multiple municipal corporations",
+      "type": "E-Bus"
+    }
+  ],
+  "monthlyRecords": [
+    {
+      "projectId": "TMBPL",
+      "month": "2023-10",
+      "metrics": {
+        "vehicles": 4,
+        "distanceKm": 691,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 20172,
+        "dieselSavedL": 230.33333333333334,
+        "co2t": 0.6080800000000001,
+        "noxKg": 1.1056,
+        "so2Kg": 9.213333333333335,
+        "pm25Kg": 0.002764,
+        "pm10Kg": 0.018426666666666668,
+        "trees": 25.539360000000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2023-11",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 19028.300000000007,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 25215,
+        "dieselSavedL": 6342.766666666669,
+        "co2t": 16.744904000000005,
+        "noxKg": 30.44528000000001,
+        "so2Kg": 253.71066666666678,
+        "pm25Kg": 0.07611320000000002,
+        "pm10Kg": 0.5074213333333335,
+        "trees": 703.2859680000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2023-12",
+      "metrics": {
+        "vehicles": 6,
+        "distanceKm": 23184.4,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 30258,
+        "dieselSavedL": 7728.133333333334,
+        "co2t": 20.402272000000004,
+        "noxKg": 37.09504,
+        "so2Kg": 309.12533333333334,
+        "pm25Kg": 0.0927376,
+        "pm10Kg": 0.6182506666666667,
+        "trees": 856.8954240000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-01",
+      "metrics": {
+        "vehicles": 13,
+        "distanceKm": 29740.7,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 65559,
+        "dieselSavedL": 9913.566666666668,
+        "co2t": 26.171816000000003,
+        "noxKg": 47.58512,
+        "so2Kg": 396.5426666666667,
+        "pm25Kg": 0.1189628,
+        "pm10Kg": 0.7930853333333333,
+        "trees": 1099.2162720000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-02",
+      "metrics": {
+        "vehicles": 18,
+        "distanceKm": 46598.600000000006,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 90774,
+        "dieselSavedL": 15532.866666666669,
+        "co2t": 41.006768,
+        "noxKg": 74.55776,
+        "so2Kg": 621.3146666666668,
+        "pm25Kg": 0.18639440000000002,
+        "pm10Kg": 1.2426293333333336,
+        "trees": 1722.2842560000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-03",
+      "metrics": {
+        "vehicles": 28,
+        "distanceKm": 70808.95999999999,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 141204,
+        "dieselSavedL": 23602.986666666664,
+        "co2t": 62.311884799999994,
+        "noxKg": 113.29433599999997,
+        "so2Kg": 944.1194666666665,
+        "pm25Kg": 0.28323583999999996,
+        "pm10Kg": 1.8882389333333331,
+        "trees": 2617.0991615999997
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "assumed",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-04",
+      "metrics": {
+        "vehicles": 32,
+        "distanceKm": 107996.50000000001,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 109960.7,
+        "dieselSavedL": 35998.833333333336,
+        "co2t": 95.03692000000001,
+        "noxKg": 172.7944,
+        "so2Kg": 1439.9533333333334,
+        "pm25Kg": 0.43198600000000004,
+        "pm10Kg": 2.879906666666667,
+        "trees": 3991.5506400000004
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-05",
+      "metrics": {
+        "vehicles": 32,
+        "distanceKm": 134072.85,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 147201.92,
+        "dieselSavedL": 44690.950000000004,
+        "co2t": 117.98410800000002,
+        "noxKg": 214.51656,
+        "so2Kg": 1787.6380000000001,
+        "pm25Kg": 0.5362914,
+        "pm10Kg": 3.575276,
+        "trees": 4955.332536000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-06",
+      "metrics": {
+        "vehicles": 32,
+        "distanceKm": 141674.39999999997,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 156691.46,
+        "dieselSavedL": 47224.79999999999,
+        "co2t": 124.67347199999998,
+        "noxKg": 226.67903999999993,
+        "so2Kg": 1888.9919999999995,
+        "pm25Kg": 0.5666975999999998,
+        "pm10Kg": 3.7779839999999987,
+        "trees": 5236.285823999999
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-07",
+      "metrics": {
+        "vehicles": 32,
+        "distanceKm": 138948.5001741409,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 153868.75,
+        "dieselSavedL": 46316.166724713636,
+        "co2t": 122.274680153244,
+        "noxKg": 222.31760027862543,
+        "so2Kg": 1852.6466689885456,
+        "pm25Kg": 0.5557940006965636,
+        "pm10Kg": 3.705293337977091,
+        "trees": 5135.536566436248
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-08",
+      "metrics": {
+        "vehicles": 35,
+        "distanceKm": 120260.00008801227,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 137208.77,
+        "dieselSavedL": 40086.66669600409,
+        "co2t": 105.8288000774508,
+        "noxKg": 192.41600014081962,
+        "so2Kg": 1603.4666678401636,
+        "pm25Kg": 0.481040000352049,
+        "pm10Kg": 3.206933335680327,
+        "trees": 4444.809603252933
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-09",
+      "metrics": {
+        "vehicles": 41,
+        "distanceKm": 130663.70012104514,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 147697.57,
+        "dieselSavedL": 43554.566707015045,
+        "co2t": 114.98405610651973,
+        "noxKg": 209.0619201936722,
+        "so2Kg": 1742.1826682806018,
+        "pm25Kg": 0.5226548004841806,
+        "pm10Kg": 3.4843653365612037,
+        "trees": 4829.330356473829
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-10",
+      "metrics": {
+        "vehicles": 51,
+        "distanceKm": 160080.430063932,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 183368.98,
+        "dieselSavedL": 53360.143354644,
+        "co2t": 140.87077845626015,
+        "noxKg": 256.12868810229116,
+        "so2Kg": 2134.40573418576,
+        "pm25Kg": 0.640321720255728,
+        "pm10Kg": 4.26881146837152,
+        "trees": 5916.572695162927
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-11",
+      "metrics": {
+        "vehicles": 53,
+        "distanceKm": 182792.75030952095,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 210861.78,
+        "dieselSavedL": 60930.91676984032,
+        "co2t": 160.85762027237843,
+        "noxKg": 292.4684004952335,
+        "so2Kg": 2437.2366707936126,
+        "pm25Kg": 0.7311710012380838,
+        "pm10Kg": 4.874473341587225,
+        "trees": 6756.020051439894
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2024-12",
+      "metrics": {
+        "vehicles": 56,
+        "distanceKm": 206212.50073453187,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 233310.94,
+        "dieselSavedL": 68737.50024484396,
+        "co2t": 181.46700064638807,
+        "noxKg": 329.940001175251,
+        "so2Kg": 2749.5000097937586,
+        "pm25Kg": 0.8248500029381275,
+        "pm10Kg": 5.499000019587517,
+        "trees": 7621.614027148299
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-01",
+      "metrics": {
+        "vehicles": 56,
+        "distanceKm": 206975.40143828397,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 237979.04,
+        "dieselSavedL": 68991.80047942798,
+        "co2t": 182.1383532656899,
+        "noxKg": 331.1606423012543,
+        "so2Kg": 2759.6720191771196,
+        "pm25Kg": 0.8279016057531359,
+        "pm10Kg": 5.519344038354239,
+        "trees": 7649.810837158975
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-02",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 192281.5017320872,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 222368.69,
+        "dieselSavedL": 64093.833910695736,
+        "co2t": 169.20772152423675,
+        "noxKg": 307.6504027713395,
+        "so2Kg": 2563.7533564278297,
+        "pm25Kg": 0.7691260069283488,
+        "pm10Kg": 5.127506712855658,
+        "trees": 7106.724304017944
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-03",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 206576.50222396254,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 247743.33,
+        "dieselSavedL": 68858.83407465418,
+        "co2t": 181.78732195708704,
+        "noxKg": 330.52240355834005,
+        "so2Kg": 2754.353362986167,
+        "pm25Kg": 0.8263060088958502,
+        "pm10Kg": 5.508706725972335,
+        "trees": 7635.067522197656
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-04",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 195325,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 239106.77,
+        "dieselSavedL": 65108.333333333336,
+        "co2t": 171.886,
+        "noxKg": 312.52,
+        "so2Kg": 2604.3333333333335,
+        "pm25Kg": 0.7813,
+        "pm10Kg": 5.208666666666667,
+        "trees": 7219.2119999999995
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-05",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 236157.7,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 289701.75,
+        "dieselSavedL": 78719.23333333334,
+        "co2t": 207.818776,
+        "noxKg": 377.85231999999996,
+        "so2Kg": 3148.7693333333336,
+        "pm25Kg": 0.9446308,
+        "pm10Kg": 6.297538666666667,
+        "trees": 8728.388592000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-06",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 223308.5,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 285131.86,
+        "dieselSavedL": 74436.16666666667,
+        "co2t": 196.51148,
+        "noxKg": 357.29359999999997,
+        "so2Kg": 2977.4466666666667,
+        "pm25Kg": 0.893234,
+        "pm10Kg": 5.954893333333334,
+        "trees": 8253.48216
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-07",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 223764.8,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 280387.27,
+        "dieselSavedL": 74588.26666666666,
+        "co2t": 196.913024,
+        "noxKg": 358.02367999999996,
+        "so2Kg": 2983.5306666666665,
+        "pm25Kg": 0.8950591999999999,
+        "pm10Kg": 5.9670613333333336,
+        "trees": 8270.347008
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-08",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 200633.8,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 255208.05,
+        "dieselSavedL": 66877.93333333333,
+        "co2t": 176.557744,
+        "noxKg": 321.01408,
+        "so2Kg": 2675.1173333333336,
+        "pm25Kg": 0.8025351999999999,
+        "pm10Kg": 5.350234666666666,
+        "trees": 7415.4252480000005
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-09",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 216825.7,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 285269.52,
+        "dieselSavedL": 72275.23333333334,
+        "co2t": 190.80661600000002,
+        "noxKg": 346.92112,
+        "so2Kg": 2891.0093333333334,
+        "pm25Kg": 0.8673028,
+        "pm10Kg": 5.7820186666666675,
+        "trees": 8013.877872000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-10",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 225079.3003545641,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 292075.54,
+        "dieselSavedL": 75026.43345152137,
+        "co2t": 198.06978431201642,
+        "noxKg": 360.1268805673025,
+        "so2Kg": 3001.057338060855,
+        "pm25Kg": 0.9003172014182563,
+        "pm10Kg": 6.0021146761217095,
+        "trees": 8318.93094110469
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 230441.5003,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 301997.94,
+        "dieselSavedL": 76813.83343333333,
+        "co2t": 202.78852026400003,
+        "noxKg": 368.70640047999996,
+        "so2Kg": 3072.5533373333333,
+        "pm25Kg": 0.9217660012,
+        "pm10Kg": 6.145106674666667,
+        "trees": 8517.117851088002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 252281,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 312787.96,
+        "dieselSavedL": 84093.66666666667,
+        "co2t": 222.00728000000004,
+        "noxKg": 403.64959999999996,
+        "so2Kg": 3363.746666666667,
+        "pm25Kg": 1.009124,
+        "pm10Kg": 6.727493333333333,
+        "trees": 9324.305760000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 243831,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 329460,
+        "dieselSavedL": 81277,
+        "co2t": 214.57128,
+        "noxKg": 390.1296,
+        "so2Kg": 3251.08,
+        "pm25Kg": 0.975324,
+        "pm10Kg": 6.50216,
+        "trees": 9011.99376
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 228174.0998588175,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 318900,
+        "dieselSavedL": 76058.0332862725,
+        "co2t": 200.79320787575944,
+        "noxKg": 365.078559774108,
+        "so2Kg": 3042.3213314509003,
+        "pm25Kg": 0.9126963994352699,
+        "pm10Kg": 6.0846426629018,
+        "trees": 8433.314730781896
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 244065.69989590044,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 326058,
+        "dieselSavedL": 81355.23329863348,
+        "co2t": 214.7778159083924,
+        "noxKg": 390.5051198334407,
+        "so2Kg": 3254.2093319453393,
+        "pm25Kg": 0.9762627995836017,
+        "pm10Kg": 6.508418663890678,
+        "trees": 9020.66826815248
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 231950.9996303454,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 339654,
+        "dieselSavedL": 77316.9998767818,
+        "co2t": 204.11687967470397,
+        "noxKg": 371.12159940855264,
+        "so2Kg": 3092.679995071272,
+        "pm25Kg": 0.9278039985213816,
+        "pm10Kg": 6.185359990142544,
+        "trees": 8572.908946337566
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 233543.89979767785,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 350958,
+        "dieselSavedL": 77847.96659922595,
+        "co2t": 205.51863182195652,
+        "noxKg": 373.67023967628455,
+        "so2Kg": 3113.9186639690383,
+        "pm25Kg": 0.9341755991907114,
+        "pm10Kg": 6.227837327938076,
+        "trees": 8631.782536522174
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 233110.39983566635,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 346716,
+        "dieselSavedL": 77703.46661188878,
+        "co2t": 205.13715185538638,
+        "noxKg": 372.97663973706614,
+        "so2Kg": 3108.138664475551,
+        "pm25Kg": 0.9324415993426654,
+        "pm10Kg": 6.216277328951103,
+        "trees": 8615.760377926228
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TMBPL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 57,
+        "distanceKm": 225380.60008139163,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 315048,
+        "dieselSavedL": 75126.86669379722,
+        "co2t": 198.33492807162466,
+        "noxKg": 360.6089601302266,
+        "so2Kg": 3005.0746677518887,
+        "pm25Kg": 0.9015224003255665,
+        "pm10Kg": 6.010149335503777,
+        "trees": 8330.066979008236
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-03",
+      "metrics": {
+        "vehicles": 3,
+        "distanceKm": 7299,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 6090.75,
+        "dieselSavedL": 2433,
+        "co2t": 6.42312,
+        "noxKg": 11.678399999999998,
+        "so2Kg": 97.32000000000001,
+        "pm25Kg": 0.029196,
+        "pm10Kg": 0.19464,
+        "trees": 269.77103999999997
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-04",
+      "metrics": {
+        "vehicles": 6,
+        "distanceKm": 25303,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 12151.64,
+        "dieselSavedL": 8434.333333333334,
+        "co2t": 22.266640000000002,
+        "noxKg": 40.4848,
+        "so2Kg": 337.3733333333334,
+        "pm25Kg": 0.101212,
+        "pm10Kg": 0.6747466666666667,
+        "trees": 935.1988800000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-05",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 50282,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 32194.79,
+        "dieselSavedL": 16760.666666666668,
+        "co2t": 44.248160000000006,
+        "noxKg": 80.4512,
+        "so2Kg": 670.4266666666667,
+        "pm25Kg": 0.201128,
+        "pm10Kg": 1.3408533333333335,
+        "trees": 1858.4227200000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-06",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 48660,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 40113.4,
+        "dieselSavedL": 16220,
+        "co2t": 42.820800000000006,
+        "noxKg": 77.856,
+        "so2Kg": 648.8000000000001,
+        "pm25Kg": 0.19463999999999998,
+        "pm10Kg": 1.2975999999999999,
+        "trees": 1798.4736000000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-07",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 49600,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 36633.19,
+        "dieselSavedL": 16533.333333333332,
+        "co2t": 43.648,
+        "noxKg": 79.35999999999999,
+        "so2Kg": 661.3333333333333,
+        "pm25Kg": 0.1984,
+        "pm10Kg": 1.3226666666666667,
+        "trees": 1833.2160000000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-08",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 49600,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 37888.11,
+        "dieselSavedL": 16533.333333333332,
+        "co2t": 43.648,
+        "noxKg": 79.35999999999999,
+        "so2Kg": 661.3333333333333,
+        "pm25Kg": 0.1984,
+        "pm10Kg": 1.3226666666666667,
+        "trees": 1833.2160000000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-09",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 48000,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 29263.19,
+        "dieselSavedL": 16000,
+        "co2t": 42.24,
+        "noxKg": 76.8,
+        "so2Kg": 640,
+        "pm25Kg": 0.192,
+        "pm10Kg": 1.28,
+        "trees": 1774.0800000000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-10",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 49600,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 27474.2,
+        "dieselSavedL": 16533.333333333332,
+        "co2t": 43.648,
+        "noxKg": 79.35999999999999,
+        "so2Kg": 661.3333333333333,
+        "pm25Kg": 0.1984,
+        "pm10Kg": 1.3226666666666667,
+        "trees": 1833.2160000000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-11",
+      "metrics": {
+        "vehicles": 10,
+        "distanceKm": 48000,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 26530.42,
+        "dieselSavedL": 16000,
+        "co2t": 42.24,
+        "noxKg": 76.8,
+        "so2Kg": 640,
+        "pm25Kg": 0.192,
+        "pm10Kg": 1.28,
+        "trees": 1774.0800000000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2024-12",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 90190,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 74974.58,
+        "dieselSavedL": 30063.333333333332,
+        "co2t": 79.3672,
+        "noxKg": 144.30399999999997,
+        "so2Kg": 1202.5333333333333,
+        "pm25Kg": 0.36075999999999997,
+        "pm10Kg": 2.4050666666666665,
+        "trees": 3333.4224
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-01",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 96371,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 86627.61,
+        "dieselSavedL": 32123.666666666668,
+        "co2t": 84.80648000000001,
+        "noxKg": 154.1936,
+        "so2Kg": 1284.9466666666667,
+        "pm25Kg": 0.385484,
+        "pm10Kg": 2.5698933333333334,
+        "trees": 3561.8721600000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-02",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 86464,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 78676.39,
+        "dieselSavedL": 28821.333333333332,
+        "co2t": 76.08832000000001,
+        "noxKg": 138.34239999999997,
+        "so2Kg": 1152.8533333333332,
+        "pm25Kg": 0.345856,
+        "pm10Kg": 2.3057066666666666,
+        "trees": 3195.7094400000005
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-03",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 103527,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 95089.91,
+        "dieselSavedL": 34509,
+        "co2t": 91.10376000000001,
+        "noxKg": 165.64319999999998,
+        "so2Kg": 1380.3600000000001,
+        "pm25Kg": 0.414108,
+        "pm10Kg": 2.76072,
+        "trees": 3826.3579200000004
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-04",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 99639,
+        "tonnageMt": null,
+        "passengers": 271200,
+        "energyKwh": 92924.5,
+        "dieselSavedL": 33213,
+        "co2t": 87.68232,
+        "noxKg": 159.42239999999998,
+        "so2Kg": 1328.52,
+        "pm25Kg": 0.39855599999999997,
+        "pm10Kg": 2.65704,
+        "trees": 3682.65744
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-05",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 99020,
+        "tonnageMt": null,
+        "passengers": 292640,
+        "energyKwh": 91414.17,
+        "dieselSavedL": 33006.666666666664,
+        "co2t": 87.13759999999999,
+        "noxKg": 158.432,
+        "so2Kg": 1320.2666666666667,
+        "pm25Kg": 0.39608,
+        "pm10Kg": 2.6405333333333334,
+        "trees": 3659.7791999999995
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-06",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 96187,
+        "tonnageMt": null,
+        "passengers": 277200,
+        "energyKwh": 85022.78,
+        "dieselSavedL": 32062.333333333332,
+        "co2t": 84.64456,
+        "noxKg": 153.89919999999998,
+        "so2Kg": 1282.4933333333333,
+        "pm25Kg": 0.384748,
+        "pm10Kg": 2.5649866666666665,
+        "trees": 3555.07152
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-07",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 93853,
+        "tonnageMt": null,
+        "passengers": 280240,
+        "energyKwh": 75026.85,
+        "dieselSavedL": 31284.333333333332,
+        "co2t": 82.59064,
+        "noxKg": 150.16479999999999,
+        "so2Kg": 1251.3733333333332,
+        "pm25Kg": 0.37541199999999997,
+        "pm10Kg": 2.5027466666666665,
+        "trees": 3468.8068799999996
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-08",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 94594,
+        "tonnageMt": null,
+        "passengers": 286440,
+        "energyKwh": 84367.8,
+        "dieselSavedL": 31531.333333333332,
+        "co2t": 83.24272,
+        "noxKg": 151.35039999999998,
+        "so2Kg": 1261.2533333333333,
+        "pm25Kg": 0.378376,
+        "pm10Kg": 2.5225066666666667,
+        "trees": 3496.1942400000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-09",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 88999,
+        "tonnageMt": null,
+        "passengers": 270000,
+        "energyKwh": 75488.06,
+        "dieselSavedL": 29666.333333333332,
+        "co2t": 78.31912,
+        "noxKg": 142.39839999999998,
+        "so2Kg": 1186.6533333333334,
+        "pm25Kg": 0.355996,
+        "pm10Kg": 2.3733066666666667,
+        "trees": 3289.40304
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-10",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 93883,
+        "tonnageMt": null,
+        "passengers": 273000,
+        "energyKwh": 86016.58,
+        "dieselSavedL": 31294.333333333332,
+        "co2t": 82.61703999999999,
+        "noxKg": 150.2128,
+        "so2Kg": 1251.7733333333333,
+        "pm25Kg": 0.375532,
+        "pm10Kg": 2.503546666666667,
+        "trees": 3469.9156799999996
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 91040,
+        "tonnageMt": null,
+        "passengers": 285200,
+        "energyKwh": 110719.12,
+        "dieselSavedL": 30346.666666666668,
+        "co2t": 80.11520000000002,
+        "noxKg": 145.664,
+        "so2Kg": 1213.8666666666668,
+        "pm25Kg": 0.36416,
+        "pm10Kg": 2.4277333333333333,
+        "trees": 3364.8384000000005
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 97978.4,
+        "tonnageMt": null,
+        "passengers": 291400,
+        "energyKwh": 117443.7,
+        "dieselSavedL": 32659.466666666664,
+        "co2t": 86.220992,
+        "noxKg": 156.76543999999998,
+        "so2Kg": 1306.3786666666665,
+        "pm25Kg": 0.3919136,
+        "pm10Kg": 2.612757333333333,
+        "trees": 3621.2816639999996
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 100554.40000000001,
+        "tonnageMt": null,
+        "passengers": 294500,
+        "energyKwh": 134619,
+        "dieselSavedL": 33518.13333333334,
+        "co2t": 88.48787200000002,
+        "noxKg": 160.88704,
+        "so2Kg": 1340.7253333333335,
+        "pm25Kg": 0.4022176,
+        "pm10Kg": 2.6814506666666666,
+        "trees": 3716.490624000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 85105.5,
+        "tonnageMt": null,
+        "passengers": 288944,
+        "energyKwh": 129217,
+        "dieselSavedL": 28368.5,
+        "co2t": 74.89283999999999,
+        "noxKg": 136.16879999999998,
+        "so2Kg": 1134.74,
+        "pm25Kg": 0.340422,
+        "pm10Kg": 2.26948,
+        "trees": 3145.4992799999995
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 96481,
+        "tonnageMt": null,
+        "passengers": 290173,
+        "energyKwh": 156183,
+        "dieselSavedL": 32160.333333333332,
+        "co2t": 84.90328,
+        "noxKg": 154.3696,
+        "so2Kg": 1286.4133333333334,
+        "pm25Kg": 0.385924,
+        "pm10Kg": 2.572826666666667,
+        "trees": 3565.93776
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 88135,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 139821,
+        "dieselSavedL": 29378.333333333332,
+        "co2t": 77.5588,
+        "noxKg": 141.016,
+        "so2Kg": 1175.1333333333332,
+        "pm25Kg": 0.35253999999999996,
+        "pm10Kg": 2.3502666666666667,
+        "trees": 3257.4696000000004
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 95499.63,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 149781,
+        "dieselSavedL": 31833.210000000003,
+        "co2t": 84.03967440000002,
+        "noxKg": 152.799408,
+        "so2Kg": 1273.3284,
+        "pm25Kg": 0.38199852,
+        "pm10Kg": 2.5466568,
+        "trees": 3529.666324800001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 93503.6,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 144583,
+        "dieselSavedL": 31167.86666666667,
+        "co2t": 82.283168,
+        "noxKg": 149.60576,
+        "so2Kg": 1246.7146666666667,
+        "pm25Kg": 0.3740144,
+        "pm10Kg": 2.4934293333333337,
+        "trees": 3455.8930560000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TUPL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 20,
+        "distanceKm": 114256.35608846741,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 135739,
+        "dieselSavedL": 38085.45202948913,
+        "co2t": 100.54559335785132,
+        "noxKg": 182.81016974154784,
+        "so2Kg": 1523.4180811795654,
+        "pm25Kg": 0.4570254243538696,
+        "pm10Kg": 3.046836162359131,
+        "trees": 4222.9149210297555
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "extrapolated",
+        "energyKwh": "reported",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-01",
+      "metrics": {
+        "vehicles": 35,
+        "distanceKm": 146971.49,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 105536,
+        "dieselSavedL": 48990.496666666666,
+        "co2t": 129.3349112,
+        "noxKg": 235.15438399999996,
+        "so2Kg": 1959.6198666666667,
+        "pm25Kg": 0.5878859599999999,
+        "pm10Kg": 3.919239733333333,
+        "trees": 5432.0662704
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-02",
+      "metrics": {
+        "vehicles": 35,
+        "distanceKm": 121175.26,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 74910,
+        "dieselSavedL": 40391.753333333334,
+        "co2t": 106.63422880000002,
+        "noxKg": 193.880416,
+        "so2Kg": 1615.6701333333333,
+        "pm25Kg": 0.48470103999999997,
+        "pm10Kg": 3.2313402666666664,
+        "trees": 4478.6376096
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-03",
+      "metrics": {
+        "vehicles": 35,
+        "distanceKm": 141581.98999999993,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 131586,
+        "dieselSavedL": 47193.996666666644,
+        "co2t": 124.59215119999995,
+        "noxKg": 226.53118399999988,
+        "so2Kg": 1887.7598666666659,
+        "pm25Kg": 0.5663279599999997,
+        "pm10Kg": 3.775519733333332,
+        "trees": 5232.870350399998
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-04",
+      "metrics": {
+        "vehicles": 46,
+        "distanceKm": 151018.75,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 245610,
+        "dieselSavedL": 50339.583333333336,
+        "co2t": 132.8965,
+        "noxKg": 241.63,
+        "so2Kg": 2013.5833333333335,
+        "pm25Kg": 0.6040749999999999,
+        "pm10Kg": 4.027166666666666,
+        "trees": 5581.653
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-05",
+      "metrics": {
+        "vehicles": 53,
+        "distanceKm": 175537.19,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 234357,
+        "dieselSavedL": 58512.39666666667,
+        "co2t": 154.47272720000004,
+        "noxKg": 280.85950399999996,
+        "so2Kg": 2340.4958666666666,
+        "pm25Kg": 0.7021487599999999,
+        "pm10Kg": 4.680991733333333,
+        "trees": 6487.854542400001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-06",
+      "metrics": {
+        "vehicles": 53,
+        "distanceKm": 199416.47,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 220966,
+        "dieselSavedL": 66472.15666666666,
+        "co2t": 175.4864936,
+        "noxKg": 319.06635199999994,
+        "so2Kg": 2658.8862666666664,
+        "pm25Kg": 0.7976658799999999,
+        "pm10Kg": 5.317772533333333,
+        "trees": 7370.4327312
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-07",
+      "metrics": {
+        "vehicles": 66,
+        "distanceKm": 220740,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 508207,
+        "dieselSavedL": 73580,
+        "co2t": 194.2512,
+        "noxKg": 353.18399999999997,
+        "so2Kg": 2943.2000000000003,
+        "pm25Kg": 0.88296,
+        "pm10Kg": 5.8864,
+        "trees": 8158.5504
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-08",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 209187,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 183655.59,
+        "dieselSavedL": 69729,
+        "co2t": 184.08456,
+        "noxKg": 334.69919999999996,
+        "so2Kg": 2789.16,
+        "pm25Kg": 0.8367479999999999,
+        "pm10Kg": 5.57832,
+        "trees": 7731.551520000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-09",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 198336,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 232783.78,
+        "dieselSavedL": 66112,
+        "co2t": 174.53568,
+        "noxKg": 317.33759999999995,
+        "so2Kg": 2644.48,
+        "pm25Kg": 0.7933439999999999,
+        "pm10Kg": 5.288959999999999,
+        "trees": 7330.498560000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-10",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 220770,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 203551.63,
+        "dieselSavedL": 73590,
+        "co2t": 194.2776,
+        "noxKg": 353.23199999999997,
+        "so2Kg": 2943.6,
+        "pm25Kg": 0.88308,
+        "pm10Kg": 5.8872,
+        "trees": 8159.6592
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 224163,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 183913.33,
+        "dieselSavedL": 74721,
+        "co2t": 197.26344,
+        "noxKg": 358.6608,
+        "so2Kg": 2988.84,
+        "pm25Kg": 0.896652,
+        "pm10Kg": 5.97768,
+        "trees": 8285.064480000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 237196,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 238502.03,
+        "dieselSavedL": 79065.33333333333,
+        "co2t": 208.73248,
+        "noxKg": 379.51359999999994,
+        "so2Kg": 3162.6133333333332,
+        "pm25Kg": 0.948784,
+        "pm10Kg": 6.3252266666666666,
+        "trees": 8766.76416
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 230124,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 76708,
+        "co2t": 202.50912,
+        "noxKg": 368.1984,
+        "so2Kg": 3068.32,
+        "pm25Kg": 0.920496,
+        "pm10Kg": 6.13664,
+        "trees": 8505.38304
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 227124,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 75708,
+        "co2t": 199.86912,
+        "noxKg": 363.3984,
+        "so2Kg": 3028.32,
+        "pm25Kg": 0.908496,
+        "pm10Kg": 6.05664,
+        "trees": 8394.50304
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 223010,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 74336.66666666667,
+        "co2t": 196.24880000000002,
+        "noxKg": 356.816,
+        "so2Kg": 2973.4666666666667,
+        "pm25Kg": 0.8920399999999999,
+        "pm10Kg": 5.946933333333333,
+        "trees": 8242.4496
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 255512.67108063027,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 313027.3685854282,
+        "dieselSavedL": 85170.89036021009,
+        "co2t": 224.85115055095466,
+        "noxKg": 408.8202737290084,
+        "so2Kg": 3406.8356144084037,
+        "pm25Kg": 1.022050684322521,
+        "pm10Kg": 6.813671228816807,
+        "trees": 9443.748323140095
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "extrapolated",
+        "energyKwh": "extrapolated",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 263237.8584335279,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 323723.13137217425,
+        "dieselSavedL": 87745.95281117596,
+        "co2t": 231.64931542150455,
+        "noxKg": 421.18057349364454,
+        "so2Kg": 3509.8381124470384,
+        "pm25Kg": 1.0529514337341115,
+        "pm10Kg": 7.019676224894077,
+        "trees": 9729.271247703191
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "extrapolated",
+        "energyKwh": "extrapolated",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 270713.84619439766,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 334073.8695528954,
+        "dieselSavedL": 90237.94873146589,
+        "co2t": 238.22818465106997,
+        "noxKg": 433.14215391103625,
+        "so2Kg": 3609.517949258636,
+        "pm25Kg": 1.0828553847775906,
+        "pm10Kg": 7.219035898517271,
+        "trees": 10005.583755344938
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "extrapolated",
+        "energyKwh": "extrapolated",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "TEOPL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 63,
+        "distanceKm": 278439.0335472971,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 344769.63233964145,
+        "dieselSavedL": 92813.01118243237,
+        "co2t": 245.02634952162146,
+        "noxKg": 445.5024536756753,
+        "so2Kg": 3712.5204472972946,
+        "pm25Kg": 1.1137561341891884,
+        "pm10Kg": 7.42504089459459,
+        "trees": 10291.106679908102
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "extrapolated",
+        "energyKwh": "extrapolated",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-07",
+      "metrics": {
+        "vehicles": 15,
+        "distanceKm": 55469,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 18489.666666666668,
+        "co2t": 48.812720000000006,
+        "noxKg": 88.7504,
+        "so2Kg": 739.5866666666667,
+        "pm25Kg": 0.221876,
+        "pm10Kg": 1.4791733333333332,
+        "trees": 2050.1342400000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-08",
+      "metrics": {
+        "vehicles": 25,
+        "distanceKm": 121035,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 40345,
+        "co2t": 106.5108,
+        "noxKg": 193.65599999999998,
+        "so2Kg": 1613.8,
+        "pm25Kg": 0.48413999999999996,
+        "pm10Kg": 3.2276,
+        "trees": 4473.4536
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-09",
+      "metrics": {
+        "vehicles": 25,
+        "distanceKm": 127720,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 42573.333333333336,
+        "co2t": 112.3936,
+        "noxKg": 204.352,
+        "so2Kg": 1702.9333333333334,
+        "pm25Kg": 0.51088,
+        "pm10Kg": 3.405866666666667,
+        "trees": 4720.5312
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-10",
+      "metrics": {
+        "vehicles": 25,
+        "distanceKm": 125271,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 41757,
+        "co2t": 110.23848000000001,
+        "noxKg": 200.43359999999998,
+        "so2Kg": 1670.28,
+        "pm25Kg": 0.501084,
+        "pm10Kg": 3.34056,
+        "trees": 4630.01616
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 25,
+        "distanceKm": 142369,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 47456.333333333336,
+        "co2t": 125.28472000000002,
+        "noxKg": 227.7904,
+        "so2Kg": 1898.2533333333336,
+        "pm25Kg": 0.569476,
+        "pm10Kg": 3.7965066666666667,
+        "trees": 5261.958240000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 25,
+        "distanceKm": 153235,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 51078.333333333336,
+        "co2t": 134.84680000000003,
+        "noxKg": 245.176,
+        "so2Kg": 2043.1333333333334,
+        "pm25Kg": 0.6129399999999999,
+        "pm10Kg": 4.086266666666666,
+        "trees": 5663.565600000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 50,
+        "distanceKm": 333963,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 111321,
+        "co2t": 293.88744,
+        "noxKg": 534.3408,
+        "so2Kg": 4452.84,
+        "pm25Kg": 1.335852,
+        "pm10Kg": 8.90568,
+        "trees": 12343.272480000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 512336,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 170778.66666666666,
+        "co2t": 450.85568,
+        "noxKg": 819.7375999999999,
+        "so2Kg": 6831.1466666666665,
+        "pm25Kg": 2.049344,
+        "pm10Kg": 13.662293333333334,
+        "trees": 18935.93856
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 447183,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 149061,
+        "co2t": 393.52104,
+        "noxKg": 715.4928,
+        "so2Kg": 5962.4400000000005,
+        "pm25Kg": 1.788732,
+        "pm10Kg": 11.92488,
+        "trees": 16527.883680000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "missing",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 487210.27721752226,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 162403.4257391741,
+        "co2t": 428.74504395141963,
+        "noxKg": 779.5364435480355,
+        "so2Kg": 6496.137029566964,
+        "pm25Kg": 1.948841108870089,
+        "pm10Kg": 12.992274059133926,
+        "trees": 18007.291845959626
+      },
+      "quality": {
+        "vehicles": "carried_forward",
+        "distanceKm": "extrapolated",
+        "energyKwh": "missing",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 541187.9492879361,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 180395.9830959787,
+        "co2t": 476.2453953733838,
+        "noxKg": 865.9007188606977,
+        "so2Kg": 7215.839323839148,
+        "pm25Kg": 2.1647517971517445,
+        "pm10Kg": 14.431678647678297,
+        "trees": 20002.30660568212
+      },
+      "quality": {
+        "vehicles": "carried_forward",
+        "distanceKm": "extrapolated",
+        "energyKwh": "missing",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 593424.4061302692,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 197808.1353767564,
+        "co2t": 522.2134773946369,
+        "noxKg": 949.4790498084307,
+        "so2Kg": 7912.325415070256,
+        "pm25Kg": 2.3736976245210766,
+        "pm10Kg": 15.824650830140511,
+        "trees": 21932.966050574752
+      },
+      "quality": {
+        "vehicles": "carried_forward",
+        "distanceKm": "extrapolated",
+        "energyKwh": "missing",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "NTSPL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 100,
+        "distanceKm": 647402.078200683,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": null,
+        "dieselSavedL": 215800.692733561,
+        "co2t": 569.7138288166011,
+        "noxKg": 1035.8433251210927,
+        "so2Kg": 8632.027709342441,
+        "pm25Kg": 2.589608312802732,
+        "pm10Kg": 17.26405541868488,
+        "trees": 23927.980810297246
+      },
+      "quality": {
+        "vehicles": "carried_forward",
+        "distanceKm": "extrapolated",
+        "energyKwh": "missing",
+        "derived": "extrapolated"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-03",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 12718,
+        "tonnageMt": 1294.78,
+        "passengers": null,
+        "energyKwh": 0,
+        "dieselSavedL": 4239.333333333333,
+        "co2t": 11.191840000000001,
+        "noxKg": 20.348799999999997,
+        "so2Kg": 169.57333333333332,
+        "pm25Kg": 0.050872,
+        "pm10Kg": 0.3391466666666667,
+        "trees": 470.05728000000005
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-04",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 46931,
+        "tonnageMt": 4699,
+        "passengers": null,
+        "energyKwh": 75108.10999999999,
+        "dieselSavedL": 15643.666666666666,
+        "co2t": 41.299279999999996,
+        "noxKg": 75.08959999999999,
+        "so2Kg": 625.7466666666667,
+        "pm25Kg": 0.187724,
+        "pm10Kg": 1.2514933333333333,
+        "trees": 1734.5697599999999
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-05",
+      "metrics": {
+        "vehicles": 16,
+        "distanceKm": 47156,
+        "tonnageMt": 4999.41,
+        "passengers": null,
+        "energyKwh": 77716.13000000003,
+        "dieselSavedL": 15718.666666666666,
+        "co2t": 41.497279999999996,
+        "noxKg": 75.44959999999999,
+        "so2Kg": 628.7466666666667,
+        "pm25Kg": 0.18862399999999999,
+        "pm10Kg": 1.2574933333333334,
+        "trees": 1742.88576
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-06",
+      "metrics": {
+        "vehicles": 24,
+        "distanceKm": 96130,
+        "tonnageMt": 9824.92,
+        "passengers": null,
+        "energyKwh": 148395.49000000005,
+        "dieselSavedL": 32043.333333333332,
+        "co2t": 84.5944,
+        "noxKg": 153.808,
+        "so2Kg": 1281.7333333333333,
+        "pm25Kg": 0.38452,
+        "pm10Kg": 2.563466666666667,
+        "trees": 3552.9647999999997
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-07",
+      "metrics": {
+        "vehicles": 40,
+        "distanceKm": 221697,
+        "tonnageMt": 22634.44,
+        "passengers": null,
+        "energyKwh": 380179.99,
+        "dieselSavedL": 73899,
+        "co2t": 195.09336000000002,
+        "noxKg": 354.7152,
+        "so2Kg": 2955.96,
+        "pm25Kg": 0.8867879999999999,
+        "pm10Kg": 5.911919999999999,
+        "trees": 8193.92112
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-08",
+      "metrics": {
+        "vehicles": 40,
+        "distanceKm": 81887,
+        "tonnageMt": 8924,
+        "passengers": null,
+        "energyKwh": 251124.39,
+        "dieselSavedL": 27295.666666666668,
+        "co2t": 72.06056000000001,
+        "noxKg": 131.01919999999998,
+        "so2Kg": 1091.8266666666668,
+        "pm25Kg": 0.327548,
+        "pm10Kg": 2.1836533333333334,
+        "trees": 3026.54352
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-09",
+      "metrics": {
+        "vehicles": 70,
+        "distanceKm": 135283,
+        "tonnageMt": 15591.45,
+        "passengers": null,
+        "energyKwh": 229595.85,
+        "dieselSavedL": 45094.333333333336,
+        "co2t": 119.04904,
+        "noxKg": 216.4528,
+        "so2Kg": 1803.7733333333335,
+        "pm25Kg": 0.541132,
+        "pm10Kg": 3.6075466666666665,
+        "trees": 5000.05968
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-10",
+      "metrics": {
+        "vehicles": 68,
+        "distanceKm": 244929,
+        "tonnageMt": 30907.75000000002,
+        "passengers": null,
+        "energyKwh": 520622.99,
+        "dieselSavedL": 81643,
+        "co2t": 215.53752000000003,
+        "noxKg": 391.8864,
+        "so2Kg": 3265.7200000000003,
+        "pm25Kg": 0.9797159999999999,
+        "pm10Kg": 6.53144,
+        "trees": 9052.575840000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 68,
+        "distanceKm": 373600,
+        "tonnageMt": 40300.700000000026,
+        "passengers": null,
+        "energyKwh": 723143.28,
+        "dieselSavedL": 124533.33333333333,
+        "co2t": 328.768,
+        "noxKg": 597.7599999999999,
+        "so2Kg": 4981.333333333333,
+        "pm25Kg": 1.4944,
+        "pm10Kg": 9.962666666666667,
+        "trees": 13808.256
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 311630,
+        "tonnageMt": 33875.53999999994,
+        "passengers": null,
+        "energyKwh": 610222.49,
+        "dieselSavedL": 103876.66666666667,
+        "co2t": 274.23440000000005,
+        "noxKg": 498.608,
+        "so2Kg": 4155.066666666667,
+        "pm25Kg": 1.2465199999999999,
+        "pm10Kg": 8.310133333333333,
+        "trees": 11517.844800000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 506100,
+        "tonnageMt": 52240.49,
+        "passengers": null,
+        "energyKwh": 849802.5700000001,
+        "dieselSavedL": 168700,
+        "co2t": 445.368,
+        "noxKg": 809.7599999999999,
+        "so2Kg": 6748,
+        "pm25Kg": 2.0244,
+        "pm10Kg": 13.496,
+        "trees": 18705.456
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 536416,
+        "tonnageMt": 55013.950000000055,
+        "passengers": null,
+        "energyKwh": 1041951.75,
+        "dieselSavedL": 178805.33333333334,
+        "co2t": 472.0460800000001,
+        "noxKg": 858.2656,
+        "so2Kg": 7152.213333333334,
+        "pm25Kg": 2.145664,
+        "pm10Kg": 14.304426666666668,
+        "trees": 19825.935360000003
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 523980,
+        "tonnageMt": 53919,
+        "passengers": null,
+        "energyKwh": 880228,
+        "dieselSavedL": 174660,
+        "co2t": 461.10240000000005,
+        "noxKg": 838.3679999999999,
+        "so2Kg": 6986.400000000001,
+        "pm25Kg": 2.09592,
+        "pm10Kg": 13.972800000000001,
+        "trees": 19366.3008
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 563490,
+        "tonnageMt": 60731,
+        "passengers": null,
+        "energyKwh": 1051937,
+        "dieselSavedL": 187830,
+        "co2t": 495.8712,
+        "noxKg": 901.584,
+        "so2Kg": 7513.2,
+        "pm25Kg": 2.2539599999999997,
+        "pm10Kg": 15.026399999999999,
+        "trees": 20826.5904
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 455877,
+        "tonnageMt": 49617,
+        "passengers": null,
+        "energyKwh": 813037,
+        "dieselSavedL": 151959,
+        "co2t": 401.17176,
+        "noxKg": 729.4032,
+        "so2Kg": 6078.36,
+        "pm25Kg": 1.823508,
+        "pm10Kg": 12.15672,
+        "trees": 16849.213920000002
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 498165,
+        "tonnageMt": 53282,
+        "passengers": null,
+        "energyKwh": 1098422,
+        "dieselSavedL": 166055,
+        "co2t": 438.3852,
+        "noxKg": 797.064,
+        "so2Kg": 6642.2,
+        "pm25Kg": 1.9926599999999999,
+        "pm10Kg": 13.2844,
+        "trees": 18412.1784
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "UCL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 67,
+        "distanceKm": 461118,
+        "tonnageMt": 52175,
+        "passengers": null,
+        "energyKwh": 929130,
+        "dieselSavedL": 153706,
+        "co2t": 405.78384,
+        "noxKg": 737.7887999999999,
+        "so2Kg": 6148.24,
+        "pm25Kg": 1.844472,
+        "pm10Kg": 12.296479999999999,
+        "trees": 17042.92128
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2025-11",
+      "metrics": {
+        "vehicles": 4,
+        "distanceKm": 1730,
+        "tonnageMt": 10042.46,
+        "passengers": null,
+        "energyKwh": 7355.56,
+        "dieselSavedL": 576.6666666666666,
+        "co2t": 1.5223999999999998,
+        "noxKg": 2.768,
+        "so2Kg": 23.066666666666666,
+        "pm25Kg": 0.00692,
+        "pm10Kg": 0.04613333333333333,
+        "trees": 63.94079999999999
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2025-12",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 10984,
+        "tonnageMt": 84696.80099999999,
+        "passengers": null,
+        "energyKwh": 40395.82999999999,
+        "dieselSavedL": 3661.3333333333335,
+        "co2t": 9.66592,
+        "noxKg": 17.5744,
+        "so2Kg": 146.45333333333335,
+        "pm25Kg": 0.043935999999999996,
+        "pm10Kg": 0.29290666666666665,
+        "trees": 405.96864
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-01",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 18034,
+        "tonnageMt": 84858.76599999999,
+        "passengers": null,
+        "energyKwh": 77750.54,
+        "dieselSavedL": 6011.333333333333,
+        "co2t": 15.86992,
+        "noxKg": 28.854399999999995,
+        "so2Kg": 240.45333333333332,
+        "pm25Kg": 0.07213599999999999,
+        "pm10Kg": 0.48090666666666665,
+        "trees": 666.53664
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-02",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 15989,
+        "tonnageMt": 85342.66,
+        "passengers": null,
+        "energyKwh": 62976.36,
+        "dieselSavedL": 5329.666666666667,
+        "co2t": 14.070320000000002,
+        "noxKg": 25.5824,
+        "so2Kg": 213.1866666666667,
+        "pm25Kg": 0.063956,
+        "pm10Kg": 0.4263733333333333,
+        "trees": 590.9534400000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-03",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 17048,
+        "tonnageMt": 95714,
+        "passengers": null,
+        "energyKwh": 62760,
+        "dieselSavedL": 5682.666666666667,
+        "co2t": 15.002240000000002,
+        "noxKg": 27.276799999999998,
+        "so2Kg": 227.30666666666667,
+        "pm25Kg": 0.068192,
+        "pm10Kg": 0.45461333333333337,
+        "trees": 630.0940800000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-04",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 15982,
+        "tonnageMt": 93582,
+        "passengers": null,
+        "energyKwh": 58400,
+        "dieselSavedL": 5327.333333333333,
+        "co2t": 14.06416,
+        "noxKg": 25.571199999999997,
+        "so2Kg": 213.09333333333333,
+        "pm25Kg": 0.063928,
+        "pm10Kg": 0.42618666666666666,
+        "trees": 590.69472
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 15641,
+        "tonnageMt": 92365,
+        "passengers": null,
+        "energyKwh": 62468,
+        "dieselSavedL": 5213.666666666667,
+        "co2t": 13.764080000000002,
+        "noxKg": 25.0256,
+        "so2Kg": 208.54666666666668,
+        "pm25Kg": 0.062564,
+        "pm10Kg": 0.4170933333333333,
+        "trees": 578.0913600000001
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 11397,
+        "tonnageMt": 113093,
+        "passengers": null,
+        "energyKwh": 61184,
+        "dieselSavedL": 3799,
+        "co2t": 10.02936,
+        "noxKg": 18.2352,
+        "so2Kg": 151.96,
+        "pm25Kg": 0.045588,
+        "pm10Kg": 0.30391999999999997,
+        "trees": 421.23312000000004
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "SCL",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 5,
+        "distanceKm": 12149,
+        "tonnageMt": 81167,
+        "passengers": null,
+        "energyKwh": 61472,
+        "dieselSavedL": 4049.6666666666665,
+        "co2t": 10.691120000000002,
+        "noxKg": 19.438399999999998,
+        "so2Kg": 161.98666666666665,
+        "pm25Kg": 0.048596,
+        "pm10Kg": 0.32397333333333334,
+        "trees": 449.02704000000006
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "JM_BAXI",
+      "month": "2026-05",
+      "metrics": {
+        "vehicles": 14,
+        "distanceKm": null,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 20100,
+        "dieselSavedL": null,
+        "co2t": null,
+        "noxKg": null,
+        "so2Kg": null,
+        "pm25Kg": null,
+        "pm10Kg": null,
+        "trees": null
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "missing",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "JM_BAXI",
+      "month": "2026-06",
+      "metrics": {
+        "vehicles": 18,
+        "distanceKm": 27212,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 65131,
+        "dieselSavedL": 9070.666666666666,
+        "co2t": 23.94656,
+        "noxKg": 43.539199999999994,
+        "so2Kg": 362.82666666666665,
+        "pm25Kg": 0.108848,
+        "pm10Kg": 0.7256533333333334,
+        "trees": 1005.75552
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    },
+    {
+      "projectId": "JM_BAXI",
+      "month": "2026-07",
+      "metrics": {
+        "vehicles": 18,
+        "distanceKm": 29294,
+        "tonnageMt": null,
+        "passengers": null,
+        "energyKwh": 70064,
+        "dieselSavedL": 9764.666666666666,
+        "co2t": 25.77872,
+        "noxKg": 46.8704,
+        "so2Kg": 390.58666666666664,
+        "pm25Kg": 0.11717599999999999,
+        "pm10Kg": 0.7811733333333333,
+        "trees": 1082.70624
+      },
+      "quality": {
+        "vehicles": "reported",
+        "distanceKm": "reported",
+        "energyKwh": "reported",
+        "derived": "reported"
+      }
+    }
+  ],
+  "issues": [
+    {
+      "id": "iss-1",
+      "projectId": "UCL",
+      "month": "2025-03 to 2025-05",
+      "metric": "energyKwh",
+      "severity": "review",
+      "message": "kWh column appears shifted 1 month relative to MWh (e.g. Apr-25 kWh=75,108 while Mar-25 MWh=75.1). May-25 & Jun-25 MWh both 148.4. Needs verification.",
+      "sourceRef": "UCL Sheet rows 5-7"
+    },
+    {
+      "id": "iss-2",
+      "projectId": "NTSPL",
+      "metric": "energyKwh",
+      "severity": "info",
+      "message": "Energy is blank in kWh and 0 in MWh for all months (Jul-25 to Jul-26). Displays as \"No energy data\".",
+      "sourceRef": "NTSPL Sheet Energy column"
+    },
+    {
+      "id": "iss-3",
+      "projectId": "TEOPL",
+      "month": "2026-01 to 2026-03",
+      "metric": "energyKwh",
+      "severity": "review",
+      "message": "kWh is blank Jan-26 to Mar-26; Jul-25 kWh (508,207) is ~2.5x adjacent months (outlier).",
+      "sourceRef": "TEOPL Sheet Energy column"
+    },
+    {
+      "id": "iss-4",
+      "projectId": "JM_BAXI",
+      "month": "2026-05",
+      "metric": "distanceKm",
+      "severity": "info",
+      "message": "Run km and derived metrics are text \"-\" while vehicles (14) and energy (20 MWh) are reported.",
+      "sourceRef": "JM BAXI Sheet row 5"
+    },
+    {
+      "id": "iss-5",
+      "projectId": "JM_BAXI",
+      "metric": "derivedMetrics",
+      "severity": "info",
+      "message": "Derived values in source sheet are rounded to integers (e.g., PM2.5 displays 0). Note reduced precision.",
+      "sourceRef": "JM BAXI Sheet"
+    },
+    {
+      "id": "iss-6",
+      "projectId": "UCL",
+      "severity": "info",
+      "message": "Sheet header contains copy-paste error (TMBPL company name & depot location). Client and type correctly mapped from Category Summary.",
+      "sourceRef": "UCL Sheet header row 1-3"
+    },
+    {
+      "id": "iss-7",
+      "projectId": "SCL",
+      "severity": "info",
+      "message": "Sheet header contains copy-paste error (TMBPL company name & depot location). Client and type correctly mapped from Category Summary.",
+      "sourceRef": "SCL Sheet header row 1-3"
+    },
+    {
+      "id": "iss-8",
+      "projectId": "NTSPL",
+      "metric": "vehicles",
+      "severity": "info",
+      "message": "Fleet size mismatch: Tracker fleet size (235) vs latest MIS active count (100).",
+      "sourceRef": "Category Summary vs NTSPL Sheet"
+    },
+    {
+      "id": "iss-9",
+      "projectId": "UCL",
+      "metric": "vehicles",
+      "severity": "info",
+      "message": "Fleet size mismatch: Tracker fleet size (70) vs latest MIS active count (67).",
+      "sourceRef": "Category Summary vs UCL Sheet"
+    },
+    {
+      "id": "iss-10",
+      "projectId": "JM_BAXI",
+      "metric": "vehicles",
+      "severity": "info",
+      "message": "Fleet size mismatch: Tracker fleet size (36) vs latest MIS active count (18).",
+      "sourceRef": "Category Summary vs JM BAXI Sheet"
+    }
+  ]
+}
