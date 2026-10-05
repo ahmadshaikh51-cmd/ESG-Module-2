@@ -7,7 +7,7 @@
  *
  * Visuals use the app's existing design tokens (styles.css). Animation
  * keyframes + stateful helper classes live in `@/styles/landing.css`
- * (import it once — see README).
+ * (import it once — see README..).
  *
  * Self-contained: manages its own light/dark via the `.dark` class on
  * <html>, so it works as a standalone route shown before authentication.
