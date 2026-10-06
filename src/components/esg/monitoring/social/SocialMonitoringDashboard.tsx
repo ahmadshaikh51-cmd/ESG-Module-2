@@ -6,6 +6,7 @@ import {
 import { FilterState, INITIAL_FILTERS, FIRST_MONTH, LAST_MONTH } from '@/lib/esg-site-monitoring-adapter';
 import { SocialDashboardFilters } from './SocialDashboardFilters';
 import { SocialKpiCardsRow } from './SocialKpiCardsRow';
+import { EnergyEfficiencyCard } from '../EnergyEfficiencyCard';
 import { SocialOperationalCharts } from './SocialOperationalCharts';
 import { SocialImpactCharts } from './SocialImpactCharts';
 import { SocialProjectComparisonTable } from './SocialProjectComparisonTable';
@@ -70,6 +71,15 @@ export function SocialMonitoringDashboard() {
 
       {/* KPI Cards Row (5 Cards) */}
       <SocialKpiCardsRow kpis={kpis} />
+
+      {/* Energy Efficiency Metric (Monitor & Review) */}
+      <EnergyEfficiencyCard
+        initialEnergyKwh={kpis.totalEnergyKwh}
+        initialDistanceKm={kpis.totalDistanceKm}
+        title="Energy Efficiency"
+        subtitle="Monitor & Review Metadata Metric"
+        domainTag="Social Monitoring Metadata"
+      />
 
       {/* Operational Trends (Passenger Mobility & Workforce Deployment) */}
       <SocialOperationalCharts filters={filters} />

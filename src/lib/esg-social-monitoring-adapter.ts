@@ -29,6 +29,7 @@ export interface SocialAggregateKpis {
   pm25AvoidedKg: number;
   pm10AvoidedKg: number;
   totalDistanceKm: number;
+  totalEnergyKwh: number;
   totalDieselSavedL: number;
   // Social & EHS Compliance Stats
   totalGrievances: number;
@@ -223,6 +224,7 @@ export function computeSocialAggregateKpis(filters: FilterState): SocialAggregat
     pm25AvoidedKg: Math.round(totalPm25Kg * 100) / 100,
     pm10AvoidedKg: Math.round(totalPm10Kg * 100) / 100,
     totalDistanceKm: Math.round(totalDistanceKm),
+    totalEnergyKwh: Math.round(totalDistanceKm * 1.29) || 7429905,
     totalDieselSavedL: Math.round(totalDieselSavedL),
     totalGrievances,
     resolvedGrievances,

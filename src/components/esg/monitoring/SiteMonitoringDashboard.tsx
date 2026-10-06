@@ -9,6 +9,7 @@ import {
 } from '@/lib/esg-site-monitoring-adapter';
 import { DashboardFilters } from './DashboardFilters';
 import { KpiCardsRow } from './KpiCardsRow';
+import { EnergyEfficiencyCard } from './EnergyEfficiencyCard';
 import { OperationalCharts } from './OperationalCharts';
 import { EnvironmentalCharts } from './EnvironmentalCharts';
 import { ProjectComparisonTable } from './ProjectComparisonTable';
@@ -89,6 +90,15 @@ export function SiteMonitoringDashboard() {
         kpis={kpis}
         energyUnit={energyUnit}
         onEnergyUnitToggle={setEnergyUnit}
+      />
+
+      {/* Energy Efficiency Metric (Monitor & Review) */}
+      <EnergyEfficiencyCard
+        initialEnergyKwh={kpis.totalEnergyKwh}
+        initialDistanceKm={kpis.totalDistanceKm}
+        title="Energy Efficiency"
+        subtitle="Monitor & Review Metadata Metric"
+        domainTag="Site Monitoring Metadata"
       />
 
       {/* Operational Charts (Distance, Fleet Deployment, Energy) */}

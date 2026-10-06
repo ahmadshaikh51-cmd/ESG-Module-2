@@ -99,7 +99,7 @@ function RiskTile({
 }: {
   label: React.ReactNode;
   value: string;
-  hint: string;
+  hint: React.ReactNode;
   accent: string;
   active?: boolean;
   onClick?: () => void;
@@ -1324,7 +1324,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   const projectOwner = (projectId: string) => {
     switch (projectId) {
       case "pl-mbmt":
-        return "Arjun Mehta";
+        return "Diganta Sharma";
       case "pl-silvassa":
         return "Priya Nair";
       case "pl-noida":
@@ -1339,7 +1339,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   const projectResponsibleTeam = (entityId: string) => {
     switch (entityId) {
       case "mbmt":
-        return "MBMT ESG Team";
+        return null;
       case "silvassa":
         return "Silvassa SPV";
       case "corp":
@@ -1396,7 +1396,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
     if (p.currentStage === "closure") return "Completed";
     if (p.blocked) return "Critical";
     if (overdueCount > 2) return "High Risk";
-    if (overdueCount > 0) return "Moderate Risk";
+    if (overdueCount > 0) return "Low Risk";
     if (expiringCount > 0 || breachCount > 0) return "Low Risk";
     return "Healthy";
   };
@@ -1422,8 +1422,9 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
   const getComplianceRiskAccent = (level: string) => {
     switch (level) {
       case "Severe":
-      case "High":
         return "var(--color-destructive)";
+      case "High":
+        return "var(--color-success)";
       case "Moderate":
       case "Low":
         return "var(--color-warning)";
@@ -1677,9 +1678,11 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
           {/* Selected Project Overview Header Card */}
           <PanelCard className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-primary">
-                {projectResponsibleTeam(activeProject.entityId)}
-              </span>
+              {projectResponsibleTeam(activeProject.entityId) && (
+                <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-primary">
+                  {projectResponsibleTeam(activeProject.entityId)}
+                </span>
+              )}
               <h2 className="text-[20px] font-semibold tracking-tight mt-0.5 text-foreground leading-snug">
                 {activeProject.project}
               </h2>
@@ -1768,8 +1771,8 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               <RiskTile
                 className="h-full"
                 label="Overdue items"
-                value={String(projectAgg.overdue.length)}
-                hint="expired · non-compliant now"
+                value="01"
+                hint="Factory License Pending"
                 accent="var(--color-destructive)"
                 active={panel?.kind === "state" && panel.state === "overdue"}
                 onClick={() =>
@@ -1809,8 +1812,13 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
             <RiskTile
               className="h-full"
               label="Expiring soon"
-              value={String(projectAgg.expiring.length)}
-              hint="inside the renewal lead window"
+              value="02"
+              hint={
+                <div className="space-y-0.5 text-[11px] leading-tight">
+                  <div>Fire NOC - 31 Dec 2026</div>
+                  <div>MTWA Registration - 31 Dec 2026</div>
+                </div>
+              }
               accent="var(--color-warning)"
               active={panel?.kind === "state" && panel.state === "expiring"}
               onClick={() =>

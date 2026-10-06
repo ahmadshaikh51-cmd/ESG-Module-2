@@ -81,7 +81,7 @@ export function ProjectDetailDrawer({
         </DialogHeader>
 
         {/* Project KPI Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 space-y-1">
             <span className="text-[10.5px] font-semibold uppercase text-muted-foreground block">
               Active Vehicles (Reported)
@@ -106,6 +106,21 @@ export function ProjectDetailDrawer({
               {totalKwh > 0
                 ? Math.round(energyUnit === 'kWh' ? totalKwh : totalKwh / 1000).toLocaleString()
                 : 'No data'}
+            </span>
+          </div>
+
+          <div className="rounded-xl border border-primary/30 bg-primary/10 p-3.5 space-y-1">
+            <span className="text-[10.5px] font-bold uppercase text-primary block">
+              Energy Efficiency
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="num text-[20px] font-bold text-primary">
+                {totalKm > 0 ? (totalKwh / totalKm).toFixed(2) : '0.00'}
+              </span>
+              <span className="text-[11px] font-semibold text-primary/80">kWh/km</span>
+            </div>
+            <span className="text-[9.5px] font-mono text-muted-foreground block truncate" title="Energy Used ÷ Distance">
+              kWh ÷ km
             </span>
           </div>
 

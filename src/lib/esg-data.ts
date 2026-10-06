@@ -60,7 +60,7 @@ export type Person = { id: string; name: string; role: string };
 export const PEOPLE: Person[] = [
   { id: "priya", name: "Priya Nair", role: "ESG Executive" },
   { id: "kavita", name: "Kavita Rao", role: "ESG Lead" },
-  { id: "arjun", name: "Arjun Mehta", role: "Project Manager · MBMT" },
+  { id: "arjun", name: "Diganta Sharma", role: "Project Manager · MBMT" },
   { id: "rohan", name: "Rohan Desai", role: "Depot Manager · Kashimira" },
   { id: "sunil", name: "Sunil Patil", role: "Admin & Liaison" },
   { id: "rahul", name: "Rahul Patil", role: "Environmental Compliance Officer" },
@@ -97,7 +97,7 @@ export const GLOSSARY: Record<string, { full: string; note?: string }> = {
     note: "SEBI disclosure format.",
   },
   NOC: { full: "No Objection Certificate" },
-  CTO: { full: "Consent to Operate", note: "State pollution control board consent." },
+  CTO: { full: "MTWA Registration", note: "Motor Transport Workers Act Registration." },
   CTE: { full: "Consent to Establish" },
   COE: { full: "Certificate of Establishment", note: "Shops & Establishment registration." },
   ROC: { full: "Registrar of Companies" },
@@ -183,9 +183,9 @@ export const TYPE_MASTER: ComplianceType[] = [
   },
   {
     key: "cto",
-    label: "CTO — Consent to Operate",
+    label: "MTWA Registration",
     category: "permit",
-    leadDays: 90,
+    leadDays: 180,
     ownerRole: "ESG Executive",
   },
   {
@@ -203,10 +203,17 @@ export const TYPE_MASTER: ComplianceType[] = [
     ownerRole: "Admin",
   },
   {
+    key: "factory-license",
+    label: "Factory License",
+    category: "permit",
+    leadDays: 90,
+    ownerRole: "Admin",
+  },
+  {
     key: "fire-noc",
     label: "Fire NOC",
     category: "site",
-    leadDays: 60,
+    leadDays: 180,
     ownerRole: "Depot Manager",
   },
   {
@@ -281,6 +288,21 @@ export type ComplianceRecord = {
 export const RECORDS: ComplianceRecord[] = [
   // ---- overdue (the risk stock) ----
   {
+    id: "r-factory-bhy",
+    typeKey: "factory-license",
+    entityId: "mbmt",
+    depotId: "bhayandar",
+    authority: "Directorate of Industrial Safety & Health",
+    refNo: "FL/MH/2025/0892",
+    issueDate: "2025-06-28",
+    expiryDate: "2026-06-28",
+    ownerId: "rohan",
+    doc: { name: "factory-license-2025.pdf", size: "1.4 MB", uploadedAt: "2025-07-02" },
+    withheldExternal: true,
+    remarks: "Renewal application pending compliance inspection and safety clearance.",
+    renewal: "none",
+  },
+  {
     id: "r-fire-kash",
     typeKey: "fire-noc",
     entityId: "mbmt",
@@ -288,13 +310,12 @@ export const RECORDS: ComplianceRecord[] = [
     authority: "Maharashtra Fire Services",
     refNo: "FN/KSH/2025/118",
     issueDate: "2025-06-28",
-    expiryDate: "2026-06-28",
+    expiryDate: "2027-06-28",
     ownerId: "rohan",
     doc: { name: "fire-noc-kashimira-2025.pdf", size: "1.2 MB", uploadedAt: "2025-07-02" },
     withheldExternal: true,
-    remarks:
-      "Renewal application filed 30 Jun; fire dept inspection pending — hydrant pressure test failed on first visit, pump replacement ordered (ETA 22 Jul).",
-    renewal: "initiated",
+    remarks: "Hydrant pressure test passed; NOC extended.",
+    renewal: "none",
   },
   {
     id: "r-stp-bhy",
@@ -304,12 +325,11 @@ export const RECORDS: ComplianceRecord[] = [
     authority: "MPCB",
     refNo: "STP/BHY/2025/44",
     issueDate: "2025-07-04",
-    expiryDate: "2026-07-04",
+    expiryDate: "2027-07-04",
     ownerId: "rohan",
     doc: { name: "stp-cert-bhayandar.pdf", size: "840 KB", uploadedAt: "2025-07-06" },
     withheldExternal: true,
-    remarks:
-      "Lab re-test of treated water sample scheduled 18 Jul; certificate renewal blocked until report.",
+    remarks: "Treated water report approved; certificate valid.",
     renewal: "none",
   },
   {
@@ -352,7 +372,7 @@ export const RECORDS: ComplianceRecord[] = [
     authority: "Maharashtra Fire Services",
     refNo: "FN/BHY/2025/204",
     issueDate: "2025-08-05",
-    expiryDate: "2026-08-05",
+    expiryDate: "2026-12-31",
     ownerId: "rohan",
     doc: { name: "fire-noc-bhayandar-2025.pdf", size: "1.1 MB", uploadedAt: "2025-08-08" },
     renewal: "none",
@@ -364,7 +384,7 @@ export const RECORDS: ComplianceRecord[] = [
     authority: "MPCB",
     refNo: "CTO/TH/2024/7761",
     issueDate: "2024-08-20",
-    expiryDate: "2026-08-20",
+    expiryDate: "2026-12-31",
     ownerId: "priya",
     doc: { name: "cto-mbmt-2024.pdf", size: "3.4 MB", uploadedAt: "2024-08-25" },
     autoFields: [
@@ -411,19 +431,6 @@ export const RECORDS: ComplianceRecord[] = [
     expiryDate: "2026-09-01",
     ownerId: "priya",
     doc: { name: "pcc-consent-silvassa.pdf", size: "1.6 MB", uploadedAt: "2024-09-04" },
-    renewal: "none",
-  },
-  {
-    id: "r-trade-bhy",
-    typeKey: "trade-licence",
-    entityId: "mbmt",
-    depotId: "bhayandar",
-    authority: "MBMC",
-    refNo: "TL/2025/5521",
-    issueDate: "2025-08-25",
-    expiryDate: "2026-08-25",
-    ownerId: "sunil",
-    doc: { name: "trade-licence-bhy.pdf", size: "380 KB", uploadedAt: "2025-08-28" },
     renewal: "none",
   },
   // ---- valid ----
@@ -1037,7 +1044,7 @@ export const ASSESSMENTS: Assessment[] = [
   {
     id: "a-esdd-mbmt",
     kind: "ESDD",
-    project: "MBMT depot electrification (brownfield)",
+    project: "MBMT Depot (brownfield)",
     entityId: "mbmt",
     projectType: "brownfield",
     status: "complete",
@@ -3173,7 +3180,7 @@ export type ProjectLifecycle = {
 export const PROJECT_LIFECYCLES: ProjectLifecycle[] = [
   {
     projectId: "pl-mbmt",
-    project: "MBMT depot electrification",
+    project: "MBMT Depot",
     entityId: "mbmt",
     branch: "brownfield",
     currentStage: "esap-implement",
