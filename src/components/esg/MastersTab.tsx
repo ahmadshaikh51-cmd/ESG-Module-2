@@ -57,7 +57,7 @@ export function MastersTab() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <RoleSwitcher />
       <div className="grid items-start gap-4 xl:grid-cols-2">
         <PanelCard>
@@ -131,7 +131,7 @@ export function MastersTab() {
           <GhgMastersPanel />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <PanelCard>
             <div className="border-b border-border/60 px-5 py-3.5">
               <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">

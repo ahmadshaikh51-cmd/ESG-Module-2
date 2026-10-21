@@ -90,7 +90,7 @@ export function ProjectsTab({ initialSub }: { initialSub?: string }) {
   const hasOverdue = urgentRecords.some((r) => recordState(r) === "overdue");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Urgent compliance attention banner — shown for register views */}
       {sub !== "status" && !activeForm && !showDataPortal && urgentRecords.length > 0 && (
         <PanelCard accent={hasOverdue ? "var(--color-destructive)" : "var(--color-warning)"}>

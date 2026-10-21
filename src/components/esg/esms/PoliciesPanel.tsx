@@ -62,7 +62,7 @@ export function PoliciesPanel({ onOpenEsap }: { onOpenEsap: () => void }) {
   const selected = selectedId ? (POLICIES.find((p) => p.id === selectedId) ?? null) : null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Annual review banner */}
       {dueForReview.length > 0 && (
         <PanelCard accent="var(--color-warning)">

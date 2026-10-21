@@ -368,7 +368,7 @@ function EsgPage() {
           </div>
         }
       >
-        <div className="space-y-5">
+        <div className="space-y-6">
           <EsgHeader area={area} />
           {/* Tab switches blur-crossfade; the audience lens fades so the curated
               swap reads as a deliberate mode change, not a reload. */}

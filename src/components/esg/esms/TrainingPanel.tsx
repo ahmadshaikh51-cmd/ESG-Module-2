@@ -594,7 +594,7 @@ export function TrainingPanel() {
   const openTraining = openId ? (sessions.find((t) => t.id === openId) ?? null) : null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Segmented
           ariaLabel="Training view"

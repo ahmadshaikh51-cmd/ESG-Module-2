@@ -1598,7 +1598,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
               : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {!roleConfig.isContributorOnly && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border/60 rounded-xl p-3 shadow-sm">
           <div className="flex gap-2">
@@ -1654,7 +1654,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
         <>
           {activeProject ? (
             // Selected Project Overview Dashboard (Project Overview -> KPIs -> Lifecycle -> Quick Actions)
-            <div className="space-y-5">
+            <div className="space-y-6">
           {/* Back button and breadcrumb */}
           <div className="flex items-center gap-3 border-b border-border/40 pb-3">
             <button
@@ -2058,7 +2058,7 @@ export function OverviewTab({ deepLinkRecordId }: { deepLinkRecordId?: string })
         </div>
       ) : (
         // Initial Project Cards Workspace (Overview Landing Page)
-        <div className="space-y-5">
+        <div className="space-y-6">
           {/* Headline introduction */}
           <div className="flex items-center justify-between border-b border-border/30 pb-2.5">
             <span className="text-[12px] font-semibold text-foreground">
@@ -2338,7 +2338,7 @@ function ApprovalCenterUI({
   handleRejectTask,
 }: ApprovalCenterUIProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Functional Filters Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
@@ -2642,7 +2642,7 @@ interface EscalationMatrixUIProps {
 
 function EscalationMatrixUI({ auditTrails }: EscalationMatrixUIProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Overview Card */}
       <div className="p-4 bg-muted/40 rounded-xl border border-border/40">
         <h4 className="text-[13px] font-bold text-foreground">SLA Governance & Role Assignments Matrix</h4>

@@ -113,7 +113,7 @@ export function EsmsTab({ initialSub }: { initialSub?: string }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2">
         {allowedTiers.length > 0 && (
           <Segmented<EsmsTier>

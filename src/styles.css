@@ -80,6 +80,26 @@
   --chart-4: oklch(0.55 0.19 320);
   --chart-5: oklch(0.58 0.18 35);
   --glow-primary: oklch(0.52 0.17 195 / 0.28);
+
+  /* IBM Carbon 4px-based Spacing Scale Tokens */
+  --space-1: 0.25rem; /* 4px - Micro spacing & icon alignment */
+  --space-2: 0.5rem;  /* 8px - Compact component gaps */
+  --space-3: 0.75rem; /* 12px - Form controls & compact groups */
+  --space-4: 1rem;    /* 16px - Standard field & component spacing */
+  --space-5: 1.5rem;  /* 24px - Card sections & related groups */
+  --space-6: 2rem;    /* 32px - Major section separation */
+  --space-7: 3rem;    /* 48px - Large content group separation */
+  --space-8: 4rem;    /* 64px - Page-level spacing */
+
+  /* Semantic Layout Gutters & Spacing */
+  --esg-page-px: 1.5rem;
+  --esg-page-py: 2rem;
+  --esg-section-gap: 1.5rem;
+  --esg-card-p: 1.25rem;
+  --esg-card-header-py: 0.875rem;
+  --esg-card-header-px: 1.25rem;
+  --esg-table-cell-px: 1.25rem;
+  --esg-table-cell-py: 0.75rem;
 }
 
 .dark {
@@ -321,6 +341,66 @@
     background: color-mix(in oklab, var(--primary) 14%, var(--muted));
     color: var(--foreground);
     box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+
+  /* Standardized ESG Section Rhythm & Layout */
+  .esg-page-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .esg-page-flow {
+      gap: 1.75rem;
+    }
+  }
+
+  /* Standardized Card Padding (Apple visual clarity + Carbon compact rhythm) */
+  .esg-card-pad {
+    padding: 1.25rem;
+  }
+  @media (max-width: 640px) {
+    .esg-card-pad {
+      padding: 1rem;
+    }
+  }
+
+  .esg-card-header {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  @media (max-width: 640px) {
+    .esg-card-header {
+      padding: 0.75rem 1rem;
+    }
+  }
+
+  /* Enterprise Table Density (IBM Carbon high data density with Apple clarity) */
+  .esg-table th {
+    padding: 0.625rem 1.25rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .esg-table td {
+    padding: 0.75rem 1.25rem;
+    font-size: 12.5px;
+    vertical-align: middle;
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 45%, transparent);
+  }
+  @media (max-width: 640px) {
+    .esg-table th,
+    .esg-table td {
+      padding-left: 0.875rem;
+      padding-right: 0.875rem;
+    }
   }
 }
 
@@ -664,3 +744,71 @@
 .critical-beam-red [data-beam-bloom] {
   filter: grayscale(1) sepia(1) hue-rotate(308deg) saturate(40) brightness(0.85) !important;
 }
+
+/* ==========================================================================
+   ESG Module Spacing & Layout Standardization (IBM Carbon + Apple Principles)
+   ========================================================================== */
+.esg-page-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5); /* 24px */
+}
+
+@media (min-width: 640px) {
+  .esg-page-flow {
+    gap: var(--space-6); /* 32px major rhythm on larger screens */
+  }
+}
+
+.esg-section-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5); /* 24px */
+}
+
+.esg-card-pad {
+  padding: 1.25rem; /* 20px - balanced card interior */
+}
+
+@media (min-width: 1024px) {
+  .esg-card-pad {
+    padding: 1.5rem; /* 24px on desktop cards */
+  }
+}
+
+.esg-card-compact {
+  padding: 1rem; /* 16px */
+}
+
+.esg-card-header {
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .esg-card-header {
+    padding: 1rem 1.5rem;
+  }
+}
+
+.esg-toolbar-gap {
+  gap: var(--space-3); /* 12px form controls & action groups */
+}
+
+.esg-table th {
+  padding: 0.625rem 1rem; /* 10px 16px */
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.esg-table td {
+  padding: 0.75rem 1rem; /* 12px 16px */
+  font-size: 0.8125rem; /* 13px */
+  vertical-align: middle;
+}
+

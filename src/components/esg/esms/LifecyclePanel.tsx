@@ -735,7 +735,7 @@ export function LifecyclePanel() {
           )}>
             {mode === "all" ? (
               <div className="w-full">
-                <EsmsLifecycleDiagram />
+                <EsmsLifecycleDiagram onSelectProject={(projectId) => setMode(projectId)} />
               </div>
             ) : (
               <div className="flex flex-col items-center min-w-[850px] pb-12">

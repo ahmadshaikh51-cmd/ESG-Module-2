@@ -382,7 +382,7 @@ export function EsgHeader({ area }: { area: string }) {
   const allowedAreas = AREAS.filter((a) => roleConfig.tabs.includes(a.key));
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {hasHistory && goBack && (
         <div className="flex items-center gap-3 border-b border-border/40 pb-3 mb-1">
           <button
@@ -408,7 +408,7 @@ export function EsgHeader({ area }: { area: string }) {
       {/* Audience lens leads on the left — it changes what every screen shows. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <AudienceControl />
-        <div className="ml-auto flex flex-wrap items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center gap-2.5">
           <ProjectFilterControl />
           <DateRangePicker />
           <NotificationsBell />
