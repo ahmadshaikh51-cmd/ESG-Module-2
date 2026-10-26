@@ -9,89 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SegmentsRouteImport } from './routes/segments'
-import { Route as RoutesRouteImport } from './routes/routes'
-import { Route as ReadinessRouteImport } from './routes/readiness'
-import { Route as MisRouteImport } from './routes/mis'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as LauncherRouteImport } from './routes/launcher'
-import { Route as IntelligenceRouteImport } from './routes/intelligence'
-import { Route as FleetRouteImport } from './routes/fleet'
-import { Route as EsgRouteImport } from './routes/esg'
-import { Route as DriversRouteImport } from './routes/drivers'
-import { Route as DataSyncRouteImport } from './routes/data-sync'
-import { Route as ChargingRouteImport } from './routes/charging'
-import { Route as BatteryCyclesRouteImport } from './routes/battery-cycles'
-import { Route as AttributeScoreRouteImport } from './routes/attribute-score'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReadinessIndexRouteImport } from './routes/readiness.index'
-import { Route as ReadinessOpsRouteImport } from './routes/readiness.ops'
-import { Route as ReadinessConfigRouteImport } from './routes/readiness.config'
+import { Route as AttributeScoreRouteImport } from './routes/attribute-score'
+import { Route as BatteryCyclesRouteImport } from './routes/battery-cycles'
+import { Route as ChargingRouteImport } from './routes/charging'
+import { Route as DataSyncRouteImport } from './routes/data-sync'
+import { Route as DriversRouteImport } from './routes/drivers'
+import { Route as EsgRouteImport } from './routes/esg'
+import { Route as FleetRouteImport } from './routes/fleet'
+import { Route as IntelligenceRouteImport } from './routes/intelligence'
+import { Route as LauncherRouteImport } from './routes/launcher'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MisRouteImport } from './routes/mis'
+import { Route as ReadinessRouteImport } from './routes/readiness'
+import { Route as RoutesRouteImport } from './routes/routes'
+import { Route as SegmentsRouteImport } from './routes/segments'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as ReadinessIndexRouteImport } from './routes/readiness.index'
+import { Route as ReadinessConfigRouteImport } from './routes/readiness.config'
+import { Route as ReadinessOpsRouteImport } from './routes/readiness.ops'
 
-const SegmentsRoute = SegmentsRouteImport.update({
-  id: '/segments',
-  path: '/segments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RoutesRoute = RoutesRouteImport.update({
-  id: '/routes',
-  path: '/routes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReadinessRoute = ReadinessRouteImport.update({
-  id: '/readiness',
-  path: '/readiness',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MisRoute = MisRouteImport.update({
-  id: '/mis',
-  path: '/mis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LauncherRoute = LauncherRouteImport.update({
-  id: '/launcher',
-  path: '/launcher',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IntelligenceRoute = IntelligenceRouteImport.update({
-  id: '/intelligence',
-  path: '/intelligence',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FleetRoute = FleetRouteImport.update({
-  id: '/fleet',
-  path: '/fleet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EsgRoute = EsgRouteImport.update({
-  id: '/esg',
-  path: '/esg',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DriversRoute = DriversRouteImport.update({
-  id: '/drivers',
-  path: '/drivers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DataSyncRoute = DataSyncRouteImport.update({
-  id: '/data-sync',
-  path: '/data-sync',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChargingRoute = ChargingRouteImport.update({
-  id: '/charging',
-  path: '/charging',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BatteryCyclesRoute = BatteryCyclesRouteImport.update({
-  id: '/battery-cycles',
-  path: '/battery-cycles',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AttributeScoreRoute = AttributeScoreRouteImport.update({
@@ -99,9 +39,74 @@ const AttributeScoreRoute = AttributeScoreRouteImport.update({
   path: '/attribute-score',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BatteryCyclesRoute = BatteryCyclesRouteImport.update({
+  id: '/battery-cycles',
+  path: '/battery-cycles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChargingRoute = ChargingRouteImport.update({
+  id: '/charging',
+  path: '/charging',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataSyncRoute = DataSyncRouteImport.update({
+  id: '/data-sync',
+  path: '/data-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriversRoute = DriversRouteImport.update({
+  id: '/drivers',
+  path: '/drivers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsgRoute = EsgRouteImport.update({
+  id: '/esg',
+  path: '/esg',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FleetRoute = FleetRouteImport.update({
+  id: '/fleet',
+  path: '/fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntelligenceRoute = IntelligenceRouteImport.update({
+  id: '/intelligence',
+  path: '/intelligence',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LauncherRoute = LauncherRouteImport.update({
+  id: '/launcher',
+  path: '/launcher',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisRoute = MisRouteImport.update({
+  id: '/mis',
+  path: '/mis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadinessRoute = ReadinessRouteImport.update({
+  id: '/readiness',
+  path: '/readiness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoutesRoute = RoutesRouteImport.update({
+  id: '/routes',
+  path: '/routes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SegmentsRoute = SegmentsRouteImport.update({
+  id: '/segments',
+  path: '/segments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReadinessIndexRoute = ReadinessIndexRouteImport.update({
@@ -109,20 +114,15 @@ const ReadinessIndexRoute = ReadinessIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ReadinessRoute,
 } as any)
-const ReadinessOpsRoute = ReadinessOpsRouteImport.update({
-  id: '/ops',
-  path: '/ops',
-  getParentRoute: () => ReadinessRoute,
-} as any)
 const ReadinessConfigRoute = ReadinessConfigRouteImport.update({
   id: '/config',
   path: '/config',
   getParentRoute: () => ReadinessRoute,
 } as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/auth/callback',
-  path: '/auth/callback',
-  getParentRoute: () => rootRouteImport,
+const ReadinessOpsRoute = ReadinessOpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
+  getParentRoute: () => ReadinessRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -274,95 +274,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/segments': {
-      id: '/segments'
-      path: '/segments'
-      fullPath: '/segments'
-      preLoaderRoute: typeof SegmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/routes': {
-      id: '/routes'
-      path: '/routes'
-      fullPath: '/routes'
-      preLoaderRoute: typeof RoutesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/readiness': {
-      id: '/readiness'
-      path: '/readiness'
-      fullPath: '/readiness'
-      preLoaderRoute: typeof ReadinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mis': {
-      id: '/mis'
-      path: '/mis'
-      fullPath: '/mis'
-      preLoaderRoute: typeof MisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/launcher': {
-      id: '/launcher'
-      path: '/launcher'
-      fullPath: '/launcher'
-      preLoaderRoute: typeof LauncherRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/intelligence': {
-      id: '/intelligence'
-      path: '/intelligence'
-      fullPath: '/intelligence'
-      preLoaderRoute: typeof IntelligenceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fleet': {
-      id: '/fleet'
-      path: '/fleet'
-      fullPath: '/fleet'
-      preLoaderRoute: typeof FleetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/esg': {
-      id: '/esg'
-      path: '/esg'
-      fullPath: '/esg'
-      preLoaderRoute: typeof EsgRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/drivers': {
-      id: '/drivers'
-      path: '/drivers'
-      fullPath: '/drivers'
-      preLoaderRoute: typeof DriversRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/data-sync': {
-      id: '/data-sync'
-      path: '/data-sync'
-      fullPath: '/data-sync'
-      preLoaderRoute: typeof DataSyncRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/charging': {
-      id: '/charging'
-      path: '/charging'
-      fullPath: '/charging'
-      preLoaderRoute: typeof ChargingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/battery-cycles': {
-      id: '/battery-cycles'
-      path: '/battery-cycles'
-      fullPath: '/battery-cycles'
-      preLoaderRoute: typeof BatteryCyclesRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/attribute-score': {
@@ -372,11 +288,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AttributeScoreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/battery-cycles': {
+      id: '/battery-cycles'
+      path: '/battery-cycles'
+      fullPath: '/battery-cycles'
+      preLoaderRoute: typeof BatteryCyclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/charging': {
+      id: '/charging'
+      path: '/charging'
+      fullPath: '/charging'
+      preLoaderRoute: typeof ChargingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-sync': {
+      id: '/data-sync'
+      path: '/data-sync'
+      fullPath: '/data-sync'
+      preLoaderRoute: typeof DataSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drivers': {
+      id: '/drivers'
+      path: '/drivers'
+      fullPath: '/drivers'
+      preLoaderRoute: typeof DriversRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esg': {
+      id: '/esg'
+      path: '/esg'
+      fullPath: '/esg'
+      preLoaderRoute: typeof EsgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fleet': {
+      id: '/fleet'
+      path: '/fleet'
+      fullPath: '/fleet'
+      preLoaderRoute: typeof FleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intelligence': {
+      id: '/intelligence'
+      path: '/intelligence'
+      fullPath: '/intelligence'
+      preLoaderRoute: typeof IntelligenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launcher': {
+      id: '/launcher'
+      path: '/launcher'
+      fullPath: '/launcher'
+      preLoaderRoute: typeof LauncherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mis': {
+      id: '/mis'
+      path: '/mis'
+      fullPath: '/mis'
+      preLoaderRoute: typeof MisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/readiness': {
+      id: '/readiness'
+      path: '/readiness'
+      fullPath: '/readiness'
+      preLoaderRoute: typeof ReadinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/routes': {
+      id: '/routes'
+      path: '/routes'
+      fullPath: '/routes'
+      preLoaderRoute: typeof RoutesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/segments': {
+      id: '/segments'
+      path: '/segments'
+      fullPath: '/segments'
+      preLoaderRoute: typeof SegmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/readiness/': {
@@ -386,13 +393,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReadinessIndexRouteImport
       parentRoute: typeof ReadinessRoute
     }
-    '/readiness/ops': {
-      id: '/readiness/ops'
-      path: '/ops'
-      fullPath: '/readiness/ops'
-      preLoaderRoute: typeof ReadinessOpsRouteImport
-      parentRoute: typeof ReadinessRoute
-    }
     '/readiness/config': {
       id: '/readiness/config'
       path: '/config'
@@ -400,12 +400,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReadinessConfigRouteImport
       parentRoute: typeof ReadinessRoute
     }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
+    '/readiness/ops': {
+      id: '/readiness/ops'
+      path: '/ops'
+      fullPath: '/readiness/ops'
+      preLoaderRoute: typeof ReadinessOpsRouteImport
+      parentRoute: typeof ReadinessRoute
     }
   }
 }
